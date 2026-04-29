@@ -1,0 +1,37 @@
+
+.about .style1 {
+    font-size: 100%;
+}
+.about .style3 {
+	font-size: 83%;
+}
+.about .style5 {
+	font-size: 66%;
+}
+
+.embed-container { 
+    position: relative; 
+    padding-bottom: 56.5%; 
+    height: 0; 
+    overflow: hidden; 
+    max-width: 100%; 
+} 
+.embed-container iframe, .embed-container object, .embed-container embed { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+}
+#trio .embed-container {
+    padding-bottom: 18.95%;
+}
+
+#about-todo {
+    background-color: #007800;
+    color: white;
+    padding: 1em;
+}
+#about-todo > p:last-of-type {
+    margin-bottom: 0;
+}

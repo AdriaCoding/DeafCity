@@ -1,0 +1,4 @@
+php_flag display_errors On
+php_value session.save_path /srv/www/deaf.city/storage/sessions
+php_value session.gc_maxlifetime 7200
+Redirect "/testing/" "/"

@@ -1,0 +1,70 @@
+# Secrets & local config (use a non-tracked copy or env; do not commit API keys)
+/config/config.php
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Composer dependencies (install from src/composer.json + composer.lock)
+/src/vendor/
+/src/vendor_fromphp7/
+
+# Generated / cached runtime data
+/data/cache/
+
+# Large media (not practical for normal Git history; deploy or use LFS separately)
+/videos/
+
+# Debug / server introspection (leaks server config if publicly reachable)
+/phpinfo*.php
+
+# Obsolete duplicate app subtree (superseded by realtime/; carries its own .git)
+/realold/
+
+# Local backup / scratch copies of sources
+*_OLD.php
+*.BCK
+*OLD.css
+
+# Abandoned image variants under realtime clocks
+**/_old_*.svg
+
+# Experimental / local-only area
+/torino/
+
+# Scratch / lab HTML (not linked from main PHP app)
+/2column/
+/B/
+/C/
+/D/
+/E/
+/maketa/
+/realt_colors/
+/yt/
+
+# Logs & temp
+*.log
+/logs/
+/tmp/
+*.tmp
+*.temp
+
+# Nested Git repositories (standalone clones inside this tree)
+**/.git/
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*.kate-swp
+
+# Optional local overrides
+*.local.php
+*.local.js

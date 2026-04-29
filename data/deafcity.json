@@ -1,0 +1,28 @@
+[
+
+
+
+    {
+      "label": "LSE València",
+      "coordinates": [
+          -0.41,
+          39.4689236
+      ],
+      "id": "deafcity-valencia"
+    },
+
+
+    {
+      "label": "LSM Ciudad de México",
+      "coordinates": [
+          -99.13,
+          19.43
+      ],
+      "id": "deafcity-mexic"
+    }
+
+
+
+
+
+]

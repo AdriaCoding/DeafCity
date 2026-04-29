@@ -1,0 +1,4654 @@
+{
+  "type": "FeatureCollection",
+  "properties": {
+    "layer": "sign1238"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwMDBGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 981,
+        "language": {
+          "pk": 981,
+          "name": "Berbey Sign Language",
+          "longitude": -1.769086,
+          "latitude": 15.278462,
+          "id": "berb1261"
+        },
+        "name": "Berbey Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.769086,
+          15.278462
+        ]
+      },
+      "id": "berb1261"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGMDBGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 979,
+        "language": {
+          "pk": 979,
+          "name": "International Sign",
+          "longitude": 11.4,
+          "latitude": 44.95,
+          "id": "inte1259"
+        },
+        "name": "International Sign"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.4,
+          44.95
+        ]
+      },
+      "id": "inte1259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Jumla Sign Language",
+          "longitude": 82.183333,
+          "latitude": 29.275278,
+          "id": "juml1239"
+        },
+        "name": "Jumla Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.183333,
+          29.275278
+        ]
+      },
+      "id": "juml1239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Kafr Qasem Sign Language",
+          "longitude": 34.9751,
+          "latitude": 32.1151,
+          "id": "kafr1234"
+        },
+        "name": "Kafr Qasem Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.9751,
+          32.1151
+        ]
+      },
+      "id": "kafr1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Bura Sign Language",
+          "longitude": 12.28484,
+          "latitude": 10.478601,
+          "id": "bura1295"
+        },
+        "name": "Bura Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.28484,
+          10.478601
+        ]
+      },
+      "id": "bura1295"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Kata Kolok",
+          "longitude": 115.098,
+          "latitude": -8.383,
+          "id": "beng1239"
+        },
+        "name": "Kata Kolok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          115.098,
+          -8.383
+        ]
+      },
+      "id": "beng1239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Guinea-Bissau Sign Language",
+          "longitude": -15.591553,
+          "latitude": 11.859297,
+          "id": "guin1260"
+        },
+        "name": "Guinea-Bissau Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -15.591553,
+          11.859297
+        ]
+      },
+      "id": "guin1260"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Miyakubo Sign Language",
+          "longitude": 133.074929,
+          "latitude": 34.178195,
+          "id": "miya1268"
+        },
+        "name": "Miyakubo Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          133.074929,
+          34.178195
+        ]
+      },
+      "id": "miya1268"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Brunca Sign Language",
+          "longitude": -84.821363,
+          "latitude": 9.978549,
+          "id": "brun1247"
+        },
+        "name": "Brunca Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          275.178637,
+          9.978549
+        ]
+      },
+      "id": "brun1247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Keresan Pueblo Indian Sign Language",
+          "longitude": -106.723333,
+          "latitude": 35.503611,
+          "id": "kere1299"
+        },
+        "name": "Keresan Pueblo Indian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          253.276667,
+          35.503611
+        ]
+      },
+      "id": "kere1299"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Angami Naga Sign Language",
+          "longitude": 93.719062,
+          "latitude": 25.896367,
+          "id": "anga1315"
+        },
+        "name": "Angami Naga Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          93.719062,
+          25.896367
+        ]
+      },
+      "id": "anga1315"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Maunabudhuk and Bodhe Local Sign",
+          "longitude": 87.43858,
+          "latitude": 26.92253,
+          "id": "maun1242"
+        },
+        "name": "Maunabudhuk and Bodhe Local Sign"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          87.43858,
+          26.92253
+        ]
+      },
+      "id": "maun1242"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Inuit Sign Language",
+          "longitude": -68.519722,
+          "latitude": 63.748611,
+          "id": "inui1247"
+        },
+        "name": "Inuit Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          291.480278,
+          63.748611
+        ]
+      },
+      "id": "inui1247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Macushi Sign Language",
+          "longitude": -60.16245,
+          "latitude": 4.59501,
+          "id": "macu1262"
+        },
+        "name": "Macushi Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          299.83755,
+          4.59501
+        ]
+      },
+      "id": "macu1262"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Bribri Sign Language",
+          "longitude": -83.05,
+          "latitude": 9.4,
+          "id": "brib1244"
+        },
+        "name": "Bribri Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          276.95,
+          9.4
+        ]
+      },
+      "id": "brib1244"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Sinasina Sign Language",
+          "longitude": 145.025508,
+          "latitude": -5.954719,
+          "id": "sina1273"
+        },
+        "name": "Sinasina Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145.025508,
+          -5.954719
+        ]
+      },
+      "id": "sina1273"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Alipur Sign Language",
+          "longitude": 77.107525,
+          "latitude": 16.843564,
+          "id": "alip1234"
+        },
+        "name": "Alipur Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.107525,
+          16.843564
+        ]
+      },
+      "id": "alip1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Bay Islands Sign Language",
+          "longitude": -86.461386,
+          "latitude": 16.35726,
+          "id": "fren1280"
+        },
+        "name": "Bay Islands Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          273.538614,
+          16.35726
+        ]
+      },
+      "id": "fren1280"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Ghardaia Sign Language",
+          "longitude": 3.666667,
+          "latitude": 32.483333,
+          "id": "ghar1240"
+        },
+        "name": "Ghardaia Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.666667,
+          32.483333
+        ]
+      },
+      "id": "ghar1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Yucatec Maya Sign Language",
+          "longitude": -89,
+          "latitude": 20.5,
+          "id": "yuca1236"
+        },
+        "name": "Yucatec Maya Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          271,
+          20.5
+        ]
+      },
+      "id": "yuca1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Mardin Sign Language",
+          "longitude": 40.737778,
+          "latitude": 37.316667,
+          "id": "mard1245"
+        },
+        "name": "Mardin Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.737778,
+          37.316667
+        ]
+      },
+      "id": "mard1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Langue des Signes de Bouakako",
+          "longitude": -3.548218,
+          "latitude": 8.065846,
+          "id": "lang1336"
+        },
+        "name": "Langue des Signes de Bouakako"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.548218,
+          8.065846
+        ]
+      },
+      "id": "lang1336"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Kajana Sign Language",
+          "longitude": -55.572222,
+          "latitude": 3.888611,
+          "id": "kaja1257"
+        },
+        "name": "Kajana Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          304.427778,
+          3.888611
+        ]
+      },
+      "id": "kaja1257"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Yolngu Sign Language",
+          "longitude": 136.816667,
+          "latitude": -12.283333,
+          "id": "yoln1234"
+        },
+        "name": "Yolngu Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          136.816667,
+          -12.283333
+        ]
+      },
+      "id": "yoln1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Mofu-Gudur Sign Language",
+          "longitude": 14.5,
+          "latitude": 11,
+          "id": "mofu1251"
+        },
+        "name": "Mofu-Gudur Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.5,
+          11
+        ]
+      },
+      "id": "mofu1251"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Original Costa Rican Sign Language",
+          "longitude": -84.010539,
+          "latitude": 9.935135,
+          "id": "orig1234"
+        },
+        "name": "Original Costa Rican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          275.989461,
+          9.935135
+        ]
+      },
+      "id": "orig1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Central Taurus Sign Language",
+          "longitude": 33,
+          "latitude": 37,
+          "id": "cent2319"
+        },
+        "name": "Central Taurus Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          33,
+          37
+        ]
+      },
+      "id": "cent2319"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Mbour Sign Language",
+          "longitude": -16.970045,
+          "latitude": 14.420649,
+          "id": "mbou1245"
+        },
+        "name": "Mbour Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -16.970045,
+          14.420649
+        ]
+      },
+      "id": "mbou1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Amami O Shima Sign Language",
+          "longitude": 129.358991,
+          "latitude": 28.268372,
+          "id": "amam1247"
+        },
+        "name": "Amami O Shima Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          129.358991,
+          28.268372
+        ]
+      },
+      "id": "amam1247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Douentza Sign Language",
+          "longitude": -2.956465,
+          "latitude": 15.006344,
+          "id": "doue1234"
+        },
+        "name": "Douentza Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -2.956465,
+          15.006344
+        ]
+      },
+      "id": "doue1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Extreme North Cameroon Sign Language",
+          "longitude": 14.315833,
+          "latitude": 10.597222,
+          "id": "extr1248"
+        },
+        "name": "Extreme North Cameroon Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.315833,
+          10.597222
+        ]
+      },
+      "id": "extr1248"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Sivia Sign Language",
+          "longitude": -73.86124,
+          "latitude": -12.51094,
+          "id": "sivi1235"
+        },
+        "name": "Sivia Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          286.13876,
+          -12.51094
+        ]
+      },
+      "id": "sivi1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Qahvehkhaneh Sign Language",
+          "longitude": 51.3668463,
+          "latitude": 35.667731,
+          "id": "qahv1234"
+        },
+        "name": "Qahvehkhaneh Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.3668463,
+          35.667731
+        ]
+      },
+      "id": "qahv1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Kailge Sign Language",
+          "longitude": 144.15251,
+          "latitude": -5.89842,
+          "id": "kail1256"
+        },
+        "name": "Kailge Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.15251,
+          -5.89842
+        ]
+      },
+      "id": "kail1256"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Urubú-Kaapor Sign Language",
+          "longitude": -46.4213,
+          "latitude": -2.54091,
+          "id": "urub1243"
+        },
+        "name": "Urubú-Kaapor Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          313.5787,
+          -2.54091
+        ]
+      },
+      "id": "urub1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Al-Sayyid Bedouin Sign Language",
+          "longitude": 34.916111,
+          "latitude": 31.284444,
+          "id": "alsa1242"
+        },
+        "name": "Al-Sayyid Bedouin Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.916111,
+          31.284444
+        ]
+      },
+      "id": "alsa1242"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Maxakali Sign Language",
+          "longitude": -40.594224,
+          "latitude": -16.863682,
+          "id": "maxa1248"
+        },
+        "name": "Maxakali Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          319.405776,
+          -16.863682
+        ]
+      },
+      "id": "maxa1248"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Yoruba Sign Language",
+          "longitude": 3.66,
+          "latitude": 7.15,
+          "id": "yoru1246"
+        },
+        "name": "Yoruba Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.66,
+          7.15
+        ]
+      },
+      "id": "yoru1246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Adamorobe Sign Language",
+          "longitude": -0.151,
+          "latitude": 5.834,
+          "id": "adam1238"
+        },
+        "name": "Adamorobe Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.151,
+          5.834
+        ]
+      },
+      "id": "adam1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Jamaican Country Sign Language",
+          "longitude": -76.9321,
+          "latitude": 17.9997,
+          "id": "jama1256"
+        },
+        "name": "Jamaican Country Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          283.0679,
+          17.9997
+        ]
+      },
+      "id": "jama1256"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Wanib Sign Language",
+          "longitude": 142.53,
+          "latitude": -3.75862,
+          "id": "wani1243"
+        },
+        "name": "Wanib Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.53,
+          -3.75862
+        ]
+      },
+      "id": "wani1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Enga Sign Language",
+          "longitude": 143.441436,
+          "latitude": -5.408371,
+          "id": "enga1253"
+        },
+        "name": "Enga Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          143.441436,
+          -5.408371
+        ]
+      },
+      "id": "enga1253"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Old Kentish Sign Language",
+          "longitude": 0.98365,
+          "latitude": 51.1198,
+          "id": "oldk1238"
+        },
+        "name": "Old Kentish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          0.98365,
+          51.1198
+        ]
+      },
+      "id": "oldk1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Mehek Sign Language",
+          "longitude": 142.5109,
+          "latitude": -3.72792,
+          "id": "mehe1245"
+        },
+        "name": "Mehek Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.5109,
+          -3.72792
+        ]
+      },
+      "id": "mehe1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Papiu Yanomama Sign Language",
+          "longitude": -63.24581,
+          "latitude": 2.52366,
+          "id": "papi1256"
+        },
+        "name": "Papiu Yanomama Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          296.75419,
+          2.52366
+        ]
+      },
+      "id": "papi1256"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Ghandruk Sign Language",
+          "longitude": 83.807,
+          "latitude": 28.377,
+          "id": "ghan1245"
+        },
+        "name": "Ghandruk Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          83.807,
+          28.377
+        ]
+      },
+      "id": "ghan1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Martha's Vineyard Sign Language",
+          "longitude": -70.625275,
+          "latitude": 41.414542,
+          "id": "mart1251"
+        },
+        "name": "Martha's Vineyard Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          289.374725,
+          41.414542
+        ]
+      },
+      "id": "mart1251"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Nanabin Sign Language",
+          "longitude": -0.949953,
+          "latitude": 5.245634,
+          "id": "nana1261"
+        },
+        "name": "Nanabin Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.949953,
+          5.245634
+        ]
+      },
+      "id": "nana1261"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Sao Tome and Principe Sign Language",
+          "longitude": 6.722558,
+          "latitude": 0.320259,
+          "id": "saot1241"
+        },
+        "name": "Sao Tome and Principe Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.722558,
+          0.320259
+        ]
+      },
+      "id": "saot1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Tebul Sign Language",
+          "longitude": -3.499957,
+          "latitude": 14.499995,
+          "id": "tebu1240"
+        },
+        "name": "Tebul Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.499957,
+          14.499995
+        ]
+      },
+      "id": "tebu1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Far North Queensland Indigenous Sign Language",
+          "longitude": 142.923879,
+          "latitude": -14.830544,
+          "id": "fnqi1234"
+        },
+        "name": "Far North Queensland Indigenous Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          142.923879,
+          -14.830544
+        ]
+      },
+      "id": "fnqi1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "South Rupununi Sign",
+          "longitude": -59.048261,
+          "latitude": 3.858056,
+          "id": "sout3305"
+        },
+        "name": "South Rupununi Sign"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          300.951739,
+          3.858056
+        ]
+      },
+      "id": "sout3305"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Jhankot Sign Language",
+          "longitude": 82.9,
+          "latitude": 28.933333,
+          "id": "jhan1234"
+        },
+        "name": "Jhankot Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          82.9,
+          28.933333
+        ]
+      },
+      "id": "jhan1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Marajo Sign Language",
+          "longitude": -49.641656,
+          "latitude": -0.962912,
+          "id": "mara1418"
+        },
+        "name": "Marajo Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          310.358344,
+          -0.962912
+        ]
+      },
+      "id": "mara1418"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "San Juan Quiahije Chatino Sign Language",
+          "longitude": -97.316667,
+          "latitude": 16.3,
+          "id": "chat1269"
+        },
+        "name": "San Juan Quiahije Chatino Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          262.683333,
+          16.3
+        ]
+      },
+      "id": "chat1269"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Ban Khor Sign Language",
+          "longitude": 103.296,
+          "latitude": 16.911,
+          "id": "bank1251"
+        },
+        "name": "Ban Khor Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.296,
+          16.911
+        ]
+      },
+      "id": "bank1251"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Miriwoong Sign Language",
+          "longitude": 128.73861,
+          "latitude": -15.77361,
+          "id": "miri1273"
+        },
+        "name": "Miriwoong Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.73861,
+          -15.77361
+        ]
+      },
+      "id": "miri1273"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Solomon Islands Sign Language",
+          "longitude": 159.966938,
+          "latitude": -9.453975,
+          "id": "solo1262"
+        },
+        "name": "Solomon Islands Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          159.966938,
+          -9.453975
+        ]
+      },
+      "id": "solo1262"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Providencia Sign Language",
+          "longitude": -81.373888,
+          "latitude": 13.348416,
+          "id": "prov1243"
+        },
+        "name": "Providencia Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          278.62611200000003,
+          13.348416
+        ]
+      },
+      "id": "prov1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6IzAwRkZGRjtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 980,
+        "language": {
+          "pk": 980,
+          "name": "Old Cayman Sign Language",
+          "longitude": -81.216667,
+          "latitude": 19.333333,
+          "id": "oldc1248"
+        },
+        "name": "Old Cayman Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          278.78333299999997,
+          19.333333
+        ]
+      },
+      "id": "oldc1248"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGMDAwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 978,
+        "language": {
+          "pk": 978,
+          "name": "Plains Indian Sign Language",
+          "longitude": -99.2499,
+          "latitude": 38.3941,
+          "id": "plai1235"
+        },
+        "name": "Plains Indian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          260.7501,
+          38.3941
+        ]
+      },
+      "id": "plai1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGMDAwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 978,
+        "language": {
+          "pk": 978,
+          "name": "Monastic Sign Language",
+          "longitude": 12.452,
+          "latitude": 41.9026,
+          "id": "mona1241"
+        },
+        "name": "Monastic Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.452,
+          41.9026
+        ]
+      },
+      "id": "mona1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGMDAwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 978,
+        "language": {
+          "pk": 978,
+          "name": "Armenian Sign Language",
+          "longitude": 44.4767,
+          "latitude": 40.1002,
+          "id": "arme1259"
+        },
+        "name": "Armenian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.4767,
+          40.1002
+        ]
+      },
+      "id": "arme1259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGMDAwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 978,
+        "language": {
+          "pk": 978,
+          "name": "Australian Aborigines Sign Language",
+          "longitude": 135,
+          "latitude": -25,
+          "id": "aust1253"
+        },
+        "name": "Australian Aborigines Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          135,
+          -25
+        ]
+      },
+      "id": "aust1253"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Turkish Sign Language",
+          "longitude": 28.85551,
+          "latitude": 41.02675,
+          "id": "turk1288"
+        },
+        "name": "Turkish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.85551,
+          41.02675
+        ]
+      },
+      "id": "turk1288"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Tanzanian Sign Language",
+          "longitude": 39.127,
+          "latitude": -6.82431,
+          "id": "tanz1238"
+        },
+        "name": "Tanzanian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.127,
+          -6.82431
+        ]
+      },
+      "id": "tanz1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Argentine Sign Language",
+          "longitude": -59.1798,
+          "latitude": -34.797,
+          "id": "arge1236"
+        },
+        "name": "Argentine Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          300.8202,
+          -34.797
+        ]
+      },
+      "id": "arge1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Burkina Faso Sign Language",
+          "longitude": -1.5238,
+          "latitude": 12.363514,
+          "id": "burk1234"
+        },
+        "name": "Burkina Faso Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -1.5238,
+          12.363514
+        ]
+      },
+      "id": "burk1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Langue des Signes Zairoise",
+          "longitude": 17.7887,
+          "latitude": -3.6211,
+          "id": "lang1335"
+        },
+        "name": "Langue des Signes Zairoise"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.7887,
+          -3.6211
+        ]
+      },
+      "id": "lang1335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Afghan Sign Language",
+          "longitude": 70.447778,
+          "latitude": 34.434167,
+          "id": "afgh1239"
+        },
+        "name": "Afghan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          70.447778,
+          34.434167
+        ]
+      },
+      "id": "afgh1239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Mauritian Sign Language",
+          "longitude": 57.516667,
+          "latitude": -20.166667,
+          "id": "maur1240"
+        },
+        "name": "Mauritian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          57.516667,
+          -20.166667
+        ]
+      },
+      "id": "maur1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Albanian Sign Language",
+          "longitude": 19.817778,
+          "latitude": 41.328889,
+          "id": "alba1271"
+        },
+        "name": "Albanian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.817778,
+          41.328889
+        ]
+      },
+      "id": "alba1271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Penang Sign Language",
+          "longitude": 100.254,
+          "latitude": 5.375,
+          "id": "pena1248"
+        },
+        "name": "Penang Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.254,
+          5.375
+        ]
+      },
+      "id": "pena1248"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Langue de Signes Malienne",
+          "longitude": -8.00136,
+          "latitude": 12.651,
+          "id": "bama1249"
+        },
+        "name": "Langue de Signes Malienne"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.00136,
+          12.651
+        ]
+      },
+      "id": "bama1249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Zambian Sign Language",
+          "longitude": 28.9898,
+          "latitude": -15.5134,
+          "id": "zamb1239"
+        },
+        "name": "Zambian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.9898,
+          -15.5134
+        ]
+      },
+      "id": "zamb1239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Sri Lankan Sign Language",
+          "longitude": 79.857,
+          "latitude": 7.10588,
+          "id": "sril1237"
+        },
+        "name": "Sri Lankan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.857,
+          7.10588
+        ]
+      },
+      "id": "sril1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Zaban Eshareh Irani",
+          "longitude": 51.0996,
+          "latitude": 35.6922,
+          "id": "pers1244"
+        },
+        "name": "Zaban Eshareh Irani"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.0996,
+          35.6922
+        ]
+      },
+      "id": "pers1244"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Cambodian Sign Language",
+          "longitude": 104.870261,
+          "latitude": 11.557804,
+          "id": "camb1244"
+        },
+        "name": "Cambodian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          104.870261,
+          11.557804
+        ]
+      },
+      "id": "camb1244"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Zimbabwe Sign Language",
+          "longitude": 31.0216,
+          "latitude": -17.9128,
+          "id": "zimb1247"
+        },
+        "name": "Zimbabwe Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          31.0216,
+          -17.9128
+        ]
+      },
+      "id": "zimb1247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Hausa Sign Language",
+          "longitude": 7.168,
+          "latitude": 8.486,
+          "id": "haus1246"
+        },
+        "name": "Hausa Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.168,
+          8.486
+        ]
+      },
+      "id": "haus1246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Maltese Sign Language",
+          "longitude": 14.4824,
+          "latitude": 35.907,
+          "id": "malt1238"
+        },
+        "name": "Maltese Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4824,
+          35.907
+        ]
+      },
+      "id": "malt1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Kenya-Somali Sign Language",
+          "longitude": 37.1995,
+          "latitude": -1.00166,
+          "id": "keny1241"
+        },
+        "name": "Kenya-Somali Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.1995,
+          -1.00166
+        ]
+      },
+      "id": "keny1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Mozambican Sign Language",
+          "longitude": 34.613,
+          "latitude": -19.811,
+          "id": "moza1235"
+        },
+        "name": "Mozambican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.613,
+          -19.811
+        ]
+      },
+      "id": "moza1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Kurdish Sign Language",
+          "longitude": 44.28591,
+          "latitude": 36.829499,
+          "id": "kurd1260"
+        },
+        "name": "Kurdish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.28591,
+          36.829499
+        ]
+      },
+      "id": "kurd1260"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Guatemalan Sign Language",
+          "longitude": -90.5667,
+          "latitude": 14.5034,
+          "id": "guat1249"
+        },
+        "name": "Guatemalan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          269.43330000000003,
+          14.5034
+        ]
+      },
+      "id": "guat1249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Tibetan Sign Language",
+          "longitude": 91.157981,
+          "latitude": 29.651803,
+          "id": "tibe1277"
+        },
+        "name": "Tibetan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          91.157981,
+          29.651803
+        ]
+      },
+      "id": "tibe1277"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Nicaraguan Sign Language",
+          "longitude": -86.3399,
+          "latitude": 12.2509,
+          "id": "nica1238"
+        },
+        "name": "Nicaraguan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          273.6601,
+          12.2509
+        ]
+      },
+      "id": "nica1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Mongolian Sign Language",
+          "longitude": 107.528,
+          "latitude": 48.6852,
+          "id": "mong1264"
+        },
+        "name": "Mongolian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          107.528,
+          48.6852
+        ]
+      },
+      "id": "mong1264"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Moldova Sign Language",
+          "longitude": 28.694,
+          "latitude": 47.107,
+          "id": "mold1243"
+        },
+        "name": "Moldova Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.694,
+          47.107
+        ]
+      },
+      "id": "mold1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Ukrainian Sign Language",
+          "longitude": 30.553,
+          "latitude": 50.4111,
+          "id": "ukra1235"
+        },
+        "name": "Ukrainian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.553,
+          50.4111
+        ]
+      },
+      "id": "ukra1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Russian-Tajik Sign Language",
+          "longitude": 44,
+          "latitude": 56,
+          "id": "russ1255"
+        },
+        "name": "Russian-Tajik Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44,
+          56
+        ]
+      },
+      "id": "russ1255"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Lithuanian Sign Language",
+          "longitude": 23.8814,
+          "latitude": 55.2487,
+          "id": "lith1236"
+        },
+        "name": "Lithuanian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.8814,
+          55.2487
+        ]
+      },
+      "id": "lith1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Georgian Sign Language",
+          "longitude": 44.813437,
+          "latitude": 41.727762,
+          "id": "geor1254"
+        },
+        "name": "Georgian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.813437,
+          41.727762
+        ]
+      },
+      "id": "geor1254"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Swedish Sign Language",
+          "longitude": 16.1133,
+          "latitude": 58.929,
+          "id": "swed1236"
+        },
+        "name": "Swedish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.1133,
+          58.929
+        ]
+      },
+      "id": "swed1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Portuguese Sign Language",
+          "longitude": -8.53355,
+          "latitude": 38.5474,
+          "id": "port1277"
+        },
+        "name": "Portuguese Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -8.53355,
+          38.5474
+        ]
+      },
+      "id": "port1277"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Israeli Sign Language",
+          "longitude": 34.7637,
+          "latitude": 31.5279,
+          "id": "isra1236"
+        },
+        "name": "Israeli Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7637,
+          31.5279
+        ]
+      },
+      "id": "isra1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Swiss-German Sign Language",
+          "longitude": 9.07557,
+          "latitude": 47.1069,
+          "id": "swis1240"
+        },
+        "name": "Swiss-German Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          9.07557,
+          47.1069
+        ]
+      },
+      "id": "swis1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Polish Sign Language",
+          "longitude": 20.761,
+          "latitude": 52.0041,
+          "id": "poli1259"
+        },
+        "name": "Polish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          20.761,
+          52.0041
+        ]
+      },
+      "id": "poli1259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "German Sign Language",
+          "longitude": 7.30478,
+          "latitude": 50.8154,
+          "id": "germ1281"
+        },
+        "name": "German Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          7.30478,
+          50.8154
+        ]
+      },
+      "id": "germ1281"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Haiphong Sign Language",
+          "longitude": 106.689,
+          "latitude": 20.8537,
+          "id": "haip1238"
+        },
+        "name": "Haiphong Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.689,
+          20.8537
+        ]
+      },
+      "id": "haip1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Chilean Sign Language",
+          "longitude": -70.6698,
+          "latitude": -32.781,
+          "id": "chil1264"
+        },
+        "name": "Chilean Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          289.3302,
+          -32.781
+        ]
+      },
+      "id": "chil1264"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Mandalay Myanmar Sign Language",
+          "longitude": 96.10784,
+          "latitude": 21.93575,
+          "id": "mand1477"
+        },
+        "name": "Mandalay Myanmar Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          96.10784,
+          21.93575
+        ]
+      },
+      "id": "mand1477"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Yangoon Myanmar Sign Language",
+          "longitude": 96.13867,
+          "latitude": 16.78599,
+          "id": "yang1309"
+        },
+        "name": "Yangoon Myanmar Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          96.13867,
+          16.78599
+        ]
+      },
+      "id": "yang1309"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Spanish Sign Language",
+          "longitude": -3.70738,
+          "latitude": 40.0314,
+          "id": "span1263"
+        },
+        "name": "Spanish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.70738,
+          40.0314
+        ]
+      },
+      "id": "span1263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Venezuelan Sign Language",
+          "longitude": -66.7678,
+          "latitude": 10.3294,
+          "id": "vene1237"
+        },
+        "name": "Venezuelan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          293.23220000000003,
+          10.3294
+        ]
+      },
+      "id": "vene1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Mexican Sign Language",
+          "longitude": -98.5,
+          "latitude": 19.75,
+          "id": "mexi1237"
+        },
+        "name": "Mexican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          261.5,
+          19.75
+        ]
+      },
+      "id": "mexi1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Cuba Sign Language",
+          "longitude": -79.209,
+          "latitude": 22.061,
+          "id": "cuba1235"
+        },
+        "name": "Cuba Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          280.791,
+          22.061
+        ]
+      },
+      "id": "cuba1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Guyana Sign Language",
+          "longitude": -58.151363,
+          "latitude": 6.795809,
+          "id": "guya1253"
+        },
+        "name": "Guyana Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          301.848637,
+          6.795809
+        ]
+      },
+      "id": "guya1253"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Nepalese Sign Language",
+          "longitude": 85.3041,
+          "latitude": 27.6993,
+          "id": "nepa1250"
+        },
+        "name": "Nepalese Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          85.3041,
+          27.6993
+        ]
+      },
+      "id": "nepa1250"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Taiwan Sign Language",
+          "longitude": 121.305,
+          "latitude": 25.0206,
+          "id": "taiw1241"
+        },
+        "name": "Taiwan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.305,
+          25.0206
+        ]
+      },
+      "id": "taiw1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Japanese Sign Language",
+          "longitude": 139.079,
+          "latitude": 36.0221,
+          "id": "japa1238"
+        },
+        "name": "Japanese Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.079,
+          36.0221
+        ]
+      },
+      "id": "japa1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Korean Sign Language",
+          "longitude": 127.609,
+          "latitude": 37.4718,
+          "id": "kore1273"
+        },
+        "name": "Korean Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          127.609,
+          37.4718
+        ]
+      },
+      "id": "kore1273"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Maritime Sign Language",
+          "longitude": -63.881,
+          "latitude": 45.0427,
+          "id": "mari1381"
+        },
+        "name": "Maritime Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          296.119,
+          45.0427
+        ]
+      },
+      "id": "mari1381"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Brazilian Sign Language",
+          "longitude": -48,
+          "latitude": -15.5,
+          "id": "braz1236"
+        },
+        "name": "Brazilian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          312,
+          -15.5
+        ]
+      },
+      "id": "braz1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "French Sign Language",
+          "longitude": 3,
+          "latitude": 47,
+          "id": "fren1243"
+        },
+        "name": "French Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3,
+          47
+        ]
+      },
+      "id": "fren1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Philippine Sign Language",
+          "longitude": 121.512,
+          "latitude": 16.916,
+          "id": "phil1239"
+        },
+        "name": "Philippine Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.512,
+          16.916
+        ]
+      },
+      "id": "phil1239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Irish Sign Language",
+          "longitude": -6.36541,
+          "latitude": 53.315,
+          "id": "iris1235"
+        },
+        "name": "Irish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -6.36541,
+          53.315
+        ]
+      },
+      "id": "iris1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Algerian Sign Language",
+          "longitude": 3.5462,
+          "latitude": 36.4762,
+          "id": "alge1235"
+        },
+        "name": "Algerian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.5462,
+          36.4762
+        ]
+      },
+      "id": "alge1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Swiss-French Sign Language",
+          "longitude": 6.78425,
+          "latitude": 46.72252,
+          "id": "swis1241"
+        },
+        "name": "Swiss-French Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          6.78425,
+          46.72252
+        ]
+      },
+      "id": "swis1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Greek Sign Language",
+          "longitude": 23.3762,
+          "latitude": 38.0536,
+          "id": "gree1271"
+        },
+        "name": "Greek Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          23.3762,
+          38.0536
+        ]
+      },
+      "id": "gree1271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Hawai'i Pidgin Sign Language",
+          "longitude": -158.002,
+          "latitude": 21.6311,
+          "id": "hawa1235"
+        },
+        "name": "Hawai'i Pidgin Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          201.998,
+          21.6311
+        ]
+      },
+      "id": "hawa1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Estonian Sign Language",
+          "longitude": 24.566,
+          "latitude": 58.947,
+          "id": "esto1238"
+        },
+        "name": "Estonian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.566,
+          58.947
+        ]
+      },
+      "id": "esto1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Latvian Sign Language",
+          "longitude": 24.4931,
+          "latitude": 56.9335,
+          "id": "latv1245"
+        },
+        "name": "Latvian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          24.4931,
+          56.9335
+        ]
+      },
+      "id": "latv1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Austrian Sign Language",
+          "longitude": 16.225,
+          "latitude": 48.1197,
+          "id": "aust1252"
+        },
+        "name": "Austrian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.225,
+          48.1197
+        ]
+      },
+      "id": "aust1252"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Libyan Sign Language",
+          "longitude": 17.573,
+          "latitude": 29.512,
+          "id": "liby1235"
+        },
+        "name": "Libyan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.573,
+          29.512
+        ]
+      },
+      "id": "liby1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Yemeni Sign Language",
+          "longitude": 44.200281,
+          "latitude": 15.354531,
+          "id": "yeme1237"
+        },
+        "name": "Yemeni Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.200281,
+          15.354531
+        ]
+      },
+      "id": "yeme1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Kuwaiti Sign Language",
+          "longitude": 47.98118,
+          "latitude": 29.376662,
+          "id": "kuwa1252"
+        },
+        "name": "Kuwaiti Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          47.98118,
+          29.376662
+        ]
+      },
+      "id": "kuwa1252"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Saudi Arabian Sign Language",
+          "longitude": 46.4714,
+          "latitude": 23.614,
+          "id": "saud1238"
+        },
+        "name": "Saudi Arabian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.4714,
+          23.614
+        ]
+      },
+      "id": "saud1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Egypt Sign Language",
+          "longitude": 29.654,
+          "latitude": 29.567,
+          "id": "egyp1238"
+        },
+        "name": "Egypt Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          29.654,
+          29.567
+        ]
+      },
+      "id": "egyp1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Finland-Swedish Sign Language",
+          "longitude": 25.67,
+          "latitude": 60.39,
+          "id": "finl1235"
+        },
+        "name": "Finland-Swedish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.67,
+          60.39
+        ]
+      },
+      "id": "finl1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Finnish Sign Language",
+          "longitude": 25.0677,
+          "latitude": 60.661,
+          "id": "finn1310"
+        },
+        "name": "Finnish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0677,
+          60.661
+        ]
+      },
+      "id": "finn1310"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Chiangmai Sign Language",
+          "longitude": 99.039,
+          "latitude": 18.8629,
+          "id": "chia1237"
+        },
+        "name": "Chiangmai Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.039,
+          18.8629
+        ]
+      },
+      "id": "chia1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Old Bangkok Sign Language",
+          "longitude": 100.49417,
+          "latitude": 13.7525,
+          "id": "oldb1247"
+        },
+        "name": "Old Bangkok Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.49417,
+          13.7525
+        ]
+      },
+      "id": "oldb1247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Hanoi Sign Language",
+          "longitude": 105.834,
+          "latitude": 21.0245,
+          "id": "hano1243"
+        },
+        "name": "Hanoi Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.834,
+          21.0245
+        ]
+      },
+      "id": "hano1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Ho Chi Minh City Sign Language",
+          "longitude": 106.68073,
+          "latitude": 10.78646,
+          "id": "hoch1237"
+        },
+        "name": "Ho Chi Minh City Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.68073,
+          10.78646
+        ]
+      },
+      "id": "hoch1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Chinese Sign Language",
+          "longitude": 121.569,
+          "latitude": 30.9063,
+          "id": "chin1283"
+        },
+        "name": "Chinese Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          121.569,
+          30.9063
+        ]
+      },
+      "id": "chin1283"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Hong Kong-Macau Sign Language",
+          "longitude": 113.555225,
+          "latitude": 22.160631,
+          "id": "hong1241"
+        },
+        "name": "Hong Kong-Macau Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          113.555225,
+          22.160631
+        ]
+      },
+      "id": "hong1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Uruguayan Sign Language",
+          "longitude": -56.4509,
+          "latitude": -34.5967,
+          "id": "urug1238"
+        },
+        "name": "Uruguayan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          303.5491,
+          -34.5967
+        ]
+      },
+      "id": "urug1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Paraguayan Sign Language",
+          "longitude": -57.666667,
+          "latitude": -25.266667,
+          "id": "para1318"
+        },
+        "name": "Paraguayan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          302.333333,
+          -25.266667
+        ]
+      },
+      "id": "para1318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Indian Sign Language",
+          "longitude": 79.6787,
+          "latitude": 27.5186,
+          "id": "indi1237"
+        },
+        "name": "Indian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          79.6787,
+          27.5186
+        ]
+      },
+      "id": "indi1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Pakistan Sign Language",
+          "longitude": 67.8843,
+          "latitude": 28.0667,
+          "id": "paki1242"
+        },
+        "name": "Pakistan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          67.8843,
+          28.0667
+        ]
+      },
+      "id": "paki1242"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "British Sign Language",
+          "longitude": -0.4431,
+          "latitude": 51.6688,
+          "id": "brit1235"
+        },
+        "name": "British Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.4431,
+          51.6688
+        ]
+      },
+      "id": "brit1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "New Zealand Sign Language",
+          "longitude": 175.773,
+          "latitude": -39.2923,
+          "id": "newz1236"
+        },
+        "name": "New Zealand Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          175.773,
+          -39.2923
+        ]
+      },
+      "id": "newz1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Namibian Sign Language",
+          "longitude": 17.048,
+          "latitude": -22.6,
+          "id": "nami1249"
+        },
+        "name": "Namibian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.048,
+          -22.6
+        ]
+      },
+      "id": "nami1249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Lesotho Sign Language",
+          "longitude": 27.50772,
+          "latitude": -29.36985,
+          "id": "leso1234"
+        },
+        "name": "Lesotho Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.50772,
+          -29.36985
+        ]
+      },
+      "id": "leso1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "South African Sign Language",
+          "longitude": 28.11864,
+          "latitude": -25.96551,
+          "id": "sout1404"
+        },
+        "name": "South African Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          28.11864,
+          -25.96551
+        ]
+      },
+      "id": "sout1404"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Marseille Sign Language",
+          "longitude": 5.370187,
+          "latitude": 43.292301,
+          "id": "mars1235"
+        },
+        "name": "Marseille Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.370187,
+          43.292301
+        ]
+      },
+      "id": "mars1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Tunisian Sign Language",
+          "longitude": 10.03348,
+          "latitude": 36.49562,
+          "id": "tuni1249"
+        },
+        "name": "Tunisian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.03348,
+          36.49562
+        ]
+      },
+      "id": "tuni1249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Italian Sign Language",
+          "longitude": 12.42949,
+          "latitude": 42.72915,
+          "id": "ital1275"
+        },
+        "name": "Italian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.42949,
+          42.72915
+        ]
+      },
+      "id": "ital1275"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Swiss-Italian Sign Language",
+          "longitude": 8.79111,
+          "latitude": 46.3076,
+          "id": "swis1235"
+        },
+        "name": "Swiss-Italian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          8.79111,
+          46.3076
+        ]
+      },
+      "id": "swis1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Catalan Sign Language",
+          "longitude": 2.13,
+          "latitude": 41.39,
+          "id": "cata1241"
+        },
+        "name": "Catalan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.13,
+          41.39
+        ]
+      },
+      "id": "cata1241"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Valencian Sign Language",
+          "longitude": -0.75,
+          "latitude": 39.5,
+          "id": "vale1251"
+        },
+        "name": "Valencian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.75,
+          39.5
+        ]
+      },
+      "id": "vale1251"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Norwegian Sign Language",
+          "longitude": 10.242,
+          "latitude": 60.7733,
+          "id": "norw1255"
+        },
+        "name": "Norwegian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.242,
+          60.7733
+        ]
+      },
+      "id": "norw1255"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Madagascar Sign Language",
+          "longitude": 46.87,
+          "latitude": -19.04,
+          "id": "mada1271"
+        },
+        "name": "Madagascar Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          46.87,
+          -19.04
+        ]
+      },
+      "id": "mada1271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Yugoslavian Sign Language",
+          "longitude": 17.5193,
+          "latitude": 45.3912,
+          "id": "yugo1238"
+        },
+        "name": "Yugoslavian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          17.5193,
+          45.3912
+        ]
+      },
+      "id": "yugo1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Croatian Sign Language",
+          "longitude": 16.796,
+          "latitude": 45.502,
+          "id": "croa1242"
+        },
+        "name": "Croatian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          16.796,
+          45.502
+        ]
+      },
+      "id": "croa1242"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Icelandic Sign Language",
+          "longitude": -20.2731,
+          "latitude": 64.1731,
+          "id": "icel1236"
+        },
+        "name": "Icelandic Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -20.2731,
+          64.1731
+        ]
+      },
+      "id": "icel1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Danish Sign Language",
+          "longitude": 12.3187,
+          "latitude": 55.8257,
+          "id": "dani1246"
+        },
+        "name": "Danish Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.3187,
+          55.8257
+        ]
+      },
+      "id": "dani1246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Romanian Sign Language",
+          "longitude": 26.2924,
+          "latitude": 44.9292,
+          "id": "roma1324"
+        },
+        "name": "Romanian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          26.2924,
+          44.9292
+        ]
+      },
+      "id": "roma1324"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Slovakian Sign Language",
+          "longitude": 18.1248,
+          "latitude": 48.0463,
+          "id": "slov1263"
+        },
+        "name": "Slovakian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.1248,
+          48.0463
+        ]
+      },
+      "id": "slov1263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Bulgarian Sign Language",
+          "longitude": 25.0026,
+          "latitude": 42.7918,
+          "id": "bulg1240"
+        },
+        "name": "Bulgarian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          25.0026,
+          42.7918
+        ]
+      },
+      "id": "bulg1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Hungarian Sign Language",
+          "longitude": 19.052084,
+          "latitude": 47.49236,
+          "id": "hung1263"
+        },
+        "name": "Hungarian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          19.052084,
+          47.49236
+        ]
+      },
+      "id": "hung1263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Czech Sign Language",
+          "longitude": 14.4774,
+          "latitude": 50.012,
+          "id": "czec1253"
+        },
+        "name": "Czech Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          14.4774,
+          50.012
+        ]
+      },
+      "id": "czec1253"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Dutch Sign Language",
+          "longitude": 4.91133,
+          "latitude": 52.1251,
+          "id": "dutc1253"
+        },
+        "name": "Dutch Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.91133,
+          52.1251
+        ]
+      },
+      "id": "dutc1253"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Gambian Sign Language",
+          "longitude": -16.580639,
+          "latitude": 13.453444,
+          "id": "gamb1259"
+        },
+        "name": "Gambian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -16.580639,
+          13.453444
+        ]
+      },
+      "id": "gamb1259"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Puerto Rican Sign Language",
+          "longitude": -66.0919,
+          "latitude": 18.4592,
+          "id": "puer1237"
+        },
+        "name": "Puerto Rican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          293.9081,
+          18.4592
+        ]
+      },
+      "id": "puer1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Sierra Leone Sign Language",
+          "longitude": -13.235,
+          "latitude": 8.483,
+          "id": "sier1246"
+        },
+        "name": "Sierra Leone Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -13.235,
+          8.483
+        ]
+      },
+      "id": "sier1246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Ugandan Sign Language",
+          "longitude": 32.4829,
+          "latitude": 0.2475,
+          "id": "ugan1238"
+        },
+        "name": "Ugandan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.4829,
+          0.2475
+        ]
+      },
+      "id": "ugan1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Ghanaian Sign Language",
+          "longitude": -0.30274,
+          "latitude": 5.55225,
+          "id": "ghan1235"
+        },
+        "name": "Ghanaian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.30274,
+          5.55225
+        ]
+      },
+      "id": "ghan1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Moroccan Sign Language",
+          "longitude": -7.69607,
+          "latitude": 32.139,
+          "id": "moro1242"
+        },
+        "name": "Moroccan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -7.69607,
+          32.139
+        ]
+      },
+      "id": "moro1242"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Salvadoran Sign Language",
+          "longitude": -89.5988,
+          "latitude": 13.7024,
+          "id": "salv1237"
+        },
+        "name": "Salvadoran Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          270.4012,
+          13.7024
+        ]
+      },
+      "id": "salv1237"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Ethiopian Sign Language",
+          "longitude": 38.8534,
+          "latitude": 8.9761,
+          "id": "ethi1238"
+        },
+        "name": "Ethiopian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.8534,
+          8.9761
+        ]
+      },
+      "id": "ethi1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Quebec Sign Language",
+          "longitude": -74.87193,
+          "latitude": 45.99654,
+          "id": "queb1245"
+        },
+        "name": "Quebec Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          285.12807,
+          45.99654
+        ]
+      },
+      "id": "queb1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Thai Sign Language",
+          "longitude": 100.445,
+          "latitude": 13.7837,
+          "id": "thai1240"
+        },
+        "name": "Thai Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.445,
+          13.7837
+        ]
+      },
+      "id": "thai1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Guinean Sign Language",
+          "longitude": -13.674,
+          "latitude": 9.553,
+          "id": "guin1250"
+        },
+        "name": "Guinean Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -13.674,
+          9.553
+        ]
+      },
+      "id": "guin1250"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Dominican Sign Language",
+          "longitude": -71.1722,
+          "latitude": 18.8798,
+          "id": "domi1236"
+        },
+        "name": "Dominican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          288.8278,
+          18.8798
+        ]
+      },
+      "id": "domi1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Trinidad and Tobago Sign Language",
+          "longitude": -61.516667,
+          "latitude": 10.666667,
+          "id": "trin1277"
+        },
+        "name": "Trinidad and Tobago Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          298.483333,
+          10.666667
+        ]
+      },
+      "id": "trin1277"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Iraqi Sign Language",
+          "longitude": 44.377867,
+          "latitude": 33.308738,
+          "id": "iraq1246"
+        },
+        "name": "Iraqi Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          44.377867,
+          33.308738
+        ]
+      },
+      "id": "iraq1246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Levantine Arabic Sign Language",
+          "longitude": 36.0829,
+          "latitude": 31.8202,
+          "id": "jord1238"
+        },
+        "name": "Levantine Arabic Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0829,
+          31.8202
+        ]
+      },
+      "id": "jord1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Kolkata Indian Sign Language",
+          "longitude": 88.394224,
+          "latitude": 22.606042,
+          "id": "kolk1234"
+        },
+        "name": "Kolkata Indian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          88.394224,
+          22.606042
+        ]
+      },
+      "id": "kolk1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Papua New Guinean Sign Language",
+          "longitude": 147.116667,
+          "latitude": -9.5,
+          "id": "papu1255"
+        },
+        "name": "Papua New Guinean Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.116667,
+          -9.5
+        ]
+      },
+      "id": "papu1255"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Auslan",
+          "longitude": 145,
+          "latitude": -30,
+          "id": "aust1271"
+        },
+        "name": "Auslan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          145,
+          -30
+        ]
+      },
+      "id": "aust1271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Langue des signes de Belgique Francophone",
+          "longitude": 4.31312,
+          "latitude": 50.8021,
+          "id": "lang1248"
+        },
+        "name": "Langue des signes de Belgique Francophone"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.31312,
+          50.8021
+        ]
+      },
+      "id": "lang1248"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Vlaamse Gebarentaal",
+          "longitude": 4.31312,
+          "latitude": 50.8021,
+          "id": "vlaa1235"
+        },
+        "name": "Vlaamse Gebarentaal"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.31312,
+          50.8021
+        ]
+      },
+      "id": "vlaa1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Chadian Sign Language",
+          "longitude": 15.2481,
+          "latitude": 12.1115,
+          "id": "chad1238"
+        },
+        "name": "Chadian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          15.2481,
+          12.1115
+        ]
+      },
+      "id": "chad1238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Nigerian Sign Language",
+          "longitude": 3.16664,
+          "latitude": 6.49997,
+          "id": "nige1240"
+        },
+        "name": "Nigerian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.16664,
+          6.49997
+        ]
+      },
+      "id": "nige1240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Bolivian Sign Language",
+          "longitude": -67.57823,
+          "latitude": -16.38949,
+          "id": "boli1236"
+        },
+        "name": "Bolivian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          292.42177,
+          -16.38949
+        ]
+      },
+      "id": "boli1236"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Colombian Sign Language",
+          "longitude": -75.4464,
+          "latitude": 5.33532,
+          "id": "colo1249"
+        },
+        "name": "Colombian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          284.5536,
+          5.33532
+        ]
+      },
+      "id": "colo1249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Ecuadorian Sign Language",
+          "longitude": -79.1666,
+          "latitude": -1.24999,
+          "id": "ecua1243"
+        },
+        "name": "Ecuadorian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          280.8334,
+          -1.24999
+        ]
+      },
+      "id": "ecua1243"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Costa Rican Sign Language",
+          "longitude": -84.118,
+          "latitude": 9.8943,
+          "id": "cost1249"
+        },
+        "name": "Costa Rican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          275.882,
+          9.8943
+        ]
+      },
+      "id": "cost1249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Panamanian Sign Language",
+          "longitude": -79.533333,
+          "latitude": 8.966667,
+          "id": "pana1308"
+        },
+        "name": "Panamanian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          280.46666700000003,
+          8.966667
+        ]
+      },
+      "id": "pana1308"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Chiriqui Sign Languages",
+          "longitude": -82.409271,
+          "latitude": 8.398055,
+          "id": "chir1296"
+        },
+        "name": "Chiriqui Sign Languages"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          277.590729,
+          8.398055
+        ]
+      },
+      "id": "chir1296"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Honduras Sign Language",
+          "longitude": -87.224,
+          "latitude": 14.622,
+          "id": "hond1239"
+        },
+        "name": "Honduras Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          272.776,
+          14.622
+        ]
+      },
+      "id": "hond1239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Jamaican Sign Language",
+          "longitude": -77.758042,
+          "latitude": 18.049925,
+          "id": "jama1263"
+        },
+        "name": "Jamaican Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          282.241958,
+          18.049925
+        ]
+      },
+      "id": "jama1263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Haitian Sign Language",
+          "longitude": -72.285,
+          "latitude": 18.541,
+          "id": "hait1245"
+        },
+        "name": "Haitian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          287.71500000000003,
+          18.541
+        ]
+      },
+      "id": "hait1245"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "American Sign Language",
+          "longitude": -81.6121,
+          "latitude": 33.8117,
+          "id": "amer1248"
+        },
+        "name": "American Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          278.3879,
+          33.8117
+        ]
+      },
+      "id": "amer1248"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Malaysian Sign Language",
+          "longitude": 101.366,
+          "latitude": 2.946,
+          "id": "mala1412"
+        },
+        "name": "Malaysian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          101.366,
+          2.946
+        ]
+      },
+      "id": "mala1412"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Selangor Sign Language",
+          "longitude": 101.614,
+          "latitude": 3.13489,
+          "id": "sela1253"
+        },
+        "name": "Selangor Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          101.614,
+          3.13489
+        ]
+      },
+      "id": "sela1253"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Peruvian Sign Language",
+          "longitude": -76.8213,
+          "latitude": -11.9008,
+          "id": "peru1235"
+        },
+        "name": "Peruvian Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          283.1787,
+          -11.9008
+        ]
+      },
+      "id": "peru1235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Inmaculada Sign Language",
+          "longitude": -77.01956,
+          "latitude": -12.14477,
+          "id": "inma1234"
+        },
+        "name": "Inmaculada Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          282.98044,
+          -12.14477
+        ]
+      },
+      "id": "inma1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Yogyakarta Sign Language",
+          "longitude": 110.368664,
+          "latitude": -7.800018,
+          "id": "yogy1234"
+        },
+        "name": "Yogyakarta Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          110.368664,
+          -7.800018
+        ]
+      },
+      "id": "yogy1234"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "icon": "data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICAgICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgaGVpZ2h0PSI0MCIgd2lkdGg9IjQwIj4KICA8Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNCIgc3R5bGU9ImZpbGw6I0ZGRkYwMDtzdHJva2U6YmxhY2s7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7Ii8+Cjwvc3ZnPg==",
+        "branch": 982,
+        "language": {
+          "pk": 982,
+          "name": "Jakartan Sign Language",
+          "longitude": 112.378,
+          "latitude": -7.908,
+          "id": "indo1291"
+        },
+        "name": "Jakartan Sign Language"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          112.378,
+          -7.908
+        ]
+      },
+      "id": "indo1291"
+    }
+  ]
+}
