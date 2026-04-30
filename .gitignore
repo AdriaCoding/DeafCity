@@ -68,3 +68,5 @@ Thumbs.db
 # Optional local overrides
 *.local.php
 *.local.js
+
+develop/cache
