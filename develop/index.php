@@ -46,14 +46,16 @@
 </head>
 <body>
 <?php
-$videoIdMinimal       = '38DSoHOO8u4';
-$vimeoVttBasename          = 'luis_02.srt.vtt';
-$vimeoVttBasenameSecondary = 'luis_02.srt copy.vtt';
+$vimeoVttBasename          = 'luis_02.es-MX.vtt';
+$vimeoVttBasenameSecondary = 'luis_02.en.vtt';
 // Vimeo outer captions from static WebVTT (captions-static.php).
 $vimeoVideoId = '639494119';
 $embedVimeo   = 'https://player.vimeo.com/video/' . rawurlencode($vimeoVideoId)
     . '?api=1&title=0&byline=0&portrait=0&dnt=1';
 
+// YouTube (disabled). Change to `if (true):` and uncomment the JS block marked `YOUTUBE RESCUE` below.
+if (false):
+$videoIdMinimal       = '38DSoHOO8u4';
 $base           = [
     'rel'            => '0',
     'iv_load_policy' => '3',
@@ -80,6 +82,7 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
                 allowfullscreen></iframe>
         </div>
     </div>
+<?php endif; ?>
 
     <div class="develop-block">
         <div id="caption-box-vimeo" class="caption-box"></div>
@@ -99,49 +102,11 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
 (function () {
     'use strict';
 
-    var VIDEO_ID_MINIMAL = '<?php echo $videoIdMinimal; ?>';
     var VIMEO_VTT_FILE = '<?php echo htmlspecialchars($vimeoVttBasename, ENT_QUOTES, 'UTF-8'); ?>';
     var VIMEO_VTT_FILE_2 = '<?php echo htmlspecialchars($vimeoVttBasenameSecondary, ENT_QUOTES, 'UTF-8'); ?>';
-    var captionEventsMinimal = [];
     var captionEventsVimeo = [];
     var captionEventsVimeo2 = [];
-    var playerMinimal   = null;
     var vimeoPlayer     = null;
-    var syncInterval    = null;
-
-    // ── Fetch captions ────────────────────────────────────────────────────────
-
-    var lang = (navigator.language || 'en').split('-')[0];
-
-    function loadCaptions(videoId, assign) {
-        function tryLang(code, done) {
-            fetch('/develop/captions.php?v=' + videoId + '&lang=' + encodeURIComponent(code))
-                .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
-                .then(function (res) {
-                    if (res.ok && Array.isArray(res.data)) {
-                        assign(res.data);
-                        syncAllCaptions();
-                    } else if (typeof done === 'function') {
-                        done();
-                    }
-                })
-                .catch(function (e) {
-                    console.warn('Caption fetch failed for ' + videoId + ' (' + code + '):', e);
-                    if (typeof done === 'function') {
-                        done();
-                    }
-                });
-        }
-        tryLang(lang, function () {
-            if (lang !== 'en') {
-                tryLang('en', null);
-            }
-        });
-    }
-
-    loadCaptions(VIDEO_ID_MINIMAL, function (data) {
-        captionEventsMinimal = data;
-    });
 
     function loadStaticVtt(file, assign, label) {
         fetch('/develop/captions-static.php?f=' + encodeURIComponent(file))
@@ -188,11 +153,6 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
         box.textContent = caption ? caption.text : '';
     }
 
-    function syncCaptionPair(player, boxId, events) {
-        if (!player || typeof player.getCurrentTime !== 'function') return;
-        syncCaptionBox(boxId, events, player.getCurrentTime() * 1000);
-    }
-
     function syncVimeoCaptionBoxes(seconds) {
         var ms = seconds * 1000;
         syncCaptionBox('caption-box-vimeo', captionEventsVimeo, ms);
@@ -200,9 +160,60 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
     }
 
     function syncAllCaptions() {
-        syncCaptionPair(playerMinimal, 'caption-box', captionEventsMinimal);
         if (vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function') {
             vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes).catch(function () { /* ignore */ });
+        }
+    }
+
+    /*
+     * ========== YOUTUBE RESCUE ================================================
+     * Turn PHP `if (false):` → `if (true):` for the YouTube block, then remove this
+     * comment wrapper so the following runs again (merge syncAllCaptions to drive both players).
+     *
+    var VIDEO_ID_MINIMAL = '38DSoHOO8u4';
+    var captionEventsMinimal = [];
+    var playerMinimal   = null;
+    var syncInterval    = null;
+    var lang = (navigator.language || 'en').split('-')[0];
+
+    function loadCaptions(videoId, assign) {
+        function tryLang(code, done) {
+            fetch('/develop/captions.php?v=' + videoId + '&lang=' + encodeURIComponent(code))
+                .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+                .then(function (res) {
+                    if (res.ok && Array.isArray(res.data)) {
+                        assign(res.data);
+                        syncAllCaptions();
+                    } else if (typeof done === 'function') {
+                        done();
+                    }
+                })
+                .catch(function (e) {
+                    console.warn('Caption fetch failed for ' + videoId + ' (' + code + '):', e);
+                    if (typeof done === 'function') {
+                        done();
+                    }
+                });
+        }
+        tryLang(lang, function () {
+            if (lang !== 'en') {
+                tryLang('en', null);
+            }
+        });
+    }
+    loadCaptions(VIDEO_ID_MINIMAL, function (data) {
+        captionEventsMinimal = data;
+    });
+
+    function syncCaptionPair(player, boxId, events) {
+        if (!player || typeof player.getCurrentTime !== 'function') return;
+        syncCaptionBox(boxId, events, player.getCurrentTime() * 1000);
+    }
+
+    function syncAllCaptions() {
+        syncCaptionPair(playerMinimal, 'caption-box', captionEventsMinimal);
+        if (vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function') {
+            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes).catch(function () {});
         }
     }
 
@@ -231,8 +242,6 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
         syncInterval = null;
     }
 
-    // ── IFrame Player API ─────────────────────────────────────────────────────
-
     function initYoutubePlayer() {
         playerMinimal = new YT.Player('yt-player', {
             events: {
@@ -258,6 +267,8 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
         var first  = document.getElementsByTagName('script')[0];
         first.parentNode.insertBefore(tag, first);
     }
+     * ===========================================================================
+     */
 
     // ── Vimeo Player SDK + static WebVTT captions ──────────────────────────────
 
