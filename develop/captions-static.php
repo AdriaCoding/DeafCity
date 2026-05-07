@@ -6,7 +6,7 @@
 header('Content-Type: application/json; charset=utf-8');
 
 $basename = isset($_GET['f']) ? basename((string) $_GET['f']) : '';
-if ($basename === '' || !preg_match('/^[a-zA-Z0-9_\-\.]+\.vtt$/', $basename)) {
+if ($basename === '' || !preg_match('/^[a-zA-Z0-9_\-\. ]+\.vtt$/', $basename)) {
     http_response_code(400);
     echo json_encode(array('error' => 'Invalid or missing filename'));
     exit;

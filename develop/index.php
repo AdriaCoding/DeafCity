@@ -47,8 +47,9 @@
 <body>
 <?php
 $videoIdMinimal       = '38DSoHOO8u4';
-$vimeoVttBasename     = 'luis_02.srt.vtt';
-// Vimeo outer captions from static WebVTT (captions-static.php); see $vimeoVttBasename.
+$vimeoVttBasename          = 'luis_02.srt.vtt';
+$vimeoVttBasenameSecondary = 'luis_02.srt copy.vtt';
+// Vimeo outer captions from static WebVTT (captions-static.php).
 $vimeoVideoId = '639494119';
 $embedVimeo   = 'https://player.vimeo.com/video/' . rawurlencode($vimeoVideoId)
     . '?api=1&title=0&byline=0&portrait=0&dnt=1';
@@ -82,6 +83,7 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
 
     <div class="develop-block">
         <div id="caption-box-vimeo" class="caption-box"></div>
+        <div id="caption-box-vimeo-2" class="caption-box"></div>
         <div class="video-shell">
             <iframe
                 id="vimeo-player"
@@ -99,8 +101,10 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
 
     var VIDEO_ID_MINIMAL = '<?php echo $videoIdMinimal; ?>';
     var VIMEO_VTT_FILE = '<?php echo htmlspecialchars($vimeoVttBasename, ENT_QUOTES, 'UTF-8'); ?>';
+    var VIMEO_VTT_FILE_2 = '<?php echo htmlspecialchars($vimeoVttBasenameSecondary, ENT_QUOTES, 'UTF-8'); ?>';
     var captionEventsMinimal = [];
     var captionEventsVimeo = [];
+    var captionEventsVimeo2 = [];
     var playerMinimal   = null;
     var vimeoPlayer     = null;
     var syncInterval    = null;
@@ -139,23 +143,24 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
         captionEventsMinimal = data;
     });
 
-    function loadStaticVimeoCaptions() {
-        fetch('/develop/captions-static.php?f=' + encodeURIComponent(VIMEO_VTT_FILE))
+    function loadStaticVtt(file, assign, label) {
+        fetch('/develop/captions-static.php?f=' + encodeURIComponent(file))
             .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
             .then(function (res) {
                 if (!res.ok || !Array.isArray(res.data)) {
-                    console.warn('Vimeo static captions failed', res.data);
+                    console.warn('Static VTT failed (' + label + ')', res.data);
                     return;
                 }
-                captionEventsVimeo = res.data;
+                assign(res.data);
                 syncAllCaptions();
             })
             .catch(function (e) {
-                console.warn('Vimeo static captions fetch failed:', e);
+                console.warn('Static VTT fetch failed (' + label + '):', e);
             });
     }
 
-    loadStaticVimeoCaptions();
+    loadStaticVtt(VIMEO_VTT_FILE, function (data) { captionEventsVimeo = data; }, 'vimeo-primary');
+    loadStaticVtt(VIMEO_VTT_FILE_2, function (data) { captionEventsVimeo2 = data; }, 'vimeo-secondary');
 
     // ── Caption sync ──────────────────────────────────────────────────────────
 
@@ -188,12 +193,16 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
         syncCaptionBox(boxId, events, player.getCurrentTime() * 1000);
     }
 
+    function syncVimeoCaptionBoxes(seconds) {
+        var ms = seconds * 1000;
+        syncCaptionBox('caption-box-vimeo', captionEventsVimeo, ms);
+        syncCaptionBox('caption-box-vimeo-2', captionEventsVimeo2, ms);
+    }
+
     function syncAllCaptions() {
         syncCaptionPair(playerMinimal, 'caption-box', captionEventsMinimal);
         if (vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function') {
-            vimeoPlayer.getCurrentTime().then(function (seconds) {
-                syncCaptionBox('caption-box-vimeo', captionEventsVimeo, seconds * 1000);
-            }).catch(function () { /* ignore */ });
+            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes).catch(function () { /* ignore */ });
         }
     }
 
@@ -257,17 +266,13 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
         if (!iframe || !window.Vimeo || !window.Vimeo.Player) return;
         vimeoPlayer = new Vimeo.Player(iframe);
         vimeoPlayer.on('timeupdate', function (data) {
-            syncCaptionBox('caption-box-vimeo', captionEventsVimeo, data.seconds * 1000);
+            syncVimeoCaptionBoxes(data.seconds);
         });
         vimeoPlayer.on('seeked', function () {
-            vimeoPlayer.getCurrentTime().then(function (sec) {
-                syncCaptionBox('caption-box-vimeo', captionEventsVimeo, sec * 1000);
-            });
+            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes);
         });
         vimeoPlayer.on('pause', function () {
-            vimeoPlayer.getCurrentTime().then(function (sec) {
-                syncCaptionBox('caption-box-vimeo', captionEventsVimeo, sec * 1000);
-            });
+            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes);
         });
         syncAllCaptions();
     }
