@@ -42,12 +42,50 @@
         .caption-box:empty::after {
             content: '\00a0';
         }
+        .caption-lang-picker {
+            max-width: min(100vw, 1280px);
+            margin: 0 auto;
+            padding: 0.75rem 1rem 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            align-items: center;
+        }
+        .caption-lang-picker-label {
+            font-family: sans-serif;
+            font-size: 0.875rem;
+            color: #333;
+            margin-right: 0.25rem;
+        }
+        .caption-lang-picker button {
+            font-family: sans-serif;
+            font-size: 0.875rem;
+            padding: 0.35em 0.9em;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #f5f5f5;
+            color: #222;
+            cursor: pointer;
+        }
+        .caption-lang-picker button:hover {
+            background: #eaeaea;
+        }
+        .caption-lang-picker button[aria-pressed="true"] {
+            background: #007800;
+            border-color: #006000;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
 <?php
-$vimeoVttBasename          = 'luis_02.es-MX.vtt';
-$vimeoVttBasenameSecondary = 'luis_02.en.vtt';
+$vimeoCaptionTracks = array(
+    array('file' => 'luis_02.es-MX.vtt', 'label' => 'Español (México)'),
+    array('file' => 'luis_02.en.vtt', 'label' => 'English'),
+    array('file' => 'luis_02.it.vtt', 'label' => 'Italiano'),
+);
 // Vimeo outer captions from static WebVTT (captions-static.php).
 $vimeoVideoId = '639494119';
 $embedVimeo   = 'https://player.vimeo.com/video/' . rawurlencode($vimeoVideoId)
@@ -85,8 +123,20 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
 <?php endif; ?>
 
     <div class="develop-block">
+        <div class="caption-lang-picker" role="group" aria-label="Caption language">
+            <span class="caption-lang-picker-label" id="caption-lang-heading">Captions</span>
+            <?php foreach ($vimeoCaptionTracks as $i => $track): ?>
+            <button
+                type="button"
+                class="caption-lang-btn"
+                data-track-index="<?php echo (int) $i; ?>"
+                aria-pressed="<?php echo $i === 0 ? 'true' : 'false'; ?>"
+                aria-controls="caption-box-vimeo"
+                aria-describedby="caption-lang-heading"
+            ><?php echo htmlspecialchars($track['label'], ENT_QUOTES, 'UTF-8'); ?></button>
+            <?php endforeach; ?>
+        </div>
         <div id="caption-box-vimeo" class="caption-box"></div>
-        <div id="caption-box-vimeo-2" class="caption-box"></div>
         <div class="video-shell">
             <iframe
                 id="vimeo-player"
@@ -102,13 +152,14 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
 (function () {
     'use strict';
 
-    var VIMEO_VTT_FILE = '<?php echo htmlspecialchars($vimeoVttBasename, ENT_QUOTES, 'UTF-8'); ?>';
-    var VIMEO_VTT_FILE_2 = '<?php echo htmlspecialchars($vimeoVttBasenameSecondary, ENT_QUOTES, 'UTF-8'); ?>';
-    var captionEventsVimeo = [];
-    var captionEventsVimeo2 = [];
-    var vimeoPlayer     = null;
+    var VIMEO_CAPTION_TRACKS = <?php echo json_encode($vimeoCaptionTracks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>;
+    var vimeoTracksState = VIMEO_CAPTION_TRACKS.map(function () {
+        return { events: [] };
+    });
+    var activeCaptionTrackIndex = 0;
+    var vimeoPlayer = null;
 
-    function loadStaticVtt(file, assign, label) {
+    function loadStaticVtt(file, trackIndex, label) {
         fetch('/develop/captions-static.php?f=' + encodeURIComponent(file))
             .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
             .then(function (res) {
@@ -116,7 +167,9 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
                     console.warn('Static VTT failed (' + label + ')', res.data);
                     return;
                 }
-                assign(res.data);
+                if (vimeoTracksState[trackIndex]) {
+                    vimeoTracksState[trackIndex].events = res.data;
+                }
                 syncAllCaptions();
             })
             .catch(function (e) {
@@ -124,8 +177,26 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
             });
     }
 
-    loadStaticVtt(VIMEO_VTT_FILE, function (data) { captionEventsVimeo = data; }, 'vimeo-primary');
-    loadStaticVtt(VIMEO_VTT_FILE_2, function (data) { captionEventsVimeo2 = data; }, 'vimeo-secondary');
+    VIMEO_CAPTION_TRACKS.forEach(function (t, i) {
+        loadStaticVtt(t.file, i, 'vimeo-' + i);
+    });
+
+    function setActiveCaptionTrack(index) {
+        if (index < 0 || index >= VIMEO_CAPTION_TRACKS.length) return;
+        activeCaptionTrackIndex = index;
+        document.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
+            var idx = parseInt(btn.getAttribute('data-track-index'), 10);
+            btn.setAttribute('aria-pressed', idx === index ? 'true' : 'false');
+        });
+        syncAllCaptions();
+    }
+
+    document.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var idx = parseInt(btn.getAttribute('data-track-index'), 10);
+            setActiveCaptionTrack(idx);
+        });
+    });
 
     // ── Caption sync ──────────────────────────────────────────────────────────
 
@@ -155,8 +226,9 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
 
     function syncVimeoCaptionBoxes(seconds) {
         var ms = seconds * 1000;
-        syncCaptionBox('caption-box-vimeo', captionEventsVimeo, ms);
-        syncCaptionBox('caption-box-vimeo-2', captionEventsVimeo2, ms);
+        var state = vimeoTracksState[activeCaptionTrackIndex];
+        var events = state ? state.events : [];
+        syncCaptionBox('caption-box-vimeo', events, ms);
     }
 
     function syncAllCaptions() {

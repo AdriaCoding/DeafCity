@@ -4,7 +4,7 @@
  * ?f=<basename> — only safe basenames ending in .vtt are allowed.
  *
  * Caption files are typically named with a BCP 47 tag before the extension,
- * e.g. luis_02.es-MX.vtt, luis_02.en.vtt (see develop/index.php).
+ * e.g. luis_02.es-MX.vtt, luis_02.en.vtt, luis_02.it.vtt (see develop/index.php).
  */
 header('Content-Type: application/json; charset=utf-8');
 
