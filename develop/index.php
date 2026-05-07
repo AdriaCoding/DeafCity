@@ -46,8 +46,7 @@
 </head>
 <body>
 <?php
-$videoIdMinimal = '38DSoHOO8u4';
-$videoIdFull    = 'miZfM7_o68U';
+$videoIdMinimal       = '38DSoHOO8u4';
 $base           = [
     'rel'            => '0',
     'iv_load_policy' => '3',
@@ -60,12 +59,7 @@ $paramsMinimal = http_build_query(array_merge($base, [
     'controls' => '0',
     'fs'       => '0',
 ]));
-$paramsFull = http_build_query(array_merge($base, [
-    'controls' => '1',
-    'fs'       => '1',
-]));
-$embedMinimal = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoIdMinimal) . '?' . $paramsMinimal;
-$embedFull    = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoIdFull) . '?' . $paramsFull;
+$embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoIdMinimal) . '?' . $paramsMinimal;
 ?>
     <div class="develop-block">
         <div id="caption-box" class="caption-box"></div>
@@ -79,29 +73,14 @@ $embedFull    = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoI
                 allowfullscreen></iframe>
         </div>
     </div>
-    <div class="develop-block">
-        <div id="caption-box-b" class="caption-box"></div>
-        <div class="video-shell">
-            <iframe
-                id="yt-player-b"
-                src="<?php echo htmlspecialchars($embedFull, ENT_QUOTES, 'UTF-8'); ?>"
-                title="Video (controls + fullscreen)"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-        </div>
-    </div>
 
 <script>
 (function () {
     'use strict';
 
     var VIDEO_ID_MINIMAL = '<?php echo $videoIdMinimal; ?>';
-    var VIDEO_ID_FULL    = '<?php echo $videoIdFull; ?>';
     var captionEventsMinimal = [];
-    var captionEventsFull    = [];
     var playerMinimal   = null;
-    var playerFull      = null;
     var syncInterval    = null;
 
     // ── Fetch captions ────────────────────────────────────────────────────────
@@ -120,7 +99,6 @@ $embedFull    = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoI
     }
 
     loadCaptions(VIDEO_ID_MINIMAL, function (data) { captionEventsMinimal = data; });
-    loadCaptions(VIDEO_ID_FULL, function (data) { captionEventsFull = data; });
 
     // ── Caption sync ──────────────────────────────────────────────────────────
 
@@ -152,7 +130,6 @@ $embedFull    = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoI
 
     function syncAllCaptions() {
         syncCaptionPair(playerMinimal, 'caption-box', captionEventsMinimal);
-        syncCaptionPair(playerFull, 'caption-box-b', captionEventsFull);
     }
 
     function isActivePlayback(player) {
@@ -162,7 +139,7 @@ $embedFull    = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoI
     }
 
     function updateSyncRunning() {
-        if (isActivePlayback(playerMinimal) || isActivePlayback(playerFull)) {
+        if (isActivePlayback(playerMinimal)) {
             startSync();
         } else {
             stopSync();
@@ -184,13 +161,6 @@ $embedFull    = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoI
 
     window.onYouTubeIframeAPIReady = function () {
         playerMinimal = new YT.Player('yt-player', {
-            events: {
-                onStateChange: function () {
-                    updateSyncRunning();
-                }
-            }
-        });
-        playerFull = new YT.Player('yt-player-b', {
             events: {
                 onStateChange: function () {
                     updateSyncRunning();
