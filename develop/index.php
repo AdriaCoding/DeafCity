@@ -4,109 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Develop</title>
+    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=1">
     <style>
         html, body {
             margin: 0;
             min-height: 100%;
             background: #fff;
         }
-        .video-shell {
-            max-width: min(100vw, 1280px);
-            margin: 0 auto;
-            aspect-ratio: 16 / 9;
-            background: #fff;
-        }
-        .video-shell iframe {
-            display: block;
-            width: 100%;
-            height: 100%;
-            border: 0;
-            vertical-align: top;
-        }
         .develop-block {
             margin-bottom: 2rem;
-        }
-        .caption-box {
-            max-width: min(100vw, 1280px);
-            margin: 0 auto;
-            min-height: 4.25em;
-            padding: 0.75em 1rem;
-            box-sizing: border-box;
-            background: #fff;
-            color: #007800;
-            font-family: sans-serif;
-            font-size: clamp(1.5rem, 3.8vw, 2.35rem);
-            line-height: 1.45;
-            text-align: center;
-        }
-        .caption-box:empty::after {
-            content: '\00a0';
-        }
-        .caption-lang-picker {
-            max-width: min(100vw, 1280px);
-            margin: 0 auto;
-            padding: 0.75rem 1rem 0;
-            box-sizing: border-box;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-            align-items: center;
-        }
-        .caption-lang-picker-label {
-            font-family: sans-serif;
-            font-size: 0.875rem;
-            color: #333;
-            margin-right: 0.25rem;
-        }
-        .caption-lang-picker button {
-            font-family: sans-serif;
-            font-size: 0.875rem;
-            padding: 0.35em 0.9em;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background: #f5f5f5;
-            color: #222;
-            cursor: pointer;
-        }
-        .caption-lang-picker button:hover {
-            background: #eaeaea;
-        }
-        .caption-lang-picker button[aria-pressed="true"] {
-            background: #007800;
-            border-color: #006000;
-            color: #fff;
         }
     </style>
 </head>
 <body>
-<?php
-$vimeoCaptionTracks = array(
-    array('file' => 'luis_02.es-MX.vtt', 'label' => 'Español (México)'),
-    array('file' => 'luis_02.en.vtt', 'label' => 'English'),
-    array('file' => 'luis_02.it.vtt', 'label' => 'Italiano'),
-);
-// Vimeo outer captions from static WebVTT (captions-static.php).
-$vimeoVideoId = '639494119';
-$embedVimeo   = 'https://player.vimeo.com/video/' . rawurlencode($vimeoVideoId)
-    . '?api=1&title=0&byline=0&portrait=0&dnt=1';
 
-// YouTube (disabled). Change to `if (true):` and uncomment the JS block marked `YOUTUBE RESCUE` below.
+<?php
+// YouTube (disabled). Change to `if (true):` and uncomment the JS block marked `YOUTUBE RESCUE` in a page script below.
 if (false):
-$videoIdMinimal       = '38DSoHOO8u4';
-$base           = [
-    'rel'            => '0',
-    'iv_load_policy' => '3',
-    'playsinline'    => '1',
-    'color'          => 'white',
-    'enablejsapi'    => '1',
-    'origin'         => 'https://deaf.city',
-];
-$paramsMinimal = http_build_query(array_merge($base, [
-    'controls' => '0',
-    'fs'       => '0',
-]));
-$embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoIdMinimal) . '?' . $paramsMinimal;
+    $videoIdMinimal = '38DSoHOO8u4';
+    $base = [
+        'rel'            => '0',
+        'iv_load_policy' => '3',
+        'playsinline'    => '1',
+        'color'          => 'white',
+        'enablejsapi'    => '1',
+        'origin'         => 'https://deaf.city',
+    ];
+    $paramsMinimal = http_build_query(array_merge($base, [
+        'controls' => '0',
+        'fs'       => '0',
+    ]));
+    $embedMinimal = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoIdMinimal) . '?' . $paramsMinimal;
 ?>
     <div class="develop-block">
         <div id="caption-box" class="caption-box"></div>
@@ -122,254 +50,22 @@ $embedMinimal  = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($video
     </div>
 <?php endif; ?>
 
+<?php
+// Vimeo caption player props: use `embed_url` instead of `video_id` + embed_params when you already have the iframe src.
+$vpc = array(
+    'instance_id'   => 'develop-luis02',
+    'video_id'      => '639494119',
+    'caption_tracks' => array(
+        array('file' => 'luis_02.es-MX.vtt', 'label' => 'Español (México)'),
+        array('file' => 'luis_02.en.vtt', 'label' => 'English'),
+        array('file' => 'luis_02.it.vtt', 'label' => 'Italiano'),
+    ),
+);
+?>
+
     <div class="develop-block">
-        <div class="caption-lang-picker" role="group" aria-label="Caption language">
-            <span class="caption-lang-picker-label" id="caption-lang-heading">Captions</span>
-            <?php foreach ($vimeoCaptionTracks as $i => $track): ?>
-            <button
-                type="button"
-                class="caption-lang-btn"
-                data-track-index="<?php echo (int) $i; ?>"
-                aria-pressed="<?php echo $i === 0 ? 'true' : 'false'; ?>"
-                aria-controls="caption-box-vimeo"
-                aria-describedby="caption-lang-heading"
-            ><?php echo htmlspecialchars($track['label'], ENT_QUOTES, 'UTF-8'); ?></button>
-            <?php endforeach; ?>
-        </div>
-        <div id="caption-box-vimeo" class="caption-box"></div>
-        <div class="video-shell">
-            <iframe
-                id="vimeo-player"
-                src="<?php echo htmlspecialchars($embedVimeo, ENT_QUOTES, 'UTF-8'); ?>"
-                title="Vimeo"
-                allow="autoplay; fullscreen; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-        </div>
+        <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
     </div>
-
-<script>
-(function () {
-    'use strict';
-
-    var VIMEO_CAPTION_TRACKS = <?php echo json_encode($vimeoCaptionTracks, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>;
-    var vimeoTracksState = VIMEO_CAPTION_TRACKS.map(function () {
-        return { events: [] };
-    });
-    var activeCaptionTrackIndex = 0;
-    var vimeoPlayer = null;
-
-    function loadStaticVtt(file, trackIndex, label) {
-        fetch('/develop/captions-static.php?f=' + encodeURIComponent(file))
-            .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
-            .then(function (res) {
-                if (!res.ok || !Array.isArray(res.data)) {
-                    console.warn('Static VTT failed (' + label + ')', res.data);
-                    return;
-                }
-                if (vimeoTracksState[trackIndex]) {
-                    vimeoTracksState[trackIndex].events = res.data;
-                }
-                syncAllCaptions();
-            })
-            .catch(function (e) {
-                console.warn('Static VTT fetch failed (' + label + '):', e);
-            });
-    }
-
-    VIMEO_CAPTION_TRACKS.forEach(function (t, i) {
-        loadStaticVtt(t.file, i, 'vimeo-' + i);
-    });
-
-    function setActiveCaptionTrack(index) {
-        if (index < 0 || index >= VIMEO_CAPTION_TRACKS.length) return;
-        activeCaptionTrackIndex = index;
-        document.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
-            var idx = parseInt(btn.getAttribute('data-track-index'), 10);
-            btn.setAttribute('aria-pressed', idx === index ? 'true' : 'false');
-        });
-        syncAllCaptions();
-    }
-
-    document.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var idx = parseInt(btn.getAttribute('data-track-index'), 10);
-            setActiveCaptionTrack(idx);
-        });
-    });
-
-    // ── Caption sync ──────────────────────────────────────────────────────────
-
-    function findCaption(events, timeMs) {
-        var lo = 0, hi = events.length - 1, result = -1;
-        while (lo <= hi) {
-            var mid = (lo + hi) >> 1;
-            if (events[mid].start <= timeMs) {
-                result = mid;
-                lo = mid + 1;
-            } else {
-                hi = mid - 1;
-            }
-        }
-        if (result >= 0 && events[result].end >= timeMs) {
-            return events[result];
-        }
-        return null;
-    }
-
-    function syncCaptionBox(boxId, events, timeMs) {
-        var box = document.getElementById(boxId);
-        if (!box) return;
-        var caption = findCaption(events, timeMs);
-        box.textContent = caption ? caption.text : '';
-    }
-
-    function syncVimeoCaptionBoxes(seconds) {
-        var ms = seconds * 1000;
-        var state = vimeoTracksState[activeCaptionTrackIndex];
-        var events = state ? state.events : [];
-        syncCaptionBox('caption-box-vimeo', events, ms);
-    }
-
-    function syncAllCaptions() {
-        if (vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function') {
-            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes).catch(function () { /* ignore */ });
-        }
-    }
-
-    /*
-     * ========== YOUTUBE RESCUE ================================================
-     * Turn PHP `if (false):` → `if (true):` for the YouTube block, then remove this
-     * comment wrapper so the following runs again (merge syncAllCaptions to drive both players).
-     *
-    var VIDEO_ID_MINIMAL = '38DSoHOO8u4';
-    var captionEventsMinimal = [];
-    var playerMinimal   = null;
-    var syncInterval    = null;
-    var lang = (navigator.language || 'en').split('-')[0];
-
-    function loadCaptions(videoId, assign) {
-        function tryLang(code, done) {
-            fetch('/develop/captions.php?v=' + videoId + '&lang=' + encodeURIComponent(code))
-                .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
-                .then(function (res) {
-                    if (res.ok && Array.isArray(res.data)) {
-                        assign(res.data);
-                        syncAllCaptions();
-                    } else if (typeof done === 'function') {
-                        done();
-                    }
-                })
-                .catch(function (e) {
-                    console.warn('Caption fetch failed for ' + videoId + ' (' + code + '):', e);
-                    if (typeof done === 'function') {
-                        done();
-                    }
-                });
-        }
-        tryLang(lang, function () {
-            if (lang !== 'en') {
-                tryLang('en', null);
-            }
-        });
-    }
-    loadCaptions(VIDEO_ID_MINIMAL, function (data) {
-        captionEventsMinimal = data;
-    });
-
-    function syncCaptionPair(player, boxId, events) {
-        if (!player || typeof player.getCurrentTime !== 'function') return;
-        syncCaptionBox(boxId, events, player.getCurrentTime() * 1000);
-    }
-
-    function syncAllCaptions() {
-        syncCaptionPair(playerMinimal, 'caption-box', captionEventsMinimal);
-        if (vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function') {
-            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes).catch(function () {});
-        }
-    }
-
-    function isActivePlayback(player) {
-        if (!player || typeof player.getPlayerState !== 'function') return false;
-        var s = player.getPlayerState();
-        return s === YT.PlayerState.PLAYING || s === YT.PlayerState.BUFFERING;
-    }
-
-    function updateSyncRunning() {
-        if (isActivePlayback(playerMinimal)) {
-            startSync();
-        } else {
-            stopSync();
-            syncAllCaptions();
-        }
-    }
-
-    function startSync() {
-        if (syncInterval) return;
-        syncInterval = setInterval(syncAllCaptions, 150);
-    }
-
-    function stopSync() {
-        clearInterval(syncInterval);
-        syncInterval = null;
-    }
-
-    function initYoutubePlayer() {
-        playerMinimal = new YT.Player('yt-player', {
-            events: {
-                onReady: function () {
-                    syncAllCaptions();
-                    updateSyncRunning();
-                },
-                onStateChange: function () {
-                    updateSyncRunning();
-                }
-            }
-        });
-    }
-
-    if (window.YT && window.YT.Player) {
-        initYoutubePlayer();
-    } else {
-        window.onYouTubeIframeAPIReady = function () {
-            initYoutubePlayer();
-        };
-        var tag    = document.createElement('script');
-        tag.src    = 'https://www.youtube.com/iframe_api';
-        var first  = document.getElementsByTagName('script')[0];
-        first.parentNode.insertBefore(tag, first);
-    }
-     * ===========================================================================
-     */
-
-    // ── Vimeo Player SDK + static WebVTT captions ──────────────────────────────
-
-    function initVimeoPlayer() {
-        var iframe = document.getElementById('vimeo-player');
-        if (!iframe || !window.Vimeo || !window.Vimeo.Player) return;
-        vimeoPlayer = new Vimeo.Player(iframe);
-        vimeoPlayer.on('timeupdate', function (data) {
-            syncVimeoCaptionBoxes(data.seconds);
-        });
-        vimeoPlayer.on('seeked', function () {
-            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes);
-        });
-        vimeoPlayer.on('pause', function () {
-            vimeoPlayer.getCurrentTime().then(syncVimeoCaptionBoxes);
-        });
-        syncAllCaptions();
-    }
-
-    (function loadVimeoSdk() {
-        var s = document.createElement('script');
-        s.src = 'https://player.vimeo.com/api/player.js';
-        s.onload = initVimeoPlayer;
-        s.onerror = function () {
-            console.warn('Vimeo Player SDK failed to load');
-        };
-        document.head.appendChild(s);
-    }());
-}());
-</script>
+<script src="/develop/js/vimeo_caption_player.js?v=1" defer></script>
 </body>
 </html>
