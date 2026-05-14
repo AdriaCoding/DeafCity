@@ -45,7 +45,7 @@
     box-sizing: border-box;
     background: #fff;
     color: #007800;
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: clamp(1.5rem, 3.8vw, 2.35rem);
     line-height: 1.45;
     text-align: center;
@@ -65,13 +65,13 @@
     align-items: center;
 }
 .caption-lang-picker-label {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 0.875rem;
     color: #333;
     margin-right: 0.25rem;
 }
 .caption-lang-picker button {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 0.875rem;
     padding: 0.35em 0.9em;
     border: 1px solid #ccc;
@@ -104,7 +104,7 @@
     gap: 0.75rem;
 }
 .vpc-play-pause-btn {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 600;
     padding: 0.55em 1.35em;
@@ -124,7 +124,7 @@
 }
 .vpc-prev-btn,
 .vpc-next-btn {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 600;
     padding: 0.55em 1em;
@@ -150,7 +150,7 @@
     outline-offset: 2px;
 }
 .vpc-reset-btn {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 600;
     padding: 0.55em 1.2em;
@@ -181,13 +181,13 @@
     align-items: center;
 }
 .vpc-sign-language-label {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 0.9375rem;
     font-weight: 600;
     color: #222;
 }
 .vpc-sign-lang-select {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     font-size: 0.9375rem;
     min-width: min(100%, 22rem);
     padding: 0.45em 2em 0.45em 0.75em;

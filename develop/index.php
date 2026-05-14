@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Develop</title>
-    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=8">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=9">
     <style>
         html, body {
             margin: 0;
             min-height: 100%;
             background: #fff;
+            font-family: 'Roboto', sans-serif;
         }
         .develop-block {
             margin-bottom: 2rem;
@@ -82,7 +85,7 @@ if (count($playlist) > 0) {
         <?php if ($vpc !== null): ?>
             <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
         <?php else: ?>
-            <p style="font-family: sans-serif; padding: 1rem;">
+            <p style="font-family: 'Roboto', sans-serif; padding: 1rem;">
                 No playlist entries loaded. Check that <code>data/videos.json</code> exists and the ordered catalog ids match entries in the <code>videos</code> array.
             </p>
         <?php endif; ?>
