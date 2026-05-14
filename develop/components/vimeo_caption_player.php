@@ -7,8 +7,8 @@
  *   $vpc = array(
  *     'video_id' => '639494119',
  *     'embed_params' => array(...),           // merged into query string when using video_id
- *     // OR pass a full iframe src:
- *     'embed_url' => 'https://player.vimeo.com/video/123?title=0',
+ *     // OR pass a full iframe src (include `controls=0` for chromeless + external controls):
+ *     'embed_url' => 'https://player.vimeo.com/video/123?title=0&controls=0&autoplay=1&muted=1',
  *
  *     'caption_tracks' => array(
  *       array('file' => 'foo.en.vtt', 'label' => 'English'),
@@ -20,6 +20,37 @@
  *     'captions_endpoint' => '/develop/captions-static.php',
  *   );
  */
+
+if (!function_exists('vpc_merge_vimeo_embed_query')) {
+    /**
+     * Merge default/embed_params into an existing Vimeo player URL query string (preserving path/host/fragment).
+     *
+     * @param array $defaults  Base defaults (applied first).
+     * @param array $overrides Passed last; wins over defaults and URL values.
+     */
+    function vpc_merge_vimeo_embed_query($embedUrl, array $defaults, array $overrides) {
+        $parts = parse_url($embedUrl);
+        if ($parts === false || empty($parts['scheme']) || empty($parts['host'])) {
+            return $embedUrl;
+        }
+
+        $existing = array();
+        if (!empty($parts['query'])) {
+            parse_str($parts['query'], $existing);
+        }
+
+        $merged = array_merge($defaults, $existing, $overrides);
+        $qs = http_build_query($merged, '', '&', PHP_QUERY_RFC3986);
+
+        $scheme = $parts['scheme'] . '://';
+        $host = $parts['host'];
+        $port = isset($parts['port']) ? ':' . (int) $parts['port'] : '';
+        $path = isset($parts['path']) ? $parts['path'] : '';
+        $frag = isset($parts['fragment']) ? '#' . $parts['fragment'] : '';
+
+        return $scheme . $host . $port . $path . ($qs !== '' ? '?' . $qs : '') . $frag;
+    }
+}
 
 if (!isset($vpc) || !is_array($vpc)) {
     trigger_error('$vpc array is required before including vimeo_caption_player.php', E_USER_WARNING);
@@ -54,23 +85,30 @@ $captionsBase    = isset($vpc['captions_endpoint'])
 $iframeId       = $idBase . '__iframe';
 $captionBoxId   = $idBase . '__captions';
 $headingId      = $idBase . '__caption-heading';
+$transportId    = $idBase . '__transport';
+
 $wrapperClass   = 'develop-vimeo-player-root';
 
 $embedSrc = '';
+$extraParams = isset($vpc['embed_params']) && is_array($vpc['embed_params'])
+    ? $vpc['embed_params']
+    : array();
+
+$defaultParams = array(
+    'api'      => '1',
+    'title'    => '0',
+    'byline'   => '0',
+    'portrait' => '0',
+    'dnt'      => '1',
+    'controls' => '0',
+    'autoplay' => '1',
+    // Most browsers block audible autoplay; keep muted unless overridden via embed_params.
+    'muted'    => '1',
+);
+
 if (!empty($vpc['embed_url'])) {
-    $embedSrc = $vpc['embed_url'];
+    $embedSrc = vpc_merge_vimeo_embed_query($vpc['embed_url'], $defaultParams, $extraParams);
 } elseif (!empty($vpc['video_id'])) {
-    $defaultParams = array(
-        'api'                     => '1',
-        'title'                   => '0',
-        'byline'                  => '0',
-        'portrait'                => '0',
-        'dnt'                     => '1',
-        'play_button_position'    => 'bottom',
-    );
-    $extraParams = isset($vpc['embed_params']) && is_array($vpc['embed_params'])
-        ? $vpc['embed_params']
-        : array();
     $merged = array_merge($defaultParams, $extraParams);
     $embedSrc = 'https://player.vimeo.com/video/' . rawurlencode((string) $vpc['video_id'])
         . '?' . http_build_query($merged, '', '&', PHP_QUERY_RFC3986);
@@ -121,5 +159,25 @@ if ($configJson === false) {
             allow="autoplay; fullscreen; picture-in-picture"
             referrerpolicy="strict-origin-when-cross-origin"
             allowfullscreen></iframe>
+        <button
+            type="button"
+            class="vpc-video-hitarea"
+            tabindex="-1"
+            aria-hidden="true"
+            aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+        ></button>
+    </div>
+    <div
+        id="<?php echo htmlspecialchars($transportId, ENT_QUOTES, 'UTF-8'); ?>"
+        class="vpc-transport"
+        role="group"
+        aria-label="Playback"
+    >
+        <button
+            type="button"
+            class="vpc-play-pause-btn"
+            aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+            aria-label="Play video"
+        >Play</button>
     </div>
 </div>

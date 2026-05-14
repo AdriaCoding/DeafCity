@@ -171,16 +171,87 @@
 
             /** @type {any} */
             var p = vimeoPlayer;
+
+            var playBtn = root.querySelector('.vpc-play-pause-btn');
+            function setTransportPlaying(isPlaying) {
+                if (!playBtn) return;
+                if (isPlaying) {
+                    playBtn.textContent = 'Pause';
+                    playBtn.setAttribute('aria-label', 'Pause video');
+                } else {
+                    playBtn.textContent = 'Play';
+                    playBtn.setAttribute('aria-label', 'Play video');
+                }
+            }
+
+            function refreshTransport() {
+                p.getPaused()
+                    .then(function (paused) {
+                        setTransportPlaying(!paused);
+                    })
+                    .catch(function () {});
+            }
+
+            function togglePlayPause() {
+                p.getPaused()
+                    .then(function (paused) {
+                        if (paused) {
+                            return p.play();
+                        }
+                        return p.pause();
+                    })
+                    .then(function () {
+                        refreshTransport();
+                    })
+                    .catch(function () {
+                        refreshTransport();
+                    });
+            }
+
+            if (playBtn) {
+                playBtn.addEventListener('click', togglePlayPause);
+            }
+
+            var hitArea = root.querySelector('.vpc-video-hitarea');
+            if (hitArea) {
+                hitArea.addEventListener('click', togglePlayPause);
+            }
+
+            p.on('play', function () {
+                setTransportPlaying(true);
+            });
+            p.on('pause', function () {
+                setTransportPlaying(false);
+                p.getCurrentTime().then(syncVimeoCaptionBoxes);
+            });
+            p.on('ended', function () {
+                setTransportPlaying(false);
+            });
+
             p.on('timeupdate', function (data) {
                 syncVimeoCaptionBoxes(data.seconds);
             });
             p.on('seeked', function () {
                 p.getCurrentTime().then(syncVimeoCaptionBoxes);
             });
-            p.on('pause', function () {
-                p.getCurrentTime().then(syncVimeoCaptionBoxes);
-            });
-            syncAllCaptions();
+
+            function tryAutoplayFallback() {
+                var readyPromise =
+                    typeof p.ready === 'function' ? p.ready() : Promise.resolve();
+                return readyPromise
+                    .then(function () {
+                        return p.getPaused().then(function (paused) {
+                            if (paused) return p.play();
+                        });
+                    })
+                    .catch(function () {})
+                    .then(function () {
+                        refreshTransport();
+                        syncAllCaptions();
+                    });
+            }
+
+            tryAutoplayFallback();
         }
 
         ensureVimeoSdk(attachPlayer);

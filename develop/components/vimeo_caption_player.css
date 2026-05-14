@@ -1,4 +1,5 @@
 .video-shell {
+    position: relative;
     max-width: min(100vw, 1280px);
     margin: 0 auto;
     aspect-ratio: 16 / 9;
@@ -10,6 +11,31 @@
     height: 100%;
     border: 0;
     vertical-align: top;
+    position: relative;
+    z-index: 0;
+}
+.vpc-video-hitarea {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.vpc-video-hitarea::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+.vpc-video-hitarea:focus-visible {
+    outline: 2px solid #007800;
+    outline-offset: 2px;
 }
 .caption-box {
     max-width: min(100vw, 1280px);
@@ -61,4 +87,33 @@
     background: #007800;
     border-color: #006000;
     color: #fff;
+}
+
+.vpc-transport {
+    max-width: min(100vw, 1280px);
+    margin: 0.35rem auto 0;
+    padding: 0.5rem 1rem;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.vpc-play-pause-btn {
+    font-family: sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.55em 1.35em;
+    border: 1px solid #006000;
+    border-radius: 8px;
+    background: #007800;
+    color: #fff;
+    cursor: pointer;
+}
+.vpc-play-pause-btn:hover {
+    background: #006600;
+    border-color: #004400;
+}
+.vpc-play-pause-btn:focus-visible {
+    outline: 2px solid #007800;
+    outline-offset: 2px;
 }
