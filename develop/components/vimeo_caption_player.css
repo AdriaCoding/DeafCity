@@ -103,11 +103,20 @@
     flex-wrap: wrap;
     gap: 0.75rem;
 }
+.vpc-transport .material-icons {
+    font-size: 1.5rem;
+    line-height: 1;
+}
 .vpc-play-pause-btn {
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 600;
-    padding: 0.55em 1.35em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem;
     border: 1px solid #006000;
     border-radius: 8px;
     background: #007800;
@@ -122,28 +131,47 @@
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
+.vpc-shuffle-btn,
 .vpc-prev-btn,
 .vpc-next-btn {
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 600;
-    padding: 0.55em 1em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 8px;
     background: #fafafa;
     color: #222;
     cursor: pointer;
 }
+.vpc-shuffle-btn:hover,
 .vpc-prev-btn:hover:not(:disabled),
 .vpc-next-btn:hover:not(:disabled) {
     background: #efefef;
     border-color: #bbb;
+}
+.vpc-shuffle-btn[aria-pressed='false'] .material-icons {
+    opacity: 0.45;
+}
+.vpc-shuffle-btn[aria-pressed='true'] {
+    background: #e8f5e9;
+    border-color: #007800;
+    color: #005c00;
+}
+.vpc-shuffle-btn[aria-pressed='true'] .material-icons {
+    opacity: 1;
 }
 .vpc-prev-btn:disabled,
 .vpc-next-btn:disabled {
     opacity: 0.45;
     cursor: not-allowed;
 }
+.vpc-shuffle-btn:focus-visible,
 .vpc-prev-btn:focus-visible,
 .vpc-next-btn:focus-visible {
     outline: 2px solid #007800;
@@ -153,7 +181,12 @@
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 600;
-    padding: 0.55em 1.2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem;
     border: 1px solid #999;
     border-radius: 8px;
     background: #f5f5f5;

@@ -395,30 +395,37 @@ $showPlaylistNav = count($playlistNormalized) > 1;
         <?php if ($showPlaylistNav): ?>
         <button
             type="button"
+            class="vpc-shuffle-btn"
+            aria-pressed="false"
+            aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+            aria-label="Shuffle playlist"
+        ><span class="material-icons" aria-hidden="true">shuffle</span></button>
+        <button
+            type="button"
             class="vpc-prev-btn"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Previous video in playlist"
-        >Previous</button>
+        ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
         <?php endif; ?>
         <button
             type="button"
             class="vpc-play-pause-btn"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Play video"
-        >Play</button>
+        ><span class="material-icons" aria-hidden="true">play_arrow</span></button>
         <button
             type="button"
             class="vpc-reset-btn"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Restart video from the beginning"
-        >Reset</button>
+        ><span class="material-icons" aria-hidden="true">replay</span></button>
         <?php if ($showPlaylistNav): ?>
         <button
             type="button"
             class="vpc-next-btn"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Next video in playlist"
-        >Next</button>
+        ><span class="material-icons" aria-hidden="true">skip_next</span></button>
         <?php endif; ?>
     </div>
     <?php if ($useSignLanguageFilter): ?>
