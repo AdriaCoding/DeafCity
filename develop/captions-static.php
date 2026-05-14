@@ -3,8 +3,7 @@
  * Serves WebVTT from this directory as JSON cues for outer captions (no OAuth).
  * ?f=<basename> — only safe basenames ending in .vtt are allowed.
  *
- * Caption files are typically named with a BCP 47 tag before the extension,
- * e.g. luis_02.es-MX.vtt, luis_02.en.vtt, luis_02.it.vtt (see develop/index.php).
+ * Caption files live under /data/captions/ (project data). ?f= is basename only.
  */
 header('Content-Type: application/json; charset=utf-8');
 
@@ -15,7 +14,8 @@ if ($basename === '' || !preg_match('/^[a-zA-Z0-9_\-\. ]+\.vtt$/', $basename)) {
     exit;
 }
 
-$path = __DIR__ . '/' . $basename;
+$captionsDir = dirname(__DIR__) . '/data/captions';
+$path = $captionsDir . '/' . $basename;
 if (!is_file($path) || !is_readable($path)) {
     http_response_code(404);
     echo json_encode(array('error' => 'VTT file not found'));

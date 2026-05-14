@@ -21,6 +21,7 @@
  *
  *     // Optional ordered playlist (each entry: video_id OR embed_url; optional caption_tracks, embed_params).
  *     // Omit to use single video_id / embed_url at the top level. Prev/Next appear when length > 1.
+ *     // Canonical metadata for develop: data/videos.json plus data/captions/*.vtt (videos_catalog.php).
  *     'playlist' => array(
  *       array(
  *         'video_id' => '639494119',

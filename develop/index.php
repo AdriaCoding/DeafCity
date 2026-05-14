@@ -51,27 +51,34 @@ if (false):
 <?php endif; ?>
 
 <?php
-// Vimeo caption player props: use `embed_url` instead of `video_id` + embed_params when you already have the iframe src.
-$vpc = array(
-    'instance_id'   => 'develop-luis02',
-    'playlist'      => array(
-        array(
-            'video_id'       => '639494119',
-            'caption_tracks' => array(
-                array('file' => 'luis_02.es-MX.vtt', 'label' => 'Español (México)'),
-                array('file' => 'luis_02.en.vtt', 'label' => 'English'),
-                array('file' => 'luis_02.it.vtt', 'label' => 'Italiano'),
-            ),
-        ),
-        array(
-            'embed_url' => 'https://vimeo.com/1128906791?fl=tl&fe=ec',
-        ),
-    ),
-);
+require __DIR__ . '/lib/videos_catalog.php';
+
+$videosJsonPath = dirname(__DIR__) . '/data/videos.json';
+$catalog = vpc_load_videos_catalog($videosJsonPath);
+$playlist = $catalog
+    ? vpc_vimeo_playlist_from_catalog($catalog, array(
+        'lsm_luis_02',
+        'libras_cochlear_fabio_4',
+    ))
+    : array();
+
+$vpc = null;
+if (count($playlist) > 0) {
+    $vpc = array(
+        'instance_id' => 'develop-playlist-demo',
+        'playlist'    => $playlist,
+    );
+}
 ?>
 
     <div class="develop-block">
-        <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
+        <?php if ($vpc !== null): ?>
+            <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
+        <?php else: ?>
+            <p style="font-family: sans-serif; padding: 1rem;">
+                No playlist entries loaded. Check that <code>data/videos.json</code> exists and the ordered catalog ids match entries in the <code>videos</code> array.
+            </p>
+        <?php endif; ?>
     </div>
 <script src="/develop/js/vimeo_caption_player.js?v=6" defer></script>
 </body>

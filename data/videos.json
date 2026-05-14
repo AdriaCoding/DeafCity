@@ -1,0 +1,30 @@
+{
+    "videos": [
+        {
+            "id": "lsm_luis_02",
+            "vimeo_id": "639494119",
+            "title": "LSM — Luis 02",
+            "captions": [
+                {
+                    "label": "Español (México)",
+                    "file": "luis_02.es-MX.vtt"
+                },
+                {
+                    "label": "English",
+                    "file": "luis_02.en.vtt"
+                },
+                {
+                    "label": "Italiano",
+                    "file": "luis_02.it.vtt"
+                }
+            ]
+        },
+        {
+            "id": "libras_cochlear_fabio_4",
+            "vimeo_id": "1128906791",
+            "title": "LIBRAS — São Paulo — Fabio (#cochlear implant)",
+            "embed_url": "https://vimeo.com/1128906791",
+            "captions": []
+        }
+    ]
+}

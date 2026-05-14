@@ -1,0 +1,92 @@
+<?php
+/**
+ * Load video metadata from data/videos.json for the Vimeo caption player.
+ *
+ * videos.json shape:
+ *   { "videos": [ { "id", "vimeo_id"?, "embed_url"?, "title"?, "captions": [ { "label", "file" } ] } ] }
+ *
+ * Caption "file" is a basename under data/captions/ (served via develop/captions-static.php).
+ */
+
+if (!function_exists('vpc_load_videos_catalog')) {
+    /**
+     * @return array{ videos: array<int, array<string, mixed>> }|null
+     */
+    function vpc_load_videos_catalog($jsonPath) {
+        if (!is_string($jsonPath) || $jsonPath === '' || !is_readable($jsonPath)) {
+            trigger_error('videos catalog: file not readable', E_USER_WARNING);
+            return null;
+        }
+        $raw = file_get_contents($jsonPath);
+        if ($raw === false) {
+            trigger_error('videos catalog: failed to read file', E_USER_WARNING);
+            return null;
+        }
+        $data = json_decode($raw, true);
+        if (!is_array($data) || !isset($data['videos']) || !is_array($data['videos'])) {
+            trigger_error('videos catalog: invalid JSON (expected "videos" array)', E_USER_WARNING);
+            return null;
+        }
+        return $data;
+    }
+}
+
+if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
+    /**
+     * Build a $vpc-compatible playlist from ordered catalog ids.
+     *
+     * @param array<string, mixed> $catalog Decoded root (must include "videos")
+     * @param string[]             $orderedIds Catalog entry "id" values, in play order
+     * @return array<int, array<string, mixed>> playlist entries for vimeo_caption_player
+     */
+    function vpc_vimeo_playlist_from_catalog(array $catalog, array $orderedIds) {
+        /** @var array<string, array<string, mixed>> $byId */
+        $byId = array();
+        foreach ($catalog['videos'] as $v) {
+            if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
+                continue;
+            }
+            $byId[$v['id']] = $v;
+        }
+
+        $playlist = array();
+        foreach ($orderedIds as $slug) {
+            if (!is_string($slug) || $slug === '' || empty($byId[$slug])) {
+                continue;
+            }
+            $v = $byId[$slug];
+            $entry = array();
+
+            if (!empty($v['vimeo_id'])) {
+                $entry['video_id'] = preg_replace('/\D/', '', (string) $v['vimeo_id']);
+            }
+            if (!empty($v['embed_url']) && is_string($v['embed_url'])) {
+                $entry['embed_url'] = $v['embed_url'];
+            }
+
+            $tracks = array();
+            if (!empty($v['captions']) && is_array($v['captions'])) {
+                foreach ($v['captions'] as $c) {
+                    if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
+                        continue;
+                    }
+                    $fn = basename((string) $c['file']);
+                    $tracks[] = array(
+                        'file'  => $fn,
+                        'label' => (string) $c['label'],
+                    );
+                }
+            }
+            if (count($tracks) > 0) {
+                $entry['caption_tracks'] = $tracks;
+            }
+
+            if (empty($entry['video_id']) && empty($entry['embed_url'])) {
+                continue;
+            }
+
+            $playlist[] = $entry;
+        }
+        return $playlist;
+    }
+}
