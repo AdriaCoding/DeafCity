@@ -3,10 +3,47 @@
  * Load video metadata from data/videos.json for the Vimeo caption player.
  *
  * videos.json shape:
- *   { "videos": [ { "id", "vimeo_id"?, "embed_url"?, "title"?, "captions": [ { "label", "file" } ] } ] }
+ *   { "videos": [ {
+ *     "id", "vimeo_id"?, "embed_url"?, "title"?, "sign_language"?(string — same titles as playlists.json),
+ *     "captions": [ { "label", "file" } ]
+ *   } ] }
  *
  * Caption "file" is a basename under data/captions/ (served via develop/captions-static.php).
  */
+
+if (!function_exists('vpc_sign_language_options_from_playlists_json')) {
+    /**
+     * @return array<int, array{value: string, label: string}>
+     */
+    function vpc_sign_language_options_from_playlists_json($playlistsJsonPath) {
+        if (!is_string($playlistsJsonPath) || $playlistsJsonPath === '' || !is_readable($playlistsJsonPath)) {
+            return array();
+        }
+        $raw = file_get_contents($playlistsJsonPath);
+        if ($raw === false) {
+            return array();
+        }
+        $data = json_decode($raw, true);
+        if (!is_array($data) || !isset($data['playlists']) || !is_array($data['playlists'])) {
+            return array();
+        }
+        $opts = array();
+        foreach ($data['playlists'] as $block) {
+            if (!is_array($block)) {
+                continue;
+            }
+            $title = isset($block['title']) ? trim((string) $block['title']) : '';
+            if ($title === '') {
+                continue;
+            }
+            $opts[] = array(
+                'value' => $title,
+                'label' => $title,
+            );
+        }
+        return $opts;
+    }
+}
 
 if (!function_exists('vpc_load_videos_catalog')) {
     /**
@@ -79,6 +116,75 @@ if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
             }
             if (count($tracks) > 0) {
                 $entry['caption_tracks'] = $tracks;
+            }
+
+            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
+            if ($sl !== '') {
+                $entry['sign_language'] = $sl;
+            }
+
+            if (empty($entry['video_id']) && empty($entry['embed_url'])) {
+                continue;
+            }
+
+            $playlist[] = $entry;
+        }
+        return $playlist;
+    }
+}
+
+if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
+    /**
+     * Build a full $vpc playlist from all videos.json entries in array order (order defines playback within a category).
+     *
+     * @param array<string, mixed> $catalog
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_vimeo_playlist_all_from_catalog(array $catalog) {
+        if (!isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            return array();
+        }
+        $playlist = array();
+        foreach ($catalog['videos'] as $v) {
+            if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
+                continue;
+            }
+            $entry = array();
+
+            if (!empty($v['vimeo_id'])) {
+                $entry['video_id'] = preg_replace('/\D/', '', (string) $v['vimeo_id']);
+            }
+            if (!empty($v['embed_url']) && is_string($v['embed_url'])) {
+                $entry['embed_url'] = $v['embed_url'];
+            }
+
+            $tracks = array();
+            if (!empty($v['captions']) && is_array($v['captions'])) {
+                foreach ($v['captions'] as $c) {
+                    if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
+                        continue;
+                    }
+                    $fn = basename((string) $c['file']);
+                    $tracks[] = array(
+                        'file'  => $fn,
+                        'label' => (string) $c['label'],
+                    );
+                }
+            }
+            if (count($tracks) > 0) {
+                $entry['caption_tracks'] = $tracks;
+            }
+
+            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
+            if ($sl !== '') {
+                $entry['sign_language'] = $sl;
+            }
+
+            $eParams = isset($v['embed_params']) && is_array($v['embed_params'])
+                ? $v['embed_params']
+                : array();
+            if (count($eParams) > 0) {
+                $entry['embed_params'] = $eParams;
             }
 
             if (empty($entry['video_id']) && empty($entry['embed_url'])) {

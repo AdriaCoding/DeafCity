@@ -21,7 +21,14 @@
  *
  *     // Optional ordered playlist (each entry: video_id OR embed_url; optional caption_tracks, embed_params).
  *     // Omit to use single video_id / embed_url at the top level. Prev/Next appear when length > 1.
- *     // Canonical metadata for develop: data/videos.json plus data/captions/*.vtt (videos_catalog.php).
+ *     // Canonical metadata: data/videos.json plus data/captions/*.vtt (videos_catalog.php).
+ *     //
+ *     // Optional: sign-language filter (reads option labels from data/playlists.json titles).
+ *     // Renders a picker under the transport row; client filters playlist by item sign_language.
+ *     'sign_language_filter' => array(
+ *       'options' => array( array('value' => 'LIBRAS Brazilian Sign Language', 'label' => '...'), ),
+ *       'default' => 'LIBRAS Brazilian Sign Language',
+ *     ),
  *     'playlist' => array(
  *       array(
  *         'video_id' => '639494119',
@@ -108,11 +115,16 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                     ? $entry['embed_params']
                     : array();
 
+                $signLangMeta = isset($entry['sign_language']) && is_string($entry['sign_language'])
+                    ? trim($entry['sign_language'])
+                    : '';
+
                 $out[] = array(
                     'videoId' => $digits,
                     'caption_tracks' => $ct,
                     'embed_url' => $entryEmbed,
                     'embed_params' => $eParams,
+                    'sign_language' => $signLangMeta,
                 );
             }
         }
@@ -147,12 +159,16 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
             $extraParams = isset($vpc['embed_params']) && is_array($vpc['embed_params'])
                 ? $vpc['embed_params']
                 : array();
+            $legacySl = isset($vpc['sign_language']) && is_string($vpc['sign_language'])
+                ? trim($vpc['sign_language'])
+                : '';
             $firstCaptionTracks = $legacyTracks;
             return array(array(
                 'videoId' => $digitsLegacy,
                 'caption_tracks' => $legacyTracks,
                 'embed_url' => $legacyEmbed,
                 'embed_params' => $extraParams,
+                'sign_language' => $legacySl,
             ));
         }
 
@@ -262,20 +278,56 @@ if (!empty($firstEntry['embed_url'])) {
 $playlistForJson = array();
 foreach ($playlistNormalized as $pe) {
     $plTracks = isset($pe['caption_tracks']) && is_array($pe['caption_tracks']) ? $pe['caption_tracks'] : array();
+    $slOut      = isset($pe['sign_language']) && is_string($pe['sign_language']) ? $pe['sign_language'] : '';
     $playlistForJson[] = array(
-        'videoId' => $pe['videoId'],
-        'tracks'  => $plTracks,
+        'videoId'      => $pe['videoId'],
+        'tracks'       => $plTracks,
+        'signLanguage' => $slOut,
     );
 }
 
+$signLanguageFilterCfg = null;
+$captionPickerDynamic   = false;
+if (isset($vpc['sign_language_filter']) && is_array($vpc['sign_language_filter'])) {
+    $optRaw = isset($vpc['sign_language_filter']['options']) ? $vpc['sign_language_filter']['options'] : null;
+    if (is_array($optRaw) && count($optRaw) > 0) {
+        $captionPickerDynamic = true;
+        $def = isset($vpc['sign_language_filter']['default'])
+            ? (string) $vpc['sign_language_filter']['default']
+            : '';
+        $signLanguageFilterCfg = array(
+            'options' => $optRaw,
+            'default' => $def,
+        );
+    }
+}
+
+$signLangOptionsList = isset($vpc['sign_language_filter']['options']) && is_array($vpc['sign_language_filter']['options'])
+    ? $vpc['sign_language_filter']['options']
+    : array();
+$useSignLanguageFilter = count($signLangOptionsList) > 0;
+$signLangDefault = '';
+if ($useSignLanguageFilter) {
+    if (isset($vpc['sign_language_filter']['default'])) {
+        $signLangDefault = (string) $vpc['sign_language_filter']['default'];
+    }
+    if ($signLangDefault === '' && isset($signLangOptionsList[0]['value'])) {
+        $signLangDefault = (string) $signLangOptionsList[0]['value'];
+    }
+}
+$signLangSelectId = $idBase . '__sign-language-select';
+
 $config = array(
-    'iframeId'         => $iframeId,
-    'captionBoxId'     => $captionBoxId,
-    'tracks'           => $captionTracks,
-    'captionsEndpoint' => $captionsBase,
-    'playlist'         => $playlistForJson,
-    'playlistIndex'    => 0,
+    'iframeId'             => $iframeId,
+    'captionBoxId'         => $captionBoxId,
+    'tracks'               => $captionTracks,
+    'captionsEndpoint'     => $captionsBase,
+    'playlist'             => $playlistForJson,
+    'playlistIndex'        => 0,
+    'captionPickerDynamic' => $captionPickerDynamic,
+    'signLanguageFilter'   => $signLanguageFilterCfg,
 );
+
 $configJson = json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 if ($configJson === false) {
     trigger_error('vimeo_caption_player: json_encode failed for config', E_USER_WARNING);
@@ -287,7 +339,19 @@ $showPlaylistNav = count($playlistNormalized) > 1;
 <div class="<?php echo htmlspecialchars($wrapperClass, ENT_QUOTES, 'UTF-8'); ?>">
 <script type="application/json" class="vpc-config"><?php echo $configJson; ?></script>
 
-<?php if (count($captionTracks) > 0): ?>
+<?php if ($useSignLanguageFilter): ?>
+    <div
+        id="<?php echo htmlspecialchars($idBase . '__caption-picker', ENT_QUOTES, 'UTF-8'); ?>"
+        class="caption-lang-picker vpc-caption-lang-dynamic vpc-caption-picker-hidden"
+        role="group"
+        aria-label="<?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>"
+    >
+        <span class="caption-lang-picker-label" id="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>
+        </span>
+        <span class="vpc-caption-dynamic-btns" aria-live="polite"></span>
+    </div>
+<?php elseif (count($captionTracks) > 0): ?>
     <div class="caption-lang-picker" role="group" aria-label="<?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>">
         <span class="caption-lang-picker-label" id="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>">
             <?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>
@@ -357,4 +421,18 @@ $showPlaylistNav = count($playlistNormalized) > 1;
         >Next</button>
         <?php endif; ?>
     </div>
+    <?php if ($useSignLanguageFilter): ?>
+    <div class="vpc-sign-language" role="group" aria-label="Sign language">
+        <label class="vpc-sign-language-label" for="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>">Sign language</label>
+        <select id="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>" class="vpc-sign-lang-select" autocomplete="off">
+            <?php foreach ($signLangOptionsList as $opt): ?>
+                <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
+            <option
+                value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
+                <?php echo (string) $opt['value'] === $signLangDefault ? ' selected' : ''; ?>
+            ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <?php endif; ?>
 </div>

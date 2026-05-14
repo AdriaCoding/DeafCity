@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Develop</title>
-    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=6">
+    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=8">
     <style>
         html, body {
             margin: 0;
@@ -54,13 +54,14 @@ if (false):
 require __DIR__ . '/lib/videos_catalog.php';
 
 $videosJsonPath = dirname(__DIR__) . '/data/videos.json';
+$playlistsJsonPath = dirname(__DIR__) . '/data/playlists.json';
 $catalog = vpc_load_videos_catalog($videosJsonPath);
-$playlist = $catalog
-    ? vpc_vimeo_playlist_from_catalog($catalog, array(
-        'lsm_luis_02',
-        'libras_cochlear_fabio_4',
-    ))
-    : array();
+$playlist = $catalog ? vpc_vimeo_playlist_all_from_catalog($catalog) : array();
+
+$signLanguageOptions = vpc_sign_language_options_from_playlists_json($playlistsJsonPath);
+$defaultSignLanguage = isset($signLanguageOptions[0]['value'])
+    ? (string) $signLanguageOptions[0]['value']
+    : '';
 
 $vpc = null;
 if (count($playlist) > 0) {
@@ -68,6 +69,12 @@ if (count($playlist) > 0) {
         'instance_id' => 'develop-playlist-demo',
         'playlist'    => $playlist,
     );
+    if (count($signLanguageOptions) > 0) {
+        $vpc['sign_language_filter'] = array(
+            'options' => $signLanguageOptions,
+            'default' => $defaultSignLanguage,
+        );
+    }
 }
 ?>
 
@@ -80,6 +87,6 @@ if (count($playlist) > 0) {
             </p>
         <?php endif; ?>
     </div>
-<script src="/develop/js/vimeo_caption_player.js?v=6" defer></script>
+<script src="/develop/js/vimeo_caption_player.js?v=8" defer></script>
 </body>
 </html>
