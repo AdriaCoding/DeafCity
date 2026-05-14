@@ -97,6 +97,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 .vpc-play-pause-btn {
     font-family: sans-serif;
@@ -114,6 +116,25 @@
     border-color: #004400;
 }
 .vpc-play-pause-btn:focus-visible {
+    outline: 2px solid #007800;
+    outline-offset: 2px;
+}
+.vpc-reset-btn {
+    font-family: sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.55em 1.2em;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #f5f5f5;
+    color: #222;
+    cursor: pointer;
+}
+.vpc-reset-btn:hover {
+    background: #eaeaea;
+    border-color: #888;
+}
+.vpc-reset-btn:focus-visible {
     outline: 2px solid #007800;
     outline-offset: 2px;
 }

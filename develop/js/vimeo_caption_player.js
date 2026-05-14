@@ -217,6 +217,25 @@
                 hitArea.addEventListener('click', togglePlayPause);
             }
 
+            function resetFromBeginning() {
+                p.setCurrentTime(0)
+                    .then(function () {
+                        return p.play();
+                    })
+                    .then(function () {
+                        syncVimeoCaptionBoxes(0);
+                        refreshTransport();
+                    })
+                    .catch(function () {
+                        refreshTransport();
+                    });
+            }
+
+            var resetBtn = root.querySelector('.vpc-reset-btn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', resetFromBeginning);
+            }
+
             p.on('play', function () {
                 setTransportPlaying(true);
             });

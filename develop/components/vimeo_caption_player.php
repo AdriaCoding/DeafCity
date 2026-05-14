@@ -179,5 +179,11 @@ if ($configJson === false) {
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Play video"
         >Play</button>
+        <button
+            type="button"
+            class="vpc-reset-btn"
+            aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+            aria-label="Restart video from the beginning"
+        >Reset</button>
     </div>
 </div>
