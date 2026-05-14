@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Develop</title>
-    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=5">
+    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=6">
     <style>
         html, body {
             margin: 0;
@@ -54,11 +54,18 @@ if (false):
 // Vimeo caption player props: use `embed_url` instead of `video_id` + embed_params when you already have the iframe src.
 $vpc = array(
     'instance_id'   => 'develop-luis02',
-    'video_id'      => '639494119',
-    'caption_tracks' => array(
-        array('file' => 'luis_02.es-MX.vtt', 'label' => 'Español (México)'),
-        array('file' => 'luis_02.en.vtt', 'label' => 'English'),
-        array('file' => 'luis_02.it.vtt', 'label' => 'Italiano'),
+    'playlist'      => array(
+        array(
+            'video_id'       => '639494119',
+            'caption_tracks' => array(
+                array('file' => 'luis_02.es-MX.vtt', 'label' => 'Español (México)'),
+                array('file' => 'luis_02.en.vtt', 'label' => 'English'),
+                array('file' => 'luis_02.it.vtt', 'label' => 'Italiano'),
+            ),
+        ),
+        array(
+            'embed_url' => 'https://vimeo.com/1128906791?fl=tl&fe=ec',
+        ),
     ),
 );
 ?>
@@ -66,6 +73,6 @@ $vpc = array(
     <div class="develop-block">
         <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
     </div>
-<script src="/develop/js/vimeo_caption_player.js?v=5" defer></script>
+<script src="/develop/js/vimeo_caption_player.js?v=6" defer></script>
 </body>
 </html>

@@ -82,21 +82,45 @@
             cfg.captionsEndpoint && typeof cfg.captionsEndpoint === 'string'
                 ? cfg.captionsEndpoint
                 : '/develop/captions-static.php';
-        /** @type {Array<{file: string}>} */
-        var tracks = Array.isArray(cfg.tracks) ? cfg.tracks : [];
 
-        /** @type {Array<{ events: unknown[] }>} */
-        var vimeoTracksState = tracks.map(function () {
-            return { events: [] };
+        /** @type {Array<{ videoId: string, tracks?: Array<{ file: string, label?: string }>}>} */
+        var playlistItems = Array.isArray(cfg.playlist) && cfg.playlist.length > 0
+            ? cfg.playlist
+            : [];
+
+        /** @type {{ events: unknown[] }[][]} */
+        var vimeoTracksState = playlistItems.map(function (item) {
+            var tl = Array.isArray(item.tracks) ? item.tracks : [];
+            return tl.map(function () {
+                return { events: [] };
+            });
         });
+
+        var playlistIndex = typeof cfg.playlistIndex === 'number' ? cfg.playlistIndex : 0;
+
+        /** @typedef {{ file: string, label?: string }} VpcTrackDecl */
+        /** @type {VpcTrackDecl[]} UI track layout from server (typically first playlist clip) */
+        var uiTracks = Array.isArray(cfg.tracks) ? cfg.tracks : [];
 
         var activeCaptionTrackIndex = 0;
 
         /** @type {unknown} */
         var vimeoPlayer = null;
 
-        function loadStaticVtt(file, trackIndex, label) {
-            var url = captionsEndpoint +
+        /** @returns {VpcTrackDecl[]} */
+        function currentItemUiTracksForPicker() {
+            if (playlistIndex !== 0) return [];
+            return uiTracks;
+        }
+
+        function currentItemCueTracksRaw() {
+            var item = playlistItems[playlistIndex];
+            return Array.isArray(item.tracks) ? item.tracks : [];
+        }
+
+        function loadStaticVtt(file, plIndex, cueTrackIndex, label) {
+            var url =
+                captionsEndpoint +
                 (captionsEndpoint.indexOf('?') >= 0 ? '&' : '?') +
                 'f=' +
                 encodeURIComponent(file);
@@ -111,8 +135,9 @@
                         console.warn('Static VTT failed (' + label + ')', res.data);
                         return;
                     }
-                    if (vimeoTracksState[trackIndex]) {
-                        vimeoTracksState[trackIndex].events = res.data;
+                    var tier = vimeoTracksState[plIndex];
+                    if (tier && tier[cueTrackIndex]) {
+                        tier[cueTrackIndex].events = res.data;
                     }
                     syncAllCaptions();
                 })
@@ -121,14 +146,41 @@
                 });
         }
 
-        tracks.forEach(function (t, i) {
-            if (t && t.file) {
-                loadStaticVtt(t.file, i, 'vimeo-' + i);
-            }
+        playlistItems.forEach(function (item, pi) {
+            var tr = Array.isArray(item.tracks) ? item.tracks : [];
+            tr.forEach(function (t, ci) {
+                if (t && t.file) {
+                    loadStaticVtt(t.file, pi, ci, 'pl-' + pi + '-' + ci);
+                }
+            });
         });
 
+        function updateCaptionPickerVisibility() {
+            var picker = root.querySelector('.caption-lang-picker');
+            if (!picker) return;
+            picker.classList.toggle('vpc-caption-picker-hidden', currentItemUiTracksForPicker().length === 0);
+        }
+
+        /** @returns {unknown[]} */
+        function eventsForSync() {
+            var tier = vimeoTracksState[playlistIndex];
+            var raw = currentItemCueTracksRaw();
+            var ix = raw.length === 0 ? 0 : Math.min(activeCaptionTrackIndex, raw.length - 1);
+            if (!tier || !tier[ix]) return [];
+            return tier[ix].events || [];
+        }
+
         function setActiveCaptionTrack(index) {
-            if (index < 0 || index >= tracks.length) return;
+            var cueTracks = currentItemCueTracksRaw();
+            if (cueTracks.length === 0) {
+                activeCaptionTrackIndex = 0;
+                root.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
+                    btn.setAttribute('aria-pressed', 'false');
+                });
+                syncCaptionBox(captionBoxId, [], 0);
+                return;
+            }
+            if (index < 0 || index >= cueTracks.length) return;
             activeCaptionTrackIndex = index;
             root.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
                 var idx = parseInt(btn.getAttribute('data-track-index'), 10);
@@ -146,8 +198,7 @@
 
         function syncVimeoCaptionBoxes(seconds) {
             var ms = seconds * 1000;
-            var state = vimeoTracksState[activeCaptionTrackIndex];
-            var events = state ? state.events : [];
+            var events = /** @type {unknown[]} */ (eventsForSync());
             syncCaptionBox(captionBoxId, events, ms);
         }
 
@@ -236,6 +287,63 @@
                 resetBtn.addEventListener('click', resetFromBeginning);
             }
 
+            function updatePlaylistNavButtons() {
+                var prevBtn = root.querySelector('.vpc-prev-btn');
+                var nextBtn = root.querySelector('.vpc-next-btn');
+                if (!prevBtn || !nextBtn) return;
+                prevBtn.disabled = playlistIndex <= 0;
+                nextBtn.disabled = playlistIndex >= playlistItems.length - 1;
+            }
+
+            function goPlaylistIndex(nextIndex, autoPlayPreferred) {
+                if (playlistItems.length <= 1) return Promise.resolve();
+                if (nextIndex < 0 || nextIndex >= playlistItems.length) {
+                    return Promise.resolve();
+                }
+                playlistIndex = nextIndex;
+
+                /** @type {number} */
+                var vidNum = parseInt(playlistItems[playlistIndex].videoId, 10);
+                /** @type {Promise<void>} */
+                var loadP =
+                    typeof p.loadVideo === 'function'
+                        ? p.loadVideo(vidNum).then(function () {})
+                        : Promise.reject(new Error('Vimeo.Player.loadVideo unavailable'));
+
+                return loadP
+                    .then(function () {
+                        updateCaptionPickerVisibility();
+                        activeCaptionTrackIndex = 0;
+                        setActiveCaptionTrack(0);
+                        syncCaptionBox(captionBoxId, eventsForSync(), 0);
+                        updatePlaylistNavButtons();
+                        /** @type {Promise<void>} */
+                        var autoplayP =
+                            autoPlayPreferred === false ? Promise.resolve() : tryAutoplayFallback();
+                        return autoplayP;
+                    })
+                    .catch(function (e) {
+                        console.warn('Vimeo playlist: loadVideo failed', e);
+                        refreshTransport();
+                    });
+            }
+
+            var prevTransport = root.querySelector('.vpc-prev-btn');
+            if (prevTransport) {
+                prevTransport.addEventListener('click', function () {
+                    goPlaylistIndex(playlistIndex - 1, true);
+                });
+            }
+            var nextTransport = root.querySelector('.vpc-next-btn');
+            if (nextTransport) {
+                nextTransport.addEventListener('click', function () {
+                    goPlaylistIndex(playlistIndex + 1, true);
+                });
+            }
+
+            updateCaptionPickerVisibility();
+            updatePlaylistNavButtons();
+
             p.on('play', function () {
                 setTransportPlaying(true);
             });
@@ -286,4 +394,3 @@
         boot();
     }
 })();
-

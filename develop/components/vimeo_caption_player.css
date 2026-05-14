@@ -88,6 +88,9 @@
     border-color: #006000;
     color: #fff;
 }
+.caption-lang-picker.vpc-caption-picker-hidden {
+    display: none;
+}
 
 .vpc-transport {
     max-width: min(100vw, 1280px);
@@ -116,6 +119,33 @@
     border-color: #004400;
 }
 .vpc-play-pause-btn:focus-visible {
+    outline: 2px solid #007800;
+    outline-offset: 2px;
+}
+.vpc-prev-btn,
+.vpc-next-btn {
+    font-family: sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.55em 1em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #222;
+    cursor: pointer;
+}
+.vpc-prev-btn:hover:not(:disabled),
+.vpc-next-btn:hover:not(:disabled) {
+    background: #efefef;
+    border-color: #bbb;
+}
+.vpc-prev-btn:disabled,
+.vpc-next-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.vpc-prev-btn:focus-visible,
+.vpc-next-btn:focus-visible {
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
