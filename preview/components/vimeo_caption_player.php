@@ -17,7 +17,7 @@
  *     'instance_id' => 'main',                   // sanitized; used for HTML ids (default: random)
  *     'captions_heading' => 'Captions',
  *     'iframe_title' => 'Vimeo',
- *     'captions_endpoint' => '/develop/captions-static.php',
+ *     'captions_endpoint' => '/preview/captions-static.php',
  *
  *     // Optional ordered playlist (each entry: video_id OR embed_url; optional caption_tracks, embed_params).
  *     // Omit to use single video_id / embed_url at the top level. Prev/Next appear when length > 1.
@@ -234,14 +234,14 @@ $captionsHeading = isset($vpc['captions_heading']) ? (string) $vpc['captions_hea
 $iframeTitle     = isset($vpc['iframe_title']) ? (string) $vpc['iframe_title'] : 'Vimeo';
 $captionsBase    = isset($vpc['captions_endpoint'])
     ? (string) $vpc['captions_endpoint']
-    : '/develop/captions-static.php';
+    : '/preview/captions-static.php';
 
 $iframeId       = $idBase . '__iframe';
 $captionBoxId   = $idBase . '__captions';
 $headingId      = $idBase . '__caption-heading';
 $transportId    = $idBase . '__transport';
 
-$wrapperClass   = 'develop-vimeo-player-root';
+$wrapperClass   = 'preview-vimeo-player-root';
 
 $defaultParams = array(
     'api'      => '1',

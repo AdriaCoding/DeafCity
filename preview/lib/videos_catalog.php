@@ -8,7 +8,7 @@
  *     "captions": [ { "label", "file" } ]
  *   } ] }
  *
- * Caption "file" is a basename under data/captions/ (served via develop/captions-static.php).
+ * Caption "file" is a basename under data/captions/ (served via preview/captions-static.php).
  */
 
 if (!function_exists('vpc_sign_language_options_from_playlists_json')) {

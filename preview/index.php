@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Develop</title>
+    <title>Preview</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/develop/components/vimeo_caption_player.css?v=12">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=12">
     <style>
         html, body {
             margin: 0;
@@ -15,7 +15,7 @@
             background: #fff;
             font-family: 'Roboto', sans-serif;
         }
-        .develop-block {
+        .preview-block {
             margin-bottom: 2rem;
         }
     </style>
@@ -40,7 +40,7 @@ if (false):
     ]));
     $embedMinimal = 'https://www.youtube-nocookie.com/embed/' . rawurlencode($videoIdMinimal) . '?' . $paramsMinimal;
 ?>
-    <div class="develop-block">
+    <div class="preview-block">
         <div id="caption-box" class="caption-box"></div>
         <div class="video-shell">
             <iframe
@@ -70,7 +70,7 @@ $defaultSignLanguage = isset($signLanguageOptions[0]['value'])
 $vpc = null;
 if (count($playlist) > 0) {
     $vpc = array(
-        'instance_id' => 'develop-playlist-demo',
+        'instance_id' => 'preview-playlist-demo',
         'playlist'    => $playlist,
     );
     if (count($signLanguageOptions) > 0) {
@@ -82,7 +82,7 @@ if (count($playlist) > 0) {
 }
 ?>
 
-    <div class="develop-block">
+    <div class="preview-block">
         <?php if ($vpc !== null): ?>
             <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
         <?php else: ?>
@@ -91,6 +91,6 @@ if (count($playlist) > 0) {
             </p>
         <?php endif; ?>
     </div>
-<script src="/develop/js/vimeo_caption_player.js?v=11" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=11" defer></script>
 </body>
 </html>

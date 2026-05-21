@@ -81,7 +81,7 @@
         var captionsEndpoint =
             cfg.captionsEndpoint && typeof cfg.captionsEndpoint === 'string'
                 ? cfg.captionsEndpoint
-                : '/develop/captions-static.php';
+                : '/preview/captions-static.php';
 
         /** Master playlist (never reordered — sign-language filter chooses a subset). */
         /** @type {Array<{ videoId: string, tracks?: Array<{ file: string, label?: string }>, signLanguage?: string}>} */
@@ -602,7 +602,7 @@
     }
 
     function boot() {
-        document.querySelectorAll('.develop-vimeo-player-root').forEach(initOne);
+        document.querySelectorAll('.preview-vimeo-player-root').forEach(initOne);
     }
 
     if (document.readyState === 'loading') {
