@@ -39,8 +39,8 @@ The private, password-protected application where Producers process Videos — u
 _Avoid_: Webapp, admin, CMS, portal
 
 **Producer**:
-A team member who uses the Studio to process Videos — uploading, generating and editing Subtitles, translating, tagging, and publishing. May be a developer or Antoni.
-_Avoid_: User, operator, editor, participant
+Someone who uses the Studio to process Videos on behalf of the project — typically Antoni. Developers build and maintain the Studio and Website but do not operate the subtitle-and-publication workflow.
+_Avoid_: User, operator, editor, participant, developer (as a Studio role)
 
 **Tag**:
 A reusable label a Producer attaches to a Video before publication (e.g. city edition, theme, installation). Tags can be newly created or reused from previous Videos.
@@ -65,7 +65,7 @@ An optional spoken-language recording of the signed performance, uploaded alongs
 _Avoid_: Voiceover, audio track, narration
 
 **Publication**:
-The Studio action that makes a Video live — uploading to Vimeo (when needed), saving caption files on the server, and updating catalog metadata for the Website.
+The Studio action that makes a Video live — uploading to Vimeo (when needed), saving caption files on the server, and updating the Catalog.
 _Avoid_: Publish (as a noun), release, deploy
 
 **Master subtitle**:
