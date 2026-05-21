@@ -91,6 +91,6 @@ if (count($playlist) > 0) {
             </p>
         <?php endif; ?>
     </div>
-<script src="/preview/js/vimeo_caption_player.js?v=11" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=12" defer></script>
 </body>
 </html>

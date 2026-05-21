@@ -250,9 +250,10 @@ $defaultParams = array(
     'portrait' => '0',
     'dnt'      => '1',
     'controls' => '0',
-    'autoplay' => '1',
+    'autoplay'    => '1',
     // Most browsers block audible autoplay; keep muted unless overridden via embed_params.
-    'muted'    => '1',
+    'muted'       => '1',
+    'playsinline' => '1',
 );
 
 $firstEntry = $playlistNormalized[0];

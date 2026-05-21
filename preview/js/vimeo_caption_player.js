@@ -218,9 +218,9 @@
         }
 
         function rebuildDynamicCaptionButtons() {
-            if (!captionPickerDynamic || !captionDynHost) return;
+            if (!captionPickerDynamic || !captionDynamicHost) return;
 
-            captionDynHost.innerHTML = '';
+            captionDynamicHost.innerHTML = '';
 
             var tracks = currentItemCueTracksRaw();
 
@@ -236,7 +236,7 @@
                     b.setAttribute('aria-describedby', headingEl.id);
                 }
                 b.setAttribute('aria-controls', captionBoxId);
-                captionDynHost.appendChild(b);
+                captionDynamicHost.appendChild(b);
             });
         }
 
@@ -399,8 +399,14 @@
                     typeof p.ready === 'function' ? p.ready() : Promise.resolve();
                 return readyPromise
                     .then(function () {
-                        return p.getPaused().then(function (paused) {
-                            if (paused) return p.play();
+                        var mutedP =
+                            typeof p.setMuted === 'function'
+                                ? p.setMuted(true)
+                                : Promise.resolve();
+                        return mutedP.then(function () {
+                            return p.getPaused().then(function (paused) {
+                                if (paused) return p.play();
+                            });
                         });
                     })
                     .catch(function () {})
@@ -408,6 +414,50 @@
                         refreshTransport();
                         syncAllCaptions();
                     });
+            }
+
+            function iframeEmbedVideoId() {
+                var el = document.getElementById(iframeId);
+                if (!el || !el.src) return '';
+                var m = el.src.match(/\/video\/(\d+)/);
+                return m ? m[1] : '';
+            }
+
+            function applyLoadedVideoUi() {
+                if (captionPickerDynamic) rebuildDynamicCaptionButtons();
+                activeCaptionTrackIndex = 0;
+                setActiveCaptionTrack(0);
+                updateCaptionPickerVisibility();
+            }
+
+            function resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay) {
+                if (isNaN(vidNum) || typeof p.loadVideo !== 'function') {
+                    return Promise.reject(new Error('Vimeo.Player.loadVideo unavailable'));
+                }
+
+                var currentIdP =
+                    typeof p.getVideoId === 'function'
+                        ? p.getVideoId().catch(function () {
+                              return null;
+                          })
+                        : Promise.resolve(null);
+
+                return currentIdP.then(function (currentId) {
+                    var currentRaw =
+                        currentId !== null && currentId !== undefined && currentId !== ''
+                            ? String(currentId)
+                            : iframeEmbedVideoId();
+                    if (currentRaw === vidRaw) {
+                        return Promise.resolve();
+                    }
+                    return p
+                        .loadVideo({
+                            id: vidNum,
+                            autoplay: wantAutoplay,
+                            muted: true,
+                        })
+                        .then(function () {});
+                });
             }
 
             function loadVideoMaster(masterIx, autoPlayPreferred) {
@@ -419,21 +469,13 @@
                 var item = fullPlaylistItems[playlistIndex];
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
-                /** @type {Promise<void>} */
-                var loadP =
-                    !isNaN(vidNum) && typeof p.loadVideo === 'function'
-                        ? p.loadVideo(vidNum).then(function () {})
-                        : Promise.reject(new Error('Vimeo.Player.loadVideo unavailable'));
+                var wantAutoplay = autoPlayPreferred !== false;
 
-                return loadP
+                return resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay)
                     .then(function () {
-                        if (captionPickerDynamic) rebuildDynamicCaptionButtons();
-                        activeCaptionTrackIndex = 0;
-                        setActiveCaptionTrack(0);
-                        updateCaptionPickerVisibility();
+                        applyLoadedVideoUi();
                         /** @type {Promise<void>} */
-                        var autoplayP =
-                            autoPlayPreferred === false ? Promise.resolve() : tryAutoplayFallback();
+                        var autoplayP = wantAutoplay ? tryAutoplayFallback() : Promise.resolve();
                         return autoplayP;
                     })
                     .then(function () {
