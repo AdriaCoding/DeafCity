@@ -53,7 +53,7 @@ The Studio follows this pipeline:
 3. **Subtitle editing** — Interface to edit Subtitle text and timestamps, with video playback and real-time Subtitle preview.
 4. **Translation** — From the validated **Master subtitle**, generate Subtitles in other Subtitle languages. Each translation is reviewable and editable via the same editor (step 3).
 5. **Tagging** — Before Publication, Producer selects Tags (new or reused).
-6. **Publication** — Upload Video to Vimeo via API (TBD), save caption files on the server, update the **Catalog**.
+6. **Publication** — Upload Video to Vimeo via API, save caption files on the server, update the **Catalog**.
 
 ## User stories
 
@@ -101,6 +101,12 @@ The Studio follows this pipeline:
 - **Subtitles** are served as caption files (WebVTT) from our server, synced by the player — not pulled from Vimeo native text tracks ([ADR-0001](adr/0001-server-hosted-subtitles.md)).
 - The legacy homepage still uses Vimeo `?texttrack=` today; the Preview site player replaces this approach.
 
+## Vimeo upload at Publication
+
+The Studio can upload Videos to Vimeo automatically as part of **Publication**. The [Vimeo API](https://developer.vimeo.com/api/upload/videos) supports programmatic upload (resumable/TUS, pull, or form-based); the server uploads the intake file, receives a `vimeo_id`, and writes it to the **Catalog**. Subtitles are not uploaded to Vimeo — only the Video file ([ADR-0001](adr/0001-server-hosted-subtitles.md)).
+
+Antoni's Vimeo account is on a **paid plan**, which includes API upload access. The project already uses the official [`vimeo/vimeo-api`](https://github.com/vimeo/vimeo.php) PHP library for Vimeo integration; Publication extends that with upload and edit scopes on the same developer app and account.
+
 ## Out of scope (for this codebase)
 
 - Physical **Installations** (multi-screen museum setups) — external to this repo.
@@ -108,6 +114,5 @@ The Studio follows this pipeline:
 
 ## Open questions
 
-- Vimeo upload via API at Publication — confirmed as direction, implementation TBD.
 - Blind Wiki tooling integration — referenced in Studio spec, details TBD.
 - Exact Studio subroute path on deaf.city — TBD.

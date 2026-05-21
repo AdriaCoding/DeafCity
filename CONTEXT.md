@@ -65,7 +65,7 @@ An optional spoken-language recording of the signed performance, uploaded alongs
 _Avoid_: Voiceover, audio track, narration
 
 **Publication**:
-The Studio action that makes a Video live — uploading to Vimeo (when needed), saving caption files on the server, and updating the Catalog.
+The Studio action that makes a Video live — uploading the Video to Vimeo via the API, saving caption files on the server, and updating the Catalog. Antoni's paid Vimeo account supports API upload; Subtitles stay on our server, not on Vimeo.
 _Avoid_: Publish (as a noun), release, deploy
 
 **Master subtitle**:
