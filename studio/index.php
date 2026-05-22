@@ -41,9 +41,13 @@ if ($action === 'logout') {
     exit;
 }
 
-// Login attempt
+// Login attempt (must not depend on $action — blocker POSTs from the current URL)
 $showError = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === null) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && !$guard->isAuthenticated()
+    && array_key_exists('password', $_POST)
+) {
     $submitted = $_POST['password'] ?? '';
     if ($guard->login($submitted)) {
         header('Location: ' . $baseUrl);

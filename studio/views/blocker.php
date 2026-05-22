@@ -68,7 +68,7 @@
         <?php if ($showError): ?>
             <p class="error">Contrasenya incorrecta.</p>
         <?php endif; ?>
-        <form method="POST" action="">
+        <form method="POST" action="<?= htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8') ?>">
             <input type="password" name="password" placeholder="Contrasenya" autofocus autocomplete="current-password">
             <button type="submit">Entra</button>
         </form>
