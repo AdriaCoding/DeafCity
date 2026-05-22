@@ -23,13 +23,22 @@ Build sequence is strictly 1 → 2 → 3 → 4 → 5 → 6. Each slice is specce
 
 ## Slice 1 — Intake
 
-Producer uploads a Video plus one of:
-- An existing subtitle file (primary path, built first)
-- Interpreter audio for AI generation (built in Slice 3)
+The Producer uploads the Video to Vimeo directly, by any means (Vimeo web UI, batch tool, mobile app), before opening the Studio. See [ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md).
 
-Producer also selects: Sign language, Edition, Subtitle language.
+In the Studio, the Producer fills a single intake form:
+- **Vimeo URL or ID** — accepts a full `https://vimeo.com/...` URL or a raw numeric ID; PHP extracts the numeric ID and calls `GET /videos/{id}` to validate it and fetch the Video title.
+- **Sign language** — dropdown from `data/studio-config.json`.
+- **Edition** — dropdown from `data/studio-config.json`.
+- **Subtitle language** — dropdown from `data/studio-config.json` (the written language of the subtitle file being uploaded).
+- **Subtitle file** — WebVTT upload (Slice 1 primary path). Interpreter audio upload is deferred to Slice 3.
 
-Intake creates a **Job** folder on the server filesystem holding the uploaded files. The Studio shell lists resumable Jobs so a Producer can return across sessions. One Job is processed at a time.
+Submitting creates `data/jobs/current/` containing `job.json` (vimeo_id, video title, sign language, edition, subtitle language, current pipeline step) and the uploaded WebVTT file.
+
+The Studio shell shows one of two states:
+- **No active Job** — "New Job" button leads to the intake form.
+- **Active Job** — displays Video title + Edition + current pipeline step, with "Resume" and "Cancel" buttons. Cancel shows a confirm dialog before deleting `data/jobs/current/`.
+
+One Job is processed at a time.
 
 ## Slice 2 — Subtitle Editor
 
@@ -53,14 +62,13 @@ Producer picks existing Tags or creates new ones before Publication. Tag selecti
 
 ## Slice 6 — Publication
 
-Single **Publish** action from the Producer's perspective. On the server it runs as one workflow with two Vimeo phases (video, then text tracks); both must succeed or the action fails with no Catalog write (see requirements).
+Single **Publish** action from the Producer's perspective. The Video is already on Vimeo (uploaded directly by the Producer at intake — see [ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)). Publication uploads the caption files and writes the Catalog; all steps must succeed or the action fails with no Catalog write.
 
-1. **Upload video to Vimeo** — resumable/TUS via API using Antoni's Vimeo Plus account (`upload` + `edit` scopes). Receive `vimeo_id`.
-2. **Upload subtitles to Vimeo** — for each reviewed caption file in the Job folder (Master subtitle plus every translated Subtitle language), upload WebVTT via the [text tracks API](https://developer.vimeo.com/api/upload/texttracks) (`POST` resource → `PUT` file → activate). One track per Subtitle language; use `subtitles` type and IETF language tags (e.g. `es`, `en`).
-3. **Save caption files on the server** — copy the same reviewed WebVTT files into the server caption directory (`data/captions/`).
-4. **Update the Catalog** — Video metadata, `vimeo_id`, Tags, and caption file references.
-5. **Delete the Job folder**
+1. **Upload subtitles to Vimeo** — for each reviewed caption file in the Job folder (Master subtitle plus every translated Subtitle language), upload WebVTT via the [text tracks API](https://developer.vimeo.com/api/upload/texttracks) (`POST` resource → `PUT` file → activate). One track per Subtitle language; use `subtitles` type and IETF language tags (e.g. `es`, `en`).
+2. **Save caption files on the server** — copy the same reviewed WebVTT files into `data/captions/`.
+3. **Update the Catalog** — Video metadata, `vimeo_id`, Tags, and caption file references.
+4. **Delete the Job folder**
 
-**Playback:** the Preview site player still loads Subtitles from server caption files ([ADR-0001](adr/0001-server-hosted-subtitles.md)). Vimeo text tracks are written at Publication so embeds and tools that use Vimeo captions stay in sync; re-Publish after subtitle edits must replace Vimeo tracks for that video.
+**Playback:** the Preview site player loads Subtitles from server caption files ([ADR-0001](adr/0001-server-hosted-subtitles.md)). Vimeo text tracks are kept in sync at Publication so embeds and tools that use Vimeo captions work; re-Publish after subtitle edits must replace Vimeo tracks for that video.
 
-**Failures:** if the Vimeo account is out of storage/quota, video upload fails, or any text-track upload fails, block Publish with a clear error and do not update the Catalog.
+**Failures:** if any text-track upload fails, block Publish with a clear error and do not update the Catalog.
