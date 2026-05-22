@@ -14,6 +14,10 @@ import argparse
 import json
 import sys
 
+from studio_log import LOG_FILE, setup_logging
+
+logger = setup_logging("transcribe")
+
 
 def write_status(path: str, status: str, message: str = "") -> None:
     data = {"status": status}
@@ -56,11 +60,19 @@ def main() -> None:
     parser.add_argument("--language", required=True)
     args = parser.parse_args()
 
+    logger.info(
+        "Starting transcription language=%s audio=%s output=%s log=%s",
+        args.language,
+        args.audio_file,
+        args.vtt_output,
+        LOG_FILE,
+    )
     write_status(args.status_file, "running")
 
     try:
         from transformers import pipeline
 
+        logger.info("Loading Whisper model")
         asr = pipeline(
             "automatic-speech-recognition",
             model="openai/whisper-large-v3-turbo",
@@ -68,6 +80,7 @@ def main() -> None:
             device="cpu",
         )
 
+        logger.info("Running speech recognition")
         result = asr(
             args.audio_file,
             return_timestamps=True,
@@ -76,6 +89,7 @@ def main() -> None:
 
         chunks = result.get("chunks") or []
         if not chunks:
+            logger.error("No speech chunks recognized in audio file")
             write_status(args.status_file, "error", "El format de l'àudio no es reconeix")
             sys.exit(1)
 
@@ -83,13 +97,16 @@ def main() -> None:
         with open(args.vtt_output, "w", encoding="utf-8") as f:
             f.write(vtt)
 
+        logger.info("Transcription complete cues=%d output=%s", len(chunks), args.vtt_output)
         write_status(args.status_file, "done")
 
     except Exception as e:
         msg = str(e).lower()
         if any(k in msg for k in ("ffmpeg", "format", "codec", "audio", "decode")):
+            logger.exception("Audio format/decode error")
             write_status(args.status_file, "error", "El format de l'àudio no es reconeix")
         else:
+            logger.exception("Transcription failed")
             write_status(args.status_file, "error", "Error en la generació de subtítols")
         sys.exit(1)
 

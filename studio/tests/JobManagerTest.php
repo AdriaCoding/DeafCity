@@ -69,6 +69,26 @@ class JobManagerTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->jobsDir . '/current');
     }
 
+    public function test_draftVttPathForLang_returns_expected_path(): void
+    {
+        $this->createSampleJob();
+
+        $this->assertSame(
+            $this->jobsDir . '/current/draft_en.vtt',
+            $this->manager->draftVttPathForLang('en')
+        );
+    }
+
+    public function test_translationStatePath_returns_expected_path(): void
+    {
+        $this->createSampleJob();
+
+        $this->assertSame(
+            $this->jobsDir . '/current/translation.json',
+            $this->manager->translationStatePath()
+        );
+    }
+
     private function createSampleJob(): void
     {
         $vttPath = $this->writeVtt('WEBVTT');

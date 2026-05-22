@@ -107,6 +107,16 @@ class JobManager
         return $this->currentDir . '/draft.vtt';
     }
 
+    public function draftVttPathForLang(string $lang): string
+    {
+        return $this->currentDir . '/draft_' . $lang . '.vtt';
+    }
+
+    public function translationStatePath(): string
+    {
+        return $this->currentDir . '/translation.json';
+    }
+
     public function cancel(): void
     {
         if (!$this->exists()) {

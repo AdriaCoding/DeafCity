@@ -26,7 +26,6 @@ class SubtitleEditorHandlerTest extends TestCase
             $this->jobManager,
         );
 
-        // Bootstrap a current job
         $currentDir = $this->jobsDir . '/current';
         mkdir($currentDir);
         file_put_contents($currentDir . '/job.json', json_encode([
@@ -58,7 +57,6 @@ class SubtitleEditorHandlerTest extends TestCase
         $this->assertFalse($result['ok']);
         $this->assertNotEmpty($result['errors']);
 
-        // draft.vtt must not have changed
         $draftContent = file_get_contents($this->jobsDir . '/current/draft.vtt');
         $this->assertStringContainsString('Original', $draftContent);
 
@@ -66,7 +64,7 @@ class SubtitleEditorHandlerTest extends TestCase
         $this->assertSame('subtitle-editor', $job['step']);
     }
 
-    public function test_valid_cues_overwrite_draft_vtt_and_advance_step(): void
+    public function test_save_draft_overwrites_master_vtt_without_advancing_step(): void
     {
         $cues = [
             ['start' => 0.0, 'end' => 3.0, 'text' => 'Updated cue', 'opaque' => ''],
@@ -75,12 +73,76 @@ class SubtitleEditorHandlerTest extends TestCase
         $result = $this->handler->handle($cues);
 
         $this->assertTrue($result['ok']);
+        $this->assertArrayNotHasKey('translate', $result);
 
-        $draftPath = $this->jobsDir . '/current/draft.vtt';
-        $writtenContent = file_get_contents($draftPath);
+        $writtenContent = file_get_contents($this->jobsDir . '/current/draft.vtt');
         $this->assertStringContainsString('Updated cue', $writtenContent);
 
         $job = $this->jobManager->read();
+        $this->assertSame('subtitle-editor', $job['step']);
+    }
+
+    public function test_save_and_translate_advances_step_and_returns_translate_flag(): void
+    {
+        $cues = [
+            ['start' => 0.0, 'end' => 3.0, 'text' => 'Updated cue', 'opaque' => ''],
+        ];
+
+        $result = $this->handler->handleRawJson(json_encode([
+            'cues' => $cues,
+            'translate' => true,
+        ]));
+
+        $this->assertTrue($result['ok']);
+        $this->assertTrue($result['translate']);
+
+        $job = $this->jobManager->read();
         $this->assertSame('translation', $job['step']);
+    }
+
+    public function test_translation_review_saves_to_language_specific_path_without_step_change(): void
+    {
+        $enPath = $this->jobManager->draftVttPathForLang('en');
+        file_put_contents($enPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nEnglish original\n");
+
+        $cues = [
+            ['start' => 0.0, 'end' => 3.0, 'text' => 'English updated', 'opaque' => ''],
+        ];
+
+        $result = $this->handler->handle($cues, [
+            'savePath' => $enPath,
+        ]);
+
+        $this->assertTrue($result['ok']);
+
+        $writtenContent = file_get_contents($enPath);
+        $this->assertStringContainsString('English updated', $writtenContent);
+
+        $masterContent = file_get_contents($this->jobsDir . '/current/draft.vtt');
+        $this->assertStringContainsString('Original', $masterContent);
+
+        $job = $this->jobManager->read();
+        $this->assertSame('subtitle-editor', $job['step']);
+    }
+
+    public function test_integrity_errors_rejected_in_translation_review_mode(): void
+    {
+        $enPath = $this->jobManager->draftVttPathForLang('en');
+        file_put_contents($enPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nEnglish original\n");
+
+        $cues = [
+            ['start' => 0.0, 'end' => 5.0, 'text' => 'A', 'opaque' => ''],
+            ['start' => 3.0, 'end' => 7.0, 'text' => 'B', 'opaque' => ''],
+        ];
+
+        $result = $this->handler->handle($cues, [
+            'savePath' => $enPath,
+        ]);
+
+        $this->assertFalse($result['ok']);
+        $this->assertNotEmpty($result['errors']);
+
+        $writtenContent = file_get_contents($enPath);
+        $this->assertStringContainsString('English original', $writtenContent);
     }
 }

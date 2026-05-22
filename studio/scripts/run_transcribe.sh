@@ -4,6 +4,8 @@ export OMP_NUM_THREADS=1
 export TRANSFORMERS_CACHE=/srv/www/blind.wiki/public_html/Tagger/cache
 export HF_HOME=/srv/www/blind.wiki/public_html/Tagger/cache
 
+LOG_FILE="/srv/www/deaf.city/public_html/data/logs/studio.log"
+
 # shellcheck source=/dev/null
 source /srv/www/blind.wiki/public_html/.venv/bin/activate
 
@@ -19,6 +21,9 @@ if [ $EXIT -ne 0 ]; then
         PREV="$ARG"
     done
     if [ -n "$STATUS_FILE" ] && grep -q '"running"' "$STATUS_FILE" 2>/dev/null; then
+        mkdir -p "$(dirname "$LOG_FILE")"
+        printf '%s [run_transcribe.sh] ERROR: Script exited %s before updating status; wrote fallback error to %s\n' \
+            "$(date '+%Y-%m-%d %H:%M:%S')" "$EXIT" "$STATUS_FILE" >> "$LOG_FILE"
         echo '{"status":"error","message":"Error en la generació de subtítols"}' > "$STATUS_FILE"
     fi
 fi

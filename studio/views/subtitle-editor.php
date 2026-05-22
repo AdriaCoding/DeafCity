@@ -96,6 +96,29 @@
             gap: 0.75rem;
             align-items: center;
         }
+        #save-draft-btn, #save-translate-btn {
+            padding: 0.65rem 1.4rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        #save-draft-btn {
+            background: transparent;
+            color: #aaa;
+            border: 1px solid #444;
+        }
+        #save-draft-btn:hover:not(:disabled) { color: #fff; border-color: #666; }
+        #save-translate-btn {
+            background: #e0e0e0;
+            color: #0a0a0a;
+        }
+        #save-translate-btn:hover:not(:disabled) { background: #fff; }
+        #save-draft-btn:disabled, #save-translate-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
         #save-btn {
             padding: 0.65rem 1.4rem;
             background: #e0e0e0;
@@ -255,7 +278,7 @@
 </head>
 <body>
     <header>
-        <h1>Editor de subtítols</h1>
+        <h1><?php if (($editorMode ?? 'master') === 'translation'): ?>Editor de subtítols — <?= htmlspecialchars($langLabel ?? '') ?><?php else: ?>Editor de subtítols<?php endif; ?></h1>
         <div class="header-actions">
             <a class="nav-link" href="./">← Estudi</a>
             <a class="nav-link" href="?action=logout">Tanca la sessió</a>
@@ -270,8 +293,13 @@
             </div>
             <div class="save-area">
                 <div class="save-row">
-                    <button id="save-btn" type="button">Desa i finalitza</button>
-                    <button id="skip-btn" type="button">Omet i ves a l'etiquetatge</button>
+                    <?php if (($editorMode ?? 'master') === 'translation'): ?>
+                        <button id="save-btn" type="button">Desa</button>
+                    <?php else: ?>
+                        <button id="save-draft-btn" type="button">Desa esborrany</button>
+                        <button id="save-translate-btn" type="button">Desa i tradueix</button>
+                        <button id="skip-btn" type="button">Omet i ves a l'etiquetatge</button>
+                    <?php endif; ?>
                 </div>
                 <pre id="save-error" hidden></pre>
             </div>
@@ -284,8 +312,9 @@
     </div>
 
     <script>
-        window.__cues    = <?= json_encode($cues, JSON_UNESCAPED_UNICODE) ?>;
-        window.__vimeoId = <?= json_encode($vimeoId) ?>;
+        window.__cues       = <?= json_encode($cues, JSON_UNESCAPED_UNICODE) ?>;
+        window.__vimeoId    = <?= json_encode($vimeoId) ?>;
+        window.__editorMode = <?= json_encode($editorMode ?? 'master') ?>;
     </script>
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="js/subtitle-editor.js?v=<?= filemtime(__DIR__ . '/../js/subtitle-editor.js') ?>"></script>

@@ -2,14 +2,13 @@
 (function () {
     'use strict';
 
-    // ─── State ───────────────────────────────────────────────────────────────
     let cues = JSON.parse(JSON.stringify(window.__cues));
     let savedSnapshot = JSON.stringify(cues);
     let player = null;
     let activeCueIndex = -1;
+    const editorMode = window.__editorMode || 'master';
 
-    // ─── DOM refs (assigned after DOMContentLoaded) ───────────────────────
-    let cueList, saveBtn, saveError, skipBtn, liveCaption;
+    let cueList, saveBtn, saveDraftBtn, saveTranslateBtn, saveError, skipBtn, liveCaption;
 
     function findActiveCueIndex(currentTime) {
         for (let i = 0; i < cues.length; i++) {
@@ -25,7 +24,6 @@
         liveCaption.textContent = cueIndex >= 0 ? cues[cueIndex].text : '';
     }
 
-    // ─── Vimeo player ────────────────────────────────────────────────────────
     function initPlayer(vimeoId) {
         player = new Vimeo.Player('vimeo-player', {
             id: vimeoId,
@@ -46,9 +44,7 @@
 
         player.ready().then(function () {
             return player.play();
-        }).catch(function () {
-            // Browser may block unmuted autoplay; Vimeo controls remain for manual play/scrub.
-        });
+        }).catch(function () {});
     }
 
     function highlightActiveCue(currentTime) {
@@ -70,7 +66,6 @@
         }
     }
 
-    // ─── Integrity check ─────────────────────────────────────────────────────
     function checkIntegrity() {
         const errors = [];
 
@@ -92,17 +87,31 @@
         return errors;
     }
 
+    function setButtonsDisabled(disabled) {
+        if (saveBtn) saveBtn.disabled = disabled;
+        if (saveDraftBtn) saveDraftBtn.disabled = disabled;
+        if (saveTranslateBtn) saveTranslateBtn.disabled = disabled;
+    }
+
     function updateIntegrityUI() {
         const errors = checkIntegrity();
         const hasErrors = errors.length > 0;
 
-        saveBtn.disabled = hasErrors;
-        saveBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de desar.' : '';
+        setButtonsDisabled(hasErrors);
+
+        if (saveBtn) {
+            saveBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de desar.' : '';
+        }
+        if (saveDraftBtn) {
+            saveDraftBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de desar.' : '';
+        }
+        if (saveTranslateBtn) {
+            saveTranslateBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de traduir.' : '';
+        }
 
         saveError.textContent = errors.join('\n');
         saveError.hidden = !hasErrors;
 
-        // highlight overlapping rows
         const overlapRows = new Set();
         for (let i = 0; i < cues.length - 1; i++) {
             for (let j = i + 1; j < cues.length; j++) {
@@ -117,7 +126,6 @@
         });
     }
 
-    // ─── Time helpers ─────────────────────────────────────────────────────────
     function formatTime(seconds) {
         if (typeof seconds !== 'number' || isNaN(seconds)) return '00:00:00.000';
         const h = Math.floor(seconds / 3600);
@@ -141,7 +149,6 @@
         return parseFloat(str);
     }
 
-    // ─── Rendering ───────────────────────────────────────────────────────────
     function render() {
         cueList.innerHTML = '';
         cues.forEach(function (cue, idx) {
@@ -160,13 +167,11 @@
         row.className = 'cue-row';
         row.dataset.idx = idx;
 
-        // index label
         const label = document.createElement('span');
         label.className = 'cue-index';
         label.textContent = idx + 1;
         row.appendChild(label);
 
-        // seek button
         const seekBtn = document.createElement('button');
         seekBtn.className = 'cue-seek';
         seekBtn.type = 'button';
@@ -177,7 +182,6 @@
         });
         row.appendChild(seekBtn);
 
-        // timestamps
         row.appendChild(buildTimestampField(cue, idx, 'start'));
         const arrow = document.createElement('span');
         arrow.className = 'cue-arrow';
@@ -185,7 +189,6 @@
         row.appendChild(arrow);
         row.appendChild(buildTimestampField(cue, idx, 'end'));
 
-        // text
         const textarea = document.createElement('textarea');
         textarea.className = 'cue-text';
         textarea.rows = 2;
@@ -198,7 +201,6 @@
         });
         row.appendChild(textarea);
 
-        // delete button
         const delBtn = document.createElement('button');
         delBtn.className = 'cue-delete';
         delBtn.type = 'button';
@@ -210,7 +212,6 @@
         });
         row.appendChild(delBtn);
 
-        // insert-after button
         const addBtn = document.createElement('button');
         addBtn.className = 'cue-add';
         addBtn.type = 'button';
@@ -263,45 +264,71 @@
         return wrap;
     }
 
-    // ─── Save ─────────────────────────────────────────────────────────────────
-    function save() {
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Desant…';
+    function redirectAfterSave(translate) {
+        if (editorMode === 'translation') {
+            window.location.href = '?action=translation';
+            return;
+        }
+        if (translate) {
+            window.location.href = '?action=translation';
+            return;
+        }
+        resetSaveButtons();
+    }
+
+    function save(options) {
+        options = options || {};
+        const translate = !!options.translate;
+
+        setButtonsDisabled(true);
+        if (saveBtn) saveBtn.textContent = 'Desant…';
+        if (saveDraftBtn) saveDraftBtn.textContent = 'Desant…';
+        if (saveTranslateBtn) saveTranslateBtn.textContent = 'Desant…';
+
+        const payload = { cues: cues };
+        if (translate) {
+            payload.translate = true;
+        }
 
         fetch(window.location.href, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-            body: JSON.stringify({ cues: cues }),
+            body: JSON.stringify(payload),
         })
             .then(function (res) { return res.json(); })
             .then(function (data) {
                 if (data.ok) {
                     savedSnapshot = JSON.stringify(cues);
-                    window.location.href = '?action=translation';
+                    redirectAfterSave(translate);
                 } else {
                     saveError.textContent = (data.errors || ['Error desconegut.']).join('\n');
                     saveError.hidden = false;
-                    saveBtn.disabled = false;
-                    saveBtn.textContent = 'Desa i finalitza';
+                    resetSaveButtons();
                 }
             })
             .catch(function () {
                 saveError.textContent = 'Error de xarxa. Torneu-ho a provar.';
                 saveError.hidden = false;
-                saveBtn.disabled = false;
-                saveBtn.textContent = 'Desa i finalitza';
+                resetSaveButtons();
             });
     }
 
-    // ─── Unsaved-changes guard ────────────────────────────────────────────────
+    function resetSaveButtons() {
+        updateIntegrityUI();
+        if (saveBtn) saveBtn.textContent = 'Desa';
+        if (saveDraftBtn) saveDraftBtn.textContent = 'Desa esborrany';
+        if (saveTranslateBtn) saveTranslateBtn.textContent = 'Desa i tradueix';
+    }
+
     function isDirty() {
         return JSON.stringify(cues) !== savedSnapshot;
     }
 
-    // ─── Boot ─────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', function () {
         cueList = document.getElementById('cue-list');
         saveBtn = document.getElementById('save-btn');
+        saveDraftBtn = document.getElementById('save-draft-btn');
+        saveTranslateBtn = document.getElementById('save-translate-btn');
         saveError = document.getElementById('save-error');
         skipBtn = document.getElementById('skip-btn');
         liveCaption = document.getElementById('live-caption');
@@ -309,19 +336,29 @@
         initPlayer(window.__vimeoId);
         render();
 
-        saveBtn.addEventListener('click', save);
+        if (saveBtn) {
+            saveBtn.addEventListener('click', function () { save(); });
+        }
+        if (saveDraftBtn) {
+            saveDraftBtn.addEventListener('click', function () { save(); });
+        }
+        if (saveTranslateBtn) {
+            saveTranslateBtn.addEventListener('click', function () { save({ translate: true }); });
+        }
 
-        skipBtn.addEventListener('click', function () {
-            if (isDirty()) {
-                if (!confirm('Teniu canvis sense desar. Voleu ometre igualment?')) return;
-            }
-            fetch('?action=skip-to-tagging', {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            }).then(function () {
-                window.location.href = '?action=tagging';
+        if (skipBtn) {
+            skipBtn.addEventListener('click', function () {
+                if (isDirty()) {
+                    if (!confirm('Teniu canvis sense desar. Voleu ometre igualment?')) return;
+                }
+                fetch('?action=skip-to-tagging', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                }).then(function () {
+                    window.location.href = '?action=tagging';
+                });
             });
-        });
+        }
 
         window.addEventListener('beforeunload', function (e) {
             if (isDirty()) {
