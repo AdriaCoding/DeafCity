@@ -35,8 +35,59 @@
         a.logout:hover { color: #999; }
         main {
             padding: 3rem 2rem;
-            color: #444;
+            max-width: 640px;
+        }
+        .idle p {
+            color: #666;
             font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        .job-card {
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+        .job-card h2 {
+            font-size: 1.15rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+        .job-meta {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        a.btn-primary {
+            display: inline-block;
+            padding: 0.65rem 1.25rem;
+            background: #e0e0e0;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        a.btn-primary:hover { background: #fff; }
+        button.btn-danger {
+            padding: 0.65rem 1.25rem;
+            background: transparent;
+            color: #a55;
+            border: 1px solid #533;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        button.btn-danger:hover {
+            color: #e88;
+            border-color: #844;
         }
     </style>
 </head>
@@ -46,7 +97,36 @@
         <a class="logout" href="?action=logout">Log out</a>
     </header>
     <main>
-        <!-- Studio features will be added here -->
+        <?php if (!$hasActiveJob): ?>
+            <div class="idle">
+                <p>No job in progress. Start intake to register a Vimeo video and upload a draft subtitle file.</p>
+                <div class="actions">
+                    <a class="btn-primary" href="?action=intake">New Job</a>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="job-card">
+                <h2><?= htmlspecialchars($job['video_title']) ?></h2>
+                <p class="job-meta">
+                    <strong>Edition:</strong> <?= htmlspecialchars($editionLabel) ?><br>
+                    <strong>Step:</strong> <?= htmlspecialchars($stepLabel) ?>
+                </p>
+                <div class="actions">
+                    <a class="btn-primary" href="<?= htmlspecialchars($resumeUrl) ?>">Resume</a>
+                    <form method="POST" action="?action=cancel" style="display:inline" id="cancel-form">
+                        <button type="submit" class="btn-danger">Cancel Job</button>
+                    </form>
+                </div>
+            </div>
+            <script>
+                document.getElementById('cancel-form').addEventListener('submit', function (e) {
+                    var ok = confirm(
+                        'Cancel this job?\n\nThis will delete the job folder and the uploaded draft subtitle file (draft.vtt). This cannot be undone.'
+                    );
+                    if (!ok) e.preventDefault();
+                });
+            </script>
+        <?php endif; ?>
     </main>
 </body>
 </html>

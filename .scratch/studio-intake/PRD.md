@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: shipped
 
 # PRD — Studio Slice 1: Intake
 
@@ -82,6 +82,7 @@ Handles at minimum:
 - Standard URL: `"https://vimeo.com/123456789"`
 - URL with trailing slug: `"https://vimeo.com/123456789/some-title"`
 - URL with query string
+- Vimeo manage URL: `"https://vimeo.com/manage/videos/639494119"`
 
 ### Module: VimeoClient
 
@@ -102,9 +103,9 @@ Manages the `data/jobs/current/` lifecycle:
 
 All paths are relative to the configured data directory, not hardcoded, so tests can inject a temp directory.
 
-### Intake controller (thin)
+### Intake handler (thin)
 
-Handles GET and POST to the intake form route. On POST: parse the Vimeo ID, call `VimeoClient::getVideo()`, validate the subtitle file MIME type (`text/vtt` or `.vtt` extension), call `JobManager::create()`. Renders errors inline on the form on failure. On success, redirects to the active-Job shell view.
+`IntakeHandler` plus routes in `studio/index.php` (`?action=intake`). On POST: parse the Vimeo ID, call `VimeoClient::getVideo()`, validate the subtitle file (`.vtt` extension and `WEBVTT` header via `WebVttValidator`), call `JobManager::create()`. Renders errors inline on the form on failure. On success, redirects to the active-Job shell view.
 
 ### Shell view
 
@@ -124,7 +125,7 @@ Server-side: check that the uploaded file has a `.vtt` extension and that its fi
 
 Good tests for this slice verify behaviour at module boundaries — inputs and outputs — without asserting on implementation details (file layout internals, private methods, HTTP client internals).
 
-**VimeoIdParser** — unit test all input variants: plain numeric ID, standard URL, URL with slug, URL with query string, empty string, non-Vimeo URL. This module is pure and has no dependencies; tests run instantly.
+**VimeoIdParser** — unit test all input variants: plain numeric ID, standard URL, URL with slug, URL with query string, manage URL, empty string, non-Vimeo URL. This module is pure and has no dependencies; tests run instantly.
 
 **StudioConfig** — unit test with a fixture `studio-config.json`. Assert that `getSignLanguages()` etc. return the expected array shape. Covers the JSON parsing and any missing-key handling.
 
@@ -146,7 +147,9 @@ Good tests for this slice verify behaviour at module boundaries — inputs and o
 
 ## Further Notes
 
-- `data/jobs/` and `data/jobs/current/` must be protected from direct web access. A `.htaccess` `Deny from all` rule should be added to `data/jobs/` as part of this slice.
+- `data/jobs/` is protected from direct web access via `.htaccess` (`Deny from all`) at `data/jobs/`.
+- **Resume** links to `?action=subtitle-editor`; Slice 2 will replace the placeholder view with the Subtitle Editor.
+- Studio loads `vimeo/vimeo-api` from `src/vendor/autoload.php` (shared with the main site); `studio/composer.json` declares the dependency for when Composer is available on the server.
 - PHP's `upload_max_filesize` (currently 2 MB) is not a concern for WebVTT files, which are typically a few kilobytes.
 - The `step` field in `job.json` is the hook later slices use to know where the Producer left off. Intake sets it to `subtitle-editor`; each subsequent slice updates it on completion.
 - `data/studio-config.json` should be seeded with all Editions and Sign languages known as of the Marseille 2026 planning document, so the Producer does not encounter an empty dropdown on first use.

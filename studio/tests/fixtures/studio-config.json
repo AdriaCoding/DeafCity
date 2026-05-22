@@ -1,0 +1,12 @@
+{
+  "sign_languages": [
+    { "id": "lse", "label": "LSE Spanish Sign Language" }
+  ],
+  "editions": [
+    { "id": "valencia-2020", "label": "Valencia 2020" }
+  ],
+  "subtitle_languages": [
+    { "id": "es", "label": "Spanish" },
+    { "id": "en", "label": "English" }
+  ]
+}
