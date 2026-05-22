@@ -62,6 +62,24 @@
             flex-direction: column;
             gap: 1rem;
         }
+        .player-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        #live-caption {
+            min-height: 3.5em;
+            padding: 0.65rem 0.75rem;
+            box-sizing: border-box;
+            color: #7ed87e;
+            font-size: clamp(1rem, 2.2vw, 1.45rem);
+            line-height: 1.45;
+            text-align: center;
+            white-space: pre-wrap;
+        }
+        #live-caption:empty::after {
+            content: '\00a0';
+        }
         #vimeo-player {
             width: 100%;
             background: #000;
@@ -246,7 +264,10 @@
 
     <div class="editor">
         <div class="player-pane">
-            <div id="vimeo-player"></div>
+            <div class="player-stack">
+                <div id="live-caption" aria-live="polite"></div>
+                <div id="vimeo-player"></div>
+            </div>
             <div class="save-area">
                 <div class="save-row">
                     <button id="save-btn" type="button">Desa i finalitza</button>

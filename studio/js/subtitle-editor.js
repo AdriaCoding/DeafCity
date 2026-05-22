@@ -9,7 +9,21 @@
     let activeCueIndex = -1;
 
     // ─── DOM refs (assigned after DOMContentLoaded) ───────────────────────
-    let cueList, saveBtn, saveError, skipBtn;
+    let cueList, saveBtn, saveError, skipBtn, liveCaption;
+
+    function findActiveCueIndex(currentTime) {
+        for (let i = 0; i < cues.length; i++) {
+            if (currentTime >= cues[i].start && currentTime < cues[i].end) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    function updateLiveCaption(cueIndex) {
+        if (!liveCaption) return;
+        liveCaption.textContent = cueIndex >= 0 ? cues[cueIndex].text : '';
+    }
 
     // ─── Vimeo player ────────────────────────────────────────────────────────
     function initPlayer(vimeoId) {
@@ -38,13 +52,9 @@
     }
 
     function highlightActiveCue(currentTime) {
-        let found = -1;
-        for (let i = 0; i < cues.length; i++) {
-            if (currentTime >= cues[i].start && currentTime < cues[i].end) {
-                found = i;
-                break;
-            }
-        }
+        const found = findActiveCueIndex(currentTime);
+        updateLiveCaption(found);
+
         if (found === activeCueIndex) return;
         activeCueIndex = found;
 
@@ -138,6 +148,11 @@
             cueList.appendChild(buildCueRow(cue, idx));
         });
         updateIntegrityUI();
+        if (player) {
+            player.getCurrentTime().then(highlightActiveCue).catch(function () {});
+        } else {
+            updateLiveCaption(-1);
+        }
     }
 
     function buildCueRow(cue, idx) {
@@ -177,6 +192,9 @@
         textarea.value = cue.text;
         textarea.addEventListener('input', function () {
             cues[idx].text = textarea.value;
+            if (idx === activeCueIndex) {
+                updateLiveCaption(idx);
+            }
         });
         row.appendChild(textarea);
 
@@ -286,6 +304,7 @@
         saveBtn = document.getElementById('save-btn');
         saveError = document.getElementById('save-error');
         skipBtn = document.getElementById('skip-btn');
+        liveCaption = document.getElementById('live-caption');
 
         initPlayer(window.__vimeoId);
         render();
