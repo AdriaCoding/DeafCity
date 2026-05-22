@@ -28,7 +28,7 @@
 <body>
     <header>
         <h1>Studio</h1>
-        <a href="./">← Inici de l'estudi</a>
+        <a href="./">← Tornar a Inici</a>
     </header>
     <main>
         <h2 style="color:#e0e0e0;font-weight:500;margin-bottom:0.75rem;"><?= htmlspecialchars($stepLabel) ?></h2>
