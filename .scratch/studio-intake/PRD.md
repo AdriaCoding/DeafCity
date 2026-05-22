@@ -66,7 +66,10 @@ The uploaded WebVTT file is saved alongside `job.json` with a fixed name (e.g. `
   "subtitle_languages": [
     { "id": "es", "label": "Spanish" },
     { "id": "en", "label": "English" },
-    { "id": "it", "label": "Italian" }
+    { "id": "it", "label": "Italian" },
+    { "id": "fr", "label": "French" },
+    { "id": "ca", "label": "Catalan" },
+    { "id": "pt", "label": "Portuguese" }
   ]
 }
 ```

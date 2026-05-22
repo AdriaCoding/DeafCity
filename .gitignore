@@ -74,3 +74,4 @@ Thumbs.db
 develop/cache
 realtime*
 data/
+**/__pycache__/**

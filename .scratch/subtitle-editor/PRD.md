@@ -8,7 +8,7 @@ After Intake, the Producer has a Job containing a `draft.vtt` caption file and a
 
 ## Solution
 
-A full-page Subtitle Editor at `?action=subtitle-editor` that shows a sticky Vimeo player on the left and a scrollable, fully editable cue list on the right. The Producer can edit cue text and timestamps, add and delete cues, and receive real-time feedback on caption file integrity errors. A single "Save & Done" action validates the cue list, writes the reviewed caption file back to `draft.vtt`, and advances the Job to the `translation` step. A "Skip to Tagging" action is available for Productions that do not require additional Subtitle languages.
+A full-page Subtitle Editor at `?action=subtitle-editor` that shows a sticky Vimeo player on the left and a scrollable, fully editable cue list on the right. The Producer can edit cue text and timestamps, add and delete cues, and receive real-time feedback on caption file integrity errors. A **Save & Done** action validates the cue list, writes the reviewed caption file back to `draft.vtt`, and advances the Job to the `translation` step. A **Skip to Tagging** action is available for Productions that do not require additional Subtitle languages. In Slice 4, "Save & Done" is renamed to "Save & Translate" and a "Save draft" button is added alongside it; the editor toolbar in this slice implements the Slice 2 variant only.
 
 The Subtitle Editor is built as a **universal caption file editor** — the same surface will be reused in Slice 3 (correcting auto-generated cues) and Slice 4 (reviewing translated cues), with no duplication of editor logic.
 
@@ -26,7 +26,7 @@ The Subtitle Editor is built as a **universal caption file editor** — the same
 10. As a Producer, I want to delete any cue from the list, so that I can remove erroneous or duplicate cues.
 11. As a Producer, I want overlapping cue time ranges to be flagged in real time as I edit, so that I can see and fix integrity errors before attempting to save.
 12. As a Producer, I want the "Save & Done" button to be blocked with a clear error message if the cue list contains integrity errors, so that I cannot accidentally save a corrupt caption file.
-13. As a Producer, I want "Save & Done" to succeed silently and redirect me to the next pipeline step when the cue list is clean, so that the transition to the next step is frictionless.
+13. As a Producer, I want "Save & Done" to succeed silently and redirect me to the next pipeline step when the cue list is clean, so that the transition to the next step is frictionless. (Slice 4 renames this button to "Save & Translate" and adds a "Save draft" button; see the Translation PRD.)
 14. As a Producer, I want my browser to warn me if I try to navigate away with unsaved changes, so that I do not accidentally lose edits.
 15. As a Producer, I want a "Skip to Tagging" action that bypasses the translation step, so that I can proceed directly to Tagging when no additional Subtitle languages are needed.
 16. As a Developer, I want PHP to be the authoritative integrity gate on every save, so that the integrity invariant holds even if client-side validation is bypassed.
@@ -88,11 +88,13 @@ Save: JS POSTs `application/json` body `{"cues": [...]}` to `?action=subtitle-ed
 
 ### Save semantics
 
-"Save & Done" is one action. It persists the reviewed caption file and advances the pipeline. There is no intermediate draft-save that does not advance the step. The file stays named `draft.vtt` throughout the Job; "Master subtitle" is a pipeline status, not a filename.
+"Save & Done" is one action in this slice. It persists the reviewed caption file and advances the pipeline. There is no intermediate draft-save in this slice. The file stays named `draft.vtt` throughout the Job; "Master subtitle" is a pipeline status, not a filename.
+
+Slice 4 (Translation) modifies this: "Save & Done" is renamed to "Save & Translate" and a "Save draft" button (saves `draft.vtt` without step advancement) is added alongside it. An agent building Slice 2 should implement the single-button variant; the Slice 4 agent will extend it.
 
 ### Step advancement
 
-On successful save, `job.step` is set to `translation`. A "Skip to Tagging" button on the editor page POSTs a separate action that sets `job.step` to `tagging` without saving cue edits (prompts the unsaved-changes guard if edits are pending).
+On successful save, `job.step` is set to `translation`. A "Skip to Tagging" button on the editor page POSTs a separate action that sets `job.step` to `tagging` without saving cue edits (prompts the unsaved-changes guard if edits are pending). This button persists in the toolbar through Slice 4 — it is the path for Productions that bypass translation entirely, distinct from the Translation Hub's "Proceed to Tagging" (which is reached after translation has run).
 
 ### Caption file integrity
 
