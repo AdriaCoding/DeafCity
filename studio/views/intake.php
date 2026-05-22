@@ -134,7 +134,7 @@
 
         <form method="POST" action="?action=intake" enctype="multipart/form-data">
             <div class="field">
-                <label for="vimeo_input">URL o ID de Vimeo</label>
+                <label for="vimeo_input">URL o ID de Vimeo (exemple: 639494119)</label>
                 <input type="text" id="vimeo_input" name="vimeo_input" value="<?= htmlspecialchars($values['vimeo_input'] ?? '') ?>" required>
                 <?php if (!empty($errors['vimeo_input'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['vimeo_input']) ?></p>
