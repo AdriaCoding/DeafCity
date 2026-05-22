@@ -1,3 +1,8 @@
+## Mandatory skill usage
+
+- After any planning session or grilling session (`/grill-me`, `/grill-me-qa`, `/grill-with-docs`, `/grill-with-docs-qa`), always publish the outcome with `/to-prd` (single feature) or `/to-issues` (multi-issue breakdown). Never end a planning or grilling session without one of these.
+- Whenever implementing a plan, PRD, or issue — use `/tdd`. No exceptions.
+
 ## Agent skills
 
 ### Issue tracker
