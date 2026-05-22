@@ -90,6 +90,7 @@ if ($action === 'intake') {
         'sign_language' => '',
         'edition' => '',
         'subtitle_language' => '',
+        'intake_mode' => 'upload',
     ];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -97,6 +98,18 @@ if ($action === 'intake') {
         $errors = $result['errors'];
         $values = $result['values'];
         if (!empty($result['created'])) {
+            if (($values['intake_mode'] ?? 'upload') === 'generate') {
+                $job = $jobManager->read();
+                $cmd = sprintf(
+                    'nohup %s --audio_file %s --vtt_output %s --status_file %s --language %s > /dev/null 2>&1 &',
+                    escapeshellarg(__DIR__ . '/scripts/run_transcribe.sh'),
+                    escapeshellarg($jobManager->interpreterAudioPath()),
+                    escapeshellarg($jobManager->draftVttPath()),
+                    escapeshellarg($jobManager->transcriptionStatusPath()),
+                    escapeshellarg($job['subtitle_language'] ?? 'es')
+                );
+                exec($cmd);
+            }
             header('Location: ' . $baseUrl);
             exit;
         }
@@ -145,6 +158,19 @@ if ($action === 'subtitle-editor' && $jobManager->exists()) {
     exit;
 }
 
+// Transcription status — GET (JSON)
+if ($action === 'transcription-status' && $jobManager->exists()) {
+    ini_set('display_errors', '0');
+    header('Content-Type: application/json');
+    $statusPath = $jobManager->transcriptionStatusPath();
+    if (!is_file($statusPath)) {
+        echo json_encode(['status' => 'pending']);
+    } else {
+        echo file_get_contents($statusPath);
+    }
+    exit;
+}
+
 // Skip to Tagging — POST
 if ($action === 'skip-to-tagging' && $_SERVER['REQUEST_METHOD'] === 'POST' && $jobManager->exists()) {
     $jobManager->update(['step' => 'tagging']);
@@ -169,6 +195,8 @@ $job = [];
 $editionLabel = '';
 $stepLabel = '';
 $resumeUrl = './';
+$isTranscribing = false;
+$transcriptionError = null;
 
 if ($hasActiveJob) {
     $job = $jobManager->read();
@@ -180,6 +208,17 @@ if ($hasActiveJob) {
         if ($edition['id'] === $job['edition']) {
             $editionLabel = $edition['label'];
             break;
+        }
+    }
+
+    if (($job['intake_mode'] ?? 'upload') === 'generate' && !$jobManager->hasDraftVtt()) {
+        $isTranscribing = true;
+        $statusPath = $jobManager->transcriptionStatusPath();
+        if (is_file($statusPath)) {
+            $statusData = json_decode((string) file_get_contents($statusPath), true);
+            if (($statusData['status'] ?? '') === 'error') {
+                $transcriptionError = $statusData['message'] ?? 'Error en la generació de subtítols';
+            }
         }
     }
 }

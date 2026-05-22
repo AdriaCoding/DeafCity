@@ -37,6 +37,49 @@ class JobManager
         }
     }
 
+    public function createWithAudio(array $fields, UploadedFile $audio): void
+    {
+        if ($this->exists()) {
+            throw new \RuntimeException('Ja hi ha una feina en curs.');
+        }
+
+        if (!mkdir($this->currentDir, 0775, true) && !is_dir($this->currentDir)) {
+            throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
+        }
+
+        $ext = strtolower(pathinfo($audio->originalName, PATHINFO_EXTENSION));
+        $filename = $ext !== '' ? "interpreter_audio.$ext" : 'interpreter_audio';
+        $fields['interpreter_audio'] = $filename;
+
+        $this->writeJson($fields);
+
+        $destination = $this->currentDir . '/' . $filename;
+        if (!move_uploaded_file($audio->tmpPath, $destination)) {
+            if (!rename($audio->tmpPath, $destination)) {
+                $this->cancel();
+                throw new \RuntimeException('No s\'ha pogut desar el fitxer d\'àudio pujat.');
+            }
+        }
+
+        file_put_contents($this->transcriptionStatusPath(), json_encode(['status' => 'pending']));
+    }
+
+    public function hasDraftVtt(): bool
+    {
+        return is_file($this->draftVttPath());
+    }
+
+    public function transcriptionStatusPath(): string
+    {
+        return $this->currentDir . '/transcription.json';
+    }
+
+    public function interpreterAudioPath(): string
+    {
+        $job = $this->read();
+        return $this->currentDir . '/' . ($job['interpreter_audio'] ?? 'interpreter_audio');
+    }
+
     public function read(): array
     {
         $path = $this->jobJsonPath();

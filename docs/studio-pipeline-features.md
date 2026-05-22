@@ -13,8 +13,8 @@ Vertical slices to build after the auth gate, in order.
 | # | Feature | Status | Depends on |
 |---|---------|--------|------------|
 | 1 | Intake | Shipped | Auth gate |
-| 2 | Subtitle Editor | Planned | Intake |
-| 3 | Subtitle Generation | Planned | Intake |
+| 2 | Subtitle Editor | Shipped | Intake |
+| 3 | Subtitle Generation | Shipped | Intake |
 | 4 | Translation | Planned | Subtitle Editor (Master subtitle) |
 | 5 | Tagging | Planned | — (any time before Publication) |
 | 6 | Publication | Planned | Subtitle Editor + Tagging |
@@ -50,9 +50,11 @@ Vanilla JS cue-list alongside a Vimeo player. Producer edits cue text and timest
 
 ## Slice 3 — Subtitle Generation
 
-Alternate intake path: Producer uploads Interpreter audio instead of a subtitle file. The Studio calls the Blind Wiki Whisper pipeline via PHP `proc_open` to auto-generate subtitle cues. Output lands in the Job folder as a draft; Producer then reviews and corrects it in the Subtitle Editor.
+**Shipped.** Alternate intake path: Producer uploads Interpreter audio instead of a subtitle file. The intake form has a radio toggle ("Upload WebVTT" / "Generate from interpreter audio"). On the generate path, PHP spawns `studio/scripts/run_transcribe.sh` as a background process (nohup) which sources the Blind Wiki venv and calls `studio/scripts/transcribe.py`.
 
-**TBD before building:** verify the PHP → Python subprocess path is viable on this server. Gemini API is the fallback if Blind Wiki integration is too costly.
+The Python script runs `openai/whisper-large-v3-turbo` via HuggingFace transformers (`return_timestamps=True`) using models cached at `/srv/www/blind.wiki/public_html/Tagger/cache`. It passes `subtitle_language` as the Whisper language hint, converts timestamped chunks to WebVTT, and writes `draft.vtt` into the Job folder. Status is tracked in `transcription.json` (`pending → running → done|error`).
+
+While transcription runs, the shell shows a full-screen loading state that polls `?action=transcription-status` every 3 seconds and auto-redirects to the Subtitle Editor when done. Any format ffmpeg cannot decode shows "El format de l'àudio no es reconeix".
 
 ## Slice 4 — Translation
 
