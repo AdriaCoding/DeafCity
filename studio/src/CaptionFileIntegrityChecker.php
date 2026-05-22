@@ -15,10 +15,10 @@ class CaptionFileIntegrityChecker
         foreach ($cues as $i => $cue) {
             $n = $i + 1;
             if ($cue['start'] >= $cue['end']) {
-                $errors[] = "Cue $n: start time must be less than end time.";
+                $errors[] = "Subtítol $n: l'hora d'inici ha de ser anterior a l'hora de fi.";
             }
             if ($cue['start'] < 0.0) {
-                $errors[] = "Cue $n: start time must not be negative.";
+                $errors[] = "Subtítol $n: l'hora d'inici no pot ser negativa.";
             }
         }
 
@@ -31,7 +31,7 @@ class CaptionFileIntegrityChecker
                 if ($a['end'] > $b['start']) {
                     $ni = $i + 1;
                     $nj = $j + 1;
-                    $errors[] = "Cues $ni and $nj overlap.";
+                    $errors[] = "Els subtítols $ni i $nj se superposen.";
                 }
             }
         }

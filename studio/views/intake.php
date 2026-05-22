@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Job — Studio</title>
+    <title>Nova feina — Studio</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -104,11 +104,11 @@
 <body>
     <header>
         <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Log out</a>
+        <a class="logout" href="?action=logout">Tanca la sessió</a>
     </header>
     <main>
-        <h2>New Job</h2>
-        <p class="lead">Paste the Vimeo URL or ID for a video already on your account, choose metadata, and upload the draft WebVTT subtitle file.</p>
+        <h2>Nova feina</h2>
+        <p class="lead">Enganxeu la URL o l'ID de Vimeo d'un vídeo que ja sigui al vostre compte, trieu les metadades i pugeu el fitxer de subtítols WebVTT esborrany.</p>
 
         <?php if (!empty($errors['_form'])): ?>
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
@@ -116,7 +116,7 @@
 
         <form method="POST" action="?action=intake" enctype="multipart/form-data">
             <div class="field">
-                <label for="vimeo_input">Vimeo URL or ID</label>
+                <label for="vimeo_input">URL o ID de Vimeo</label>
                 <input type="text" id="vimeo_input" name="vimeo_input" value="<?= htmlspecialchars($values['vimeo_input'] ?? '') ?>" required>
                 <?php if (!empty($errors['vimeo_input'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['vimeo_input']) ?></p>
@@ -124,9 +124,9 @@
             </div>
 
             <div class="field">
-                <label for="sign_language">Sign language</label>
+                <label for="sign_language">Llengua de signes</label>
                 <select id="sign_language" name="sign_language" required>
-                    <option value="">Select…</option>
+                    <option value="">Seleccioneu…</option>
                     <?php foreach ($signLanguages as $option): ?>
                         <option value="<?= htmlspecialchars($option['id']) ?>" <?= ($values['sign_language'] ?? '') === $option['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($option['label']) ?>
@@ -139,9 +139,9 @@
             </div>
 
             <div class="field">
-                <label for="edition">Edition</label>
+                <label for="edition">Edició</label>
                 <select id="edition" name="edition" required>
-                    <option value="">Select…</option>
+                    <option value="">Seleccioneu…</option>
                     <?php foreach ($editions as $option): ?>
                         <option value="<?= htmlspecialchars($option['id']) ?>" <?= ($values['edition'] ?? '') === $option['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($option['label']) ?>
@@ -154,9 +154,9 @@
             </div>
 
             <div class="field">
-                <label for="subtitle_language">Subtitle language</label>
+                <label for="subtitle_language">Llengua dels subtítols</label>
                 <select id="subtitle_language" name="subtitle_language" required>
-                    <option value="">Select…</option>
+                    <option value="">Seleccioneu…</option>
                     <?php foreach ($subtitleLanguages as $option): ?>
                         <option value="<?= htmlspecialchars($option['id']) ?>" <?= ($values['subtitle_language'] ?? '') === $option['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($option['label']) ?>
@@ -169,16 +169,16 @@
             </div>
 
             <div class="field">
-                <label for="subtitle_file">Subtitle file (WebVTT)</label>
+                <label for="subtitle_file">Fitxer de subtítols (WebVTT)</label>
                 <input type="file" id="subtitle_file" name="subtitle_file" accept=".vtt,text/vtt" required>
                 <?php if (!empty($errors['subtitle_file'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['subtitle_file']) ?></p>
                 <?php endif; ?>
             </div>
 
-            <button type="submit">Create Job</button>
+            <button type="submit">Crea la feina</button>
         </form>
-        <p style="margin-top: 1.5rem;"><a class="back" href="./">← Back to Studio</a></p>
+        <p style="margin-top: 1.5rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
     </main>
 </body>
 </html>

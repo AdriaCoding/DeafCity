@@ -67,14 +67,14 @@
         for (let i = 0; i < cues.length; i++) {
             const c = cues[i];
             const n = i + 1;
-            if (c.start < 0) errors.push('Cue ' + n + ': start time must not be negative.');
-            if (c.start >= c.end) errors.push('Cue ' + n + ': start must be less than end.');
+            if (c.start < 0) errors.push('Subtítol ' + n + ': l\'hora d\'inici no pot ser negativa.');
+            if (c.start >= c.end) errors.push('Subtítol ' + n + ': l\'hora d\'inici ha de ser anterior a l\'hora de fi.');
         }
 
         for (let i = 0; i < cues.length - 1; i++) {
             for (let j = i + 1; j < cues.length; j++) {
                 if (cues[i].end > cues[j].start) {
-                    errors.push('Cues ' + (i + 1) + ' and ' + (j + 1) + ' overlap.');
+                    errors.push('Els subtítols ' + (i + 1) + ' i ' + (j + 1) + ' se superposen.');
                 }
             }
         }
@@ -87,7 +87,7 @@
         const hasErrors = errors.length > 0;
 
         saveBtn.disabled = hasErrors;
-        saveBtn.title = hasErrors ? 'Fix integrity errors before saving.' : '';
+        saveBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de desar.' : '';
 
         saveError.textContent = errors.join('\n');
         saveError.hidden = !hasErrors;
@@ -155,7 +155,7 @@
         const seekBtn = document.createElement('button');
         seekBtn.className = 'cue-seek';
         seekBtn.type = 'button';
-        seekBtn.title = 'Seek to cue';
+        seekBtn.title = 'Anar al subtítol';
         seekBtn.textContent = '▶';
         seekBtn.addEventListener('click', function () {
             if (player) player.setCurrentTime(cue.start);
@@ -184,7 +184,7 @@
         const delBtn = document.createElement('button');
         delBtn.className = 'cue-delete';
         delBtn.type = 'button';
-        delBtn.title = 'Delete cue';
+        delBtn.title = 'Suprimeix el subtítol';
         delBtn.textContent = '✕';
         delBtn.addEventListener('click', function () {
             cues.splice(idx, 1);
@@ -196,8 +196,8 @@
         const addBtn = document.createElement('button');
         addBtn.className = 'cue-add';
         addBtn.type = 'button';
-        addBtn.title = 'Insert cue after';
-        addBtn.textContent = '+ cue';
+        addBtn.title = 'Insereix un subtítol després';
+        addBtn.textContent = '+ subtítol';
         addBtn.addEventListener('click', function () {
             const newStart = cue.end;
             const newEnd = cue.end + 2.0;
@@ -230,7 +230,7 @@
         const setBtn = document.createElement('button');
         setBtn.type = 'button';
         setBtn.className = 'cue-settime';
-        setBtn.title = 'Set ' + field + ' from playhead';
+        setBtn.title = 'Estableix ' + (field === 'start' ? 'l\'inici' : 'el final') + ' des del cursor de reproducció';
         setBtn.textContent = '⏺';
         setBtn.addEventListener('click', function () {
             if (!player) return;
@@ -248,7 +248,7 @@
     // ─── Save ─────────────────────────────────────────────────────────────────
     function save() {
         saveBtn.disabled = true;
-        saveBtn.textContent = 'Saving…';
+        saveBtn.textContent = 'Desant…';
 
         fetch(window.location.href, {
             method: 'POST',
@@ -261,17 +261,17 @@
                     savedSnapshot = JSON.stringify(cues);
                     window.location.href = '?action=translation';
                 } else {
-                    saveError.textContent = (data.errors || ['Unknown error.']).join('\n');
+                    saveError.textContent = (data.errors || ['Error desconegut.']).join('\n');
                     saveError.hidden = false;
                     saveBtn.disabled = false;
-                    saveBtn.textContent = 'Save & Done';
+                    saveBtn.textContent = 'Desa i finalitza';
                 }
             })
             .catch(function () {
-                saveError.textContent = 'Network error. Please try again.';
+                saveError.textContent = 'Error de xarxa. Torneu-ho a provar.';
                 saveError.hidden = false;
                 saveBtn.disabled = false;
-                saveBtn.textContent = 'Save & Done';
+                saveBtn.textContent = 'Desa i finalitza';
             });
     }
 
@@ -294,7 +294,7 @@
 
         skipBtn.addEventListener('click', function () {
             if (isDirty()) {
-                if (!confirm('You have unsaved changes. Skip anyway?')) return;
+                if (!confirm('Teniu canvis sense desar. Voleu ometre igualment?')) return;
             }
             fetch('?action=skip-to-tagging', {
                 method: 'POST',

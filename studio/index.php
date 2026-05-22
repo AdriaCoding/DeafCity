@@ -122,7 +122,7 @@ if ($action === 'subtitle-editor' && $_SERVER['REQUEST_METHOD'] === 'POST' && $j
         $body = (string) file_get_contents('php://input');
         $result = $handler->handleRawJson($body);
     } catch (\Throwable $e) {
-        $result = ['ok' => false, 'errors' => ['Server error: ' . $e->getMessage()]];
+        $result = ['ok' => false, 'errors' => ['Error del servidor: ' . $e->getMessage()]];
     }
     ob_end_clean();
     http_response_code($result['ok'] ? 200 : 422);

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subtitle Editor — Studio</title>
+    <title>Editor de subtítols — Studio</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -237,10 +237,10 @@
 </head>
 <body>
     <header>
-        <h1>Subtitle Editor</h1>
+        <h1>Editor de subtítols</h1>
         <div class="header-actions">
-            <a class="nav-link" href="./">← Studio</a>
-            <a class="nav-link" href="?action=logout">Log out</a>
+            <a class="nav-link" href="./">← Estudi</a>
+            <a class="nav-link" href="?action=logout">Tanca la sessió</a>
         </div>
     </header>
 
@@ -249,15 +249,15 @@
             <div id="vimeo-player"></div>
             <div class="save-area">
                 <div class="save-row">
-                    <button id="save-btn" type="button">Save &amp; Done</button>
-                    <button id="skip-btn" type="button">Skip to Tagging</button>
+                    <button id="save-btn" type="button">Desa i finalitza</button>
+                    <button id="skip-btn" type="button">Omet i ves a l'etiquetatge</button>
                 </div>
                 <pre id="save-error" hidden></pre>
             </div>
         </div>
 
         <div class="cue-pane">
-            <p class="cue-pane-header">Cues — <?= count($cues) ?></p>
+            <p class="cue-pane-header">Subtítols — <?= count($cues) ?></p>
             <div id="cue-list"></div>
         </div>
     </div>

@@ -44,7 +44,7 @@ class SubtitleEditorHandler
     {
         $decoded = json_decode($body, true);
         if (!is_array($decoded) || !isset($decoded['cues']) || !is_array($decoded['cues'])) {
-            return ['ok' => false, 'errors' => ['Invalid request body.']];
+            return ['ok' => false, 'errors' => ['Cos de la sol·licitud no vàlid.']];
         }
 
         return $this->handle($decoded['cues']);

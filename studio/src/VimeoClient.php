@@ -22,20 +22,20 @@ class VimeoClient
         $status = $response['status'] ?? 0;
         if ($status === 404) {
             throw new VimeoNotFoundException(
-                'That Vimeo ID was not found on your account. Check the URL or ID and try again.'
+                'Aquest ID de Vimeo no s\'ha trobat al vostre compte. Comproveu la URL o l\'ID i torneu-ho a provar.'
             );
         }
 
         if ($status < 200 || $status >= 300) {
             throw new VimeoNotFoundException(
-                'Could not fetch video details from Vimeo. Check the ID and try again.'
+                'No s\'han pogut obtenir les dades del vídeo de Vimeo. Comproveu l\'ID i torneu-ho a provar.'
             );
         }
 
         $title = $response['body']['name'] ?? null;
         if (!is_string($title) || $title === '') {
             throw new VimeoNotFoundException(
-                'Vimeo returned a video without a title. Check the ID and try again.'
+                'Vimeo ha retornat un vídeo sense títol. Comproveu l\'ID i torneu-ho a provar.'
             );
         }
 

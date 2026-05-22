@@ -19,11 +19,11 @@ class JobManager
     public function create(array $fields, UploadedFile $vtt): void
     {
         if ($this->exists()) {
-            throw new \RuntimeException('A job is already in progress.');
+            throw new \RuntimeException('Ja hi ha una feina en curs.');
         }
 
         if (!mkdir($this->currentDir, 0775, true) && !is_dir($this->currentDir)) {
-            throw new \RuntimeException('Could not create job directory.');
+            throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
         }
 
         $this->writeJson($fields);
@@ -32,7 +32,7 @@ class JobManager
         if (!move_uploaded_file($vtt->tmpPath, $destination)) {
             if (!rename($vtt->tmpPath, $destination)) {
                 $this->cancel();
-                throw new \RuntimeException('Could not save the uploaded subtitle file.');
+                throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols pujat.');
             }
         }
     }
@@ -41,13 +41,13 @@ class JobManager
     {
         $path = $this->jobJsonPath();
         if (!is_file($path)) {
-            throw new \RuntimeException('Job metadata is missing.');
+            throw new \RuntimeException('Falten les metadades de la feina.');
         }
 
         $json = file_get_contents($path);
         $data = json_decode($json ?: '', true);
         if (!is_array($data)) {
-            throw new \RuntimeException('Job metadata is invalid.');
+            throw new \RuntimeException('Les metadades de la feina no són vàlides.');
         }
 
         return $data;
@@ -77,7 +77,7 @@ class JobManager
     {
         $encoded = json_encode($fields, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         if ($encoded === false) {
-            throw new \RuntimeException('Could not encode job metadata.');
+            throw new \RuntimeException('No s\'han pogut codificar les metadades de la feina.');
         }
 
         file_put_contents($this->jobJsonPath(), $encoded . "\n");

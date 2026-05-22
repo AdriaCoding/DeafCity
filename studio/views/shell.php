@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,34 +94,34 @@
 <body>
     <header>
         <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Log out</a>
+        <a class="logout" href="?action=logout">Tanca la sessió</a>
     </header>
     <main>
         <?php if (!$hasActiveJob): ?>
             <div class="idle">
-                <p>No job in progress. Start intake to register a Vimeo video and upload a draft subtitle file.</p>
+                <p>No hi ha cap feina en curs. Inicieu la recepció per registrar un vídeo de Vimeo i pujar un fitxer de subtítols esborrany.</p>
                 <div class="actions">
-                    <a class="btn-primary" href="?action=intake">New Job</a>
+                    <a class="btn-primary" href="?action=intake">Nova feina</a>
                 </div>
             </div>
         <?php else: ?>
             <div class="job-card">
                 <h2><?= htmlspecialchars($job['video_title']) ?></h2>
                 <p class="job-meta">
-                    <strong>Edition:</strong> <?= htmlspecialchars($editionLabel) ?><br>
-                    <strong>Step:</strong> <?= htmlspecialchars($stepLabel) ?>
+                    <strong>Edició:</strong> <?= htmlspecialchars($editionLabel) ?><br>
+                    <strong>Pas:</strong> <?= htmlspecialchars($stepLabel) ?>
                 </p>
                 <div class="actions">
-                    <a class="btn-primary" href="<?= htmlspecialchars($resumeUrl) ?>">Resume</a>
+                    <a class="btn-primary" href="<?= htmlspecialchars($resumeUrl) ?>">Continua</a>
                     <form method="POST" action="?action=cancel" style="display:inline" id="cancel-form">
-                        <button type="submit" class="btn-danger">Cancel Job</button>
+                        <button type="submit" class="btn-danger">Cancel·la la feina</button>
                     </form>
                 </div>
             </div>
             <script>
                 document.getElementById('cancel-form').addEventListener('submit', function (e) {
                     var ok = confirm(
-                        'Cancel this job?\n\nThis will delete the job folder and the uploaded draft subtitle file (draft.vtt). This cannot be undone.'
+                        'Voleu cancel·lar aquesta feina?\n\nAixò suprimirà la carpeta de la feina i el fitxer de subtítols esborrany pujat (draft.vtt). Aquesta acció no es pot desfer.'
                     );
                     if (!ok) e.preventDefault();
                 });

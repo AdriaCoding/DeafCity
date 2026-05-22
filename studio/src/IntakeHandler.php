@@ -27,7 +27,7 @@ class IntakeHandler
         $errors = [];
 
         if ($this->jobManager->exists()) {
-            $errors['_form'] = 'A job is already in progress. Cancel it before starting a new one.';
+            $errors['_form'] = 'Ja hi ha una feina en curs. Cancel·leu-la abans d\'en començar una de nova.';
             return ['errors' => $errors, 'values' => $values];
         }
 
@@ -39,20 +39,20 @@ class IntakeHandler
         }
 
         if (!$this->isValidChoice($values['sign_language'], $this->studioConfig->getSignLanguages())) {
-            $errors['sign_language'] = 'Select a sign language.';
+            $errors['sign_language'] = 'Seleccioneu una llengua de signes.';
         }
         if (!$this->isValidChoice($values['edition'], $this->studioConfig->getEditions())) {
-            $errors['edition'] = 'Select an edition.';
+            $errors['edition'] = 'Seleccioneu una edició.';
         }
         if (!$this->isValidChoice($values['subtitle_language'], $this->studioConfig->getSubtitleLanguages())) {
-            $errors['subtitle_language'] = 'Select a subtitle language.';
+            $errors['subtitle_language'] = 'Seleccioneu una llengua de subtítols.';
         }
 
         $upload = $files['subtitle_file'] ?? null;
         if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            $errors['subtitle_file'] = 'Upload a WebVTT subtitle file.';
+            $errors['subtitle_file'] = 'Pugeu un fitxer de subtítols WebVTT.';
         } elseif (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-            $errors['subtitle_file'] = 'The subtitle file could not be uploaded.';
+            $errors['subtitle_file'] = 'No s\'ha pogut pujar el fitxer de subtítols.';
         }
 
         if ($errors !== []) {

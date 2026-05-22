@@ -9,7 +9,7 @@ class VimeoIdParser
         $input = trim($input);
 
         if ($input === '') {
-            throw new InvalidVimeoIdException('Vimeo URL or ID is required.');
+            throw new InvalidVimeoIdException('Cal una URL o un ID de Vimeo.');
         }
 
         if (preg_match('/^\d+$/', $input)) {
@@ -20,6 +20,6 @@ class VimeoIdParser
             return $matches[1];
         }
 
-        throw new InvalidVimeoIdException('Could not extract a Vimeo ID from that input.');
+        throw new InvalidVimeoIdException('No s\'ha pogut extreure un ID de Vimeo d\'aquesta entrada.');
     }
 }

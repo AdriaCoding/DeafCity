@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,11 +28,11 @@
 <body>
     <header>
         <h1>Studio</h1>
-        <a href="./">← Studio home</a>
+        <a href="./">← Inici de l'estudi</a>
     </header>
     <main>
         <h2 style="color:#e0e0e0;font-weight:500;margin-bottom:0.75rem;"><?= htmlspecialchars($stepLabel) ?></h2>
-        <p>This pipeline step is not built yet. Your job and draft subtitle file are saved — return from the Studio home when this slice ships.</p>
+        <p>Aquest pas del procés encara no està implementat. La feina i el fitxer de subtítols esborrany estan desats — torneu a l'inici de l'estudi quan aquesta funcionalitat estigui disponible.</p>
     </main>
 </body>
 </html>
