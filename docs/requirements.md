@@ -115,4 +115,3 @@ Antoni's Vimeo account is on a **paid plan**, which includes API upload access. 
 ## Open questions
 
 - Blind Wiki tooling integration — referenced in Studio spec, details TBD.
-- Exact Studio subroute path on deaf.city — TBD.

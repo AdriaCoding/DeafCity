@@ -6,9 +6,10 @@
 .env.*
 !.env.example
 
-# Composer dependencies (install from src/composer.json + composer.lock)
+# Composer dependencies (install from composer.json + composer.lock)
 /src/vendor/
 /src/vendor_fromphp7/
+/studio/vendor/
 
 # Generated / cached runtime data
 /data/cache/
