@@ -34,10 +34,10 @@ Add a Translation step to the Studio pipeline, immediately after the Subtitle Ed
 ## Implementation Decisions
 
 ### Translation engine
-T2TT (`facebook/nllb-200-distilled-600m`) running in the Blind Wiki Python venv. All six configured Subtitle languages (es, en, it, fr, ca, pt) are supported by the model's NLLB language code map. No external API or API key required.
+Gemini 2.0 Flash via Google AI REST API (`gemini-2.0-flash:generateContent`). The API key is stored as `GEMINI_API_KEY` in `config/config.php` (gitignored). All six configured Subtitle languages (es, en, it, fr, ca, pt) are well-supported by the model. No local model or venv required. See ADR-0005 for the decision record (replaces the original local NLLB/T2TT engine, which was OOM-killed on the production host).
 
-### Translation granularity — whole-block with separator tokens
-The translation script concatenates all cue texts from `draft.vtt` using ` ||| ` as a sentinel separator, passes the whole joined string to T2TT's `translate_text`, then splits the result on ` ||| ` to recover per-cue translated text. Timestamps are not translated — they are carried through unchanged from the Master. If the translated output contains a different number of ` ||| ` segments than the original (model garbled a separator), the affected range falls back to cue-by-cue translation as a recovery strategy.
+### Translation granularity — structured JSON, one call per language
+The translation script sends all cue texts for a language pair as a numbered JSON array in a single Gemini call, with a `responseSchema` constraining the response to `{"translations": [...]}`. Timestamps are not translated — they are carried through unchanged from the Master. If the response array length does not match the input cue count, the script falls back to one Gemini call per cue as a recovery strategy. A length-aware system instruction asks Gemini to keep each translated cue within ~1.15× the source character count and preserve speaker tags verbatim.
 
 ### Target language selection — automatic, all remaining languages
 The translation script derives the set of target Subtitle languages by taking the full list from `studio-config.json` and removing the Master's `subtitle_language`. The Producer makes no language selection; all remaining languages are always translated.
@@ -50,9 +50,9 @@ A `translation.json` file in the Job folder tracks translation state. Its schema
 
 ```json
 {
-  "status": "pending | running | done | error",
+  "status": "pending | running | done",
   "languages": {
-    "en": { "status": "done | error", "message": "" },
+    "en": { "status": "pending | running | done | error | reviewed", "message": "" },
     "fr": { "status": "error", "message": "Translation error: …" },
     "it": { "status": "done" }
   }
@@ -79,7 +79,7 @@ The Translation Hub is rendered at `?action=translation` when `translation.json`
 `POST ?action=translation-retry` with a `lang` body field re-runs `run_translate.sh` for a single language. The `translation.json` entry for that language is reset to `pending`, and the overall top-level status is reset to `running`. The Hub poll loop resumes automatically.
 
 ### Background process pattern
-The translation script is spawned via `nohup` exactly as transcription is (`run_transcribe.sh` → `transcribe.py`). A new `run_translate.sh` wrapper sources the Blind Wiki venv and delegates to `translate.py`. Shell exit-code fallback writes an error status to `translation.json` if Python crashes before doing so itself.
+The translation script is spawned via `nohup` exactly as transcription is (`run_transcribe.sh` → `transcribe.py`). `run_translate.sh` execs `php studio/scripts/translate.php` with the same argv flags — no Python venv required. `GEMINI_API_KEY` is injected into the subprocess environment by the PHP spawner. Shell exit-code fallback writes an error status to `translation.json` if the PHP script exits non-zero before doing so itself.
 
 ### New PHP class: `TranslationJobState`
 Encapsulates all reads and writes to `translation.json`. Does not touch `job.json`. Interface (approximate):
