@@ -59,6 +59,11 @@ class JobManager
         $this->writeJson(array_merge($job, $fields));
     }
 
+    public function draftVttPath(): string
+    {
+        return $this->currentDir . '/draft.vtt';
+    }
+
     public function cancel(): void
     {
         if (!$this->exists()) {

@@ -69,8 +69,16 @@ The Studio action that makes a Video live — uploading the Video and all review
 _Avoid_: Publish (as a noun), release, deploy
 
 **Master subtitle**:
-The first validated Subtitle in one Subtitle language for a Video. All other Subtitle languages for that Video are translated from the Master subtitle.
+The first validated Subtitle in one Subtitle language for a Video. All other Subtitle languages for that Video are translated from the Master subtitle. A caption file is considered validated when it has passed through the Subtitle Editor and been saved without integrity errors.
 _Avoid_: Source subtitle, original subtitle, primary track
+
+**Subtitle Editor**:
+The universal caption file editor in the Studio. Used in every pipeline slice that requires a Producer to review or author cues: reviewing an uploaded caption file (Slice 2), correcting auto-generated cues (Slice 3), and reviewing translations (Slice 4). Presents a cue list alongside a Vimeo player; supports full CRUD on cues and validates caption file integrity before saving.
+_Avoid_: Caption editor, VTT editor, subtitle review screen
+
+**Caption file integrity**:
+A set of structural rules a caption file must satisfy to be saved from the Subtitle Editor: valid WebVTT header, well-formed cue timestamps, and no overlapping cue time ranges. A file that fails any rule cannot be saved until the Producer resolves the errors.
+_Avoid_: Format validation, VTT validation (as a noun phrase — say "integrity check")
 
 **Job**:
 A single in-progress pipeline run in the Studio — from Intake through to Publication for one Video. A Job persists on the server filesystem as a folder holding the uploaded files and draft caption files, so a Producer can resume it across sessions. Only one Job is processed at a time. A Job is destroyed once Publication completes.

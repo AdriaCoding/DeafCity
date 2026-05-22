@@ -9,12 +9,15 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Studio\AuthGuard;
+use Studio\CaptionFileIntegrityChecker;
 use Studio\IntakeHandler;
 use Studio\JobManager;
 use Studio\PipelineSteps;
 use Studio\StudioConfig;
+use Studio\SubtitleEditorHandler;
 use Studio\VimeoClient;
 use Studio\VimeoIdParser;
+use Studio\VttParser;
 use Studio\WebVttValidator;
 
 session_start();
@@ -99,6 +102,50 @@ if ($action === 'intake') {
     $editions = $studioConfig->getEditions();
     $subtitleLanguages = $studioConfig->getSubtitleLanguages();
     require __DIR__ . '/views/intake.php';
+    exit;
+}
+
+// Subtitle editor — POST (JSON save)
+if ($action === 'subtitle-editor' && $_SERVER['REQUEST_METHOD'] === 'POST' && $jobManager->exists()) {
+    // Set JSON content-type and suppress error output immediately so that any PHP
+    // warning/notice (e.g. from display_errors On in the root .htaccess) does not
+    // contaminate the JSON response body and break the client-side fetch.
+    ini_set('display_errors', '0');
+    header('Content-Type: application/json');
+    ob_start();
+    try {
+        $handler = new SubtitleEditorHandler(
+            new VttParser(),
+            new CaptionFileIntegrityChecker(),
+            $jobManager,
+        );
+        $body = (string) file_get_contents('php://input');
+        $result = $handler->handleRawJson($body);
+    } catch (\Throwable $e) {
+        $result = ['ok' => false, 'errors' => ['Server error: ' . $e->getMessage()]];
+    }
+    ob_end_clean();
+    http_response_code($result['ok'] ? 200 : 422);
+    echo json_encode($result);
+    exit;
+}
+
+// Subtitle editor — GET
+if ($action === 'subtitle-editor' && $jobManager->exists()) {
+    $job = $jobManager->read();
+    $vttParser = new VttParser();
+    $parsed = $vttParser->parse($jobManager->draftVttPath());
+    $cues = $parsed['cues'];
+    $vimeoId = $job['vimeo_id'] ?? '';
+    require __DIR__ . '/views/subtitle-editor.php';
+    exit;
+}
+
+// Skip to Tagging — POST
+if ($action === 'skip-to-tagging' && $_SERVER['REQUEST_METHOD'] === 'POST' && $jobManager->exists()) {
+    $jobManager->update(['step' => 'tagging']);
+    header('Content-Type: application/json');
+    echo json_encode(['ok' => true]);
     exit;
 }
 

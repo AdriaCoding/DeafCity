@@ -13,6 +13,7 @@
 
 # Generated / cached runtime data
 /data/cache/
+studio/.phpunit.result.cache
 
 # Large media (not practical for normal Git history; deploy or use LFS separately)
 /videos/

@@ -6,6 +6,8 @@ class PipelineSteps
 {
     private const LABELS = [
         'subtitle-editor' => 'Subtitle Editor',
+        'translation'     => 'Translation',
+        'tagging'         => 'Tagging',
     ];
 
     public static function label(string $step): string
