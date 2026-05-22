@@ -1,7 +1,9 @@
 # Server-hosted caption files for subtitle playback
 
-The Website plays Videos via the Vimeo player (CDN, encoding, privacy controls) but renders Subtitles from caption files stored on our server, synced by the Preview site player model — not from Vimeo native text tracks.
+The Website plays Videos via the Vimeo player (CDN, encoding, privacy controls) but renders Subtitles from caption files stored on our server, synced by the Preview site player model — not from Vimeo native text tracks at playback time.
 
-Vimeo text tracks are harder to manage than server-side WebVTT during Studio iteration: Producers edit Subtitles locally, Publication saves `.vtt` files under `data/captions/`, and the player fetches them via a static endpoint. The legacy homepage still uses `?texttrack=` today; the modern Website (starting from `/preview/`) will replace that approach.
+During Studio work, Subtitles live only in the Job folder until Publication. **Publication** then (1) uploads the Video and all reviewed WebVTT files to Vimeo as text tracks, and (2) saves the same files under `data/captions/` for the Catalog and Preview player. The server copy is what the modern player fetches; Vimeo tracks are the publish-time mirror for embeds and legacy `?texttrack=` compatibility. Re-Publish after subtitle edits must update both copies.
 
-**Considered options:** Vimeo text tracks only (current production home); server VTT only (chosen); both with Vimeo as backup (rejected for now — dual source of truth).
+The legacy homepage still uses Vimeo `?texttrack=` today; the Preview site player replaces that for playback but Publication still pushes tracks to Vimeo.
+
+**Considered options:** Vimeo text tracks only (legacy home); server VTT only at playback with Vimeo sync at Publication (chosen); Vimeo-only with no server files (rejected — breaks Preview player and Studio iteration).

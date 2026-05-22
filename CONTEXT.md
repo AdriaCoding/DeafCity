@@ -65,12 +65,16 @@ An optional spoken-language recording of the signed performance, uploaded alongs
 _Avoid_: Voiceover, audio track, narration
 
 **Publication**:
-The Studio action that makes a Video live — uploading the Video to Vimeo via the API, saving caption files on the server, and updating the Catalog. Antoni's paid Vimeo account supports API upload; Subtitles stay on our server, not on Vimeo.
+The Studio action that makes a Video live — uploading the Video and all reviewed caption files to Vimeo via the API, saving the same caption files on the server, and updating the Catalog. Antoni's Vimeo Plus account supports API upload. Website playback uses server caption files; Vimeo text tracks are kept in sync at Publication.
 _Avoid_: Publish (as a noun), release, deploy
 
 **Master subtitle**:
 The first validated Subtitle in one Subtitle language for a Video. All other Subtitle languages for that Video are translated from the Master subtitle.
 _Avoid_: Source subtitle, original subtitle, primary track
+
+**Job**:
+A single in-progress pipeline run in the Studio — from Intake through to Publication for one Video. A Job persists on the server filesystem as a folder holding the uploaded files and draft caption files, so a Producer can resume it across sessions. Only one Job is processed at a time. A Job is destroyed once Publication completes.
+_Avoid_: Draft, task, upload, session
 
 **Catalog**:
 The authoritative metadata registry of all Videos — ids, Sign language, Edition, Tags, and caption file references. The Preview site and Studio read from the Catalog; Publication writes to it. During transition, the legacy homepage still reads Playlists separately; the Catalog becomes the sole source of truth when the Preview site replaces the homepage.

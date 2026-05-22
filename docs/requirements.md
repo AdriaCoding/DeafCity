@@ -53,7 +53,7 @@ The Studio follows this pipeline:
 3. **Subtitle editing** — Interface to edit Subtitle text and timestamps, with video playback and real-time Subtitle preview.
 4. **Translation** — From the validated **Master subtitle**, generate Subtitles in other Subtitle languages. Each translation is reviewable and editable via the same editor (step 3).
 5. **Tagging** — Before Publication, Producer selects Tags (new or reused).
-6. **Publication** — Upload Video to Vimeo via API, save caption files on the server, update the **Catalog**.
+6. **Publication** — Upload Video and all reviewed caption files to Vimeo via API, save the same caption files on the server, update the **Catalog**.
 
 ## User stories
 
@@ -86,7 +86,7 @@ The Studio follows this pipeline:
 ### Developer — platform (build & maintain, not operate)
 
 - As a **Developer**, I want the Catalog to be the single source of truth for Video metadata so that the Studio and Preview site stay in sync.
-- As a **Developer**, I want Subtitles stored as caption files on the server so that Producers can iterate without depending on Vimeo text-track management.
+- As a **Developer**, I want Subtitles stored as caption files on the server so that the Preview player and Studio iteration do not depend on Vimeo at edit time; Vimeo text tracks are updated only at Publication.
 - As a **Developer**, I want the legacy homepage and its `playlists.json` data path left untouched so that we don't break the live site during transition.
 
 ## Data & catalog
@@ -103,9 +103,11 @@ The Studio follows this pipeline:
 
 ## Vimeo upload at Publication
 
-The Studio can upload Videos to Vimeo automatically as part of **Publication**. The [Vimeo API](https://developer.vimeo.com/api/upload/videos) supports programmatic upload (resumable/TUS, pull, or form-based); the server uploads the intake file, receives a `vimeo_id`, and writes it to the **Catalog**. Subtitles are not uploaded to Vimeo — only the Video file ([ADR-0001](adr/0001-server-hosted-subtitles.md)).
+The Studio uploads to Vimeo automatically as part of **Publication**: the Video file, then every reviewed caption file (WebVTT) as Vimeo text tracks — one track per Subtitle language. The [video upload API](https://developer.vimeo.com/api/upload/videos) (resumable/TUS) and [text tracks API](https://developer.vimeo.com/api/upload/texttracks) run in sequence; both must succeed before the Catalog is updated. The same WebVTT files are also saved on the server for Preview playback ([ADR-0001](adr/0001-server-hosted-subtitles.md)).
 
-Antoni's Vimeo account is on a **paid plan**, which includes API upload access. The project already uses the official [`vimeo/vimeo-api`](https://github.com/vimeo/vimeo.php) PHP library for Vimeo integration; Publication extends that with upload and edit scopes on the same developer app and account.
+If Vimeo rejects the upload (storage/quota exhausted, rate limit, or text-track error), **Publication fails atomically** — show a clear Studio error and do not write partial Catalog state.
+
+Antoni's Vimeo account is on **Vimeo Plus**, which includes API upload access. The project already uses the official [`vimeo/vimeo-api`](https://github.com/vimeo/vimeo.php) PHP library; Publication uses the same developer app and account with `upload` and `edit` scopes.
 
 ## Out of scope (for this codebase)
 
