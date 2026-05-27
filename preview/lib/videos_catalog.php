@@ -133,6 +133,47 @@ if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
     }
 }
 
+if (!function_exists('vpc_sign_language_options_from_catalog')) {
+    /**
+     * Derive sign language filter options from distinct sign_language IDs in the catalog,
+     * resolved to labels via studio-config.json.
+     *
+     * @param array<string, mixed> $catalog
+     * @return array<int, array{value: string, label: string}>
+     */
+    function vpc_sign_language_options_from_catalog(array $catalog, $studioConfigPath) {
+        $seen = array();
+        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
+            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
+            if ($sl !== '' && !isset($seen[$sl])) {
+                $seen[$sl] = true;
+            }
+        }
+
+        $labelMap = array();
+        if (is_readable($studioConfigPath)) {
+            $raw = file_get_contents($studioConfigPath);
+            $cfg = $raw !== false ? json_decode($raw, true) : null;
+            if (is_array($cfg)) {
+                foreach (isset($cfg['sign_languages']) ? $cfg['sign_languages'] : array() as $item) {
+                    if (!empty($item['id']) && !empty($item['label'])) {
+                        $labelMap[$item['id']] = $item['label'];
+                    }
+                }
+            }
+        }
+
+        $opts = array();
+        foreach (array_keys($seen) as $id) {
+            $opts[] = array(
+                'value' => $id,
+                'label' => isset($labelMap[$id]) ? $labelMap[$id] : $id,
+            );
+        }
+        return $opts;
+    }
+}
+
 if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
     /**
      * Build a full $vpc playlist from all videos.json entries in array order (order defines playback within a category).

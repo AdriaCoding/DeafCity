@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: shipped
 
 # PRD — Slice 5: Tagging
 

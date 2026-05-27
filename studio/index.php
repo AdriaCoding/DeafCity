@@ -10,11 +10,14 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Studio\AuthGuard;
 use Studio\CaptionFileIntegrityChecker;
+use Studio\CatalogTagPool;
 use Studio\IntakeHandler;
 use Studio\JobManager;
 use Studio\PipelineSteps;
+use Studio\PublicationHandler;
 use Studio\StudioConfig;
 use Studio\SubtitleEditorHandler;
+use Studio\TaggingHandler;
 use Studio\TranslationJobState;
 use Studio\VimeoClient;
 use Studio\VimeoIdParser;
@@ -375,6 +378,92 @@ if ($action === 'translation' && $jobManager->exists()) {
     }
 
     require __DIR__ . '/views/translation-hub.php';
+    exit;
+}
+
+// Tagging step — GET and POST
+if ($action === 'tagging' && $jobManager->exists()) {
+    $job = $jobManager->read();
+    $catalogFilePath = $dataDir . '/catalog.json';
+    $catalogTagPool = new CatalogTagPool($catalogFilePath);
+    $catalogTags = $catalogTagPool->getTagsSortedAlphabetically();
+    $errors = [];
+    $jobTags = $job['tags'] ?? [];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $handler = new TaggingHandler($jobManager);
+        $result = $handler->handle($_POST);
+        if ($result['ok']) {
+            header('Location: ' . $baseUrl);
+            exit;
+        }
+        $jobTags = is_array($_POST['tags'] ?? null) ? $_POST['tags'] : [];
+        $errors = $result['errors'];
+    }
+
+    require __DIR__ . '/views/tagging.php';
+    exit;
+}
+
+// Publication step — GET and POST
+if ($action === 'publication' && $jobManager->exists()) {
+    $job = $jobManager->read();
+    $vimeoWarnings = [];
+
+    $signLanguageLabel = $job['sign_language'];
+    foreach ($studioConfig->getSignLanguages() as $sl) {
+        if ($sl['id'] === $job['sign_language']) {
+            $signLanguageLabel = $sl['label'];
+            break;
+        }
+    }
+    $editionLabel = $job['edition'];
+    foreach ($studioConfig->getEditions() as $ed) {
+        if ($ed['id'] === $job['edition']) {
+            $editionLabel = $ed['label'];
+            break;
+        }
+    }
+    $langLabelMap = [];
+    foreach ($studioConfig->getSubtitleLanguages() as $l) {
+        $langLabelMap[$l['id']] = $l['label'];
+    }
+
+    $summaryTitle = $job['video_title'] ?? '';
+    $summarySignLanguage = $signLanguageLabel;
+    $summaryEdition = $editionLabel;
+    $summaryTags = implode(', ', $job['tags'] ?? []);
+
+    $captionLangs = [$langLabelMap[$job['subtitle_language'] ?? ''] ?? ($job['subtitle_language'] ?? '')];
+    $translationState = new TranslationJobState($jobManager);
+    foreach ($studioConfig->getSubtitleLanguages() as $l) {
+        $lang = $l['id'];
+        if ($lang === ($job['subtitle_language'] ?? '')) {
+            continue;
+        }
+        if (is_file($jobManager->draftVttPathForLang($lang))) {
+            $captionLangs[] = $langLabelMap[$lang] ?? $lang;
+        }
+    }
+    $summaryCaptions = implode(', ', $captionLangs);
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $handler = new PublicationHandler(
+            new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN),
+            $jobManager,
+            $studioConfig,
+            $dataDir . '/captions',
+            $dataDir . '/catalog.json',
+        );
+        $result = $handler->handle();
+        if (empty($result['vimeoWarnings'])) {
+            header('Location: ' . $baseUrl);
+            exit;
+        }
+        $vimeoWarnings = $result['vimeoWarnings'];
+    }
+
+    require __DIR__ . '/views/publication.php';
     exit;
 }
 

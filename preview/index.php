@@ -57,12 +57,14 @@ if (false):
 <?php
 require __DIR__ . '/lib/videos_catalog.php';
 
-$videosJsonPath = dirname(__DIR__) . '/data/videos.json';
-$playlistsJsonPath = dirname(__DIR__) . '/data/playlists.json';
-$catalog = vpc_load_videos_catalog($videosJsonPath);
+$catalogJsonPath = dirname(__DIR__) . '/data/catalog.json';
+$studioConfigPath = dirname(__DIR__) . '/data/studio-config.json';
+$catalog = vpc_load_videos_catalog($catalogJsonPath);
 $playlist = $catalog ? vpc_vimeo_playlist_all_from_catalog($catalog) : array();
 
-$signLanguageOptions = vpc_sign_language_options_from_playlists_json($playlistsJsonPath);
+$signLanguageOptions = $catalog
+    ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath)
+    : array();
 $defaultSignLanguage = isset($signLanguageOptions[0]['value'])
     ? (string) $signLanguageOptions[0]['value']
     : '';

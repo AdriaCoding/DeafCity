@@ -8,6 +8,7 @@ class PipelineSteps
         'subtitle-editor' => 'Editor de subtítols',
         'translation'     => 'Traducció',
         'tagging'         => 'Etiquetatge',
+        'publication'     => 'Publicació',
     ];
 
     public static function label(string $step): string
