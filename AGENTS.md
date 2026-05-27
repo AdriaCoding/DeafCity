@@ -20,3 +20,10 @@ Single-context layout: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/
 ### Studio UI language
 
 The Studio webapp (`studio/`) is Catalan-only for all controls and user-visible text. See `studio/README.md`.
+
+### PHP version
+
+We run two PHP versions — match the tree you are editing:
+
+- **Site root** (`src/`, `preview/`, root `*.php`, etc.) — **PHP 5.6** (vhost default). Use PHP 5–compatible syntax only; follow the style of the file.
+- **Studio** (`studio/`) — **PHP 8.4** (`studio/.htaccess`). Use modern idioms already in `studio/src/`; do not use features above 8.4. Lint with `php8.4 -l`.
