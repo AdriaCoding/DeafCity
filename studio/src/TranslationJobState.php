@@ -29,17 +29,13 @@ class TranslationJobState
 
     public function read(): array
     {
-        $path = $this->jobManager->translationStatePath();
-        if (!is_file($path)) {
+        $raw = $this->jobManager->readTranslationState();
+        if ($raw === null) {
             return ['status' => 'pending', 'languages' => []];
         }
 
-        $data = json_decode((string) file_get_contents($path), true);
-        if (!is_array($data)) {
-            return ['status' => 'pending', 'languages' => []];
-        }
-
-        return $data;
+        $data = json_decode($raw, true);
+        return is_array($data) ? $data : ['status' => 'pending', 'languages' => []];
     }
 
     public function getTopLevelStatus(): string
@@ -129,6 +125,6 @@ class TranslationJobState
             throw new \RuntimeException('No s\'ha pogut codificar l\'estat de traducció.');
         }
 
-        file_put_contents($this->jobManager->translationStatePath(), $encoded . "\n");
+        $this->jobManager->writeTranslationState($encoded . "\n");
     }
 }

@@ -66,52 +66,14 @@
         }
     }
 
-    function checkIntegrity() {
-        const errors = [];
-
-        for (let i = 0; i < cues.length; i++) {
-            const c = cues[i];
-            const n = i + 1;
-            if (c.start < 0) errors.push('Subtítol ' + n + ': l\'hora d\'inici no pot ser negativa.');
-            if (c.start >= c.end) errors.push('Subtítol ' + n + ': l\'hora d\'inici ha de ser anterior a l\'hora de fi.');
-        }
-
-        for (let i = 0; i < cues.length - 1; i++) {
-            for (let j = i + 1; j < cues.length; j++) {
-                if (cues[i].end > cues[j].start) {
-                    errors.push('Els subtítols ' + (i + 1) + ' i ' + (j + 1) + ' se superposen.');
-                }
-            }
-        }
-
-        return errors;
-    }
-
     function setButtonsDisabled(disabled) {
         if (saveBtn) saveBtn.disabled = disabled;
         if (saveDraftBtn) saveDraftBtn.disabled = disabled;
         if (saveTranslateBtn) saveTranslateBtn.disabled = disabled;
     }
 
-    function updateIntegrityUI() {
-        const errors = checkIntegrity();
-        const hasErrors = errors.length > 0;
-
-        setButtonsDisabled(hasErrors);
-
-        if (saveBtn) {
-            saveBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de desar.' : '';
-        }
-        if (saveDraftBtn) {
-            saveDraftBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de desar.' : '';
-        }
-        if (saveTranslateBtn) {
-            saveTranslateBtn.title = hasErrors ? 'Corregiu els errors d\'integritat abans de traduir.' : '';
-        }
-
-        saveError.textContent = errors.join('\n');
-        saveError.hidden = !hasErrors;
-
+    // Visual hint only — not a gate. Server is the authority for what can be saved.
+    function updateOverlapHighlights() {
         const overlapRows = new Set();
         for (let i = 0; i < cues.length - 1; i++) {
             for (let j = i + 1; j < cues.length; j++) {
@@ -123,6 +85,17 @@
         }
         document.querySelectorAll('.cue-row').forEach(function (row, idx) {
             row.classList.toggle('cue-overlap', overlapRows.has(idx));
+        });
+    }
+
+    function showCueErrors(cueErrors) {
+        document.querySelectorAll('.cue-row').forEach(function (row) {
+            row.classList.remove('cue-error');
+        });
+        if (!cueErrors || cueErrors.length === 0) return;
+        const errorIndices = new Set(cueErrors.map(function (e) { return e.cueIndex; }));
+        document.querySelectorAll('.cue-row').forEach(function (row, idx) {
+            if (errorIndices.has(idx)) row.classList.add('cue-error');
         });
     }
 
@@ -154,7 +127,7 @@
         cues.forEach(function (cue, idx) {
             cueList.appendChild(buildCueRow(cue, idx));
         });
-        updateIntegrityUI();
+        updateOverlapHighlights();
         if (player) {
             player.getCurrentTime().then(highlightActiveCue).catch(function () {});
         } else {
@@ -242,7 +215,7 @@
                 cues[idx][field] = val;
                 input.value = formatTime(val);
             }
-            updateIntegrityUI();
+            updateOverlapHighlights();
         });
         wrap.appendChild(input);
 
@@ -256,7 +229,7 @@
             player.getCurrentTime().then(function (t) {
                 cues[idx][field] = t;
                 input.value = formatTime(t);
-                updateIntegrityUI();
+                updateOverlapHighlights();
             });
         });
         wrap.appendChild(setBtn);
@@ -303,6 +276,7 @@
                 } else {
                     saveError.textContent = (data.errors || ['Error desconegut.']).join('\n');
                     saveError.hidden = false;
+                    showCueErrors(data.cueErrors);
                     resetSaveButtons();
                 }
             })
@@ -314,7 +288,7 @@
     }
 
     function resetSaveButtons() {
-        updateIntegrityUI();
+        updateOverlapHighlights();
         if (saveBtn) saveBtn.textContent = 'Desa';
         if (saveDraftBtn) saveDraftBtn.textContent = 'Desa esborrany';
         if (saveTranslateBtn) saveTranslateBtn.textContent = 'Desa i tradueix';

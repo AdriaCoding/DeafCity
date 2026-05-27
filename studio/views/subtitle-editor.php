@@ -194,6 +194,10 @@
             border-color: #7c4a4a;
             background: #1a1111;
         }
+        .cue-row.cue-error {
+            border-color: #e05555;
+            background: #1a0d0d;
+        }
         .cue-index {
             font-size: 0.75rem;
             color: #555;

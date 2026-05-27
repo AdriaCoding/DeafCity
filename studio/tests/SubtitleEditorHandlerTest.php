@@ -109,9 +109,7 @@ class SubtitleEditorHandlerTest extends TestCase
             ['start' => 0.0, 'end' => 3.0, 'text' => 'English updated', 'opaque' => ''],
         ];
 
-        $result = $this->handler->handle($cues, [
-            'savePath' => $enPath,
-        ]);
+        $result = $this->handler->handle($cues, ['lang' => 'en']);
 
         $this->assertTrue($result['ok']);
 
@@ -135,12 +133,11 @@ class SubtitleEditorHandlerTest extends TestCase
             ['start' => 3.0, 'end' => 7.0, 'text' => 'B', 'opaque' => ''],
         ];
 
-        $result = $this->handler->handle($cues, [
-            'savePath' => $enPath,
-        ]);
+        $result = $this->handler->handle($cues, ['lang' => 'en']);
 
         $this->assertFalse($result['ok']);
         $this->assertNotEmpty($result['errors']);
+        $this->assertArrayHasKey('cueErrors', $result);
 
         $writtenContent = file_get_contents($enPath);
         $this->assertStringContainsString('English original', $writtenContent);

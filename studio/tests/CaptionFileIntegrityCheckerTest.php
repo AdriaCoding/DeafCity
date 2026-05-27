@@ -72,8 +72,10 @@ class CaptionFileIntegrityCheckerTest extends TestCase
         $errors = $this->checker->check($cues);
 
         $this->assertNotEmpty($errors);
-        $this->assertStringContainsString('1', $errors[0]);
-        $this->assertStringContainsString('2', $errors[0]);
+        $this->assertArrayHasKey('cueIndex', $errors[0]);
+        $this->assertArrayHasKey('message', $errors[0]);
+        $this->assertStringContainsString('1', $errors[0]['message']);
+        $this->assertStringContainsString('2', $errors[0]['message']);
     }
 
     public function test_returns_empty_array_for_clean_cue_list(): void

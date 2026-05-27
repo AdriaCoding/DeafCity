@@ -107,14 +107,41 @@ class JobManager
         return $this->currentDir . '/draft.vtt';
     }
 
+    public function writeDraftVtt(string $content): void
+    {
+        file_put_contents($this->draftVttPath(), $content);
+    }
+
     public function draftVttPathForLang(string $lang): string
     {
         return $this->currentDir . '/draft_' . $lang . '.vtt';
     }
 
+    public function writeDraftVttForLang(string $lang, string $content): void
+    {
+        file_put_contents($this->draftVttPathForLang($lang), $content);
+    }
+
     public function translationStatePath(): string
     {
         return $this->currentDir . '/translation.json';
+    }
+
+    public function readTranslationState(): ?string
+    {
+        $path = $this->translationStatePath();
+        return is_file($path) ? (string) file_get_contents($path) : null;
+    }
+
+    public function writeTranslationState(string $content): void
+    {
+        file_put_contents($this->translationStatePath(), $content);
+    }
+
+    public function readTranscriptionStatus(): ?string
+    {
+        $path = $this->transcriptionStatusPath();
+        return is_file($path) ? (string) file_get_contents($path) : null;
     }
 
     public function cancel(): void

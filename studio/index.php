@@ -9,6 +9,7 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Studio\AuthGuard;
+use Studio\BackgroundJobLauncher;
 use Studio\CaptionFileIntegrityChecker;
 use Studio\CatalogTagPool;
 use Studio\IntakeHandler;
@@ -36,6 +37,10 @@ $studioConfigPath = $dataDir . '/studio-config.json';
 
 $jobManager = new JobManager($jobsDir);
 $studioConfig = new StudioConfig($studioConfigPath);
+$launcher = new BackgroundJobLauncher(
+    __DIR__ . '/scripts',
+    defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '',
+);
 
 /**
  * @return list<string>
@@ -57,6 +62,7 @@ function spawnTranslationJob(
     JobManager $jobManager,
     TranslationJobState $translationState,
     StudioConfig $studioConfig,
+    BackgroundJobLauncher $launcher,
     string $masterLang,
     ?string $singleLang = null,
 ): void {
@@ -75,18 +81,13 @@ function spawnTranslationJob(
         $translationState->resetLanguage($singleLang);
     }
 
-    $jobDir = dirname($jobManager->draftVttPath());
-    $cmd = sprintf(
-        'GEMINI_API_KEY=%s nohup %s --master_vtt %s --status_file %s --source_lang %s --job_dir %s --target_langs %s > /dev/null 2>&1 &',
-        escapeshellarg(defined('GEMINI_API_KEY') ? GEMINI_API_KEY : ''),
-        escapeshellarg(__DIR__ . '/scripts/run_translate.sh'),
-        escapeshellarg($jobManager->draftVttPath()),
-        escapeshellarg($jobManager->translationStatePath()),
-        escapeshellarg($masterLang),
-        escapeshellarg($jobDir),
-        escapeshellarg(implode(',', $targets))
+    $launcher->launchTranslation(
+        $jobManager->draftVttPath(),
+        $jobManager->translationStatePath(),
+        $masterLang,
+        dirname($jobManager->draftVttPath()),
+        $targets
     );
-    exec($cmd);
 }
 
 // Logout
@@ -156,15 +157,12 @@ if ($action === 'intake') {
         if (!empty($result['created'])) {
             if (($values['intake_mode'] ?? 'upload') === 'generate') {
                 $job = $jobManager->read();
-                $cmd = sprintf(
-                    'nohup %s --audio_file %s --vtt_output %s --status_file %s --language %s > /dev/null 2>&1 &',
-                    escapeshellarg(__DIR__ . '/scripts/run_transcribe.sh'),
-                    escapeshellarg($jobManager->interpreterAudioPath()),
-                    escapeshellarg($jobManager->draftVttPath()),
-                    escapeshellarg($jobManager->transcriptionStatusPath()),
-                    escapeshellarg($job['subtitle_language'] ?? 'es')
+                $launcher->launchTranscription(
+                    $jobManager->interpreterAudioPath(),
+                    $jobManager->draftVttPath(),
+                    $jobManager->transcriptionStatusPath(),
+                    $job['subtitle_language'] ?? 'es',
                 );
-                exec($cmd);
             }
             header('Location: ' . $baseUrl);
             exit;
@@ -186,9 +184,6 @@ if ($action === 'subtitle-editor' && $_SERVER['REQUEST_METHOD'] === 'POST' && $j
     try {
         $job = $jobManager->read();
         $lang = isset($_GET['lang']) ? trim((string) $_GET['lang']) : '';
-        $savePath = $lang !== ''
-            ? $jobManager->draftVttPathForLang($lang)
-            : $jobManager->draftVttPath();
 
         $handler = new SubtitleEditorHandler(
             new VttParser(),
@@ -196,7 +191,7 @@ if ($action === 'subtitle-editor' && $_SERVER['REQUEST_METHOD'] === 'POST' && $j
             $jobManager,
         );
         $body = (string) file_get_contents('php://input');
-        $result = $handler->handleRawJson($body, ['savePath' => $savePath]);
+        $result = $handler->handleRawJson($body, ['lang' => $lang !== '' ? $lang : null]);
 
         if ($result['ok'] && $lang !== '') {
             (new TranslationJobState($jobManager))->markLanguageReviewed($lang);
@@ -208,6 +203,7 @@ if ($action === 'subtitle-editor' && $_SERVER['REQUEST_METHOD'] === 'POST' && $j
                 $jobManager,
                 new TranslationJobState($jobManager),
                 $studioConfig,
+                $launcher,
                 $masterLang,
             );
         }
@@ -258,12 +254,7 @@ if ($action === 'subtitle-editor' && $jobManager->exists()) {
 if ($action === 'transcription-status' && $jobManager->exists()) {
     ini_set('display_errors', '0');
     header('Content-Type: application/json');
-    $statusPath = $jobManager->transcriptionStatusPath();
-    if (!is_file($statusPath)) {
-        echo json_encode(['status' => 'pending']);
-    } else {
-        echo file_get_contents($statusPath);
-    }
+    echo $jobManager->readTranscriptionStatus() ?? json_encode(['status' => 'pending']);
     exit;
 }
 
@@ -292,6 +283,7 @@ if ($action === 'translation-retry' && $_SERVER['REQUEST_METHOD'] === 'POST' && 
         $jobManager,
         new TranslationJobState($jobManager),
         $studioConfig,
+        $launcher,
         $job['subtitle_language'] ?? 'es',
         $lang,
     );
@@ -501,9 +493,9 @@ if ($hasActiveJob) {
 
     if (($job['intake_mode'] ?? 'upload') === 'generate' && !$jobManager->hasDraftVtt()) {
         $isTranscribing = true;
-        $statusPath = $jobManager->transcriptionStatusPath();
-        if (is_file($statusPath)) {
-            $statusData = json_decode((string) file_get_contents($statusPath), true);
+        $statusJson = $jobManager->readTranscriptionStatus();
+        if ($statusJson !== null) {
+            $statusData = json_decode($statusJson, true);
             if (($statusData['status'] ?? '') === 'error') {
                 $transcriptionError = $statusData['message'] ?? 'Error en la generació de subtítols';
             }
