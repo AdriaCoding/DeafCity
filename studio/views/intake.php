@@ -58,24 +58,6 @@
         .field {
             margin-bottom: 1.25rem;
         }
-        .radio-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: #ccc;
-            cursor: pointer;
-        }
-        .radio-option input[type="radio"] {
-            width: auto;
-            margin: 0;
-            accent-color: #e0e0e0;
-        }
         input[type="text"],
         input[type="url"],
         select,
@@ -126,7 +108,7 @@
     </header>
     <main>
         <h2>Nova feina</h2>
-        <p class="lead">Enganxeu la URL o l'ID de Vimeo d'un vídeo que ja sigui al vostre compte, trieu les metadades i pugeu el fitxer de subtítols o l'àudio de l'intèrpret.</p>
+        <p class="lead">Enganxeu la URL o l'ID de Vimeo d'un vídeo que ja sigui al vostre compte, trieu les metadades i pugeu un fitxer WebVTT o l'àudio de l'intèrpret.</p>
 
         <?php if (!empty($errors['_form'])): ?>
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
@@ -187,53 +169,14 @@
             </div>
 
             <div class="field">
-                <label>Font dels subtítols</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="intake_mode" value="upload" <?= ($values['intake_mode'] ?? 'upload') === 'upload' ? 'checked' : '' ?>>
-                        Pujar fitxer WebVTT
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="intake_mode" value="generate" <?= ($values['intake_mode'] ?? 'upload') === 'generate' ? 'checked' : '' ?>>
-                        Generar des de l'àudio de l'intèrpret
-                    </label>
-                </div>
-            </div>
-
-            <div class="field" id="field-subtitle-file">
-                <label for="subtitle_file">Fitxer de subtítols (WebVTT)</label>
-                <input type="file" id="subtitle_file" name="subtitle_file" accept=".vtt,text/vtt">
-                <?php if (!empty($errors['subtitle_file'])): ?>
-                    <p class="error"><?= htmlspecialchars($errors['subtitle_file']) ?></p>
-                <?php endif; ?>
-            </div>
-
-            <div class="field" id="field-interpreter-audio" style="display:none">
-                <label for="interpreter_audio">Àudio de l'intèrpret</label>
-                <input type="file" id="interpreter_audio" name="interpreter_audio">
-                <?php if (!empty($errors['interpreter_audio'])): ?>
-                    <p class="error"><?= htmlspecialchars($errors['interpreter_audio']) ?></p>
+                <label for="intake_file">Fitxer de subtítols o àudio de l'intèrpret</label>
+                <input type="file" id="intake_file" name="intake_file" accept=".vtt,text/vtt,audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" required>
+                <?php if (!empty($errors['intake_file'])): ?>
+                    <p class="error"><?= htmlspecialchars($errors['intake_file']) ?></p>
                 <?php endif; ?>
             </div>
 
             <button type="submit">Crea la feina</button>
-
-            <script>
-                (function () {
-                    var radios = document.querySelectorAll('input[name="intake_mode"]');
-                    var vttField = document.getElementById('field-subtitle-file');
-                    var audioField = document.getElementById('field-interpreter-audio');
-
-                    function toggle() {
-                        var mode = document.querySelector('input[name="intake_mode"]:checked').value;
-                        vttField.style.display = mode === 'upload' ? '' : 'none';
-                        audioField.style.display = mode === 'generate' ? '' : 'none';
-                    }
-
-                    radios.forEach(function (r) { r.addEventListener('change', toggle); });
-                    toggle();
-                }());
-            </script>
         </form>
         <p style="margin-top: 1.5rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
     </main>

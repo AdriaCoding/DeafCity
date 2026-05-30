@@ -10,6 +10,7 @@ class IntakeHandler
         private readonly StudioConfig $studioConfig,
         private readonly JobManager $jobManager,
         private readonly WebVttValidator $vttValidator,
+        private readonly IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
     ) {
     }
 
@@ -18,15 +19,12 @@ class IntakeHandler
      */
     public function handlePost(array $post, array $files): array
     {
-        $rawMode = $post['intake_mode'] ?? 'upload';
-        $intakeMode = in_array($rawMode, ['upload', 'generate'], true) ? $rawMode : 'upload';
-
         $values = [
             'vimeo_input' => trim($post['vimeo_input'] ?? ''),
             'sign_language' => $post['sign_language'] ?? '',
             'edition' => $post['edition'] ?? '',
             'subtitle_language' => $post['subtitle_language'] ?? '',
-            'intake_mode' => $intakeMode,
+            'intake_mode' => 'upload',
         ];
         $errors = [];
 
@@ -52,25 +50,25 @@ class IntakeHandler
             $errors['subtitle_language'] = 'Seleccioneu una llengua de subtítols.';
         }
 
-        if ($intakeMode === 'upload') {
-            $upload = $files['subtitle_file'] ?? null;
-            if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-                $errors['subtitle_file'] = 'Pugeu un fitxer de subtítols WebVTT.';
-            } elseif (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-                $errors['subtitle_file'] = 'No s\'ha pogut pujar el fitxer de subtítols.';
-            }
-        } else {
-            $audioUpload = $files['interpreter_audio'] ?? null;
-            if (!$audioUpload || ($audioUpload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-                $errors['interpreter_audio'] = 'Pugeu un fitxer d\'àudio de l\'intèrpret.';
-            } elseif (($audioUpload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
-                $errors['interpreter_audio'] = 'No s\'ha pogut pujar el fitxer d\'àudio.';
-            }
+        $upload = $files['intake_file'] ?? null;
+        if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            $errors['intake_file'] = 'Pugeu un fitxer WebVTT o un fitxer d\'àudio de l\'intèrpret.';
+        } elseif (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+            $errors['intake_file'] = 'No s\'ha pogut pujar el fitxer.';
         }
 
         if ($errors !== []) {
             return ['errors' => $errors, 'values' => $values];
         }
+
+        try {
+            $intakeMode = $this->sourceDetector->detect($upload['tmp_name'], $upload['name']);
+        } catch (\InvalidArgumentException $e) {
+            $errors['intake_file'] = $e->getMessage();
+            return ['errors' => $errors, 'values' => $values];
+        }
+
+        $values['intake_mode'] = $intakeMode;
 
         try {
             $videoTitle = $this->vimeoClient->getVideo($vimeoId);
@@ -94,10 +92,10 @@ class IntakeHandler
                 $this->vttValidator->validate($upload['tmp_name'], $upload['name']);
                 $this->jobManager->create($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
             } else {
-                $this->jobManager->createWithAudio($meta, new UploadedFile($audioUpload['tmp_name'], $audioUpload['name']));
+                $this->jobManager->createWithAudio($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
             }
         } catch (\InvalidArgumentException $e) {
-            $errors['subtitle_file'] = $e->getMessage();
+            $errors['intake_file'] = $e->getMessage();
             return ['errors' => $errors, 'values' => $values];
         } catch (\RuntimeException $e) {
             $errors['_form'] = $e->getMessage();
