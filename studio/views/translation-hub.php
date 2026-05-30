@@ -133,7 +133,7 @@
             <?php foreach ($languageCards as $card): ?>
                 <div class="lang-card">
                     <?php if ($card['clickable']): ?>
-                        <a class="lang-card-link" href="?action=subtitle-editor&amp;lang=<?= urlencode($card['id']) ?>">
+                        <a class="lang-card-link" href="?action=translation-review&amp;lang=<?= urlencode($card['id']) ?>">
                             <span class="lang-label"><?= htmlspecialchars($card['label']) ?></span>
                             <span class="badge badge-<?= htmlspecialchars($card['badgeClass']) ?>"><?= htmlspecialchars($card['badgeLabel']) ?></span>
                         </a>

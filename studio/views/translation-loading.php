@@ -81,6 +81,15 @@
         .lang-progress-row.is-done {
             border-color: #2a4a2a;
         }
+        a.lang-progress-row {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+        a.lang-progress-row:hover {
+            border-color: #4a7c59;
+            background: #111a14;
+        }
         .lang-progress-row.is-error {
             border-color: #4a2020;
             background: #1a1010;
@@ -134,14 +143,18 @@
             <p class="job-title"><?= htmlspecialchars($job['video_title'] ?? '') ?></p>
             <p class="progress-summary" id="progress-summary"></p>
             <div class="lang-progress-list" id="lang-progress-list">
-                <?php foreach ($languageItems as $item): ?>
-                    <div
-                        class="lang-progress-row"
+                <?php foreach ($languageItems as $item):
+                    $isDone = in_array($item['status'], ['done', 'reviewed'], true);
+                    $tag = $isDone ? 'a' : 'div';
+                    $href = $isDone ? ' href="?action=translation-review&lang=' . urlencode($item['id']) . '"' : '';
+                ?>
+                    <<?= $tag ?><?= $href ?>
+                        class="lang-progress-row<?= $isDone ? ' is-done' : '' ?>"
                         data-lang="<?= htmlspecialchars($item['id']) ?>"
                     >
                         <span class="lang-label"><?= htmlspecialchars($item['label']) ?></span>
                         <span class="lang-status" data-status="<?= htmlspecialchars($item['status']) ?>"></span>
-                    </div>
+                    </<?= $tag ?>>
                 <?php endforeach; ?>
             </div>
             <div class="actions">
@@ -167,6 +180,17 @@
             return 'En cua';
         }
 
+        function promoteToLink(row, lang) {
+            if (row.tagName === 'A') return row;
+            var a = document.createElement('a');
+            a.href = '?action=translation-review&lang=' + encodeURIComponent(lang);
+            a.className = row.className;
+            a.dataset.lang = lang;
+            while (row.firstChild) a.appendChild(row.firstChild);
+            row.parentNode.replaceChild(a, row);
+            return a;
+        }
+
         function renderProgress(data) {
             var languages = data.languages || {};
             var rows = document.querySelectorAll('.lang-progress-row');
@@ -179,22 +203,27 @@
                 var entry = languages[lang] || { status: 'pending' };
                 var status = entry.status || 'pending';
                 var isActive = false;
+                var isDone = status === 'done' || status === 'reviewed';
 
-                if ((status === 'done' || status === 'reviewed' || status === 'error')) {
-                    if (status === 'done' || status === 'reviewed') doneCount++;
+                if (isDone || status === 'error') {
+                    if (isDone) doneCount++;
                 } else if (!activeAssigned) {
                     isActive = true;
                     activeAssigned = true;
                 }
 
+                if (isDone) {
+                    row = promoteToLink(row, lang);
+                }
+
                 row.classList.toggle('is-active', isActive);
-                row.classList.toggle('is-done', status === 'done' || status === 'reviewed');
+                row.classList.toggle('is-done', isDone);
                 row.classList.toggle('is-error', status === 'error');
 
                 var statusEl = row.querySelector('.lang-status');
                 statusEl.className = 'lang-status'
                     + (isActive ? ' is-active' : '')
-                    + (status === 'done' || status === 'reviewed' ? ' is-done' : '')
+                    + (isDone ? ' is-done' : '')
                     + (status === 'error' ? ' is-error' : '');
                 statusEl.dataset.status = status;
                 statusEl.textContent = '';

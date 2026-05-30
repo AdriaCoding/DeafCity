@@ -228,6 +228,66 @@ if ($action === 'intake') {
     exit;
 }
 
+// Translation review — POST (JSON save)
+if ($action === 'translation-review' && $_SERVER['REQUEST_METHOD'] === 'POST' && $jobManager->exists()) {
+    ini_set('display_errors', '0');
+    header('Content-Type: application/json');
+    ob_start();
+    try {
+        $lang = isset($_GET['lang']) ? trim((string) $_GET['lang']) : '';
+        if ($lang === '') {
+            $result = ['ok' => false, 'errors' => ['Idioma no especificat.']];
+        } else {
+            $handler = new SubtitleEditorHandler(
+                new VttParser(),
+                new CaptionFileIntegrityChecker(),
+                $jobManager,
+            );
+            $body = (string) file_get_contents('php://input');
+            $result = $handler->handleRawJson($body, ['lang' => $lang]);
+            if ($result['ok']) {
+                (new TranslationJobState($jobManager))->markLanguageReviewed($lang);
+            }
+        }
+    } catch (\Throwable $e) {
+        $result = ['ok' => false, 'errors' => ['Error del servidor: ' . $e->getMessage()]];
+    }
+    ob_end_clean();
+    http_response_code($result['ok'] ? 200 : 422);
+    echo json_encode($result);
+    exit;
+}
+
+// Translation review — GET
+if ($action === 'translation-review' && $jobManager->exists()) {
+    $lang = isset($_GET['lang']) ? trim((string) $_GET['lang']) : '';
+    if ($lang === '') {
+        header('Location: ?action=translation');
+        exit;
+    }
+    $translatedVttPath = $jobManager->draftVttPathForLang($lang);
+    if (!is_file($translatedVttPath)) {
+        header('Location: ?action=translation');
+        exit;
+    }
+    $vttParser = new VttParser();
+    $translatedCues = $vttParser->parse($translatedVttPath)['cues'];
+    $masterCues = [];
+    $masterVttPath = $jobManager->draftVttPath();
+    if (is_file($masterVttPath)) {
+        $masterCues = $vttParser->parse($masterVttPath)['cues'];
+    }
+    $langLabel = $lang;
+    foreach ($studioConfig->getSubtitleLanguages() as $language) {
+        if (($language['id'] ?? '') === $lang) {
+            $langLabel = $language['label'] ?? $lang;
+            break;
+        }
+    }
+    require __DIR__ . '/views/translation-review.php';
+    exit;
+}
+
 // Subtitle editor — POST (JSON save)
 if ($action === 'subtitle-editor' && $_SERVER['REQUEST_METHOD'] === 'POST' && $jobManager->exists()) {
     ini_set('display_errors', '0');
