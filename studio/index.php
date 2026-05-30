@@ -401,6 +401,7 @@ if ($action === 'tagging' && $jobManager->exists()) {
 if ($action === 'publication' && $jobManager->exists()) {
     $job = $jobManager->read();
     $vimeoWarnings = [];
+    $publicationError = null;
 
     $signLanguageLabel = $job['sign_language'];
     foreach ($studioConfig->getSignLanguages() as $sl) {
@@ -440,19 +441,23 @@ if ($action === 'publication' && $jobManager->exists()) {
     $summaryCaptions = implode(', ', $captionLangs);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $handler = new PublicationHandler(
-            new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN),
-            $jobManager,
-            $studioConfig,
-            $dataDir . '/captions',
-            $dataDir . '/catalog.json',
-        );
-        $result = $handler->handle();
-        if (empty($result['vimeoWarnings'])) {
-            header('Location: ' . $baseUrl);
-            exit;
+        try {
+            $handler = new PublicationHandler(
+                new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN),
+                $jobManager,
+                $studioConfig,
+                $dataDir . '/captions',
+                $dataDir . '/catalog.json',
+            );
+            $result = $handler->handle();
+            if (empty($result['vimeoWarnings'])) {
+                header('Location: ' . $baseUrl);
+                exit;
+            }
+            $vimeoWarnings = $result['vimeoWarnings'];
+        } catch (\Throwable $e) {
+            $publicationError = 'No s\'ha pogut completar la publicació. ' . $e->getMessage();
         }
-        $vimeoWarnings = $result['vimeoWarnings'];
     }
 
     require __DIR__ . '/views/publication.php';

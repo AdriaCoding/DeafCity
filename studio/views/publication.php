@@ -75,6 +75,15 @@
             color: #ffca60;
             font-size: 0.875rem;
         }
+        .error-banner {
+            background: #2a0a0a;
+            border: 1px solid #6a2020;
+            border-radius: 5px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            color: #ff8080;
+            font-size: 0.875rem;
+        }
         .warning-banner p { margin-bottom: 0.4rem; }
         .warning-banner ul { padding-left: 1.2rem; margin-top: 0.3rem; }
         .actions {
@@ -116,6 +125,12 @@
         <p>Revisa el resum del vídeo. Quan estiguis preparat/da, fes clic a <strong>Publicar</strong>.</p>
     </div>
 
+    <?php if (!empty($publicationError)): ?>
+    <div class="error-banner">
+        <p><?= htmlspecialchars($publicationError, ENT_QUOTES, 'UTF-8') ?></p>
+    </div>
+    <?php endif; ?>
+
     <?php if (!empty($vimeoWarnings)): ?>
     <div class="warning-banner">
         <p>El vídeo s'ha publicat al catàleg, però han fallat algunes pujades a Vimeo:</p>
@@ -150,15 +165,21 @@
         </div>
     </dl>
 
-    <?php if (empty($vimeoWarnings)): ?>
+    <?php if (empty($vimeoWarnings) && empty($publicationError)): ?>
     <div class="actions">
         <form method="POST" style="display:inline;">
             <button type="submit" class="btn-publish">Publicar</button>
         </form>
     </div>
-    <?php else: ?>
+    <?php elseif (!empty($vimeoWarnings)): ?>
     <div class="actions">
         <a href="./" class="home-link">Torna a l'inici</a>
+    </div>
+    <?php else: ?>
+    <div class="actions">
+        <form method="POST" style="display:inline;">
+            <button type="submit" class="btn-publish">Publicar</button>
+        </form>
     </div>
     <?php endif; ?>
 </main>
