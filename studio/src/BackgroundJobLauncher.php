@@ -48,6 +48,18 @@ class BackgroundJobLauncher
         call_user_func($this->exec, $cmd);
     }
 
+    /** @param string $statusFilePath */
+    public function launchSync($statusFilePath)
+    {
+        $script = $this->scriptsDir . '/sync_from_vimeo.php';
+        $cmd = sprintf(
+            'nohup php %s --status-file %s > /dev/null 2>&1 &',
+            escapeshellarg($script),
+            escapeshellarg($statusFilePath),
+        );
+        call_user_func($this->exec, $cmd);
+    }
+
     /**
      * @param string $masterVttPath
      * @param string $statusFilePath

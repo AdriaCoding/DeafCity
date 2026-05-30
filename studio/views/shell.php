@@ -76,6 +76,39 @@
             font-weight: 600;
         }
         a.btn-primary:hover { background: #fff; }
+        button.btn-secondary {
+            padding: 0.65rem 1.25rem;
+            background: transparent;
+            color: #888;
+            border: 1px solid #333;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        button.btn-secondary:hover:not(:disabled) { color: #bbb; border-color: #555; }
+        button.btn-secondary:disabled { opacity: 0.5; cursor: default; }
+        .sync-status {
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 0.75rem;
+        }
+        .sync-status.done { color: #4a8a4a; }
+        .sync-status.error { color: #a55; }
+        @keyframes spin-sm { to { transform: rotate(360deg); } }
+        .spinner-sm {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #444;
+            border-top-color: #888;
+            border-radius: 50%;
+            animation: spin-sm 0.8s linear infinite;
+            flex-shrink: 0;
+        }
         button.btn-danger {
             padding: 0.65rem 1.25rem;
             background: transparent;
@@ -150,8 +183,65 @@
                 <p>No hi ha cap feina en curs. Inicieu la recepció per registrar un vídeo de Vimeo i pujar un fitxer de subtítols esborrany.</p>
                 <div class="actions">
                     <a class="btn-primary" href="?action=intake">Nova feina</a>
+                    <form method="POST" action="?action=sync" id="sync-form">
+                        <button type="submit" class="btn-secondary" id="sync-btn"
+                            <?= $isSyncing ? 'disabled' : '' ?>>
+                            <?php if ($isSyncing): ?>
+                                <span class="spinner-sm"></span> Sincronitzant…
+                            <?php else: ?>
+                                Sincronitzar web amb Vimeo
+                            <?php endif; ?>
+                        </button>
+                    </form>
                 </div>
+                <p class="sync-status" id="sync-status-msg"><?php
+                    $s = $syncStatus['status'] ?? 'idle';
+                    if ($s === 'running') {
+                        $n = (int) ($syncStatus['synced'] ?? 0);
+                        $t = (int) ($syncStatus['total'] ?? 0);
+                        echo htmlspecialchars("Sincronitzant… ($n/$t)");
+                    } elseif ($s === 'done') {
+                        $n = (int) ($syncStatus['synced'] ?? 0);
+                        $t = (int) ($syncStatus['total'] ?? 0);
+                        echo htmlspecialchars("Sincronitzat ($n/$t vídeos)");
+                    }
+                ?></p>
             </div>
+            <?php if ($isSyncing): ?>
+            <script>
+                (function () {
+                    var btn = document.getElementById('sync-btn');
+                    var msg = document.getElementById('sync-status-msg');
+                    msg.className = 'sync-status';
+
+                    function poll() {
+                        fetch('?action=sync-status')
+                            .then(function (r) { return r.json(); })
+                            .then(function (data) {
+                                var synced = data.synced || 0;
+                                var total = data.total || 0;
+                                if (data.status === 'done') {
+                                    btn.disabled = false;
+                                    btn.innerHTML = 'Sincronitzar web amb Vimeo';
+                                    msg.className = 'sync-status done';
+                                    msg.textContent = 'Sincronitzat (' + synced + '/' + total + ' vídeos)';
+                                } else if (data.status === 'error') {
+                                    btn.disabled = false;
+                                    btn.innerHTML = 'Sincronitzar web amb Vimeo';
+                                    msg.className = 'sync-status error';
+                                    msg.textContent = 'Error en la sincronització. Torneu-ho a provar.';
+                                } else {
+                                    msg.textContent = 'Sincronitzant… (' + synced + '/' + total + ')';
+                                    setTimeout(poll, 2000);
+                                }
+                            })
+                            .catch(function () { setTimeout(poll, 3000); });
+                    }
+
+                    setTimeout(poll, 2000);
+                }());
+            </script>
+            <?php endif; ?>
         <?php elseif ($isTranscribing): ?>
             <?php if ($transcriptionError !== null): ?>
                 <div class="transcribing">

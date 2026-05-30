@@ -65,6 +65,54 @@ class VimeoClient
         }
     }
 
+    /** @return array<int, array{language: string, name: string, link: string}> */
+    public function getTextTracksDetailed(string $videoId): array
+    {
+        $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+        $response = $client->request('/videos/' . $videoId . '/texttracks', [], 'GET');
+        if (($response['status'] ?? 0) < 200 || ($response['status'] ?? 0) >= 300) {
+            throw new \RuntimeException('Error en obtenir les pistes de text de Vimeo.');
+        }
+        $items = $response['body']['data'] ?? [];
+        $seen = [];
+        $tracks = [];
+        foreach ($items as $t) {
+            $language = (string) ($t['language'] ?? '');
+            $link = (string) ($t['link'] ?? '');
+            if ($language === '' || $link === '') {
+                continue;
+            }
+            // Skip Vimeo auto-generated captions
+            if (str_contains($language, 'autogen') || str_contains((string) ($t['name'] ?? ''), 'auto_generated')) {
+                continue;
+            }
+            // Deduplicate by language code — keep first occurrence
+            if (isset($seen[$language])) {
+                continue;
+            }
+            $seen[$language] = true;
+            $tracks[] = [
+                'language' => $language,
+                'name' => (string) ($t['name'] ?? $language),
+                'link' => $link,
+            ];
+        }
+        return $tracks;
+    }
+
+    /** @return array<int, string> */
+    public function getTagNames(string $videoId): array
+    {
+        $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+        $response = $client->request('/videos/' . $videoId . '/tags', [], 'GET');
+        if (($response['status'] ?? 0) < 200 || ($response['status'] ?? 0) >= 300) {
+            return [];
+        }
+        $items = $response['body']['data'] ?? [];
+        $tags = array_filter(array_map(fn(array $t): string => trim((string) ($t['tag'] ?? '')), $items));
+        return array_values($tags);
+    }
+
     public function getVideo(string $id): string
     {
         $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);

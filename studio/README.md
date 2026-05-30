@@ -8,6 +8,13 @@ All six pipeline slices are **shipped** (see `docs/studio-pipeline-features.md`)
 
 **Publication ops:** `data/catalog.json` and `data/captions/` must be writable by the web server user (`www-data`). Vimeo token needs `private`, `upload`, `edit` scopes — see `config/config.example.php`. Test with `php studio/scripts/test_vimeo_publish.php`.
 
+**Catalog sync:** Pull title, tags, and captions for every video in `catalog.json` from Vimeo. Downloads VTT files to `data/captions/` and overwrites each catalog entry in place.
+
+```bash
+# Run from the public_html root
+php studio/scripts/sync_from_vimeo.php
+```
+
 ## UI language
 
 **All Studio controls and user-visible text must be written in Catalan.**

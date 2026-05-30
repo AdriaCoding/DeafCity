@@ -576,6 +576,31 @@ if ($action === 'publication' && $jobManager->exists()) {
     exit;
 }
 
+// Sync — POST (launch background process)
+if ($action === 'sync' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $syncStatusPath = $dataDir . '/sync-status.json';
+    $currentStatus = null;
+    if (is_file($syncStatusPath)) {
+        $raw = @file_get_contents($syncStatusPath);
+        $currentStatus = $raw ? json_decode($raw, true) : null;
+    }
+    if (($currentStatus['status'] ?? '') !== 'running') {
+        file_put_contents($syncStatusPath, json_encode(['status' => 'running', 'synced' => 0, 'total' => 0]));
+        $launcher->launchSync($syncStatusPath);
+    }
+    header('Location: ' . $baseUrl);
+    exit;
+}
+
+// Sync status — GET (JSON)
+if ($action === 'sync-status') {
+    ini_set('display_errors', '0');
+    header('Content-Type: application/json');
+    $syncStatusPath = $dataDir . '/sync-status.json';
+    echo is_file($syncStatusPath) ? (file_get_contents($syncStatusPath) ?: '{}') : json_encode(['status' => 'idle']);
+    exit;
+}
+
 // Pipeline step routes (placeholders until later slices ship)
 if ($action !== null && $jobManager->exists()) {
     $job = $jobManager->read();
@@ -587,6 +612,14 @@ if ($action !== null && $jobManager->exists()) {
 }
 
 // Studio shell
+$syncStatusPath = $dataDir . '/sync-status.json';
+$syncStatus = null;
+if (is_file($syncStatusPath)) {
+    $raw = @file_get_contents($syncStatusPath);
+    $syncStatus = ($raw ? json_decode($raw, true) : null) ?? null;
+}
+$isSyncing = ($syncStatus['status'] ?? '') === 'running';
+
 $hasActiveJob = $jobManager->exists();
 $job = [];
 $editionLabel = '';
