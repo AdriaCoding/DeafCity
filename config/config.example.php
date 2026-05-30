@@ -23,7 +23,12 @@ define('VIMEO_CLIENT_ID', '');
 /** OAuth 2 client secret from the same Vimeo app. */
 define('VIMEO_CLIENT_SECRET', '');
 
-/** Personal access token with at least "public" and "private" scopes. */
+/**
+ * Authenticated personal access token from the same Vimeo app.
+ * Required scopes for Studio: private, upload, edit.
+ * Generate at https://developer.vimeo.com/apps → Authentication.
+ * Define once only — duplicate define() lines leave the first (stale) token active.
+ */
 define('VIMEO_ACCESS_TOKEN', '');
 
 // ─── Gemini AI (subtitle translation) ────────────────────────────────────────

@@ -89,7 +89,7 @@ if (count($playlist) > 0) {
             <?php require __DIR__ . '/components/vimeo_caption_player.php'; ?>
         <?php else: ?>
             <p style="font-family: 'Roboto', sans-serif; padding: 1rem;">
-                No playlist entries loaded. Check that <code>data/videos.json</code> exists and the ordered catalog ids match entries in the <code>videos</code> array.
+                No playlist entries loaded. Check that <code>data/catalog.json</code> exists and contains playable video entries with caption files under <code>data/captions/</code>.
             </p>
         <?php endif; ?>
     </div>

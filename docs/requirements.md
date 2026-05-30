@@ -91,7 +91,7 @@ The Studio follows this pipeline:
 
 ## Data & catalog
 
-- The **Catalog** is the authoritative Video metadata registry (currently `data/videos.json`, to be renamed `data/catalog.json`).
+- The **Catalog** is the authoritative Video metadata registry at `data/catalog.json`. Studio Publication and the Preview site read and write it. Legacy `data/videos.json` may still exist on disk but is no longer the target for new work.
 - During transition, the legacy homepage continues reading `data/playlists.json` independently ([ADR-0002](adr/0002-catalog-dual-source-transition.md)).
 - When the Preview site replaces the homepage, the Catalog becomes the sole source — Playlists become views generated from Catalog metadata (e.g. by Sign language).
 
@@ -103,11 +103,11 @@ The Studio follows this pipeline:
 
 ## Vimeo upload at Publication
 
-The Studio uploads to Vimeo automatically as part of **Publication**: every reviewed caption file (WebVTT) as Vimeo text tracks — one track per Subtitle language via the [text tracks API](https://developer.vimeo.com/api/upload/texttracks). The Video file is already on Vimeo before Intake ([ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)); Publication does not upload the video. The same WebVTT files are also saved on the server for Preview playback ([ADR-0001](adr/0001-server-hosted-subtitles.md)). All text-track uploads must succeed before the Catalog is updated.
+The Studio uploads to Vimeo automatically as part of **Publication**: every reviewed caption file (WebVTT) as Vimeo text tracks — one track per Subtitle language via the [text tracks API](https://developer.vimeo.com/api/upload/texttracks). The Video file is already on Vimeo before Intake ([ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)); Publication does not upload the video. The same WebVTT files are also saved on the server for Preview playback ([ADR-0001](adr/0001-server-hosted-subtitles.md)). The Catalog and server caption files are always written; Vimeo uploads are best-effort per language.
 
-If Vimeo rejects the upload (storage/quota exhausted, rate limit, or text-track error), **Publication fails atomically** — show a clear Studio error and do not write partial Catalog state.
+If any Vimeo text-track upload fails, Publication still writes the Catalog and server caption files, deletes the Job, and re-renders the Publication screen with a warning listing the affected languages. A hard failure (e.g. catalog not writable) shows an error on the Publication screen instead of a generic 500.
 
-Antoni's Vimeo account is on **Vimeo Plus**, which includes API upload access. The project already uses the official [`vimeo/vimeo-api`](https://github.com/vimeo/vimeo.php) PHP library; Publication uses the same developer app and account with `upload` and `edit` scopes.
+Antoni's Vimeo account is on **Vimeo Plus**, which includes API upload access. The project already uses the official [`vimeo/vimeo-api`](https://github.com/vimeo/vimeo.php) PHP library; Publication uses the same developer app and account with `private`, `upload`, and `edit` scopes on an authenticated personal access token.
 
 ## Out of scope (for this codebase)
 
@@ -116,4 +116,4 @@ Antoni's Vimeo account is on **Vimeo Plus**, which includes API upload access. T
 
 ## Open questions
 
-- Blind Wiki tooling integration — referenced in Studio spec, details TBD.
+- ~~Blind Wiki tooling integration — referenced in Studio spec, details TBD.~~ Translation uses Gemini 2.0 Flash ([ADR-0005](adr/0005-gemini-flash-for-subtitle-translation.md)); Whisper transcription still uses Blind Wiki venv cache.

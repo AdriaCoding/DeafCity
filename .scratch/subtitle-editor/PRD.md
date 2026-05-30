@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: shipped
 
 # Studio — Subtitle Editor (Slice 2)
 

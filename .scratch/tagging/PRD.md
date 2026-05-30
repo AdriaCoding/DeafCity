@@ -28,13 +28,13 @@ Add a Tagging step to the Studio pipeline as the final step before Publication. 
 ### CatalogTagPool (new class)
 Reads the Catalog JSON file, collects all `tags` string values across every Video entry, deduplicates, and returns them sorted alphabetically. Constructor takes the catalog file path. Single public method: `getTagsSortedAlphabetically(): string[]`. No dependencies beyond the filesystem.
 
-At the time this slice ships, the catalog file is `data/videos.json`. Slice 6 (Publication) renames it to `data/catalog.json` and notes that `CatalogTagPool` must be updated at that point to reflect the new path.
+At the time this slice ships, the catalog file is `data/catalog.json`. `CatalogTagPool` reads tag names from the `tags` arrays on all Video entries.
 
 ### TaggingHandler (new class)
 Receives raw POST data, validates that at least one non-empty tag is present, trims each value, deduplicates, and calls `JobManager::update()` to persist `tags` (array of strings) and advance `step` to `"publication"`. Returns `['ok' => bool, 'errors' => string[]]`. Mirrors the handler pattern used by `SubtitleEditorHandler`.
 
 ### Catalog schema
-Each Video entry in `videos.json` gains a `"tags"` key: a JSON array of plain strings, e.g. `["installation", "theme: humour"]`. Tags are written to the Catalog at Publication (future slice), not at the Tagging step. Existing entries without the key are treated as having an empty tag list.
+Each Video entry in `catalog.json` gains a `"tags"` key: a JSON array of plain strings, e.g. `["installation", "theme: humour"]`. Tags are written to the Catalog at Publication, not at the Tagging step. Existing entries without the key are treated as having an empty tag list.
 
 ### Job state
 Tags are persisted in `job.json` under a `"tags"` key (array of strings) when the Producer saves the Tagging step. The `"step"` field is advanced to `"publication"` at the same time via `JobManager::update()`, which merges fields without overwriting other Job metadata.
@@ -83,7 +83,7 @@ Prior art: `JobManagerTest`, `StudioConfigTest`, `TranslationJobStateTest` — a
 - Renaming or deleting Tags across the Catalog.
 - Displaying Tags on the Website or Preview site.
 - Filtering or grouping Videos by Tag on the Website.
-- Writing Tags to `videos.json` — that is part of the Publication step (future slice).
+- Writing Tags to `catalog.json` — that is part of the Publication step (Slice 6).
 - Tag frequency counts or usage badges in the UI.
 - Case-insensitive deduplication.
 - A managed tag list in `studio-config.json`.

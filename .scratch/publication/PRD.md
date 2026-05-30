@@ -132,4 +132,7 @@ Prior art: `TranslationJobStateTest.php`, `JobManagerTest.php`.
 - The Catalog is read and written with a simple file lock (`LOCK_EX`) to guard against concurrent writes, even though a single Producer is the sole writer in practice.
 - `StudioConfig::getSubtitleLanguages()` and `getSignLanguages()` are used for label lookups at Publication and in the summary view; no new config methods are needed.
 - The migration of existing `videos.json` entries to `catalog.json` is a one-time manual JSON edit (24 entries), not automated code, since it runs once at deploy time.
-- After this slice ships, `CatalogTagPool` in Slice 5 must be updated to read from `catalog.json` instead of `videos.json`.
+- `CatalogTagPool` reads from `catalog.json` (updated when Slice 5 shipped).
+- **Vimeo credentials:** use a single **authenticated** personal access token in `config.php` with `private`, `upload`, and `edit` scopes, plus matching `VIMEO_CLIENT_ID` and `VIMEO_CLIENT_SECRET`. Test with `php studio/scripts/test_vimeo_publish.php`.
+- **File ownership:** the web app runs as `www-data`. `data/catalog.json` and `data/captions/` must be writable by that user. CLI scripts run as `root` will create root-owned files and cause Publication to fail in the browser — use `sudo -u www-data` or fix ownership afterward.
+- **Verified:** end-to-end Publication (Vimeo text tracks, catalog write, caption copy, job deletion, Studio redirect) confirmed 2026-05-30 via browser and CLI as `www-data`.
