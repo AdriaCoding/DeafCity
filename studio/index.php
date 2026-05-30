@@ -8,10 +8,31 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
+// Transcription config — defined()-guarded so an un-updated config.php still
+// boots. See config/config.example.php for documentation. A blank GROQ_API_KEY
+// means "use the local engine only" (no egress).
+if (!defined('GROQ_API_KEY')) {
+    define('GROQ_API_KEY', '');
+}
+if (!defined('GROQ_TRANSCRIBE_MODEL')) {
+    define('GROQ_TRANSCRIBE_MODEL', 'whisper-large-v3-turbo');
+}
+if (!defined('GROQ_BASE_URL')) {
+    define('GROQ_BASE_URL', 'https://api.groq.com/openai/v1');
+}
+if (!defined('GROQ_TIMEOUT_SECONDS')) {
+    define('GROQ_TIMEOUT_SECONDS', 20);
+}
+if (!defined('STUDIO_LOCAL_TRANSCRIBE_MODEL')) {
+    define('STUDIO_LOCAL_TRANSCRIBE_MODEL', 'whisper-large-v3-turbo');
+}
+
+use Studio\AudioPreprocessor;
 use Studio\AuthGuard;
 use Studio\BackgroundJobLauncher;
 use Studio\CaptionFileIntegrityChecker;
 use Studio\CatalogTagPool;
+use Studio\GroqTranscriber;
 use Studio\IntakeHandler;
 use Studio\JobManager;
 use Studio\PipelineSteps;
@@ -19,6 +40,7 @@ use Studio\PublicationHandler;
 use Studio\StudioConfig;
 use Studio\SubtitleEditorHandler;
 use Studio\TaggingHandler;
+use Studio\TranscriptionOrchestrator;
 use Studio\TranslationJobState;
 use Studio\VimeoClient;
 use Studio\VimeoIdParser;
@@ -156,16 +178,46 @@ if ($action === 'intake') {
         $values = $result['values'];
         if (!empty($result['created'])) {
             if (($values['intake_mode'] ?? 'upload') === 'generate') {
-                $job = $jobManager->read();
-                $launcher->launchTranscription(
-                    $jobManager->interpreterAudioPath(),
-                    $jobManager->draftVttPath(),
-                    $jobManager->transcriptionStatusPath(),
-                    $job['subtitle_language'] ?? 'es',
+                $orchestrator = new TranscriptionOrchestrator(
+                    jobManager: $jobManager,
+                    groqTranscriber: new GroqTranscriber(
+                        GROQ_API_KEY,
+                        GROQ_BASE_URL,
+                        GROQ_TIMEOUT_SECONDS,
+                    ),
+                    audioPreprocessor: new AudioPreprocessor(),
+                    launcher: $launcher,
+                    vttParser: new VttParser(),
+                    groqApiKey: GROQ_API_KEY,
+                    groqModel: GROQ_TRANSCRIBE_MODEL,
+                    localModel: STUDIO_LOCAL_TRANSCRIBE_MODEL,
+                    logger: function (string $line) use ($dataDir): void {
+                        $logFile = $dataDir . '/logs/studio.log';
+                        @file_put_contents(
+                            $logFile,
+                            date('Y-m-d H:i:s') . ' [orchestrator] INFO: ' . $line . "\n",
+                            FILE_APPEND
+                        );
+                    },
                 );
+
+                $outcome = $orchestrator->run();
+
+                if ($outcome['result'] === 'editor') {
+                    header('Location: ?action=subtitle-editor');
+                    exit;
+                }
+                if ($outcome['result'] === 'loading') {
+                    header('Location: ' . $baseUrl);
+                    exit;
+                }
+
+                // 'error' — the Job was destroyed; re-render Intake with the message.
+                $errors['_form'] = $outcome['message'] ?? 'Error en la generació de subtítols';
+            } else {
+                header('Location: ' . $baseUrl);
+                exit;
             }
-            header('Location: ' . $baseUrl);
-            exit;
         }
     }
 
@@ -482,6 +534,7 @@ $stepLabel = '';
 $resumeUrl = './';
 $isTranscribing = false;
 $transcriptionError = null;
+$isLocalFallback = false;
 
 if ($hasActiveJob) {
     $job = $jobManager->read();
@@ -498,6 +551,7 @@ if ($hasActiveJob) {
 
     if (($job['intake_mode'] ?? 'upload') === 'generate' && !$jobManager->hasDraftVtt()) {
         $isTranscribing = true;
+        $isLocalFallback = str_starts_with($job['transcription_engine'] ?? '', 'local:');
         $statusJson = $jobManager->readTranscriptionStatus();
         if ($statusJson !== null) {
             $statusData = json_decode($statusJson, true);

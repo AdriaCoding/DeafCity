@@ -75,3 +75,6 @@ develop/cache
 realtime*
 data/
 **/__pycache__/**
+# Studio transcription venv & model cache
+/studio/.venv/
+/studio/models/

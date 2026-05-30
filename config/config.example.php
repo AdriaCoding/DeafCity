@@ -44,3 +44,43 @@ define('VIMEO_ACCESS_TOKEN', '');
  * Estimated cost: sub-cent per month at ~250K chars/month volume.
  */
 define('GEMINI_API_KEY', '');
+
+// ─── Groq (subtitle transcription) ───────────────────────────────────────────
+
+/**
+ * Groq API key for the primary (cloud) transcription engine.
+ *
+ * Create one at https://console.groq.com/keys
+ *
+ * Groq transcribes Interpreter audio in ~1 s via an OpenAI-compatible Whisper
+ * endpoint. On success the Producer lands straight in the Subtitle Editor; on a
+ * transport/empty failure the Studio falls back to the local faster-whisper
+ * engine automatically.
+ *
+ * Leave this blank ('') to disable the cloud engine entirely and always use the
+ * local engine — the no-egress lever for hosts that never provisioned Groq.
+ *
+ * Billing note: a paid Groq account is required for production volumes; the free
+ * tier has a low rate/upload cap (~25 MB). Interpreter voice audio egresses to
+ * Groq (US cloud) on every cloud transcription — accepted by the project owner.
+ */
+define('GROQ_API_KEY', '');
+
+/** Groq Whisper model id. Default: whisper-large-v3-turbo. */
+define('GROQ_TRANSCRIBE_MODEL', 'whisper-large-v3-turbo');
+
+/**
+ * Base URL of the OpenAI-compatible transcription host.
+ * Default Groq: https://api.groq.com/openai/v1
+ * Repoint at OpenAI or a self-hosted endpoint without code changes.
+ */
+define('GROQ_BASE_URL', 'https://api.groq.com/openai/v1');
+
+/** Per-request timeout in seconds for the inline Groq call. Default: 20. */
+define('GROQ_TIMEOUT_SECONDS', 20);
+
+/**
+ * Local fallback model id (faster-whisper / CTranslate2 int8), read from
+ * studio/models/ in the dedicated studio/.venv. Default: whisper-large-v3-turbo.
+ */
+define('STUDIO_LOCAL_TRANSCRIBE_MODEL', 'whisper-large-v3-turbo');

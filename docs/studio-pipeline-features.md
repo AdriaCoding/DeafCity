@@ -60,11 +60,23 @@ One Job is processed at a time. PHPUnit covers the parser, config reader, job ma
 
 ## Slice 3 — Subtitle Generation
 
-**Shipped.** Alternate intake path: Producer uploads Interpreter audio instead of a subtitle file. The intake form has a radio toggle ("Upload WebVTT" / "Generate from interpreter audio"). On the generate path, PHP spawns `studio/scripts/run_transcribe.sh` as a background process (nohup) which sources the Blind Wiki venv and calls `studio/scripts/transcribe.py`.
+**Shipped.** Alternate intake path: Producer uploads Interpreter audio instead of a subtitle file. The intake form has a radio toggle ("Upload WebVTT" / "Generate from interpreter audio").
 
-The Python script runs `openai/whisper-large-v3-turbo` via HuggingFace transformers (`return_timestamps=True`) using models cached at `/srv/www/blind.wiki/public_html/Tagger/cache`. It passes `subtitle_language` as the Whisper language hint, converts timestamped chunks to WebVTT, and writes `draft.vtt` into the Job folder. Status is tracked in `transcription.json` (`pending → running → done|error`).
+Transcription uses **Groq as the primary cloud engine with a local faster-whisper fallback** (see [ADR-0006](adr/0006-groq-primary-faster-whisper-fallback-transcription.md)). On the generate path the Intake POST calls `TranscriptionOrchestrator` synchronously:
 
-While transcription runs, the shell shows a full-screen loading state that polls `?action=transcription-status` every 3 seconds and auto-redirects to the Subtitle Editor when done. Any format ffmpeg cannot decode shows "El format de l'àudio no es reconeix".
+1. **Preprocess** — `AudioPreprocessor` shells ffmpeg to a 16 kHz mono FLAC in the Job folder (~11× smaller, removes Groq's upload cap; the temp FLAC is deleted after upload).
+2. **Groq cloud call** — `GroqTranscriber` posts the FLAC to the OpenAI-compatible `audio/transcriptions` endpoint (`temperature=0`, `response_format=verbose_json`, `language=<subtitle language>`), retrying once (1 s backoff) on 429/5xx/timeout within a 20 s per-request ceiling. Segments are clamped (`start ≥ prev_end`, drop `start ≥ end`) identically to the local path.
+3. **Route per the fallback matrix** —
+   - **success** ⇒ write `draft.vtt`, stamp `transcription_engine: groq:<model>` on `job.json`, redirect straight to the Subtitle Editor (no loading screen, ~2 s);
+   - **transport / empty** ⇒ stamp `transcription_engine: local:<model>`, spawn the async local engine, show the loading screen with a Catalan "fast engine unavailable, may take a few minutes" notice;
+   - **auth (401/403) / bad input (400)** ⇒ destroy the Job and re-render Intake with a Catalan error;
+   - **blank `GROQ_API_KEY`** ⇒ skip Groq entirely and go straight to local.
+
+The **local fallback** spawns `studio/scripts/run_transcribe.sh` (nohup) which activates the dedicated **`studio/.venv`** and runs `studio/scripts/transcribe.py` — now **faster-whisper (CTranslate2, int8, `vad_filter=True`)** reading CT2 models from `studio/models/`, accepting `--model` (default `whisper-large-v3-turbo`). The old `transformers` engine and Blind Wiki venv coupling are removed. Status stays tracked in `transcription.json` (`pending → running → done|error`); the loading screen polls `?action=transcription-status` every 3 s and auto-redirects to the Subtitle Editor when done. Any format ffmpeg cannot decode shows "El format de l'àudio no es reconeix".
+
+**Provenance:** `transcription_engine` (`groq:<model>` / `local:<model>`) is written to `job.json`, plus one structured line per run in `data/logs/studio.log` (engine, model, lang, wall-time, fallback category on fallback).
+
+**Configuration** (all `defined()`-guarded; documented in `config/config.example.php`): `GROQ_API_KEY`, `GROQ_TRANSCRIBE_MODEL`, `GROQ_BASE_URL`, `GROQ_TIMEOUT_SECONDS`, `STUDIO_LOCAL_TRANSCRIBE_MODEL`. Verify the live Groq integration with `GROQ_SMOKE=1 php studio/scripts/test_groq_transcribe.php`.
 
 ## Slice 4 — Translation
 

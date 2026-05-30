@@ -18,7 +18,7 @@ class BackgroundJobLauncherTest extends TestCase
             }
         );
 
-        $launcher->launchTranscription('/audio.mp3', '/out.vtt', '/status.json', 'es');
+        $launcher->launchTranscription('/audio.mp3', '/out.vtt', '/status.json', 'es', 'whisper-large-v3-turbo');
 
         $this->assertNotNull($captured);
         $this->assertStringContainsString('nohup', $captured);
@@ -26,7 +26,24 @@ class BackgroundJobLauncherTest extends TestCase
         $this->assertStringContainsString(escapeshellarg('/audio.mp3'), $captured);
         $this->assertStringContainsString(escapeshellarg('/out.vtt'), $captured);
         $this->assertStringContainsString(escapeshellarg('es'), $captured);
+        $this->assertStringContainsString('--model ' . escapeshellarg('whisper-large-v3-turbo'), $captured);
         $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
+    }
+
+    public function test_launch_transcription_model_defaults(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher(
+            '/srv/scripts',
+            '',
+            function ($cmd) use (&$captured) {
+                $captured = $cmd;
+            }
+        );
+
+        $launcher->launchTranscription('/audio.mp3', '/out.vtt', '/status.json', 'es');
+
+        $this->assertStringContainsString('--model ' . escapeshellarg('whisper-large-v3-turbo'), $captured);
     }
 
     public function test_launch_transcription_escapes_paths_with_spaces(): void

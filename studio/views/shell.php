@@ -129,6 +129,14 @@
             text-align: left;
         }
         .transcribe-error p { margin-bottom: 1rem; }
+        .fallback-note {
+            max-width: 26rem;
+            margin: 0.75rem auto 0;
+            color: #b58a4a;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -166,6 +174,9 @@
                     <p class="job-title"><?= htmlspecialchars($job['video_title']) ?></p>
                     <div class="spinner"></div>
                     <p class="status-label" id="status-label">Generant subtítols…</p>
+                    <?php if (!empty($isLocalFallback)): ?>
+                        <p class="fallback-note">El whisper online (Groq) no està disponible ara mateix. Generant els subtítols amb el whisper local; això pot trigar uns minuts.</p>
+                    <?php endif; ?>
                     <form method="POST" action="?action=cancel" id="cancel-form-gen">
                         <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
                     </form>

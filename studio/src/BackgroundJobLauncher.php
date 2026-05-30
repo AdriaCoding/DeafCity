@@ -32,16 +32,18 @@ class BackgroundJobLauncher
      * @param string $vttOutputPath
      * @param string $statusPath
      * @param string $language
+     * @param string $model      faster-whisper model id (STUDIO_LOCAL_TRANSCRIBE_MODEL)
      */
-    public function launchTranscription($audioPath, $vttOutputPath, $statusPath, $language)
+    public function launchTranscription($audioPath, $vttOutputPath, $statusPath, $language, $model = 'whisper-large-v3-turbo')
     {
         $cmd = sprintf(
-            'nohup %s --audio_file %s --vtt_output %s --status_file %s --language %s > /dev/null 2>&1 &',
+            'nohup %s --audio_file %s --vtt_output %s --status_file %s --language %s --model %s > /dev/null 2>&1 &',
             escapeshellarg($this->scriptsDir . '/run_transcribe.sh'),
             escapeshellarg($audioPath),
             escapeshellarg($vttOutputPath),
             escapeshellarg($statusPath),
-            escapeshellarg($language)
+            escapeshellarg($language),
+            escapeshellarg($model)
         );
         call_user_func($this->exec, $cmd);
     }
