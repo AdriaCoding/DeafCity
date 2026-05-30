@@ -27,3 +27,6 @@ We run two PHP versions — match the tree you are editing:
 
 - **Site root** (`src/`, `preview/`, root `*.php`, etc.) — **PHP 5.6** (vhost default). Use PHP 5–compatible syntax only; follow the style of the file.
 - **Studio** (`studio/`) — **PHP 8.4** (`studio/.htaccess`). Use modern idioms already in `studio/src/`; do not use features above 8.4. Lint with `php8.4 -l`.
+
+### Frontend testing
+You may, at any time, open up the browser and test the `https://deaf.city/studio` webapp on your own. The password to it is "hola" (I will change it later)
