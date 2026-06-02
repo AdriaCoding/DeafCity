@@ -3,7 +3,7 @@
     { "id": "lse", "label": "LSE Spanish Sign Language" }
   ],
   "editions": [
-    { "id": "valencia-2020", "label": "Valencia 2020" }
+    { "id": "2020-valencia", "label": "2020 Valencia" }
   ],
   "subtitle_languages": [
     { "id": "es", "label": "Spanish" },

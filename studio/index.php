@@ -33,6 +33,7 @@ use Studio\BackgroundJobLauncher;
 use Studio\CaptionFileIntegrityChecker;
 use Studio\CatalogTagPool;
 use Studio\GroqTranscriber;
+use Studio\EditionAddHandler;
 use Studio\IntakeHandler;
 use Studio\JobManager;
 use Studio\PipelineSteps;
@@ -145,6 +146,18 @@ if (!$guard->isAuthenticated()) {
 if ($action === 'cancel' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $jobManager->cancel();
     header('Location: ' . $baseUrl);
+    exit;
+}
+
+// Add edition to studio-config (intake helper)
+if ($action === 'add-edition' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $handler = new EditionAddHandler($studioConfig);
+    $result = $handler->handle(
+        (string) ($_POST['edition_city'] ?? ''),
+        (string) ($_POST['edition_year'] ?? ''),
+    );
+    echo json_encode($result, JSON_UNESCAPED_UNICODE);
     exit;
 }
 

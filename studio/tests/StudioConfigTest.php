@@ -16,7 +16,7 @@ class StudioConfigTest extends TestCase
             $config->getSignLanguages()
         );
         $this->assertSame(
-            [['id' => 'valencia-2020', 'label' => 'Valencia 2020']],
+            [['id' => '2020-valencia', 'label' => '2020 Valencia']],
             $config->getEditions()
         );
         $this->assertSame(

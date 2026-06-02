@@ -62,7 +62,7 @@ class PublicationHandlerTest extends TestCase
         $this->assertSame('lse_111222333', $entry['id']);
         $this->assertSame('111222333', $entry['vimeo_id']);
         $this->assertSame('lse', $entry['sign_language']);
-        $this->assertSame('valencia-2020', $entry['edition']);
+        $this->assertSame('2020-valencia', $entry['edition']);
         $this->assertSame(['humor'], $entry['tags']);
         $this->assertCount(2, $entry['captions']);
     }
@@ -136,7 +136,7 @@ class PublicationHandlerTest extends TestCase
             'vimeo_id' => '111222333',
             'video_title' => 'Test Video',
             'sign_language' => 'lse',
-            'edition' => 'valencia-2020',
+            'edition' => '2020-valencia',
             'subtitle_language' => 'es',
             'tags' => ['humor'],
             'step' => 'publication',

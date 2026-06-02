@@ -99,6 +99,73 @@
             cursor: pointer;
         }
         button[type="submit"]:hover { background: #fff; }
+        .edition-new-panel {
+            display: none;
+            margin-top: 0.75rem;
+            padding: 1rem;
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 5px;
+        }
+        .edition-new-panel.is-open { display: block; }
+        .edition-new-panel h3 {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #aaa;
+            margin-bottom: 0.85rem;
+        }
+        .edition-new-grid {
+            display: grid;
+            grid-template-columns: 1fr 6rem;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .edition-preview {
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 0.85rem;
+        }
+        .edition-preview strong { color: #999; font-weight: 500; }
+        .edition-preview .value { color: #bbb; }
+        .edition-new-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .btn-secondary {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #aaa;
+            font-size: 0.85rem;
+            padding: 0.55rem 0.9rem;
+            cursor: pointer;
+        }
+        .btn-secondary:hover { background: #222; color: #ddd; }
+        .btn-link {
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 0.8rem;
+            padding: 0.55rem 0.5rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .btn-link:hover { color: #888; }
+        .edition-add-error {
+            font-size: 0.82rem;
+            color: #e05555;
+            margin-bottom: 0.65rem;
+        }
+        .edition-add-error:empty { display: none; }
+        .edition-new-hint {
+            font-size: 0.78rem;
+            color: #555;
+            margin-top: 0.65rem;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -147,7 +214,33 @@
                             <?= htmlspecialchars($option['label']) ?>
                         </option>
                     <?php endforeach; ?>
+                    <option value="__new__" <?= ($values['edition'] ?? '') === '__new__' ? 'selected' : '' ?>>+ Afegiu una edició…</option>
                 </select>
+
+                <div class="edition-new-panel<?= ($values['edition'] ?? '') === '__new__' ? ' is-open' : '' ?>" id="edition-new-panel" aria-hidden="<?= ($values['edition'] ?? '') === '__new__' ? 'false' : 'true' ?>">
+                    <h3>Nova edició</h3>
+                    <p class="edition-add-error" id="edition-add-error" role="alert"></p>
+                    <div class="edition-new-grid">
+                        <div>
+                            <label for="edition_city">Ciutat</label>
+                            <input type="text" id="edition_city" name="edition_city" autocomplete="off" placeholder="p. ex. Lisboa">
+                        </div>
+                        <div>
+                            <label for="edition_year">Any</label>
+                            <input type="text" id="edition_year" name="edition_year" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off" placeholder="2027">
+                        </div>
+                    </div>
+                    <p class="edition-preview">
+                        <strong>Nom:</strong> <span class="value" id="edition-preview-label">—</span><br>
+                        <strong>Identificador:</strong> <span class="value" id="edition-preview-id">—</span>
+                    </p>
+                    <div class="edition-new-actions">
+                        <button type="button" class="btn-secondary" id="edition-add-btn">Afegir a la llista</button>
+                        <button type="button" class="btn-link" id="edition-cancel-btn">Cancel·la</button>
+                    </div>
+                    <p class="edition-new-hint">Es desarà a la llista d'edicions per a aquest i futurs vídeos.</p>
+                </div>
+
                 <?php if (!empty($errors['edition'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['edition']) ?></p>
                 <?php endif; ?>
@@ -180,5 +273,129 @@
         </form>
         <p style="margin-top: 1.5rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
     </main>
+    <script>
+    (function () {
+        var editionSelect = document.getElementById('edition');
+        var panel = document.getElementById('edition-new-panel');
+        var cityInput = document.getElementById('edition_city');
+        var yearInput = document.getElementById('edition_year');
+        var previewLabel = document.getElementById('edition-preview-label');
+        var previewId = document.getElementById('edition-preview-id');
+        var addBtn = document.getElementById('edition-add-btn');
+        var cancelBtn = document.getElementById('edition-cancel-btn');
+        var addError = document.getElementById('edition-add-error');
+        var intakeForm = editionSelect.closest('form');
+
+        function slugifyCity(city) {
+            var normalized = city.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            return normalized.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function buildPreview() {
+            var city = cityInput.value.trim();
+            var year = yearInput.value.trim();
+            if (city === '' || !/^\d{4}$/.test(year)) {
+                previewLabel.textContent = '—';
+                previewId.textContent = '—';
+                return;
+            }
+            var slug = slugifyCity(city);
+            if (slug === '') {
+                previewLabel.textContent = '—';
+                previewId.textContent = '—';
+                return;
+            }
+            previewLabel.textContent = city + ' ' + year;
+            previewId.textContent = year + '-' + slug;
+        }
+
+        function setPanelOpen(open) {
+            panel.classList.toggle('is-open', open);
+            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+            editionSelect.required = !open;
+            if (!open) {
+                addError.textContent = '';
+            }
+        }
+
+        function closeNewEditionPanel() {
+            if (editionSelect.value === '__new__') {
+                editionSelect.value = '';
+            }
+            cityInput.value = '';
+            yearInput.value = '';
+            buildPreview();
+            setPanelOpen(false);
+        }
+
+        editionSelect.addEventListener('change', function () {
+            if (editionSelect.value === '__new__') {
+                setPanelOpen(true);
+                cityInput.focus();
+            } else {
+                setPanelOpen(false);
+            }
+        });
+
+        cityInput.addEventListener('input', buildPreview);
+        yearInput.addEventListener('input', buildPreview);
+
+        cancelBtn.addEventListener('click', closeNewEditionPanel);
+
+        addBtn.addEventListener('click', function () {
+            addError.textContent = '';
+            var city = cityInput.value.trim();
+            var year = yearInput.value.trim();
+            if (city === '' || !/^\d{4}$/.test(year)) {
+                addError.textContent = 'Indiqueu una ciutat i un any de quatre xifres.';
+                return;
+            }
+
+            addBtn.disabled = true;
+            var body = new FormData();
+            body.append('edition_city', city);
+            body.append('edition_year', year);
+
+            fetch('?action=add-edition', { method: 'POST', body: body })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (!data.ok) {
+                        addError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir l\'edició.';
+                        return;
+                    }
+                    var opt = document.createElement('option');
+                    opt.value = data.id;
+                    opt.textContent = data.label;
+                    editionSelect.insertBefore(opt, editionSelect.querySelector('option[value="__new__"]'));
+                    editionSelect.value = data.id;
+                    cityInput.value = '';
+                    yearInput.value = '';
+                    buildPreview();
+                    setPanelOpen(false);
+                })
+                .catch(function () {
+                    addError.textContent = 'No s\'ha pogut afegir l\'edició.';
+                })
+                .finally(function () {
+                    addBtn.disabled = false;
+                });
+        });
+
+        intakeForm.addEventListener('submit', function (e) {
+            if (editionSelect.value === '__new__') {
+                e.preventDefault();
+                addError.textContent = 'Afegiu l\'edició a la llista abans de crear la feina.';
+                setPanelOpen(true);
+            }
+        });
+
+        if (editionSelect.value === '__new__') {
+            setPanelOpen(true);
+            buildPreview();
+        }
+    })();
+    </script>
 </body>
 </html>

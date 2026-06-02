@@ -27,7 +27,7 @@ class TranslationJobStateTest extends TestCase
                 'vimeo_id' => '123456789',
                 'video_title' => 'Test Video',
                 'sign_language' => 'lse',
-                'edition' => 'valencia-2020',
+                'edition' => '2020-valencia',
                 'subtitle_language' => 'es',
                 'step' => 'translation',
             ],

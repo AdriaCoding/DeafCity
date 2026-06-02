@@ -74,7 +74,7 @@ class TaggingHandlerTest extends TestCase
             'vimeo_id' => '123',
             'video_title' => 'Test',
             'sign_language' => 'lse',
-            'edition' => 'valencia-2020',
+            'edition' => '2020-valencia',
             'subtitle_language' => 'es',
             'step' => 'tagging',
         ], new UploadedFile($vttPath, 'draft.vtt'));

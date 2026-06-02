@@ -91,7 +91,7 @@ class IntakeHandlerTest extends TestCase
         return [
             'vimeo_input' => '639494119',
             'sign_language' => 'lse',
-            'edition' => 'valencia-2020',
+            'edition' => '2020-valencia',
             'subtitle_language' => 'es',
         ];
     }
