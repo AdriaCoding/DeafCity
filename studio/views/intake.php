@@ -235,7 +235,7 @@
             </div>
 
             <div class="field">
-                <label for="edition">Edició</label>
+                <label for="edition">Ciutat</label>
                 <select id="edition" name="edition" required>
                     <option value="">Seleccioneu…</option>
                     <?php foreach ($editions as $option): ?>
@@ -243,11 +243,11 @@
                             <?= htmlspecialchars($option['label']) ?>
                         </option>
                     <?php endforeach; ?>
-                    <option value="__new__" <?= ($values['edition'] ?? '') === '__new__' ? 'selected' : '' ?>>+ Afegiu una edició…</option>
+                    <option value="__new__" <?= ($values['edition'] ?? '') === '__new__' ? 'selected' : '' ?>>+ Afegiu una ciutat…</option>
                 </select>
 
                 <div class="config-new-panel<?= ($values['edition'] ?? '') === '__new__' ? ' is-open' : '' ?>" id="edition-new-panel" aria-hidden="<?= ($values['edition'] ?? '') === '__new__' ? 'false' : 'true' ?>">
-                    <h3>Nova edició</h3>
+                    <h3>Nova ciutat</h3>
                     <p class="config-add-error" id="edition-add-error" role="alert"></p>
                     <div class="config-new-grid config-new-grid--year">
                         <div>
@@ -462,8 +462,8 @@
             previewLabelId: 'edition-preview-label',
             previewIdId: 'edition-preview-id',
             addAction: '?action=add-edition',
-            addFailMessage: 'No s\'ha pogut afegir l\'edició.',
-            pendingMessage: 'Afegiu l\'edició a la llista abans de crear la feina.',
+            addFailMessage: 'No s\'ha pogut afegir l\'ciutat.',
+            pendingMessage: 'Afegiu l\'ciutat a la llista abans de crear la feina.',
             focusInput: function () { editionCity.focus(); },
             clearInputs: function () {
                 editionCity.value = '';

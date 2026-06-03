@@ -152,7 +152,7 @@
             <dd><?= htmlspecialchars($summarySignLanguage, ENT_QUOTES, 'UTF-8') ?></dd>
         </div>
         <div class="summary-row">
-            <dt>Edició</dt>
+            <dt>Ciutat</dt>
             <dd><?= htmlspecialchars($summaryEdition, ENT_QUOTES, 'UTF-8') ?></dd>
         </div>
         <div class="summary-row">

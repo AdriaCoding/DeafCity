@@ -27,7 +27,7 @@ class EditionAddHandler
             if (($edition['id'] ?? '') === $formatted['id']) {
                 return [
                     'ok' => false,
-                    'errors' => ['Aquesta edició ja existeix a la llista.'],
+                    'errors' => ['Aquesta ciutat ja existeix a la llista.'],
                 ];
             }
         }
@@ -37,7 +37,7 @@ class EditionAddHandler
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,
-                'errors' => ['No s\'ha pogut desar la nova edició.'],
+                'errors' => ['No s\'ha pogut desar la nova ciutat.'],
             ];
         }
 

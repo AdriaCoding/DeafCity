@@ -56,7 +56,8 @@ _Avoid_: Collection, channel, feed
 
 **Edition**:
 A city-or-region chapter of the DEAF.city project (e.g. Valencia 2020, Marseille 2026). Each Video belongs to one Edition — where and when it was filmed as part of the artistic programme.
-_Avoid_: City alone, season, event
+Stakeholder wants its display name to be "ciutat", in catalan. However, we should still call it edition in the backend
+_Avoid_: Season, event
 
 ## Studio workflow
 

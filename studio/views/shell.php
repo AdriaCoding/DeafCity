@@ -303,7 +303,7 @@
             <div class="job-card">
                 <h2><?= htmlspecialchars($job['video_title']) ?></h2>
                 <p class="job-meta">
-                    <strong>Edició:</strong> <?= htmlspecialchars($editionLabel) ?><br>
+                    <strong>Ciutat:</strong> <?= htmlspecialchars($editionLabel) ?><br>
                     <strong>Pas:</strong> <?= htmlspecialchars($stepLabel) ?>
                 </p>
                 <div class="actions">
