@@ -242,60 +242,6 @@
                 }());
             </script>
             <?php endif; ?>
-        <?php elseif ($isConvertingSrt): ?>
-            <?php if ($conversionError !== null): ?>
-                <div class="transcribing">
-                    <p class="job-title"><?= htmlspecialchars($job['video_title']) ?></p>
-                    <div class="transcribe-error">
-                        <p><?= htmlspecialchars($conversionError) ?></p>
-                        <form method="POST" action="?action=cancel" id="cancel-form-srt-err">
-                            <button type="submit" class="btn-danger">Cancel·la la feina</button>
-                        </form>
-                    </div>
-                </div>
-                <script>
-                    document.getElementById('cancel-form-srt-err').addEventListener('submit', function (e) {
-                        var ok = confirm('Voleu cancel·lar aquesta feina? Aquesta acció no es pot desfer.');
-                        if (!ok) e.preventDefault();
-                    });
-                </script>
-            <?php else: ?>
-                <div class="transcribing" id="converting-view">
-                    <p class="job-title"><?= htmlspecialchars($job['video_title']) ?></p>
-                    <div class="spinner"></div>
-                    <p class="status-label" id="conversion-status-label">Convertint subtítols…</p>
-                    <form method="POST" action="?action=cancel" id="cancel-form-srt">
-                        <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
-                    </form>
-                </div>
-                <script>
-                    (function () {
-                        document.getElementById('cancel-form-srt').addEventListener('submit', function (e) {
-                            var ok = confirm('Voleu cancel·lar aquesta feina? Aquesta acció no es pot desfer.');
-                            if (!ok) e.preventDefault();
-                        });
-
-                        function poll() {
-                            fetch('?action=conversion-status')
-                                .then(function (r) { return r.json(); })
-                                .then(function (data) {
-                                    if (data.status === 'done') {
-                                        window.location.href = '?action=subtitle-editor';
-                                    } else if (data.status === 'error') {
-                                        document.getElementById('conversion-status-label').textContent =
-                                            data.message || 'Error en la conversió de subtítols';
-                                        document.querySelector('#converting-view .spinner').style.display = 'none';
-                                    } else {
-                                        setTimeout(poll, 1500);
-                                    }
-                                })
-                                .catch(function () { setTimeout(poll, 2000); });
-                        }
-
-                        setTimeout(poll, 1500);
-                    }());
-                </script>
-            <?php endif; ?>
         <?php elseif ($isTranscribing): ?>
             <?php if ($transcriptionError !== null): ?>
                 <div class="transcribing">

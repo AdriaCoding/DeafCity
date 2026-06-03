@@ -255,6 +255,7 @@
         window.__vimeoId        = <?= json_encode($vimeoId) ?>;
         window.__lang           = <?= json_encode($lang) ?>;
     </script>
+    <script src="js/caption-utils.js?v=<?= filemtime(__DIR__ . '/../js/caption-utils.js') ?>"></script>
     <script src="js/translation-review.js?v=<?= filemtime(__DIR__ . '/../js/translation-review.js') ?>"></script>
 </body>
 </html>

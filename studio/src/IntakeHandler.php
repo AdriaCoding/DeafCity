@@ -10,18 +10,13 @@ class IntakeHandler
         private readonly StudioConfig $studioConfig,
         private readonly JobManager $jobManager,
         private readonly WebVttValidator $vttValidator,
-        private readonly SrtParser $srtParser = new SrtParser(),
         private readonly IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
+        private readonly SrtToVttConverter $srtConverter = new SrtToVttConverter(),
     ) {
     }
 
     /**
-     * @return array{
-     *   errors: array<string, string>,
-     *   values: array<string, string>,
-     *   created?: bool,
-     *   intake_format?: 'vtt'|'srt'
-     * }
+     * @return array{errors: array<string, string>, values: array<string, string>, created?: bool}
      */
     public function handlePost(array $post, array $files): array
     {
@@ -96,26 +91,16 @@ class IntakeHandler
         try {
             if ($intakeMode === 'upload') {
                 if ($this->sourceDetector->isSubRip($upload['tmp_name'], $upload['name'])) {
-                    $this->srtParser->parse($upload['tmp_name']);
-                    $this->jobManager->createWithSrt($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
+                    $vttContent = $this->srtConverter->convert($upload['tmp_name']);
+                    $this->jobManager->createWithContent($meta, $vttContent);
 
-                    return [
-                        'errors' => [],
-                        'values' => $values,
-                        'created' => true,
-                        'intake_format' => 'srt',
-                    ];
+                    return ['errors' => [], 'values' => $values, 'created' => true];
                 }
 
                 $this->vttValidator->validate($upload['tmp_name'], $upload['name']);
                 $this->jobManager->create($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
 
-                return [
-                    'errors' => [],
-                    'values' => $values,
-                    'created' => true,
-                    'intake_format' => 'vtt',
-                ];
+                return ['errors' => [], 'values' => $values, 'created' => true];
             }
 
             $this->jobManager->createWithAudio($meta, new UploadedFile($upload['tmp_name'], $upload['name']));

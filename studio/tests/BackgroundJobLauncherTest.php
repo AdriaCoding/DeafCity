@@ -7,25 +7,6 @@ use Studio\BackgroundJobLauncher;
 
 class BackgroundJobLauncherTest extends TestCase
 {
-    public function test_launch_srt_conversion_builds_nohup_command(): void
-    {
-        $captured = '';
-        $launcher = new BackgroundJobLauncher(
-            '/studio/scripts',
-            '',
-            function (string $cmd) use (&$captured): void {
-                $captured = $cmd;
-            },
-        );
-
-        $launcher->launchSrtConversion('/in.srt', '/out.vtt', '/status.json');
-
-        $this->assertStringContainsString('run_convert_srt.sh', $captured);
-        $this->assertStringContainsString(escapeshellarg('/in.srt'), $captured);
-        $this->assertStringContainsString(escapeshellarg('/out.vtt'), $captured);
-        $this->assertStringContainsString(escapeshellarg('/status.json'), $captured);
-    }
-
     public function test_launch_transcription_builds_nohup_command(): void
     {
         $captured = null;

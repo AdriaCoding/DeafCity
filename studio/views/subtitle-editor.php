@@ -340,6 +340,7 @@
         window.__lang       = <?= json_encode($lang ?? '') ?>;
     </script>
     <script src="https://player.vimeo.com/api/player.js"></script>
+    <script src="js/caption-utils.js?v=<?= filemtime(__DIR__ . '/../js/caption-utils.js') ?>"></script>
     <script src="js/subtitle-editor.js?v=<?= filemtime(__DIR__ . '/../js/subtitle-editor.js') ?>"></script>
 </body>
 </html>

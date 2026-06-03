@@ -42,7 +42,6 @@ use Studio\PublicationHandler;
 use Studio\StudioConfig;
 use Studio\SubtitleEditorHandler;
 use Studio\TaggingHandler;
-use Studio\SrtConversionOrchestrator;
 use Studio\TranscriptionOrchestrator;
 use Studio\TranslationJobState;
 use Studio\VimeoClient;
@@ -205,15 +204,7 @@ if ($action === 'intake') {
         $errors = $result['errors'];
         $values = $result['values'];
         if (!empty($result['created'])) {
-            if (($result['intake_format'] ?? '') === 'srt') {
-                $conversionOutcome = (new SrtConversionOrchestrator($jobManager, $launcher))->run();
-                if ($conversionOutcome['result'] === 'error') {
-                    $errors['_form'] = $conversionOutcome['message'] ?? 'Error en la conversió de subtítols';
-                } else {
-                    header('Location: ' . $baseUrl);
-                    exit;
-                }
-            } elseif (($values['intake_mode'] ?? 'upload') === 'generate') {
+            if (($values['intake_mode'] ?? 'upload') === 'generate') {
                 $orchestrator = new TranscriptionOrchestrator(
                     jobManager: $jobManager,
                     groqTranscriber: new GroqTranscriber(
@@ -375,7 +366,7 @@ if ($action === 'subtitle-editor' && $jobManager->exists()) {
         : $jobManager->draftVttPath();
 
     if (!is_file($vttPath)) {
-        if ($jobManager->needsSrtConversion() || (($job['intake_mode'] ?? '') === 'generate' && !$jobManager->hasDraftVtt())) {
+        if (($job['intake_mode'] ?? '') === 'generate' && !$jobManager->hasDraftVtt()) {
             header('Location: ' . $baseUrl);
             exit;
         }
@@ -401,14 +392,6 @@ if ($action === 'subtitle-editor' && $jobManager->exists()) {
         }
     }
     require __DIR__ . '/views/subtitle-editor.php';
-    exit;
-}
-
-// SRT conversion status — GET (JSON)
-if ($action === 'conversion-status' && $jobManager->exists()) {
-    ini_set('display_errors', '0');
-    header('Content-Type: application/json');
-    echo $jobManager->readConversionStatus() ?? json_encode(['status' => 'pending']);
     exit;
 }
 
@@ -733,8 +716,6 @@ $resumeUrl = './';
 $isTranscribing = false;
 $transcriptionError = null;
 $isLocalFallback = false;
-$isConvertingSrt = false;
-$conversionError = null;
 
 if ($hasActiveJob) {
     $job = $jobManager->read();
@@ -757,15 +738,6 @@ if ($hasActiveJob) {
             $statusData = json_decode($statusJson, true);
             if (($statusData['status'] ?? '') === 'error') {
                 $transcriptionError = $statusData['message'] ?? 'Error en la generació de subtítols';
-            }
-        }
-    } elseif ($jobManager->needsSrtConversion()) {
-        $isConvertingSrt = true;
-        $statusJson = $jobManager->readConversionStatus();
-        if ($statusJson !== null) {
-            $statusData = json_decode($statusJson, true);
-            if (($statusData['status'] ?? '') === 'error') {
-                $conversionError = $statusData['message'] ?? 'Error en la conversió de subtítols';
             }
         }
     }

@@ -2,6 +2,10 @@
 (function () {
     'use strict';
 
+    var formatTime    = CaptionUtils.formatTime;
+    var parseTime     = CaptionUtils.parseTime;
+    var formatTimeSrt = CaptionUtils.formatTimeSrt;
+
     let cues = JSON.parse(JSON.stringify(window.__cues));
     let savedSnapshot = JSON.stringify(cues);
     let player = null;
@@ -10,11 +14,14 @@
 
     let cueList, saveBtn, saveDraftBtn, saveTranslateBtn, saveError, skipBtn, liveCaption, downloadVttBtn, downloadSrtBtn;
 
+    /* Binary search — cues are always sorted by start time */
     function findActiveCueIndex(currentTime) {
-        for (let i = 0; i < cues.length; i++) {
-            if (currentTime >= cues[i].start && currentTime < cues[i].end) {
-                return i;
-            }
+        var lo = 0, hi = cues.length - 1;
+        while (lo <= hi) {
+            var mid = (lo + hi) >> 1;
+            if (currentTime < cues[mid].start)     { hi = mid - 1; }
+            else if (currentTime >= cues[mid].end) { lo = mid + 1; }
+            else { return mid; }
         }
         return -1;
     }
@@ -74,18 +81,7 @@
 
     // Visual hint only — not a gate. Server is the authority for what can be saved.
     function updateOverlapHighlights() {
-        const overlapRows = new Set();
-        for (let i = 0; i < cues.length - 1; i++) {
-            for (let j = i + 1; j < cues.length; j++) {
-                if (cues[i].end > cues[j].start) {
-                    overlapRows.add(i);
-                    overlapRows.add(j);
-                }
-            }
-        }
-        document.querySelectorAll('.cue-row').forEach(function (row, idx) {
-            row.classList.toggle('cue-overlap', overlapRows.has(idx));
-        });
+        CaptionUtils.updateOverlapHighlights(cues, '.cue-row');
     }
 
     function showCueErrors(cueErrors) {
@@ -97,29 +93,6 @@
         document.querySelectorAll('.cue-row').forEach(function (row, idx) {
             if (errorIndices.has(idx)) row.classList.add('cue-error');
         });
-    }
-
-    function formatTime(seconds) {
-        if (typeof seconds !== 'number' || isNaN(seconds)) return '00:00:00.000';
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = seconds % 60;
-        return (
-            String(h).padStart(2, '0') + ':' +
-            String(m).padStart(2, '0') + ':' +
-            s.toFixed(3).padStart(6, '0')
-        );
-    }
-
-    function parseTime(str) {
-        str = str.trim();
-        const parts = str.split(':');
-        if (parts.length === 3) {
-            return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
-        } else if (parts.length === 2) {
-            return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
-        }
-        return parseFloat(str);
     }
 
     function render() {
@@ -298,71 +271,16 @@
         return JSON.stringify(cues) !== savedSnapshot;
     }
 
-    function generateVtt() {
-        var parts = ['WEBVTT'];
-        cues.forEach(function (cue) {
-            var opaque = cue.opaque ? ' ' + cue.opaque : '';
-            var timing = formatTime(cue.start) + ' --> ' + formatTime(cue.end) + opaque;
-            var block = timing + '\n' + cue.text;
-            if (cue.id && cue.id !== '') {
-                block = cue.id + '\n' + block;
-            }
-            parts.push(block);
-        });
-        return parts.join('\n\n') + '\n';
-    }
-
     function downloadVtt() {
-        var content = generateVtt();
         var lang = window.__lang || '';
         var filename = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '') + '.vtt';
-        var blob = new Blob([content], { type: 'text/vtt' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }
-
-    function formatTimeSrt(seconds) {
-        if (typeof seconds !== 'number' || isNaN(seconds)) return '00:00:00,000';
-        var h  = Math.floor(seconds / 3600);
-        var m  = Math.floor((seconds % 3600) / 60);
-        var s  = Math.floor(seconds % 60);
-        var ms = Math.round((seconds % 1) * 1000);
-        return (
-            String(h).padStart(2, '0') + ':' +
-            String(m).padStart(2, '0') + ':' +
-            String(s).padStart(2, '0') + ',' +
-            String(ms).padStart(3, '0')
-        );
-    }
-
-    function generateSrt() {
-        var blocks = [];
-        cues.forEach(function (cue, i) {
-            var timing = formatTimeSrt(cue.start) + ' --> ' + formatTimeSrt(cue.end);
-            blocks.push((i + 1) + '\n' + timing + '\n' + cue.text);
-        });
-        return blocks.join('\n\n') + '\n';
+        CaptionUtils.triggerDownload(CaptionUtils.generateVtt(cues), filename, 'text/vtt');
     }
 
     function downloadSrt() {
-        var content = generateSrt();
         var lang = window.__lang || '';
         var filename = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '') + '.srt';
-        var blob = new Blob([content], { type: 'application/x-subrip' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        CaptionUtils.triggerDownload(CaptionUtils.generateSrt(cues), filename, 'application/x-subrip');
     }
 
     document.addEventListener('DOMContentLoaded', function () {
