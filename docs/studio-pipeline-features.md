@@ -6,7 +6,7 @@ Vertical slices built after the auth gate, in order. **All six pipeline slices a
 
 **Auth gate** — password prompt, session management, blocker view, Studio shell.
 
-**Intake (Slice 1)** — single intake form (`?action=intake`), Vimeo URL/ID parsing and API validation, curated dropdowns from `data/studio-config.json`, WebVTT upload or interpreter-audio path, job folder at `data/jobs/current/`. See [Slice 1](#slice-1--intake).
+**Intake (Slice 1)** — single intake form (`?action=intake`), Vimeo URL/ID parsing and API validation, curated dropdowns from `data/studio-config.json`, WebVTT or SubRip (.srt) upload (SRT converted to WebVTT at intake) or interpreter-audio path, job folder at `data/jobs/current/`. See [Slice 1](#slice-1--intake).
 
 **Subtitle Editor (Slice 2)** — full-page cue editor with Vimeo player, live caption preview, integrity validation, Save & Translate / Skip to Tagging. See [Slice 2](#slice-2--subtitle-editor).
 
@@ -44,7 +44,7 @@ In the Studio, the Producer fills a single intake form:
 - **Sign language** — dropdown from `data/studio-config.json`.
 - **Edition** — dropdown from `data/studio-config.json`.
 - **Subtitle language** — dropdown from `data/studio-config.json` (the written language of the subtitle file being uploaded).
-- **Subtitle file** — WebVTT upload, or interpreter audio for auto-generation (Slice 3).
+- **Subtitle file** — WebVTT or SubRip (.srt) upload (converted to `draft.vtt` at intake), or interpreter audio for auto-generation (Slice 3).
 
 Submitting creates `data/jobs/current/` containing `job.json` and `draft.vtt`. `data/jobs/` is denied direct web access via `.htaccess`.
 

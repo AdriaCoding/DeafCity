@@ -10,6 +10,7 @@ class IntakeHandler
         private readonly StudioConfig $studioConfig,
         private readonly JobManager $jobManager,
         private readonly WebVttValidator $vttValidator,
+        private readonly SrtToVttConverter $srtToVttConverter = new SrtToVttConverter(),
         private readonly IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
     ) {
     }
@@ -52,7 +53,7 @@ class IntakeHandler
 
         $upload = $files['intake_file'] ?? null;
         if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            $errors['intake_file'] = 'Pugeu un fitxer WebVTT o un fitxer d\'àudio de l\'intèrpret.';
+            $errors['intake_file'] = 'Pugeu un fitxer WebVTT, SubRip (.srt) o un fitxer d\'àudio de l\'intèrpret.';
         } elseif (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
             $errors['intake_file'] = 'No s\'ha pogut pujar el fitxer.';
         }
@@ -89,8 +90,19 @@ class IntakeHandler
 
         try {
             if ($intakeMode === 'upload') {
-                $this->vttValidator->validate($upload['tmp_name'], $upload['name']);
-                $this->jobManager->create($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
+                $vttPath = $upload['tmp_name'];
+                $vttName = $upload['name'];
+                if (str_ends_with(strtolower($upload['name']), '.srt')) {
+                    $vttContent = $this->srtToVttConverter->convert($upload['tmp_name']);
+                    $vttPath = tempnam(sys_get_temp_dir(), 'studio-vtt-');
+                    if ($vttPath === false) {
+                        throw new \RuntimeException('No s\'ha pogut preparar el fitxer de subtítols convertit.');
+                    }
+                    file_put_contents($vttPath, $vttContent);
+                    $vttName = 'draft.vtt';
+                }
+                $this->vttValidator->validate($vttPath, $vttName);
+                $this->jobManager->create($meta, new UploadedFile($vttPath, $vttName));
             } else {
                 $this->jobManager->createWithAudio($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
             }

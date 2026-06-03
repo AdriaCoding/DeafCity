@@ -21,6 +21,20 @@ class IntakeSourceDetectorTest extends TestCase
         $this->assertSame('upload', $this->detector->detect($path, 'subtitles.vtt'));
     }
 
+    public function test_detects_srt_by_extension(): void
+    {
+        $path = $this->writeTemp("1\n00:00:01,000 --> 00:00:04,000\nHola\n", 'subtitles.srt');
+
+        $this->assertSame('upload', $this->detector->detect($path, 'subtitles.srt'));
+    }
+
+    public function test_detects_alger_fr_hamida_fixture_as_upload(): void
+    {
+        $path = $this->fixturePath();
+
+        $this->assertSame('upload', $this->detector->detect($path, 'ALGER_FR_Hamida_1.srt'));
+    }
+
     public function test_detects_vtt_by_content_even_without_extension(): void
     {
         $path = $this->writeTemp("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nHola\n", 'captions.txt');
@@ -47,8 +61,13 @@ class IntakeSourceDetectorTest extends TestCase
         $path = $this->writeTemp('plain text document', 'notes.pdf');
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('WebVTT');
+        $this->expectExceptionMessage('SubRip');
         $this->detector->detect($path, 'notes.pdf');
+    }
+
+    private function fixturePath(): string
+    {
+        return __DIR__ . '/ALGER_FR_Hamida_1.srt';
     }
 
     private function writeTemp(string $contents, string $name): string

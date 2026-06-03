@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Studio\IntakeHandler;
 use Studio\IntakeSourceDetector;
 use Studio\JobManager;
+use Studio\SrtToVttConverter;
 use Studio\StudioConfig;
 use Studio\VimeoClient;
 use Studio\VimeoIdParser;
@@ -73,6 +74,66 @@ class IntakeHandlerTest extends TestCase
         $this->assertFileExists($this->jobsDir . '/current/interpreter_audio.mp3');
     }
 
+    public function test_detects_srt_upload_converts_and_creates_job(): void
+    {
+        $this->vimeoClient->method('getVideo')->willReturn('Test Video');
+        $handler = $this->handler();
+        $srtPath = $this->writeTemp(
+            "1\n00:00:01,000 --> 00:00:04,000\nHello world\n",
+            'subtitles.srt'
+        );
+
+        $result = $handler->handlePost($this->validPost(), [
+            'intake_file' => $this->uploadedFile($srtPath, 'subtitles.srt'),
+        ]);
+
+        $this->assertSame([], $result['errors']);
+        $this->assertTrue($result['created'] ?? false);
+        $this->assertSame('upload', $result['values']['intake_mode']);
+        $draftPath = $this->jobsDir . '/current/draft.vtt';
+        $this->assertFileExists($draftPath);
+        $this->assertStringStartsWith("WEBVTT\n", (string) file_get_contents($draftPath));
+    }
+
+    public function test_alger_fr_hamida_srt_upload_converts_and_creates_job(): void
+    {
+        $this->vimeoClient->method('getVideo')->willReturn('Test Video');
+        $handler = $this->handler();
+        $srtPath = __DIR__ . '/ALGER_FR_Hamida_1.srt';
+
+        $result = $handler->handlePost($this->validPost(), [
+            'intake_file' => $this->uploadedFile($srtPath, 'ALGER_FR_Hamida_1.srt'),
+        ]);
+
+        $this->assertSame([], $result['errors']);
+        $this->assertTrue($result['created'] ?? false);
+        $this->assertSame('upload', $result['values']['intake_mode']);
+
+        $draftPath = $this->jobsDir . '/current/draft.vtt';
+        $this->assertFileExists($draftPath);
+        $draft = (string) file_get_contents($draftPath);
+        $this->assertStringStartsWith("WEBVTT\n", $draft);
+        $this->assertStringContainsString('Un papa avec son fils.', $draft);
+    }
+
+    public function test_rejects_malformed_srt_upload(): void
+    {
+        $this->vimeoClient->method('getVideo')->willReturn('Test Video');
+        $handler = $this->handler();
+        $srtPath = $this->writeTemp(
+            "1\n00:00:01.000 --> 00:00:04.000\nHello\n",
+            'bad.srt'
+        );
+
+        $result = $handler->handlePost($this->validPost(), [
+            'intake_file' => $this->uploadedFile($srtPath, 'bad.srt'),
+        ]);
+
+        $this->assertArrayHasKey('intake_file', $result['errors']);
+        $this->assertFalse($result['created'] ?? false);
+        $this->assertDirectoryDoesNotExist($this->jobsDir . '/current');
+    }
+
     private function handler(): IntakeHandler
     {
         return new IntakeHandler(
@@ -81,6 +142,7 @@ class IntakeHandlerTest extends TestCase
             $this->config,
             $this->jobManager,
             new WebVttValidator(),
+            new SrtToVttConverter(),
             new IntakeSourceDetector(),
         );
     }

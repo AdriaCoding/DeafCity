@@ -19,7 +19,7 @@ class IntakeSourceDetector
         }
 
         $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-        if ($ext === 'vtt') {
+        if ($ext === 'vtt' || $ext === 'srt') {
             return 'upload';
         }
 
@@ -32,7 +32,7 @@ class IntakeSourceDetector
         }
 
         throw new \InvalidArgumentException(
-            'Pugeu un fitxer WebVTT o un fitxer d\'àudio de l\'intèrpret (MP3, WAV, M4A…).'
+            'Pugeu un fitxer WebVTT, SubRip (.srt) o un fitxer d\'àudio de l\'intèrpret (MP3, WAV, M4A…).'
         );
     }
 

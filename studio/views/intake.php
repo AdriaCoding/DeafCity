@@ -178,7 +178,7 @@
     </header>
     <main>
         <h2>Nova feina</h2>
-        <p class="lead">Enganxeu la URL o l'ID de Vimeo d'un vídeo que ja sigui al vostre compte, trieu les metadades i pugeu un fitxer WebVTT o l'àudio de l'intèrpret.</p>
+        <p class="lead">Enganxeu la URL o l'ID de Vimeo d'un vídeo que ja sigui al vostre compte, trieu les metadades i pugeu un fitxer WebVTT, SubRip (.srt) o l'àudio de l'intèrpret.</p>
 
         <?php if (!empty($errors['_form'])): ?>
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
@@ -292,7 +292,7 @@
 
             <div class="field">
                 <label for="intake_file">Fitxer de subtítols o àudio de l'intèrpret</label>
-                <input type="file" id="intake_file" name="intake_file" accept=".vtt,text/vtt,audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" required>
+                <input type="file" id="intake_file" name="intake_file" accept=".vtt,.srt,text/vtt,audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" required>
                 <?php if (!empty($errors['intake_file'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['intake_file']) ?></p>
                 <?php endif; ?>

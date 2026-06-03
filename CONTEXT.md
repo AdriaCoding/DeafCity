@@ -9,7 +9,7 @@ The written translation of a signed performance into a spoken/written language (
 _Avoid_: Caption (when referring to the human-readable text — see Caption file)
 
 **Caption file**:
-A machine-readable timed text file (typically WebVTT) that carries Subtitle text for playback sync. Not the subtitle itself — the file format that delivers it.
+A machine-readable timed text file (typically WebVTT) that carries Subtitle text for playback sync. Not the subtitle itself — the file format that delivers it. Studio intake may accept SubRip (.srt); the canonical on-disk format in a Job is always WebVTT.
 _Avoid_: Subtitle file (redundant — say "caption file in language X")
 
 **Video**:
