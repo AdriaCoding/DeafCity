@@ -1,5 +1,12 @@
 <p><b>2026 Marseille, Roma, Tunis, Algiers and Barcelona _SUPPORTED BY <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a></b>
 
+<p><b>2026 Alger <a href="https://en.wikipedia.org/wiki/Algerian_Sign_Language" target="_blank">*LSA Algerian Sign Language</a></b>
+  _SUPPORTED BY <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
+  _PARTICIPANTS Atifa Kaizra, Hamida Taleb, Hassen Djouad, Mahieddine Charrad, Mhamed Lamine Said, Mustapha Iskeur
+  _INTERPRETER Hamid Fadhel _COORDINATION Shahinez Guir
+  _COLLABORATION <a href="https://jiser.org/" target="_blank">Jiser Reflexions Mediterrànies</a>
+  _THANKS TO Association Les Signes d'Or de la Wilaya d'Alger, Xavier de Luca, Walid Aïdoud, Box 24.</p>
+
 <p><b>2026 Roma <a href="https://en.wikipedia.org/wiki/Italian_Sign_Language" target="_blank">*LIS Lingua dei Segni Italiana</a></b>
   _SUPPORTED BY <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
   _PARTICIPANTS Carolina Ambrosio, Lorenzo Laudo, Massimo Paletta, Olivier Fidalgo, Paula Severi, Serena Rosaria Conte
