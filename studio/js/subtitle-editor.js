@@ -8,7 +8,7 @@
     let activeCueIndex = -1;
     const editorMode = window.__editorMode || 'master';
 
-    let cueList, saveBtn, saveDraftBtn, saveTranslateBtn, saveError, skipBtn, liveCaption;
+    let cueList, saveBtn, saveDraftBtn, saveTranslateBtn, saveError, skipBtn, liveCaption, downloadVttBtn, downloadSrtBtn;
 
     function findActiveCueIndex(currentTime) {
         for (let i = 0; i < cues.length; i++) {
@@ -298,6 +298,73 @@
         return JSON.stringify(cues) !== savedSnapshot;
     }
 
+    function generateVtt() {
+        var parts = ['WEBVTT'];
+        cues.forEach(function (cue) {
+            var opaque = cue.opaque ? ' ' + cue.opaque : '';
+            var timing = formatTime(cue.start) + ' --> ' + formatTime(cue.end) + opaque;
+            var block = timing + '\n' + cue.text;
+            if (cue.id && cue.id !== '') {
+                block = cue.id + '\n' + block;
+            }
+            parts.push(block);
+        });
+        return parts.join('\n\n') + '\n';
+    }
+
+    function downloadVtt() {
+        var content = generateVtt();
+        var lang = window.__lang || '';
+        var filename = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '') + '.vtt';
+        var blob = new Blob([content], { type: 'text/vtt' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function formatTimeSrt(seconds) {
+        if (typeof seconds !== 'number' || isNaN(seconds)) return '00:00:00,000';
+        var h  = Math.floor(seconds / 3600);
+        var m  = Math.floor((seconds % 3600) / 60);
+        var s  = Math.floor(seconds % 60);
+        var ms = Math.round((seconds % 1) * 1000);
+        return (
+            String(h).padStart(2, '0') + ':' +
+            String(m).padStart(2, '0') + ':' +
+            String(s).padStart(2, '0') + ',' +
+            String(ms).padStart(3, '0')
+        );
+    }
+
+    function generateSrt() {
+        var blocks = [];
+        cues.forEach(function (cue, i) {
+            var timing = formatTimeSrt(cue.start) + ' --> ' + formatTimeSrt(cue.end);
+            blocks.push((i + 1) + '\n' + timing + '\n' + cue.text);
+        });
+        return blocks.join('\n\n') + '\n';
+    }
+
+    function downloadSrt() {
+        var content = generateSrt();
+        var lang = window.__lang || '';
+        var filename = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '') + '.srt';
+        var blob = new Blob([content], { type: 'application/x-subrip' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         cueList = document.getElementById('cue-list');
         saveBtn = document.getElementById('save-btn');
@@ -306,6 +373,8 @@
         saveError = document.getElementById('save-error');
         skipBtn = document.getElementById('skip-btn');
         liveCaption = document.getElementById('live-caption');
+        downloadVttBtn = document.getElementById('download-vtt-btn');
+        downloadSrtBtn = document.getElementById('download-srt-btn');
 
         initPlayer(window.__vimeoId);
         render();
@@ -332,6 +401,13 @@
                     window.location.href = '?action=tagging';
                 });
             });
+        }
+
+        if (downloadVttBtn) {
+            downloadVttBtn.addEventListener('click', downloadVtt);
+        }
+        if (downloadSrtBtn) {
+            downloadSrtBtn.addEventListener('click', downloadSrt);
         }
 
         window.addEventListener('beforeunload', function (e) {

@@ -95,6 +95,26 @@ class IntakeHandlerTest extends TestCase
         $this->assertStringStartsWith("WEBVTT\n", (string) file_get_contents($draftPath));
     }
 
+    public function test_srt_content_without_srt_extension_converts_at_intake(): void
+    {
+        $this->vimeoClient->method('getVideo')->willReturn('Test Video');
+        $handler = $this->handler();
+        $srtPath = $this->writeTemp(
+            "1\n00:00:01,000 --> 00:00:04,000\nBonjour\n",
+            'captions.txt'
+        );
+
+        $result = $handler->handlePost($this->validPost(), [
+            'intake_file' => $this->uploadedFile($srtPath, 'captions.txt'),
+        ]);
+
+        $this->assertSame([], $result['errors']);
+        $this->assertTrue($result['created'] ?? false);
+        $draft = (string) file_get_contents($this->jobsDir . '/current/draft.vtt');
+        $this->assertStringStartsWith("WEBVTT\n", $draft);
+        $this->assertStringContainsString('Bonjour', $draft);
+    }
+
     public function test_alger_fr_hamida_srt_upload_converts_and_creates_job(): void
     {
         $this->vimeoClient->method('getVideo')->willReturn('Test Video');

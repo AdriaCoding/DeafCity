@@ -92,7 +92,7 @@ class IntakeHandler
             if ($intakeMode === 'upload') {
                 $vttPath = $upload['tmp_name'];
                 $vttName = $upload['name'];
-                if (str_ends_with(strtolower($upload['name']), '.srt')) {
+                if ($this->sourceDetector->isSubRip($upload['tmp_name'], $upload['name'])) {
                     $vttContent = $this->srtToVttConverter->convert($upload['tmp_name']);
                     $vttPath = tempnam(sys_get_temp_dir(), 'studio-vtt-');
                     if ($vttPath === false) {

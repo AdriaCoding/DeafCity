@@ -141,6 +141,17 @@
             cursor: pointer;
         }
         #skip-btn:hover { color: #aaa; border-color: #555; }
+        #download-vtt-btn, #download-srt-btn {
+            padding: 0.65rem 1rem;
+            background: transparent;
+            color: #555;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+        #download-vtt-btn { margin-left: auto; }
+        #download-vtt-btn:hover, #download-srt-btn:hover { color: #aaa; border-color: #555; }
         #save-error {
             font-size: 0.82rem;
             color: #e05555;
@@ -304,6 +315,8 @@
                         <button id="save-translate-btn" type="button">Desa i tradueix</button>
                         <button id="skip-btn" type="button">Omet i ves a l'etiquetatge</button>
                     <?php endif; ?>
+                    <button id="download-vtt-btn" type="button">Descarrega VTT</button>
+                    <button id="download-srt-btn" type="button">Descarrega SRT</button>
                 </div>
                 <pre id="save-error" hidden></pre>
             </div>
@@ -319,6 +332,7 @@
         window.__cues       = <?= json_encode($cues, JSON_UNESCAPED_UNICODE) ?>;
         window.__vimeoId    = <?= json_encode($vimeoId) ?>;
         window.__editorMode = <?= json_encode($editorMode ?? 'master') ?>;
+        window.__lang       = <?= json_encode($lang ?? '') ?>;
     </script>
     <script src="https://player.vimeo.com/api/player.js"></script>
     <script src="js/subtitle-editor.js?v=<?= filemtime(__DIR__ . '/../js/subtitle-editor.js') ?>"></script>

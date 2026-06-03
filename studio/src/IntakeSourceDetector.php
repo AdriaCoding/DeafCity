@@ -40,6 +40,21 @@ class IntakeSourceDetector
         );
     }
 
+    /** True when intake should convert SubRip to WebVTT before saving draft.vtt. */
+    public function isSubRip(string $filePath, string $originalName): bool
+    {
+        if ($this->looksLikeWebVtt($filePath)) {
+            return false;
+        }
+
+        $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        if ($ext === 'srt') {
+            return true;
+        }
+
+        return $this->looksLikeSubRip($filePath);
+    }
+
     private function looksLikeWebVtt(string $filePath): bool
     {
         $handle = fopen($filePath, 'r');
