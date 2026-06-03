@@ -42,11 +42,13 @@ use Studio\PublicationHandler;
 use Studio\StudioConfig;
 use Studio\SubtitleEditorHandler;
 use Studio\TaggingHandler;
+use Studio\SrtConversionOrchestrator;
 use Studio\TranscriptionOrchestrator;
 use Studio\TranslationJobState;
 use Studio\VimeoClient;
 use Studio\VimeoIdParser;
 use Studio\VttParser;
+use Studio\VttToSrtConverter;
 use Studio\WebVttValidator;
 
 session_start();
@@ -203,7 +205,15 @@ if ($action === 'intake') {
         $errors = $result['errors'];
         $values = $result['values'];
         if (!empty($result['created'])) {
-            if (($values['intake_mode'] ?? 'upload') === 'generate') {
+            if (($result['intake_format'] ?? '') === 'srt') {
+                $conversionOutcome = (new SrtConversionOrchestrator($jobManager, $launcher))->run();
+                if ($conversionOutcome['result'] === 'error') {
+                    $errors['_form'] = $conversionOutcome['message'] ?? 'Error en la conversió de subtítols';
+                } else {
+                    header('Location: ' . $baseUrl);
+                    exit;
+                }
+            } elseif (($values['intake_mode'] ?? 'upload') === 'generate') {
                 $orchestrator = new TranscriptionOrchestrator(
                     jobManager: $jobManager,
                     groqTranscriber: new GroqTranscriber(
@@ -296,6 +306,8 @@ if ($action === 'translation-review' && $jobManager->exists()) {
         header('Location: ?action=translation');
         exit;
     }
+    $job = $jobManager->read();
+    $vimeoId = $job['vimeo_id'] ?? '';
     $vttParser = new VttParser();
     $translatedCues = $vttParser->parse($translatedVttPath)['cues'];
     $masterCues = [];
@@ -363,6 +375,10 @@ if ($action === 'subtitle-editor' && $jobManager->exists()) {
         : $jobManager->draftVttPath();
 
     if (!is_file($vttPath)) {
+        if ($jobManager->needsSrtConversion() || (($job['intake_mode'] ?? '') === 'generate' && !$jobManager->hasDraftVtt())) {
+            header('Location: ' . $baseUrl);
+            exit;
+        }
         header('Location: ?action=translation');
         exit;
     }
@@ -385,6 +401,14 @@ if ($action === 'subtitle-editor' && $jobManager->exists()) {
         }
     }
     require __DIR__ . '/views/subtitle-editor.php';
+    exit;
+}
+
+// SRT conversion status — GET (JSON)
+if ($action === 'conversion-status' && $jobManager->exists()) {
+    ini_set('display_errors', '0');
+    header('Content-Type: application/json');
+    echo $jobManager->readConversionStatus() ?? json_encode(['status' => 'pending']);
     exit;
 }
 
@@ -429,6 +453,51 @@ if ($action === 'translation-retry' && $_SERVER['REQUEST_METHOD'] === 'POST' && 
     exit;
 }
 
+// Download VTT — GET
+if ($action === 'download-vtt' && $jobManager->exists()) {
+    $lang = isset($_GET['lang']) ? trim((string) $_GET['lang']) : '';
+    $vttPath = $lang !== ''
+        ? $jobManager->draftVttPathForLang($lang)
+        : $jobManager->draftVttPath();
+
+    if (!is_file($vttPath)) {
+        http_response_code(404);
+        exit;
+    }
+
+    $job = $jobManager->read();
+    $vimeoId = $job['vimeo_id'] ?? 'draft';
+    $filename = $vimeoId . ($lang !== '' ? '_' . $lang : '') . '.vtt';
+
+    header('Content-Type: text/vtt; charset=utf-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    readfile($vttPath);
+    exit;
+}
+
+// Download SRT — GET
+if ($action === 'download-srt' && $jobManager->exists()) {
+    $lang = isset($_GET['lang']) ? trim((string) $_GET['lang']) : '';
+    $vttPath = $lang !== ''
+        ? $jobManager->draftVttPathForLang($lang)
+        : $jobManager->draftVttPath();
+
+    if (!is_file($vttPath)) {
+        http_response_code(404);
+        exit;
+    }
+
+    $job = $jobManager->read();
+    $vimeoId = $job['vimeo_id'] ?? 'draft';
+    $filename = $vimeoId . ($lang !== '' ? '_' . $lang : '') . '.srt';
+    $srtContent = (new VttToSrtConverter())->convert($vttPath);
+
+    header('Content-Type: application/x-subrip; charset=utf-8');
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    echo $srtContent;
+    exit;
+}
+
 // Skip to Tagging — POST (from Master subtitle editor)
 if ($action === 'skip-to-tagging' && $_SERVER['REQUEST_METHOD'] === 'POST' && $jobManager->exists()) {
     $jobManager->update(['step' => 'tagging']);
@@ -469,10 +538,20 @@ if ($action === 'translation' && $jobManager->exists()) {
         exit;
     }
 
+    $masterLang = $job['subtitle_language'] ?? '';
+    $masterLangLabel = $masterLang;
+    $vimeoId = $job['vimeo_id'] ?? '';
+    foreach ($studioConfig->getSubtitleLanguages() as $language) {
+        if (($language['id'] ?? '') === $masterLang) {
+            $masterLangLabel = $language['label'] ?? $masterLang;
+            break;
+        }
+    }
+
     $languageCards = [];
     foreach ($studioConfig->getSubtitleLanguages() as $language) {
         $id = $language['id'] ?? '';
-        if ($id === '' || $id === ($job['subtitle_language'] ?? '')) {
+        if ($id === '' || $id === $masterLang) {
             continue;
         }
 
@@ -654,6 +733,8 @@ $resumeUrl = './';
 $isTranscribing = false;
 $transcriptionError = null;
 $isLocalFallback = false;
+$isConvertingSrt = false;
+$conversionError = null;
 
 if ($hasActiveJob) {
     $job = $jobManager->read();
@@ -676,6 +757,15 @@ if ($hasActiveJob) {
             $statusData = json_decode($statusJson, true);
             if (($statusData['status'] ?? '') === 'error') {
                 $transcriptionError = $statusData['message'] ?? 'Error en la generació de subtítols';
+            }
+        }
+    } elseif ($jobManager->needsSrtConversion()) {
+        $isConvertingSrt = true;
+        $statusJson = $jobManager->readConversionStatus();
+        if ($statusJson !== null) {
+            $statusData = json_decode($statusJson, true);
+            if (($statusData['status'] ?? '') === 'error') {
+                $conversionError = $statusData['message'] ?? 'Error en la conversió de subtítols';
             }
         }
     }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor de subtítols — Studio</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -142,6 +143,9 @@
         }
         #skip-btn:hover { color: #aaa; border-color: #555; }
         #download-vtt-btn, #download-srt-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
             padding: 0.65rem 1rem;
             background: transparent;
             color: #555;
@@ -150,6 +154,7 @@
             font-size: 0.82rem;
             cursor: pointer;
         }
+        #download-vtt-btn .material-icons, #download-srt-btn .material-icons { font-size: 1rem; }
         #download-vtt-btn { margin-left: auto; }
         #download-vtt-btn:hover, #download-srt-btn:hover { color: #aaa; border-color: #555; }
         #save-error {
@@ -315,8 +320,8 @@
                         <button id="save-translate-btn" type="button">Desa i tradueix</button>
                         <button id="skip-btn" type="button">Omet i ves a l'etiquetatge</button>
                     <?php endif; ?>
-                    <button id="download-vtt-btn" type="button">Descarrega VTT</button>
-                    <button id="download-srt-btn" type="button">Descarrega SRT</button>
+                    <button id="download-vtt-btn" type="button"><span class="material-icons">download</span>Descarrega VTT</button>
+                    <button id="download-srt-btn" type="button"><span class="material-icons">download</span>Descarrega SRT</button>
                 </div>
                 <pre id="save-error" hidden></pre>
             </div>

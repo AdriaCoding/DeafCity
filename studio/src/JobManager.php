@@ -64,6 +64,34 @@ class JobManager
         file_put_contents($this->transcriptionStatusPath(), json_encode(['status' => 'pending']));
     }
 
+    public function createWithSrt(array $fields, UploadedFile $srt): void
+    {
+        if ($this->exists()) {
+            throw new \RuntimeException('Ja hi ha una feina en curs.');
+        }
+
+        if (!mkdir($this->currentDir, 0775, true) && !is_dir($this->currentDir)) {
+            throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
+        }
+
+        $ext = strtolower(pathinfo($srt->originalName, PATHINFO_EXTENSION));
+        $filename = $ext !== '' ? "intake.$ext" : 'intake.srt';
+        $fields['intake_format'] = 'srt';
+        $fields['intake_srt'] = $filename;
+
+        $this->writeJson($fields);
+
+        $destination = $this->currentDir . '/' . $filename;
+        if (!move_uploaded_file($srt->tmpPath, $destination)) {
+            if (!rename($srt->tmpPath, $destination)) {
+                $this->cancel();
+                throw new \RuntimeException('No s\'ha pogut desar el fitxer SubRip pujat.');
+            }
+        }
+
+        file_put_contents($this->conversionStatusPath(), json_encode(['status' => 'pending']));
+    }
+
     public function hasDraftVtt(): bool
     {
         return is_file($this->draftVttPath());
@@ -72,6 +100,34 @@ class JobManager
     public function transcriptionStatusPath(): string
     {
         return $this->currentDir . '/transcription.json';
+    }
+
+    public function conversionStatusPath(): string
+    {
+        return $this->currentDir . '/conversion.json';
+    }
+
+    public function readConversionStatus(): ?string
+    {
+        $path = $this->conversionStatusPath();
+        return is_file($path) ? (string) file_get_contents($path) : null;
+    }
+
+    public function needsSrtConversion(): bool
+    {
+        if (!$this->exists() || $this->hasDraftVtt()) {
+            return false;
+        }
+        $job = $this->read();
+
+        return ($job['intake_format'] ?? '') === 'srt';
+    }
+
+    public function srtSourcePath(): string
+    {
+        $job = $this->read();
+
+        return $this->currentDir . '/' . ($job['intake_srt'] ?? 'intake.srt');
     }
 
     public function interpreterAudioPath(): string

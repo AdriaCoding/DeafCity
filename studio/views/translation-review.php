@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Revisió de traducció — Studio</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -77,6 +78,20 @@
             padding: 0.4rem 0.65rem;
         }
         #save-error[hidden] { display: none; }
+        #download-vtt-btn, #download-srt-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.55rem 1rem;
+            background: transparent;
+            color: #555;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+        #download-vtt-btn:hover, #download-srt-btn:hover { color: #aaa; border-color: #555; }
+        #download-vtt-btn .material-icons, #download-srt-btn .material-icons { font-size: 1rem; }
         .cue-count {
             font-size: 0.78rem;
             color: #444;
@@ -220,6 +235,8 @@
     <div class="toolbar">
         <button id="save-btn" type="button">Desa i tanca</button>
         <pre id="save-error" hidden></pre>
+        <button id="download-vtt-btn" type="button"><span class="material-icons">download</span>Descarrega VTT</button>
+        <button id="download-srt-btn" type="button"><span class="material-icons">download</span>Descarrega SRT</button>
         <span class="cue-count"><?= count($translatedCues) ?> subtítols</span>
     </div>
 
@@ -235,6 +252,8 @@
     <script>
         window.__masterCues     = <?= json_encode($masterCues, JSON_UNESCAPED_UNICODE) ?>;
         window.__translatedCues = <?= json_encode($translatedCues, JSON_UNESCAPED_UNICODE) ?>;
+        window.__vimeoId        = <?= json_encode($vimeoId) ?>;
+        window.__lang           = <?= json_encode($lang) ?>;
     </script>
     <script src="js/translation-review.js?v=<?= filemtime(__DIR__ . '/../js/translation-review.js') ?>"></script>
 </body>

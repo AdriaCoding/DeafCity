@@ -10,13 +10,18 @@ class IntakeHandler
         private readonly StudioConfig $studioConfig,
         private readonly JobManager $jobManager,
         private readonly WebVttValidator $vttValidator,
-        private readonly SrtToVttConverter $srtToVttConverter = new SrtToVttConverter(),
+        private readonly SrtParser $srtParser = new SrtParser(),
         private readonly IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
     ) {
     }
 
     /**
-     * @return array{errors: array<string, string>, values: array<string, string>}
+     * @return array{
+     *   errors: array<string, string>,
+     *   values: array<string, string>,
+     *   created?: bool,
+     *   intake_format?: 'vtt'|'srt'
+     * }
      */
     public function handlePost(array $post, array $files): array
     {
@@ -90,22 +95,30 @@ class IntakeHandler
 
         try {
             if ($intakeMode === 'upload') {
-                $vttPath = $upload['tmp_name'];
-                $vttName = $upload['name'];
                 if ($this->sourceDetector->isSubRip($upload['tmp_name'], $upload['name'])) {
-                    $vttContent = $this->srtToVttConverter->convert($upload['tmp_name']);
-                    $vttPath = tempnam(sys_get_temp_dir(), 'studio-vtt-');
-                    if ($vttPath === false) {
-                        throw new \RuntimeException('No s\'ha pogut preparar el fitxer de subtítols convertit.');
-                    }
-                    file_put_contents($vttPath, $vttContent);
-                    $vttName = 'draft.vtt';
+                    $this->srtParser->parse($upload['tmp_name']);
+                    $this->jobManager->createWithSrt($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
+
+                    return [
+                        'errors' => [],
+                        'values' => $values,
+                        'created' => true,
+                        'intake_format' => 'srt',
+                    ];
                 }
-                $this->vttValidator->validate($vttPath, $vttName);
-                $this->jobManager->create($meta, new UploadedFile($vttPath, $vttName));
-            } else {
-                $this->jobManager->createWithAudio($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
+
+                $this->vttValidator->validate($upload['tmp_name'], $upload['name']);
+                $this->jobManager->create($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
+
+                return [
+                    'errors' => [],
+                    'values' => $values,
+                    'created' => true,
+                    'intake_format' => 'vtt',
+                ];
             }
+
+            $this->jobManager->createWithAudio($meta, new UploadedFile($upload['tmp_name'], $upload['name']));
         } catch (\InvalidArgumentException $e) {
             $errors['intake_file'] = $e->getMessage();
             return ['errors' => $errors, 'values' => $values];

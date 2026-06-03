@@ -34,6 +34,18 @@ class BackgroundJobLauncher
      * @param string $language
      * @param string $model      faster-whisper model id (STUDIO_LOCAL_TRANSCRIBE_MODEL)
      */
+    public function launchSrtConversion($srtPath, $vttOutputPath, $statusPath)
+    {
+        $cmd = sprintf(
+            'nohup %s --srt_path %s --vtt_output %s --status_file %s > /dev/null 2>&1 &',
+            escapeshellarg($this->scriptsDir . '/run_convert_srt.sh'),
+            escapeshellarg($srtPath),
+            escapeshellarg($vttOutputPath),
+            escapeshellarg($statusPath),
+        );
+        call_user_func($this->exec, $cmd);
+    }
+
     public function launchTranscription($audioPath, $vttOutputPath, $statusPath, $language, $model = 'whisper-large-v3-turbo')
     {
         $cmd = sprintf(

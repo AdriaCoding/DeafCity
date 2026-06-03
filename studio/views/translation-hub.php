@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traducció — Studio</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -115,6 +116,44 @@
             cursor: pointer;
         }
         .btn-primary:hover { background: #fff; }
+        .download-btns {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        a.download-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.3rem 0.65rem;
+            background: transparent;
+            color: #555;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+        }
+        a.download-btn:hover { color: #aaa; border-color: #555; }
+        a.download-btn .material-icons { font-size: 0.95rem; }
+        .lang-card-original {
+            border-color: #1e1e1e;
+        }
+        .orig-lang-label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .badge-original {
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            border: 1px solid #333;
+            color: #666;
+            background: #141414;
+        }
     </style>
 </head>
 <body>
@@ -130,6 +169,16 @@
         <p class="intro">Reviseu les traduccions generades si cal, o continueu directament a l'etiquetatge.</p>
 
         <div class="lang-list">
+            <div class="lang-card lang-card-original">
+                <span class="orig-lang-label">
+                    <span class="lang-label"><?= htmlspecialchars($masterLangLabel) ?></span>
+                    <span class="badge-original">Original</span>
+                </span>
+                <div class="download-btns">
+                    <a class="download-btn" href="?action=download-vtt"><span class="material-icons">download</span>VTT</a>
+                    <a class="download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
+                </div>
+            </div>
             <?php foreach ($languageCards as $card): ?>
                 <div class="lang-card">
                     <?php if ($card['clickable']): ?>
@@ -137,6 +186,10 @@
                             <span class="lang-label"><?= htmlspecialchars($card['label']) ?></span>
                             <span class="badge badge-<?= htmlspecialchars($card['badgeClass']) ?>"><?= htmlspecialchars($card['badgeLabel']) ?></span>
                         </a>
+                        <div class="download-btns">
+                            <a class="download-btn" href="?action=download-vtt&amp;lang=<?= urlencode($card['id']) ?>"><span class="material-icons">download</span>VTT</a>
+                            <a class="download-btn" href="?action=download-srt&amp;lang=<?= urlencode($card['id']) ?>"><span class="material-icons">download</span>SRT</a>
+                        </div>
                     <?php else: ?>
                         <span class="lang-label"><?= htmlspecialchars($card['label']) ?></span>
                         <div class="actions">

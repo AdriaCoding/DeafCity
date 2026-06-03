@@ -6,7 +6,7 @@
     let translatedCues = JSON.parse(JSON.stringify(window.__translatedCues || []));
     let savedSnapshot = JSON.stringify(translatedCues);
 
-    let cueList, saveBtn, saveError;
+    let cueList, saveBtn, saveError, downloadVttBtn, downloadSrtBtn;
 
     function formatTime(seconds) {
         if (typeof seconds !== 'number' || isNaN(seconds)) return '00:00:00.000';
@@ -157,6 +157,67 @@
         return JSON.stringify(translatedCues) !== savedSnapshot;
     }
 
+    function generateVtt() {
+        var parts = ['WEBVTT'];
+        translatedCues.forEach(function (cue) {
+            var opaque = cue.opaque ? ' ' + cue.opaque : '';
+            var timing = formatTime(cue.start) + ' --> ' + formatTime(cue.end) + opaque;
+            var block = timing + '\n' + cue.text;
+            if (cue.id && cue.id !== '') {
+                block = cue.id + '\n' + block;
+            }
+            parts.push(block);
+        });
+        return parts.join('\n\n') + '\n';
+    }
+
+    function formatTimeSrt(seconds) {
+        if (typeof seconds !== 'number' || isNaN(seconds)) return '00:00:00,000';
+        var h  = Math.floor(seconds / 3600);
+        var m  = Math.floor((seconds % 3600) / 60);
+        var s  = Math.floor(seconds % 60);
+        var ms = Math.round((seconds % 1) * 1000);
+        return (
+            String(h).padStart(2, '0') + ':' +
+            String(m).padStart(2, '0') + ':' +
+            String(s).padStart(2, '0') + ',' +
+            String(ms).padStart(3, '0')
+        );
+    }
+
+    function generateSrt() {
+        var blocks = [];
+        translatedCues.forEach(function (cue, i) {
+            var timing = formatTimeSrt(cue.start) + ' --> ' + formatTimeSrt(cue.end);
+            blocks.push((i + 1) + '\n' + timing + '\n' + cue.text);
+        });
+        return blocks.join('\n\n') + '\n';
+    }
+
+    function triggerDownload(content, filename, mimeType) {
+        var blob = new Blob([content], { type: mimeType });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function downloadVtt() {
+        var lang = window.__lang || '';
+        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '');
+        triggerDownload(generateVtt(), base + '.vtt', 'text/vtt');
+    }
+
+    function downloadSrt() {
+        var lang = window.__lang || '';
+        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '');
+        triggerDownload(generateSrt(), base + '.srt', 'application/x-subrip');
+    }
+
     function save() {
         saveBtn.disabled = true;
         saveBtn.textContent = 'Desant…';
@@ -196,10 +257,14 @@
         cueList = document.getElementById('cue-list');
         saveBtn = document.getElementById('save-btn');
         saveError = document.getElementById('save-error');
+        downloadVttBtn = document.getElementById('download-vtt-btn');
+        downloadSrtBtn = document.getElementById('download-srt-btn');
 
         render();
 
         saveBtn.addEventListener('click', save);
+        if (downloadVttBtn) downloadVttBtn.addEventListener('click', downloadVtt);
+        if (downloadSrtBtn) downloadSrtBtn.addEventListener('click', downloadSrt);
 
         window.addEventListener('beforeunload', function (e) {
             if (isDirty()) {
