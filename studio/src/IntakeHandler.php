@@ -40,7 +40,7 @@ class IntakeHandler
             return ['errors' => $errors, 'values' => $values];
         }
 
-        if (!$this->isValidChoice($values['sign_language'], $this->studioConfig->getSignLanguages())) {
+        if ($values['sign_language'] === '__new__' || !$this->isValidChoice($values['sign_language'], $this->studioConfig->getSignLanguages())) {
             $errors['sign_language'] = 'Seleccioneu una llengua de signes.';
         }
         if ($values['edition'] === '__new__' || !$this->isValidChoice($values['edition'], $this->studioConfig->getEditions())) {

@@ -99,7 +99,7 @@
             cursor: pointer;
         }
         button[type="submit"]:hover { background: #fff; }
-        .edition-new-panel {
+        .config-new-panel {
             display: none;
             margin-top: 0.75rem;
             padding: 1rem;
@@ -107,28 +107,31 @@
             border: 1px solid #2a2a2a;
             border-radius: 5px;
         }
-        .edition-new-panel.is-open { display: block; }
-        .edition-new-panel h3 {
+        .config-new-panel.is-open { display: block; }
+        .config-new-panel h3 {
             font-size: 0.85rem;
             font-weight: 500;
             color: #aaa;
             margin-bottom: 0.85rem;
         }
-        .edition-new-grid {
+        .config-new-grid {
             display: grid;
-            grid-template-columns: 1fr 6rem;
+            grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
             margin-bottom: 0.75rem;
         }
-        .edition-preview {
+        .config-new-grid--year {
+            grid-template-columns: 1fr 6rem;
+        }
+        .config-preview {
             font-size: 0.8rem;
             color: #666;
             line-height: 1.5;
             margin-bottom: 0.85rem;
         }
-        .edition-preview strong { color: #999; font-weight: 500; }
-        .edition-preview .value { color: #bbb; }
-        .edition-new-actions {
+        .config-preview strong { color: #999; font-weight: 500; }
+        .config-preview .value { color: #bbb; }
+        .config-new-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -154,13 +157,13 @@
             text-decoration: underline;
         }
         .btn-link:hover { color: #888; }
-        .edition-add-error {
+        .config-add-error {
             font-size: 0.82rem;
             color: #e05555;
             margin-bottom: 0.65rem;
         }
-        .edition-add-error:empty { display: none; }
-        .edition-new-hint {
+        .config-add-error:empty { display: none; }
+        .config-new-hint {
             font-size: 0.78rem;
             color: #555;
             margin-top: 0.65rem;
@@ -199,7 +202,33 @@
                             <?= htmlspecialchars($option['label']) ?>
                         </option>
                     <?php endforeach; ?>
+                    <option value="__new__" <?= ($values['sign_language'] ?? '') === '__new__' ? 'selected' : '' ?>>+ Afegiu una llengua de signes…</option>
                 </select>
+
+                <div class="config-new-panel<?= ($values['sign_language'] ?? '') === '__new__' ? ' is-open' : '' ?>" id="sign-language-new-panel" aria-hidden="<?= ($values['sign_language'] ?? '') === '__new__' ? 'false' : 'true' ?>">
+                    <h3>Nova llengua de signes</h3>
+                    <p class="config-add-error" id="sign-language-add-error" role="alert"></p>
+                    <div class="config-new-grid">
+                        <div>
+                            <label for="sign_language_code">Codi</label>
+                            <input type="text" id="sign_language_code" name="sign_language_code" autocomplete="off" placeholder="p. ex. GSS">
+                        </div>
+                        <div>
+                            <label for="sign_language_qualifier">País o variant</label>
+                            <input type="text" id="sign_language_qualifier" name="sign_language_qualifier" autocomplete="off" placeholder="p. ex. Greek">
+                        </div>
+                    </div>
+                    <p class="config-preview">
+                        <strong>Nom:</strong> <span class="value" id="sign-language-preview-label">—</span><br>
+                        <strong>Identificador:</strong> <span class="value" id="sign-language-preview-id">—</span>
+                    </p>
+                    <div class="config-new-actions">
+                        <button type="button" class="btn-secondary" id="sign-language-add-btn">Afegir a la llista</button>
+                        <button type="button" class="btn-link" id="sign-language-cancel-btn">Cancel·la</button>
+                    </div>
+                    <p class="config-new-hint">Es desarà a la llista de llengües de signes per a aquest i futurs vídeos.</p>
+                </div>
+
                 <?php if (!empty($errors['sign_language'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['sign_language']) ?></p>
                 <?php endif; ?>
@@ -217,10 +246,10 @@
                     <option value="__new__" <?= ($values['edition'] ?? '') === '__new__' ? 'selected' : '' ?>>+ Afegiu una edició…</option>
                 </select>
 
-                <div class="edition-new-panel<?= ($values['edition'] ?? '') === '__new__' ? ' is-open' : '' ?>" id="edition-new-panel" aria-hidden="<?= ($values['edition'] ?? '') === '__new__' ? 'false' : 'true' ?>">
+                <div class="config-new-panel<?= ($values['edition'] ?? '') === '__new__' ? ' is-open' : '' ?>" id="edition-new-panel" aria-hidden="<?= ($values['edition'] ?? '') === '__new__' ? 'false' : 'true' ?>">
                     <h3>Nova edició</h3>
-                    <p class="edition-add-error" id="edition-add-error" role="alert"></p>
-                    <div class="edition-new-grid">
+                    <p class="config-add-error" id="edition-add-error" role="alert"></p>
+                    <div class="config-new-grid config-new-grid--year">
                         <div>
                             <label for="edition_city">Ciutat</label>
                             <input type="text" id="edition_city" name="edition_city" autocomplete="off" placeholder="p. ex. Lisboa">
@@ -230,15 +259,15 @@
                             <input type="text" id="edition_year" name="edition_year" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off" placeholder="2027">
                         </div>
                     </div>
-                    <p class="edition-preview">
+                    <p class="config-preview">
                         <strong>Nom:</strong> <span class="value" id="edition-preview-label">—</span><br>
                         <strong>Identificador:</strong> <span class="value" id="edition-preview-id">—</span>
                     </p>
-                    <div class="edition-new-actions">
+                    <div class="config-new-actions">
                         <button type="button" class="btn-secondary" id="edition-add-btn">Afegir a la llista</button>
                         <button type="button" class="btn-link" id="edition-cancel-btn">Cancel·la</button>
                     </div>
-                    <p class="edition-new-hint">Es desarà a la llista d'edicions per a aquest i futurs vídeos.</p>
+                    <p class="config-new-hint">Es desarà a la llista d'edicions per a aquest i futurs vídeos.</p>
                 </div>
 
                 <?php if (!empty($errors['edition'])): ?>
@@ -275,126 +304,216 @@
     </main>
     <script>
     (function () {
-        var editionSelect = document.getElementById('edition');
-        var panel = document.getElementById('edition-new-panel');
-        var cityInput = document.getElementById('edition_city');
-        var yearInput = document.getElementById('edition_year');
-        var previewLabel = document.getElementById('edition-preview-label');
-        var previewId = document.getElementById('edition-preview-id');
-        var addBtn = document.getElementById('edition-add-btn');
-        var cancelBtn = document.getElementById('edition-cancel-btn');
-        var addError = document.getElementById('edition-add-error');
-        var intakeForm = editionSelect.closest('form');
-
-        function slugifyCity(city) {
-            var normalized = city.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        function slugify(value) {
+            var normalized = value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
             return normalized.toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '');
         }
 
-        function buildPreview() {
-            var city = cityInput.value.trim();
-            var year = yearInput.value.trim();
-            if (city === '' || !/^\d{4}$/.test(year)) {
-                previewLabel.textContent = '—';
-                previewId.textContent = '—';
-                return;
-            }
-            var slug = slugifyCity(city);
-            if (slug === '') {
-                previewLabel.textContent = '—';
-                previewId.textContent = '—';
-                return;
-            }
-            previewLabel.textContent = city + ' ' + year;
-            previewId.textContent = year + '-' + slug;
-        }
+        function setupConfigAddPanel(cfg) {
+            var select = document.getElementById(cfg.selectId);
+            var panel = document.getElementById(cfg.panelId);
+            var addError = document.getElementById(cfg.errorId);
+            var addBtn = document.getElementById(cfg.addBtnId);
+            var cancelBtn = document.getElementById(cfg.cancelBtnId);
+            var previewLabel = document.getElementById(cfg.previewLabelId);
+            var previewId = document.getElementById(cfg.previewIdId);
 
-        function setPanelOpen(open) {
-            panel.classList.toggle('is-open', open);
-            panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-            editionSelect.required = !open;
-            if (!open) {
-                addError.textContent = '';
+            function setPanelOpen(open) {
+                panel.classList.toggle('is-open', open);
+                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+                select.required = !open;
+                if (!open) {
+                    addError.textContent = '';
+                }
             }
-        }
 
-        function closeNewEditionPanel() {
-            if (editionSelect.value === '__new__') {
-                editionSelect.value = '';
-            }
-            cityInput.value = '';
-            yearInput.value = '';
-            buildPreview();
-            setPanelOpen(false);
-        }
-
-        editionSelect.addEventListener('change', function () {
-            if (editionSelect.value === '__new__') {
-                setPanelOpen(true);
-                cityInput.focus();
-            } else {
+            function closePanel() {
+                if (select.value === '__new__') {
+                    select.value = '';
+                }
+                cfg.clearInputs();
+                cfg.buildPreview();
                 setPanelOpen(false);
             }
-        });
 
-        cityInput.addEventListener('input', buildPreview);
-        yearInput.addEventListener('input', buildPreview);
+            select.addEventListener('change', function () {
+                if (select.value === '__new__') {
+                    setPanelOpen(true);
+                    cfg.focusInput();
+                } else {
+                    setPanelOpen(false);
+                }
+            });
 
-        cancelBtn.addEventListener('click', closeNewEditionPanel);
+            cfg.bindPreviewInputs();
+            cancelBtn.addEventListener('click', closePanel);
 
-        addBtn.addEventListener('click', function () {
-            addError.textContent = '';
-            var city = cityInput.value.trim();
-            var year = yearInput.value.trim();
-            if (city === '' || !/^\d{4}$/.test(year)) {
-                addError.textContent = 'Indiqueu una ciutat i un any de quatre xifres.';
-                return;
+            addBtn.addEventListener('click', function () {
+                addError.textContent = '';
+                var payload = cfg.validatePayload();
+                if (!payload.ok) {
+                    addError.textContent = payload.error;
+                    return;
+                }
+
+                addBtn.disabled = true;
+                fetch(cfg.addAction, { method: 'POST', body: payload.body })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (!data.ok) {
+                            addError.textContent = (data.errors && data.errors[0]) || cfg.addFailMessage;
+                            return;
+                        }
+                        var opt = document.createElement('option');
+                        opt.value = data.id;
+                        opt.textContent = data.label;
+                        select.insertBefore(opt, select.querySelector('option[value="__new__"]'));
+                        select.value = data.id;
+                        cfg.clearInputs();
+                        cfg.buildPreview();
+                        setPanelOpen(false);
+                    })
+                    .catch(function () {
+                        addError.textContent = cfg.addFailMessage;
+                    })
+                    .finally(function () {
+                        addBtn.disabled = false;
+                    });
+            });
+
+            if (select.value === '__new__') {
+                setPanelOpen(true);
+                cfg.buildPreview();
             }
 
-            addBtn.disabled = true;
-            var body = new FormData();
-            body.append('edition_city', city);
-            body.append('edition_year', year);
+            return {
+                isPending: function () { return select.value === '__new__'; },
+                requireAdded: function () {
+                    addError.textContent = cfg.pendingMessage;
+                    setPanelOpen(true);
+                },
+            };
+        }
 
-            fetch('?action=add-edition', { method: 'POST', body: body })
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-                    if (!data.ok) {
-                        addError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir l\'edició.';
-                        return;
-                    }
-                    var opt = document.createElement('option');
-                    opt.value = data.id;
-                    opt.textContent = data.label;
-                    editionSelect.insertBefore(opt, editionSelect.querySelector('option[value="__new__"]'));
-                    editionSelect.value = data.id;
-                    cityInput.value = '';
-                    yearInput.value = '';
-                    buildPreview();
-                    setPanelOpen(false);
-                })
-                .catch(function () {
-                    addError.textContent = 'No s\'ha pogut afegir l\'edició.';
-                })
-                .finally(function () {
-                    addBtn.disabled = false;
-                });
+        var signLanguageCode = document.getElementById('sign_language_code');
+        var signLanguageQualifier = document.getElementById('sign_language_qualifier');
+        var editionCity = document.getElementById('edition_city');
+        var editionYear = document.getElementById('edition_year');
+        var intakeForm = document.getElementById('sign_language').closest('form');
+
+        var signLanguagePanel = setupConfigAddPanel({
+            selectId: 'sign_language',
+            panelId: 'sign-language-new-panel',
+            errorId: 'sign-language-add-error',
+            addBtnId: 'sign-language-add-btn',
+            cancelBtnId: 'sign-language-cancel-btn',
+            previewLabelId: 'sign-language-preview-label',
+            previewIdId: 'sign-language-preview-id',
+            addAction: '?action=add-sign-language',
+            addFailMessage: 'No s\'ha pogut afegir la llengua de signes.',
+            pendingMessage: 'Afegiu la llengua de signes a la llista abans de crear la feina.',
+            focusInput: function () { signLanguageCode.focus(); },
+            clearInputs: function () {
+                signLanguageCode.value = '';
+                signLanguageQualifier.value = '';
+            },
+            buildPreview: function () {
+                var code = signLanguageCode.value.trim();
+                var qualifier = signLanguageQualifier.value.trim();
+                if (code === '' || qualifier === '') {
+                    previewLabel.textContent = '—';
+                    previewId.textContent = '—';
+                    return;
+                }
+                var id = slugify(code);
+                if (id === '') {
+                    previewLabel.textContent = '—';
+                    previewId.textContent = '—';
+                    return;
+                }
+                previewLabel.textContent = code + ' ' + qualifier + ' Sign Language';
+                previewId.textContent = id;
+            },
+            bindPreviewInputs: function () {
+                signLanguageCode.addEventListener('input', this.buildPreview);
+                signLanguageQualifier.addEventListener('input', this.buildPreview);
+            },
+            validatePayload: function () {
+                var code = signLanguageCode.value.trim();
+                var qualifier = signLanguageQualifier.value.trim();
+                if (code === '' || qualifier === '') {
+                    return { ok: false, error: 'Indiqueu un codi i un país o variant.' };
+                }
+                var body = new FormData();
+                body.append('sign_language_code', code);
+                body.append('sign_language_qualifier', qualifier);
+                return { ok: true, body: body };
+            },
+        });
+
+        var editionPanel = setupConfigAddPanel({
+            selectId: 'edition',
+            panelId: 'edition-new-panel',
+            errorId: 'edition-add-error',
+            addBtnId: 'edition-add-btn',
+            cancelBtnId: 'edition-cancel-btn',
+            previewLabelId: 'edition-preview-label',
+            previewIdId: 'edition-preview-id',
+            addAction: '?action=add-edition',
+            addFailMessage: 'No s\'ha pogut afegir l\'edició.',
+            pendingMessage: 'Afegiu l\'edició a la llista abans de crear la feina.',
+            focusInput: function () { editionCity.focus(); },
+            clearInputs: function () {
+                editionCity.value = '';
+                editionYear.value = '';
+            },
+            buildPreview: function () {
+                var city = editionCity.value.trim();
+                var year = editionYear.value.trim();
+                if (city === '' || !/^\d{4}$/.test(year)) {
+                    previewLabel.textContent = '—';
+                    previewId.textContent = '—';
+                    return;
+                }
+                var slug = slugify(city);
+                if (slug === '') {
+                    previewLabel.textContent = '—';
+                    previewId.textContent = '—';
+                    return;
+                }
+                previewLabel.textContent = city + ' ' + year;
+                previewId.textContent = year + '-' + slug;
+            },
+            bindPreviewInputs: function () {
+                editionCity.addEventListener('input', this.buildPreview);
+                editionYear.addEventListener('input', this.buildPreview);
+            },
+            validatePayload: function () {
+                var city = editionCity.value.trim();
+                var year = editionYear.value.trim();
+                if (city === '' || !/^\d{4}$/.test(year)) {
+                    return { ok: false, error: 'Indiqueu una ciutat i un any de quatre xifres.' };
+                }
+                var body = new FormData();
+                body.append('edition_city', city);
+                body.append('edition_year', year);
+                return { ok: true, body: body };
+            },
         });
 
         intakeForm.addEventListener('submit', function (e) {
-            if (editionSelect.value === '__new__') {
+            if (signLanguagePanel.isPending()) {
                 e.preventDefault();
-                addError.textContent = 'Afegiu l\'edició a la llista abans de crear la feina.';
-                setPanelOpen(true);
+                signLanguagePanel.requireAdded();
+                return;
+            }
+            if (editionPanel.isPending()) {
+                e.preventDefault();
+                editionPanel.requireAdded();
             }
         });
-
-        if (editionSelect.value === '__new__') {
-            setPanelOpen(true);
-            buildPreview();
-        }
     })();
     </script>
 </body>

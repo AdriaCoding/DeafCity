@@ -34,6 +34,7 @@ use Studio\CaptionFileIntegrityChecker;
 use Studio\CatalogTagPool;
 use Studio\GroqTranscriber;
 use Studio\EditionAddHandler;
+use Studio\SignLanguageAddHandler;
 use Studio\IntakeHandler;
 use Studio\JobManager;
 use Studio\PipelineSteps;
@@ -146,6 +147,18 @@ if (!$guard->isAuthenticated()) {
 if ($action === 'cancel' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $jobManager->cancel();
     header('Location: ' . $baseUrl);
+    exit;
+}
+
+// Add sign language to studio-config (intake helper)
+if ($action === 'add-sign-language' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $handler = new SignLanguageAddHandler($studioConfig);
+    $result = $handler->handle(
+        (string) ($_POST['sign_language_code'] ?? ''),
+        (string) ($_POST['sign_language_qualifier'] ?? ''),
+    );
+    echo json_encode($result, JSON_UNESCAPED_UNICODE);
     exit;
 }
 

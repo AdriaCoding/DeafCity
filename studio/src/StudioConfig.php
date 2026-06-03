@@ -27,6 +27,11 @@ class StudioConfig
             throw new \InvalidArgumentException('Invalid edition id.');
         }
 
+        $this->appendConfigEntry('editions', $id, $label);
+    }
+
+    private function appendConfigEntry(string $listKey, string $id, string $label): void
+    {
         $fp = fopen($this->configPath, 'c+');
         if ($fp === false) {
             throw new \RuntimeException('Could not open studio config for writing.');
@@ -42,17 +47,17 @@ class StudioConfig
             throw new \RuntimeException('Invalid studio config JSON.');
         }
 
-        $editions = $data['editions'] ?? [];
-        foreach ($editions as $edition) {
-            if (($edition['id'] ?? '') === $id) {
+        $entries = $data[$listKey] ?? [];
+        foreach ($entries as $entry) {
+            if (($entry['id'] ?? '') === $id) {
                 flock($fp, LOCK_UN);
                 fclose($fp);
-                throw new \RuntimeException('Edition already exists.');
+                throw new \RuntimeException('Config entry already exists.');
             }
         }
 
-        $editions[] = ['id' => $id, 'label' => $label];
-        $data['editions'] = $editions;
+        $entries[] = ['id' => $id, 'label' => $label];
+        $data[$listKey] = $entries;
 
         ftruncate($fp, 0);
         fseek($fp, 0);
@@ -61,6 +66,15 @@ class StudioConfig
         fclose($fp);
 
         $this->data = $data;
+    }
+
+    public function addSignLanguage(string $id, string $label): void
+    {
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid sign language id.');
+        }
+
+        $this->appendConfigEntry('sign_languages', $id, $label);
     }
 
     public function getSignLanguages(): array
