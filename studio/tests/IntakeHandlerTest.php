@@ -114,6 +114,7 @@ class IntakeHandlerTest extends TestCase
         $draft = (string) file_get_contents($draftPath);
         $this->assertStringStartsWith("WEBVTT\n", $draft);
         $this->assertStringContainsString('Un papa avec son fils.', $draft);
+        $this->assertStringContainsString("1\n00:00:03.660 --> 00:00:05.740", $draft);
     }
 
     public function test_rejects_malformed_srt_upload(): void

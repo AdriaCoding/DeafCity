@@ -27,6 +27,7 @@ class SrtParserTest extends TestCase
         $this->assertSame(4.0, $result['cues'][0]['end']);
         $this->assertSame('Hello world', $result['cues'][0]['text']);
         $this->assertSame('', $result['cues'][0]['opaque']);
+        $this->assertSame('1', $result['cues'][0]['id']);
     }
 
     public function test_parses_multi_line_cue_text(): void

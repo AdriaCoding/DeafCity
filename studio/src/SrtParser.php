@@ -5,7 +5,7 @@ namespace Studio;
 class SrtParser
 {
     /**
-     * @return array{cues: list<array{start: float, end: float, text: string, opaque: string}>}
+     * @return array{cues: list<array{start: float, end: float, text: string, opaque: string, id: string}>}
      */
     public function parse(string $filePath): array
     {
@@ -18,7 +18,7 @@ class SrtParser
     }
 
     /**
-     * @return array{cues: list<array{start: float, end: float, text: string, opaque: string}>}
+     * @return array{cues: list<array{start: float, end: float, text: string, opaque: string, id: string}>}
      */
     public function parseString(string $content): array
     {
@@ -60,7 +60,7 @@ class SrtParser
     }
 
     /**
-     * @return array{start: float, end: float, text: string, opaque: string}
+     * @return array{start: float, end: float, text: string, opaque: string, id: string}
      */
     private function parseBlock(string $block): array
     {
@@ -95,6 +95,7 @@ class SrtParser
             'end' => $this->parseTime($m[2]),
             'text' => $text,
             'opaque' => '',
+            'id' => $indexLine,
         ];
     }
 

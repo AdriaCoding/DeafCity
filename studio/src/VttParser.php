@@ -8,7 +8,7 @@ class VttParser
      * Parse a .vtt file into a structured array:
      *   ['cues' => [...], 'header' => string, 'opaque_blocks' => [...]]
      *
-     * Each cue: ['start' => float, 'end' => float, 'text' => string, 'opaque' => string]
+     * Each cue: ['start' => float, 'end' => float, 'text' => string, 'opaque' => string, 'id' => string]
      */
     public function parse(string $filePath): array
     {
@@ -71,7 +71,11 @@ class VttParser
         foreach ($cues as $cue) {
             $opaque = $cue['opaque'] !== '' ? ' ' . $cue['opaque'] : '';
             $timestamp = $this->formatTime($cue['start']) . ' --> ' . $this->formatTime($cue['end']) . $opaque;
-            $parts[] = $timestamp . "\n" . $cue['text'];
+            $block = $timestamp . "\n" . $cue['text'];
+            if (($cue['id'] ?? '') !== '') {
+                $block = $cue['id'] . "\n" . $block;
+            }
+            $parts[] = $block;
         }
 
         return implode("\n\n", $parts) . "\n";
@@ -84,20 +88,26 @@ class VttParser
         // A cue block may start with an optional cue identifier (no '-->' in it),
         // followed by the timestamp line.
         $timingLine = null;
+        $timingIndex = null;
         $textLines = [];
-        $foundTiming = false;
 
         foreach ($lines as $i => $line) {
-            if (!$foundTiming && str_contains($line, '-->')) {
+            if (str_contains($line, '-->')) {
                 $timingLine = $line;
-                $foundTiming = true;
+                $timingIndex = $i;
                 $textLines = array_slice($lines, $i + 1);
                 break;
             }
         }
 
-        if ($timingLine === null) {
+        if ($timingLine === null || $timingIndex === null) {
             return null;
+        }
+
+        $id = '';
+        $prefixLines = array_slice($lines, 0, $timingIndex);
+        if (count($prefixLines) === 1 && preg_match('/^\d+$/', trim($prefixLines[0]))) {
+            $id = trim($prefixLines[0]);
         }
 
         // Parse "HH:MM:SS.mmm --> HH:MM:SS.mmm [opaque]"
@@ -114,6 +124,7 @@ class VttParser
             'end'    => $this->parseTime($m[2]),
             'text'   => implode("\n", $textLines),
             'opaque' => trim($m[3] ?? ''),
+            'id'     => $id,
         ];
     }
 

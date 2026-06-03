@@ -18,6 +18,10 @@ class IntakeSourceDetector
             return 'upload';
         }
 
+        if ($this->looksLikeSubRip($filePath)) {
+            return 'upload';
+        }
+
         $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
         if ($ext === 'vtt' || $ext === 'srt') {
             return 'upload';
@@ -57,6 +61,20 @@ class IntakeSourceDetector
         }
 
         return false;
+    }
+
+    private function looksLikeSubRip(string $filePath): bool
+    {
+        $sample = file_get_contents($filePath, false, null, 0, 512);
+        if ($sample === false || $sample === '') {
+            return false;
+        }
+
+        if (str_starts_with($sample, "\xEF\xBB\xBF")) {
+            $sample = substr($sample, 3);
+        }
+
+        return (bool) preg_match('/^\d+\s*\r?\n\d{2}:\d{2}:\d{2},\d{3}\s+-->/', $sample);
     }
 
     private function looksLikeAudio(string $filePath): bool

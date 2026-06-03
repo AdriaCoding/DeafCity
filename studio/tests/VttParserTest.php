@@ -73,6 +73,19 @@ class VttParserTest extends TestCase
         $this->assertSame('align:left position:10%', $result['cues'][0]['opaque']);
     }
 
+    public function test_parses_optional_numeric_cue_id(): void
+    {
+        $path = $this->writeTempVtt(
+            "WEBVTT\n\n1\n00:00:01.978 --> 00:00:04.491\nHello\n"
+        );
+
+        $result = $this->parser->parse($path);
+
+        $this->assertSame('1', $result['cues'][0]['id']);
+        $written = $this->parser->write($result);
+        $this->assertStringContainsString("1\n00:00:01.978 --> 00:00:04.491", $written);
+    }
+
     public function test_preserves_multiline_cue_text(): void
     {
         $path = $this->writeTempVtt(

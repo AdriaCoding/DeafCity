@@ -24,6 +24,7 @@ class SrtToVttConverterTest extends TestCase
         $this->assertSame('Hello world', $parsed['cues'][0]['text']);
         $this->assertSame(1.0, $parsed['cues'][0]['start']);
         $this->assertSame(4.0, $parsed['cues'][0]['end']);
+        $this->assertSame('1', $parsed['cues'][0]['id']);
     }
 
     public function test_convert_alger_fr_hamida_fixture(): void
@@ -37,5 +38,9 @@ class SrtToVttConverterTest extends TestCase
         $this->assertSame('Un papa avec son fils.', $parsed['cues'][0]['text']);
         $this->assertSame(3.66, $parsed['cues'][0]['start']);
         $this->assertSame(5.74, $parsed['cues'][0]['end']);
+        $this->assertStringContainsString(
+            "1\n00:00:03.660 --> 00:00:05.740\nUn papa avec son fils.",
+            $output
+        );
     }
 }
