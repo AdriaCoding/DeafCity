@@ -177,8 +177,8 @@
 <?php if (defined('HOME_SHOW_MAP') && HOME_SHOW_MAP): ?>
 <script src="leaflet/leaflet.js"></script>
 <?php endif; ?>
-<script src="<?php echo asset('js/deafcity.js'); ?>"></script>
-<script src="<?php echo asset('js/gallery.js'); ?>"></script>
+<script src="<?php echo asset('leaflet/js/deafcity.js'); ?>"></script>
+<script src="<?php echo asset('leaflet/js/gallery.js'); ?>"></script>
 <?php if (defined('HOME_SHOW_MAP') && HOME_SHOW_MAP): ?>
-<script src="<?php echo asset('js/map.js'); ?>"></script>
+<script src="<?php echo asset('leaflet/js/map.js'); ?>"></script>
 <?php endif; ?>
