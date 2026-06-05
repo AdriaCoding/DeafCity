@@ -98,4 +98,50 @@ class BackgroundJobLauncherTest extends TestCase
 
         $this->assertStringStartsWith('GEMINI_API_KEY=', $captured);
     }
+
+    public function test_launch_transcription_pipeline_calls_pipeline_script(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'gemini-key', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchTranscriptionPipeline(
+            audioPath:            '/data/interview.mp3',
+            vttOutputPath:        '/data/draft.vtt',
+            statusPath:           '/data/transcription.json',
+            translationStatePath: '/data/translation.json',
+            jobDir:               '/data',
+            sourceLang:           'ca',
+            targetLang:           'en',
+            model:                'whisper-large-v3-turbo',
+        );
+
+        $this->assertStringContainsString('run_transcription_pipeline.sh', $captured);
+        $this->assertStringContainsString(escapeshellarg('/data/interview.mp3'), $captured);
+        $this->assertStringContainsString(escapeshellarg('ca'), $captured);
+        $this->assertStringContainsString(escapeshellarg('en'), $captured);
+        $this->assertStringContainsString(escapeshellarg('gemini-key'), $captured);
+        $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
+    }
+
+    public function test_launch_transcription_pipeline_passes_translation_status_path(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'k', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchTranscriptionPipeline(
+            audioPath:            '/a.mp3',
+            vttOutputPath:        '/d.vtt',
+            statusPath:           '/t.json',
+            translationStatePath: '/tr.json',
+            jobDir:               '/dir',
+            sourceLang:           'es',
+            targetLang:           'en',
+        );
+
+        $this->assertStringContainsString(escapeshellarg('/tr.json'), $captured);
+    }
 }

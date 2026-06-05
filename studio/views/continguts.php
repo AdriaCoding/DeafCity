@@ -404,7 +404,7 @@
 <main>
     <div class="tabs">
         <button class="tab-btn active" data-tab="videos">Vídeos</button>
-        <button class="tab-btn" data-tab="editions">Edicions</button>
+        <button class="tab-btn" data-tab="editions">Ciutats</button>
         <button class="tab-btn" data-tab="languages">Llengues de signes</button>
     </div>
 
@@ -428,8 +428,8 @@
         ?>
         <?php foreach ($orderedEditionIds as $edId): ?>
             <?php if (empty($videosByEdition[$edId])): continue; endif; ?>
-            <div class="edition-group open">
-                <button type="button" class="edition-heading" aria-expanded="true">
+            <div class="edition-group">
+                <button type="button" class="edition-heading" aria-expanded="false">
                     <?= htmlspecialchars($editionLabelById[$edId] ?? $edId) ?>
                     <span class="edition-count"><?= count($videosByEdition[$edId]) ?></span>
                     <span class="edition-chevron" aria-hidden="true">▼</span>
@@ -478,7 +478,7 @@
         <?php endif; ?>
     </div>
 
-    <!-- ══ Edicions ════════════════════════════════════════════════════════ -->
+    <!-- ══ Ciutats ════════════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-editions">
         <div class="config-list">
             <?php foreach ($editions as $ed): ?>

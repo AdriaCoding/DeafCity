@@ -17,7 +17,7 @@ namespace Studio;
  * Performs no superglobal/header I/O — index.php maps the returned value to a
  * redirect or re-render. The logger and clock are injected seams.
  *
- * @phpstan-type Result array{result: 'editor'|'loading'|'error', message?: string}
+ * @phpstan-type Result array{result: 'editor'|'pipeline_transcribed'|'loading'|'error', message?: string}
  */
 class TranscriptionOrchestrator
 {
@@ -29,6 +29,7 @@ class TranscriptionOrchestrator
     private string $groqApiKey;
     private string $groqModel;
     private string $localModel;
+    private string $pipelineTargetLang;
     /** @var callable(string): void */
     private $logger;
     /** @var callable(): float */
@@ -37,6 +38,7 @@ class TranscriptionOrchestrator
     /**
      * @param callable(string): void|null $logger  appends one structured line
      * @param callable(): float|null $clock         monotonic seconds, for wall-time
+     * @param string $pipelineTargetLang  non-empty enables pipeline mode: skips editor, chains translation
      */
     public function __construct(
         JobManager $jobManager,
@@ -49,6 +51,7 @@ class TranscriptionOrchestrator
         string $localModel,
         ?callable $logger = null,
         ?callable $clock = null,
+        string $pipelineTargetLang = '',
     ) {
         $this->jobManager = $jobManager;
         $this->groqTranscriber = $groqTranscriber;
@@ -58,6 +61,7 @@ class TranscriptionOrchestrator
         $this->groqApiKey = $groqApiKey;
         $this->groqModel = $groqModel;
         $this->localModel = $localModel;
+        $this->pipelineTargetLang = $pipelineTargetLang;
         $this->logger = $logger ?? static fn(string $line) => null;
         $this->clock = $clock ?? static fn(): float => microtime(true);
     }
@@ -109,7 +113,9 @@ class TranscriptionOrchestrator
 
         $this->log($engine, $this->groqModel, $language, $wall, null);
 
-        return ['result' => 'editor'];
+        return $this->pipelineTargetLang !== ''
+            ? ['result' => 'pipeline_transcribed']
+            : ['result' => 'editor'];
     }
 
     /**
@@ -143,13 +149,26 @@ class TranscriptionOrchestrator
         // in use and can show the "fast engine unavailable" notice.
         $this->jobManager->update(['transcription_engine' => 'local:' . $this->localModel]);
 
-        $this->launcher->launchTranscription(
-            $this->jobManager->interpreterAudioPath(),
-            $this->jobManager->draftVttPath(),
-            $this->jobManager->transcriptionStatusPath(),
-            $language,
-            $this->localModel,
-        );
+        if ($this->pipelineTargetLang !== '') {
+            $this->launcher->launchTranscriptionPipeline(
+                audioPath:            $this->jobManager->interpreterAudioPath(),
+                vttOutputPath:        $this->jobManager->draftVttPath(),
+                statusPath:           $this->jobManager->transcriptionStatusPath(),
+                translationStatePath: $this->jobManager->translationStatePath(),
+                jobDir:               dirname($this->jobManager->draftVttPath()),
+                sourceLang:           $language,
+                targetLang:           $this->pipelineTargetLang,
+                model:                $this->localModel,
+            );
+        } else {
+            $this->launcher->launchTranscription(
+                $this->jobManager->interpreterAudioPath(),
+                $this->jobManager->draftVttPath(),
+                $this->jobManager->transcriptionStatusPath(),
+                $language,
+                $this->localModel,
+            );
+        }
 
         $this->log('local:' . $this->localModel, $this->localModel, $language, $wall, $category);
 

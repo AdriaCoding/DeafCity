@@ -62,6 +62,7 @@ class TranscriptionOrchestratorTest extends TestCase
     private function makeOrchestrator(
         callable $transcribe,
         ?callable $onLaunch = null,
+        string $pipelineTargetLang = '',
     ): TranscriptionOrchestrator {
         $groq = new GroqTranscriber(
             apiKey: 'test-key',
@@ -112,6 +113,7 @@ class TranscriptionOrchestratorTest extends TestCase
             logger: function (string $line) {
             },
             clock: fn() => 0.0,
+            pipelineTargetLang: $pipelineTargetLang,
         );
     }
 
@@ -266,6 +268,93 @@ class TranscriptionOrchestratorTest extends TestCase
         $this->assertFalse($groqCalled, 'blank key must skip Groq entirely');
         $this->assertNotNull($launched);
         $this->assertTrue($this->jobManager->exists());
+    }
+
+    public function test_pipeline_mode_groq_success_returns_pipeline_transcribed(): void
+    {
+        file_put_contents(
+            $this->jobsDir . '/current/job.json',
+            json_encode([
+                'subtitle_language' => 'ca',
+                'job_type'          => 'transcription',
+                'intake_mode'       => 'generate',
+                'interpreter_audio' => 'interpreter_audio.wav',
+            ])
+        );
+
+        $orch = $this->makeOrchestrator(
+            fn() => [['start' => 0.0, 'end' => 1.0, 'text' => 'Hola', 'opaque' => '']],
+            pipelineTargetLang: 'en',
+        );
+
+        $result = $orch->run();
+
+        $this->assertSame('pipeline_transcribed', $result['result']);
+        $this->assertTrue($this->jobManager->hasDraftVtt());
+    }
+
+    public function test_normal_mode_groq_success_still_returns_editor(): void
+    {
+        $orch = $this->makeOrchestrator(
+            fn() => [['start' => 0.0, 'end' => 1.0, 'text' => 'Hi', 'opaque' => '']],
+        );
+        $result = $orch->run();
+        $this->assertSame('editor', $result['result']);
+    }
+
+    public function test_pipeline_mode_local_fallback_calls_pipeline_script_not_transcribe_script(): void
+    {
+        $launched = null;
+        $orch = $this->makeOrchestrator(
+            fn() => throw new GroqTranscriptionException(
+                GroqTranscriptionException::CATEGORY_TRANSPORT, 'down'
+            ),
+            function ($cmd) use (&$launched) { $launched = $cmd; },
+            pipelineTargetLang: 'en',
+        );
+
+        $result = $orch->run();
+
+        $this->assertSame('loading', $result['result']);
+        $this->assertNotNull($launched);
+        $this->assertStringContainsString('run_transcription_pipeline.sh', $launched);
+        $this->assertStringNotContainsString('run_transcribe.sh', $launched);
+        $this->assertStringContainsString(escapeshellarg('en'), $launched);
+    }
+
+    public function test_pipeline_mode_auth_failure_still_destroys_job_no_spawn(): void
+    {
+        $launched = null;
+        $orch = $this->makeOrchestrator(
+            fn() => throw new GroqTranscriptionException(
+                GroqTranscriptionException::CATEGORY_AUTH, '401'
+            ),
+            function ($cmd) use (&$launched) { $launched = $cmd; },
+            pipelineTargetLang: 'en',
+        );
+
+        $result = $orch->run();
+
+        $this->assertSame('error', $result['result']);
+        $this->assertNull($launched);
+        $this->assertFalse($this->jobManager->exists());
+    }
+
+    public function test_normal_mode_transport_failure_still_uses_transcribe_script(): void
+    {
+        $launched = null;
+        $orch = $this->makeOrchestrator(
+            fn() => throw new GroqTranscriptionException(
+                GroqTranscriptionException::CATEGORY_TRANSPORT, 'down'
+            ),
+            function ($cmd) use (&$launched) { $launched = $cmd; },
+        );
+
+        $result = $orch->run();
+
+        $this->assertSame('loading', $result['result']);
+        $this->assertStringContainsString('run_transcribe.sh', $launched);
+        $this->assertStringNotContainsString('run_transcription_pipeline.sh', $launched);
     }
 
     public function test_logs_structured_line_with_engine_and_fallback(): void

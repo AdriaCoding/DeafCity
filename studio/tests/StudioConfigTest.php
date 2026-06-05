@@ -23,6 +23,7 @@ class StudioConfigTest extends TestCase
             [
                 ['id' => 'es', 'label' => 'Spanish'],
                 ['id' => 'en', 'label' => 'English'],
+                ['id' => 'ca', 'label' => 'Catalan'],
             ],
             $config->getSubtitleLanguages()
         );

@@ -53,6 +53,33 @@ class BackgroundJobLauncher
         call_user_func($this->exec, $cmd);
     }
 
+    public function launchTranscriptionPipeline(
+        string $audioPath,
+        string $vttOutputPath,
+        string $statusPath,
+        string $translationStatePath,
+        string $jobDir,
+        string $sourceLang,
+        string $targetLang,
+        string $model = 'whisper-large-v3-turbo',
+    ): void {
+        $cmd = sprintf(
+            'GEMINI_API_KEY=%s nohup %s --audio_file %s --vtt_output %s --status_file %s'
+            . ' --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s > /dev/null 2>&1 &',
+            escapeshellarg($this->geminiApiKey),
+            escapeshellarg($this->scriptsDir . '/run_transcription_pipeline.sh'),
+            escapeshellarg($audioPath),
+            escapeshellarg($vttOutputPath),
+            escapeshellarg($statusPath),
+            escapeshellarg($translationStatePath),
+            escapeshellarg($jobDir),
+            escapeshellarg($sourceLang),
+            escapeshellarg($targetLang),
+            escapeshellarg($model),
+        );
+        call_user_func($this->exec, $cmd);
+    }
+
     /**
      * @param string $masterVttPath
      * @param string $statusFilePath

@@ -7,6 +7,7 @@
   ],
   "subtitle_languages": [
     { "id": "es", "label": "Spanish" },
-    { "id": "en", "label": "English" }
+    { "id": "en", "label": "English" },
+    { "id": "ca", "label": "Catalan" }
   ]
 }

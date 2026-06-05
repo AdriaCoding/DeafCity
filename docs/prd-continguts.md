@@ -19,7 +19,7 @@ All edits to video title and tags are written back to Vimeo immediately, keeping
 
 1. As a Producer, I want a "Continguts" link on the Studio idle screen, so that I can reach content management without starting a video pipeline job.
 2. As a Producer, I want the Continguts section to be unavailable while a pipeline job is active, so that I am not distracted from an in-progress job.
-3. As a Producer, I want three tabs — Vídeos, Edicions, Llengues de signes — so that I can navigate between content types without page reloads.
+3. As a Producer, I want three tabs — Vídeos, Ciutats, Llengues de signes — so that I can navigate between content types without page reloads.
 4. As a Producer, I want to see all catalog videos listed with their thumbnail and title, so that I can quickly identify the video I need to correct.
 5. As a Producer, I want thumbnails to load instantly from the catalog (not from a live Vimeo API call), so that the page is fast even with many videos.
 6. As a Producer, I want to click a video row to expand an edit panel, so that I can focus on one video at a time without leaving the list.
@@ -29,10 +29,10 @@ All edits to video title and tags are written back to Vimeo immediately, keeping
 10. As a Producer, I want my title and tag edits written to Vimeo at save time, so that a subsequent sync does not overwrite my corrections.
 11. As a Producer, I want the catalog entry saved even if the Vimeo write fails, so that my corrections are not lost due to a transient API error.
 12. As a Producer, I want a clear warning shown when the Vimeo write fails, so that I know to retry or investigate without losing the local save.
-13. As a Producer, I want to see all editions listed in the Edicions tab with their display label, so that I can review and correct them.
+13. As a Producer, I want to see all editions listed in the Ciutats tab with their display label, so that I can review and correct them.
 14. As a Producer, I want to click an edition's label text to edit it inline, so that I can correct labels quickly without opening a separate form.
 15. As a Producer, I want a delete button shown only for editions that no video references, so that I can clean up unused entries without risking data loss.
-16. As a Producer, I want an "add edition" form at the bottom of the Edicions tab with city and year fields, so that I can register new editions without going through the intake flow.
+16. As a Producer, I want an "add edition" form at the bottom of the Ciutats tab with city and year fields, so that I can register new editions without going through the intake flow.
 17. As a Producer, I want the add-edition form to show a live preview of the generated label and id before I confirm, so that I understand what will be created.
 18. As a Producer, I want the same add-edition form component to work in both Continguts and the intake flow, so that the experience is consistent.
 19. As a Producer, I want to see all sign languages listed in the Llengues de signes tab with their display label, so that I can review and correct them.
@@ -79,7 +79,7 @@ The "unused" check for remove is performed by `CatalogEditor` (or a helper it ex
 
 ### New view
 
-`studio/views/continguts.php` — a full-page view with three client-side tabs (Vídeos, Edicions, Llengues de signes). Tab switching is handled via JavaScript (show/hide); no additional page load per tab.
+`studio/views/continguts.php` — a full-page view with three client-side tabs (Vídeos, Ciutats, Llengues de signes). Tab switching is handled via JavaScript (show/hide); no additional page load per tab.
 
 The tag chip UI in the Vídeos tab reuses the same CSS classes and JavaScript pattern as the existing Tagging step view.
 

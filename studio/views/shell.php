@@ -183,6 +183,7 @@
                 <p>No hi ha cap feina en curs. Inicieu la recepció per registrar un vídeo de Vimeo i pujar un fitxer de subtítols esborrany.</p>
                 <div class="actions">
                     <a class="btn-primary" href="?action=intake">Nova feina</a>
+                    <a class="btn-primary" href="?action=transcription-intake" style="background:#1a3a2e;color:#7ed87e;border:1px solid #2a6040;">Nova transcripció</a>
                     <a class="btn-primary" href="?action=continguts" style="background:#1a3a6e;color:#9ab8ff;border:1px solid #2a5090;">Continguts</a>
                     <form method="POST" action="?action=sync" id="sync-form">
                         <button type="submit" class="btn-secondary" id="sync-btn"
