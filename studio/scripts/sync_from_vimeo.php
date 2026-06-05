@@ -88,6 +88,14 @@ foreach ($catalog['videos'] as $idx => &$entry) {
         $tags = [];
     }
 
+    // Thumbnail
+    $thumbnailUrl = null;
+    try {
+        $thumbnailUrl = $client->getThumbnailUrl($vimeoId);
+    } catch (\Throwable) {
+        // non-fatal
+    }
+
     // Text tracks
     $captions = [];
     try {
@@ -121,6 +129,9 @@ foreach ($catalog['videos'] as $idx => &$entry) {
     $entry['title'] = $title;
     $entry['tags'] = $tags;
     $entry['captions'] = $captions;
+    if ($thumbnailUrl !== null) {
+        $entry['thumbnail_url'] = $thumbnailUrl;
+    }
 
     $synced++;
     writeStatus('running', $synced, $total, $statusFile);

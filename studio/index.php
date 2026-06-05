@@ -31,6 +31,7 @@ use Studio\AudioPreprocessor;
 use Studio\AuthGuard;
 use Studio\BackgroundJobLauncher;
 use Studio\CaptionFileIntegrityChecker;
+use Studio\CatalogEditor;
 use Studio\CatalogTagPool;
 use Studio\GroqTranscriber;
 use Studio\EditionAddHandler;
@@ -44,6 +45,7 @@ use Studio\SubtitleEditorHandler;
 use Studio\TaggingHandler;
 use Studio\TranscriptionOrchestrator;
 use Studio\TranslationJobState;
+use Studio\VideoEditHandler;
 use Studio\VimeoClient;
 use Studio\VimeoIdParser;
 use Studio\VttParser;
@@ -172,6 +174,126 @@ if ($action === 'add-edition' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         (string) ($_POST['edition_year'] ?? ''),
     );
     echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// Continguts — save video (title + tags)
+if ($action === 'continguts-save-video' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $videoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+    $title = trim((string) ($_POST['title'] ?? ''));
+    $tags = is_array($_POST['tags'] ?? null) ? array_values(array_filter(array_map('trim', $_POST['tags']))) : [];
+    if ($videoId === '' || $title === '') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.']);
+        exit;
+    }
+    $handler = new VideoEditHandler(
+        new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN),
+        new CatalogEditor($dataDir . '/catalog.json'),
+    );
+    $result = $handler->handle($videoId, $title, $tags);
+    echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// Continguts — save edition label
+if ($action === 'continguts-save-edition-label' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $id = trim((string) ($_POST['id'] ?? ''));
+    $label = trim((string) ($_POST['label'] ?? ''));
+    if ($id === '' || $label === '') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.']);
+        exit;
+    }
+    try {
+        $studioConfig->updateEditionLabel($id, $label);
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+    } catch (\Throwable $e) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}
+
+// Continguts — save sign language label
+if ($action === 'continguts-save-sign-language-label' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $id = trim((string) ($_POST['id'] ?? ''));
+    $label = trim((string) ($_POST['label'] ?? ''));
+    if ($id === '' || $label === '') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.']);
+        exit;
+    }
+    try {
+        $studioConfig->updateSignLanguageLabel($id, $label);
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+    } catch (\Throwable $e) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}
+
+// Continguts — delete edition
+if ($action === 'continguts-delete-edition' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $id = trim((string) ($_POST['id'] ?? ''));
+    if ($id === '') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => 'ID no especificat.']);
+        exit;
+    }
+    try {
+        $studioConfig->removeEdition($id, new CatalogEditor($dataDir . '/catalog.json'));
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+    } catch (\Throwable $e) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}
+
+// Continguts — delete sign language
+if ($action === 'continguts-delete-sign-language' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    $id = trim((string) ($_POST['id'] ?? ''));
+    if ($id === '') {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => 'ID no especificat.']);
+        exit;
+    }
+    try {
+        $studioConfig->removeSignLanguage($id, new CatalogEditor($dataDir . '/catalog.json'));
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+    } catch (\Throwable $e) {
+        http_response_code(422);
+        echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+    }
+    exit;
+}
+
+// Continguts — main view
+if ($action === 'continguts') {
+    if ($jobManager->exists()) {
+        header('Location: ' . $baseUrl);
+        exit;
+    }
+    $catalogFilePath = $dataDir . '/catalog.json';
+    $catalogData = is_file($catalogFilePath)
+        ? (json_decode((string) file_get_contents($catalogFilePath), true) ?? ['videos' => []])
+        : ['videos' => []];
+    $catalogVideos = $catalogData['videos'] ?? [];
+    $catalogTagPool = new CatalogTagPool($catalogFilePath);
+    $catalogTags = $catalogTagPool->getTagsSortedAlphabetically();
+    $editions = $studioConfig->getEditions();
+    $signLanguages = $studioConfig->getSignLanguages();
+    $catalogEditor = new CatalogEditor($catalogFilePath);
+    $referencedEditionIds = $catalogEditor->getReferencedEditionIds();
+    $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
+    require __DIR__ . '/views/continguts.php';
     exit;
 }
 

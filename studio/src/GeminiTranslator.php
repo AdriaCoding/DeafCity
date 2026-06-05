@@ -8,6 +8,18 @@ class GeminiTranslator
     private const MAX_ATTEMPTS = 3;
     private const BACKOFF_SECONDS = [1, 2, 4];
 
+    /** Human-readable language names for Gemini prompts (ISO ids from studio-config). */
+    private const PROMPT_LANGUAGE_NAMES = [
+        'es' => 'Spanish',
+        'en' => 'English',
+        'it' => 'Italian',
+        'fr' => 'French',
+        'ca' => 'Catalan',
+        'pt' => 'Portuguese',
+        'arq' => 'Algerian Darija (Algerian Arabic dialect, Arabic script)',
+        'aeb' => 'Tunisian Arabic (Tunisian Derja dialect, Arabic script)',
+    ];
+
     private string $apiKey;
     /** @var callable(string, array): array{status: int, body: string} */
     private $httpCallable;
@@ -121,8 +133,8 @@ class GeminiTranslator
             "- Preserve punctuation conventions of the target language\n" .
             "- Do not merge, split, or reorder cues\n" .
             "Return JSON only.",
-            $srcLang,
-            $tgtLang,
+            $this->promptLanguageName($srcLang),
+            $this->promptLanguageName($tgtLang),
             $n,
         );
 
@@ -173,6 +185,11 @@ class GeminiTranslator
         }
 
         return array_map('strval', $parsed['translations']);
+    }
+
+    private function promptLanguageName(string $code): string
+    {
+        return self::PROMPT_LANGUAGE_NAMES[$code] ?? $code;
     }
 
     private function defaultHttpCallable(): callable

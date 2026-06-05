@@ -68,6 +68,103 @@ class StudioConfig
         $this->data = $data;
     }
 
+    public function updateEditionLabel(string $id, string $label): void
+    {
+        $this->updateConfigEntryLabel('editions', $id, $label);
+    }
+
+    public function updateSignLanguageLabel(string $id, string $label): void
+    {
+        $this->updateConfigEntryLabel('sign_languages', $id, $label);
+    }
+
+    public function removeEdition(string $id, CatalogEditor $catalogEditor): void
+    {
+        if (in_array($id, $catalogEditor->getReferencedEditionIds(), true)) {
+            throw new \RuntimeException("Edition '$id' is still referenced by one or more catalog videos.");
+        }
+        $this->removeConfigEntry('editions', $id);
+    }
+
+    public function removeSignLanguage(string $id, CatalogEditor $catalogEditor): void
+    {
+        if (in_array($id, $catalogEditor->getReferencedSignLanguageIds(), true)) {
+            throw new \RuntimeException("Sign language '$id' is still referenced by one or more catalog videos.");
+        }
+        $this->removeConfigEntry('sign_languages', $id);
+    }
+
+    private function updateConfigEntryLabel(string $listKey, string $id, string $label): void
+    {
+        $fp = fopen($this->configPath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open studio config for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $data = json_decode($raw ?: '', true);
+        if (!is_array($data)) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid studio config JSON.');
+        }
+
+        $found = false;
+        foreach ($data[$listKey] ?? [] as $i => $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                $data[$listKey][$i]['label'] = $label;
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Config entry '$id' not found in '$listKey'.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        $this->data = $data;
+    }
+
+    private function removeConfigEntry(string $listKey, string $id): void
+    {
+        $fp = fopen($this->configPath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open studio config for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $data = json_decode($raw ?: '', true);
+        if (!is_array($data)) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid studio config JSON.');
+        }
+
+        $entries = $data[$listKey] ?? [];
+        $filtered = array_values(array_filter($entries, fn($e) => ($e['id'] ?? '') !== $id));
+        $data[$listKey] = $filtered;
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        $this->data = $data;
+    }
+
     public function addSignLanguage(string $id, string $label): void
     {
         if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {

@@ -223,4 +223,20 @@ class GeminiTranslatorTest extends TestCase
         $this->assertArrayHasKey('generationConfig', $capturedPayload);
         $this->assertSame('application/json', $capturedPayload['generationConfig']['responseMimeType']);
     }
+
+    public function test_prompt_uses_human_readable_dialect_names(): void
+    {
+        $capturedPayload = null;
+
+        $translator = $this->makeTranslator(function (string $url, array $payload) use (&$capturedPayload) {
+            $capturedPayload = $payload;
+            return $this->okResponse(['مرحبا']);
+        });
+
+        $translator->translate(['Hello'], 'es', 'arq');
+
+        $prompt = $capturedPayload['systemInstruction']['parts'][0]['text'];
+        $this->assertStringContainsString('Spanish', $prompt);
+        $this->assertStringContainsString('Algerian Darija', $prompt);
+    }
 }

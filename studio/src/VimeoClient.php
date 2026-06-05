@@ -21,6 +21,9 @@ class VimeoClient
         'fr' => 'fr',
         'ca' => 'ca',
         'pt' => 'pt',
+        // Vimeo text tracks only expose generic Arabic (`ar`); dialect ids map here for upload.
+        'arq' => 'ar',
+        'aeb' => 'ar',
     ];
 
     /** @return array<int, array{uri: string}> */
@@ -111,6 +114,65 @@ class VimeoClient
         $items = $response['body']['data'] ?? [];
         $tags = array_filter(array_map(fn(array $t): string => trim((string) ($t['tag'] ?? '')), $items));
         return array_values($tags);
+    }
+
+    public function getThumbnailUrl(string $id): ?string
+    {
+        $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+        $response = $client->request('/videos/' . $id . '?fields=pictures', [], 'GET');
+        $status = $response['status'] ?? 0;
+        if ($status < 200 || $status >= 300) {
+            return null;
+        }
+        $sizes = $response['body']['pictures']['sizes'] ?? [];
+        // Pick the smallest size >= 640px wide, or fall back to the last one
+        $chosen = null;
+        foreach ($sizes as $size) {
+            $w = (int) ($size['width'] ?? 0);
+            if ($w >= 640) {
+                $chosen = $size['link'] ?? null;
+                break;
+            }
+        }
+        if ($chosen === null && !empty($sizes)) {
+            $chosen = end($sizes)['link'] ?? null;
+        }
+        return is_string($chosen) ? $chosen : null;
+    }
+
+    public function updateTitle(string $videoId, string $title): void
+    {
+        $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+        $response = $client->request('/videos/' . $videoId, ['name' => $title], 'PATCH');
+        $status = $response['status'] ?? 0;
+        if ($status < 200 || $status >= 300) {
+            throw new \RuntimeException("Error en actualitzar el títol del vídeo $videoId.");
+        }
+    }
+
+    /** @param string[] $tags */
+    public function setTags(string $videoId, array $tags): void
+    {
+        $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+
+        $response = $client->request('/videos/' . $videoId . '/tags', [], 'GET');
+        if (($response['status'] ?? 0) < 200 || ($response['status'] ?? 0) >= 300) {
+            throw new \RuntimeException("Error en obtenir les etiquetes del vídeo $videoId.");
+        }
+
+        foreach ($response['body']['data'] ?? [] as $item) {
+            $word = trim((string) ($item['tag'] ?? ''));
+            if ($word !== '') {
+                $client->request('/videos/' . $videoId . '/tags/' . rawurlencode($word), [], 'DELETE');
+            }
+        }
+
+        foreach ($tags as $tag) {
+            $word = trim((string) $tag);
+            if ($word !== '') {
+                $client->request('/videos/' . $videoId . '/tags/' . rawurlencode($word), [], 'PUT');
+            }
+        }
     }
 
     public function getVideo(string $id): string
