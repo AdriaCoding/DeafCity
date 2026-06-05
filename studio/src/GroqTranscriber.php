@@ -149,43 +149,37 @@ class GroqTranscriber
             );
         }
 
-        $segments = $data['segments'] ?? null;
-        if (!is_array($segments)) {
-            $segments = [];
+        $rawWords = $data['words'] ?? null;
+        if (!is_array($rawWords)) {
+            $rawWords = [];
         }
 
-        $cues = [];
-        $prevEnd = 0.0;
-        foreach ($segments as $segment) {
-            if (!is_array($segment)) {
+        $words = [];
+        foreach ($rawWords as $w) {
+            if (!is_array($w) || !isset($w['start'], $w['end'])) {
                 continue;
             }
-            $text = trim((string) ($segment['text'] ?? ''));
-            if ($text === '' || !isset($segment['start'])) {
+            $text = trim((string) ($w['word'] ?? ''));
+            if ($text === '') {
                 continue;
             }
-            $start = max((float) $segment['start'], $prevEnd);
-            $end = isset($segment['end']) ? (float) $segment['end'] : $start + 2.0;
-            if ($start >= $end) {
-                continue;
-            }
-            $cues[] = [
-                'start' => $start,
-                'end' => $end,
+            $words[] = [
+                'start' => (float) $w['start'],
+                'end' => (float) $w['end'],
                 'text' => $text,
-                'opaque' => '',
             ];
-            $prevEnd = $end;
         }
 
-        if ($cues === []) {
+        if ($words === []) {
             throw new GroqTranscriptionException(
                 GroqTranscriptionException::CATEGORY_EMPTY,
-                'Groq returned no usable cues',
+                'Groq returned no usable words',
             );
         }
 
-        return $cues;
+        $cues = (new CueChunker())->chunk($words);
+
+        return array_map(static fn(array $c) => [...$c, 'opaque' => ''], $cues);
     }
 
     private function defaultHttpCallable(): callable
@@ -197,6 +191,7 @@ class GroqTranscriber
                 'temperature' => (string) $request['temperature'],
                 'response_format' => $request['response_format'],
                 'language' => $request['language'],
+                'timestamp_granularities[]' => 'word',
                 'file' => new \CURLFile($request['audioPath']),
             ];
             curl_setopt_array($ch, [

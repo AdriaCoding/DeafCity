@@ -36,39 +36,39 @@ class GroqTranscriberTest extends TestCase
         );
     }
 
-    private function verboseJson(array $segments): string
+    /** @param list<array{word: string, start: float, end: float}> $words */
+    private function wordsJson(array $words): string
     {
-        return json_encode(['text' => 'whatever', 'segments' => $segments]);
+        return json_encode(['text' => 'whatever', 'words' => $words]);
     }
 
-    public function test_verbose_json_returns_clamped_cues(): void
+    public function test_words_are_chunked_into_cues(): void
     {
         $http = fn(array $req) => [
             'status' => 200,
-            'body' => $this->verboseJson([
-                ['start' => 0.0, 'end' => 1.5, 'text' => ' Hola '],
-                ['start' => 1.4, 'end' => 3.0, 'text' => 'món'],
+            'body' => $this->wordsJson([
+                ['word' => ' Hola', 'start' => 0.0, 'end' => 0.5],
+                ['word' => ' món',  'start' => 0.6, 'end' => 1.0],
             ]),
         ];
 
         $cues = $this->transcriber($http)->transcribe($this->audioPath, 'whisper-large-v3-turbo', 'ca');
 
-        $this->assertSame([
-            ['start' => 0.0, 'end' => 1.5, 'text' => 'Hola', 'opaque' => ''],
-            // second cue start clamped up to prev_end (1.5)
-            ['start' => 1.5, 'end' => 3.0, 'text' => 'món', 'opaque' => ''],
-        ], $cues);
+        // Both words fall within pause_threshold → one cue; trim strips leading spaces.
+        $this->assertCount(1, $cues);
+        $this->assertSame('Hola món', $cues[0]['text']);
+        $this->assertSame(0.0, $cues[0]['start']);
+        $this->assertSame(1.0, $cues[0]['end']);
+        $this->assertSame('', $cues[0]['opaque']);
     }
 
-    public function test_drops_segment_when_start_at_or_after_end_after_clamp(): void
+    public function test_pause_between_words_produces_two_cues(): void
     {
-        // First cue ends at 5.0; second segment lies entirely before it ⇒ dropped.
         $http = fn(array $req) => [
             'status' => 200,
-            'body' => $this->verboseJson([
-                ['start' => 0.0, 'end' => 5.0, 'text' => 'one'],
-                ['start' => 2.0, 'end' => 4.0, 'text' => 'swallowed'],
-                ['start' => 6.0, 'end' => 7.0, 'text' => 'two'],
+            'body' => $this->wordsJson([
+                ['word' => 'one', 'start' => 0.0, 'end' => 0.5],
+                ['word' => 'two', 'start' => 1.5, 'end' => 2.0], // 1s gap > threshold
             ]),
         ];
 
@@ -127,8 +127,8 @@ class GroqTranscriberTest extends TestCase
             if ($calls === 1) {
                 return ['status' => 429, 'body' => 'rate limited'];
             }
-            return ['status' => 200, 'body' => $this->verboseJson([
-                ['start' => 0.0, 'end' => 1.0, 'text' => 'ok'],
+            return ['status' => 200, 'body' => $this->wordsJson([
+                ['word' => 'ok', 'start' => 0.0, 'end' => 1.0],
             ])];
         };
         $sleep = function (int $s) use (&$sleeps) {
@@ -159,9 +159,9 @@ class GroqTranscriberTest extends TestCase
         $this->assertSame(2, $calls);
     }
 
-    public function test_200_with_no_segments_throws_empty(): void
+    public function test_200_with_no_words_throws_empty(): void
     {
-        $http = fn(array $req) => ['status' => 200, 'body' => $this->verboseJson([])];
+        $http = fn(array $req) => ['status' => 200, 'body' => $this->wordsJson([])];
 
         try {
             $this->transcriber($http)->transcribe($this->audioPath, 'm', 'ca');

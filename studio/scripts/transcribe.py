@@ -19,6 +19,7 @@ import argparse
 import json
 import sys
 
+from cue_chunker import chunk as chunk_words
 from studio_log import LOG_FILE, REPO_ROOT, setup_logging
 
 logger = setup_logging("transcribe")
@@ -52,27 +53,16 @@ def fmt_ts(seconds: float) -> str:
     return f"{h:02d}:{m:02d}:{s:06.3f}"
 
 
-def segments_to_vtt(segments) -> str:
-    """Convert faster-whisper segments to WebVTT, applying the monotonic clamp.
+def words_to_vtt(words: list) -> str:
+    """Convert word-level timestamp dicts to WebVTT via CueChunker.
 
-    Each segment exposes .start, .end and .text. start is clamped up to the
-    previous cue's end; a cue whose start lands at or after its end is dropped.
+    Each element: {"start": float, "end": float, "text": str}
     Mirrors the PHP Groq path so both engines produce identical-shaped cues.
     """
+    cues = chunk_words(words)
     parts = ["WEBVTT"]
-    prev_end = 0.0
-    for seg in segments:
-        text = (getattr(seg, "text", None) or "").strip()
-        start = getattr(seg, "start", None)
-        if start is None or not text:
-            continue
-        start = max(float(start), prev_end)
-        end = getattr(seg, "end", None)
-        end = float(end) if end is not None else start + 2.0
-        if start >= end:
-            continue
-        parts.append(f"\n{fmt_ts(start)} --> {fmt_ts(end)}\n{text}")
-        prev_end = end
+    for cue in cues:
+        parts.append(f"\n{fmt_ts(cue['start'])} --> {fmt_ts(cue['end'])}\n{cue['text']}")
     return "\n".join(parts) + "\n"
 
 
@@ -113,14 +103,22 @@ def main() -> None:
         segments, info = model.transcribe(
             args.audio_file,
             language=args.language,
+            word_timestamps=True,
             vad_filter=True,
             vad_parameters=dict(min_silence_duration_ms=500),
         )
 
-        # faster-whisper yields segments lazily; materialise so we can both
-        # build the VTT and check emptiness.
-        cues = list(segments)
-        vtt = segments_to_vtt(cues)
+        # Flatten word-level timestamps from all segments.
+        flat_words = []
+        for seg in segments:
+            for w in (seg.words or []):
+                flat_words.append({
+                    "start": float(w.start),
+                    "end": float(w.end),
+                    "text": str(w.word),
+                })
+
+        vtt = words_to_vtt(flat_words)
 
         if vtt.strip() == "WEBVTT":
             logger.error("No speech recognized in audio file")
@@ -133,7 +131,7 @@ def main() -> None:
         logger.info(
             "Transcription complete engine=local:%s cues=%d output=%s",
             args.model,
-            len(cues),
+            vtt.count("-->"),
             args.vtt_output,
         )
         write_status(args.status_file, "done")

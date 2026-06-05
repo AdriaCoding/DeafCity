@@ -18,6 +18,9 @@ class CueChunker:
         self.max_chars = int(params.get("max_chars", 50))
         self.pause_threshold = float(params.get("pause_threshold", 0.4))
         self.max_duration = float(params.get("max_duration", 6.0))
+        self.cps_target = float(params.get("cps_target", 14.0))
+        self.min_duration = float(params.get("min_duration", 1.0))
+        self.min_gap = float(params.get("min_gap", 0.1))
 
     def chunk(self, words: List[Dict]) -> List[Dict]:
         """words: [{"start": float, "end": float, "text": str}, ...]
@@ -25,7 +28,7 @@ class CueChunker:
         """
         if not words:
             return []
-        return self._split_phase(words)
+        return self._time_fit_phase(self._split_phase(words))
 
     def _split_phase(self, words: List[Dict]) -> List[Dict]:
         """Phase 1 — split the word stream into cues, closing the current cue
@@ -50,6 +53,47 @@ class CueChunker:
             cur.append(w)
         if cur:
             cues.append(self._make_cue(cur))
+        return cues
+
+    def _time_fit_phase(self, cues: List[Dict]) -> List[Dict]:
+        """Phase 2 — extend each cue's end into the following gap toward CPS /
+        min-duration targets, then merge-forward any still-short cue (unless its
+        last char is strong punctuation or combined text would exceed caps).
+        The last cue is never extended.
+        """
+        i = 0
+        while i < len(cues) - 1:
+            next_start = float(cues[i + 1]["start"])
+            cue_end = float(cues[i]["end"])
+            avail = next_start - self.min_gap - cue_end
+
+            if avail > 0.0:
+                chars = len(cues[i]["text"])
+                need_min_dur = max(0.0, float(cues[i]["start"]) + self.min_duration - cue_end)
+                need_cps = (
+                    max(0.0, float(cues[i]["start"]) + chars / self.cps_target - cue_end)
+                    if self.cps_target > 0.0 else 0.0
+                )
+                target_ext = max(need_min_dur, need_cps)
+                if target_ext > 0.0:
+                    cues[i]["end"] = cue_end + min(target_ext, avail)
+
+            # Merge-forward: still short, no strong punct at boundary, fits caps.
+            if float(cues[i]["end"]) - float(cues[i]["start"]) < self.min_duration:
+                last_char = str(cues[i]["text"]).rstrip()[-1:] if str(cues[i]["text"]).rstrip() else ""
+                if last_char not in (".", "!", "?"):
+                    combined_text = cues[i]["text"] + " " + cues[i + 1]["text"]
+                    combined_dur = float(cues[i + 1]["end"]) - float(cues[i]["start"])
+                    if len(combined_text) <= self.max_chars and combined_dur <= self.max_duration:
+                        cues[i + 1] = {
+                            "start": float(cues[i]["start"]),
+                            "end": float(cues[i + 1]["end"]),
+                            "text": combined_text,
+                        }
+                        cues.pop(i)
+                        continue  # Re-check from same i (now the merged cue)
+
+            i += 1
         return cues
 
     @staticmethod
