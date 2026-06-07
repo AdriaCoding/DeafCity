@@ -28,7 +28,7 @@ Each Subtitle language in `studio-config.json` has three fields:
 | Field | Meaning |
 | --- | --- |
 | `id` | **Extended ISO code** — canonical key everywhere on the server (catalog `captions[].lang`, VTT filenames `{vimeo_id}.{id}.vtt`, intake, translation). Prefer ISO 639-1 when one exists (`es`, `ca`, `pt`); otherwise ISO 639-3 (`arq`, `aeb`). Immutable after creation. |
-| `label` | Human-readable name in Studio and the Preview caption picker (e.g. "Algerian Darija"). Always editable. |
+| `label` | Human-readable name in Studio and the Preview caption picker, set from the ISO list at add time (e.g. "Algerian Arabic"). Immutable after creation. |
 | `vimeo_code` | Locale code Vimeo accepts when uploading a text track. Equals `id` when Vimeo supports that code 1:1; otherwise a Producer-chosen code from Vimeo's restricted list. Must be **unique** across all configured Subtitle languages (Vimeo allows one active track per locale per video). Editable only while no catalog caption references this `id`. |
 
 Example mappings:
@@ -54,7 +54,7 @@ On add, the server rejects unknown `id` (not in ISO registry) and unknown `vimeo
 
 ### Adding a Subtitle language (Continguts)
 
-Producers pick a language from the searchable ISO list. The label auto-fills and remains editable. Free-text language codes are not allowed.
+Producers pick a language from the searchable ISO list. The `id` and `label` are set from that selection and cannot be changed afterward (delete and re-add to replace). Free-text language codes are not allowed.
 
 - If the selected `id` is in the Vimeo locale list → `vimeo_code` defaults to `id`; no second step.
 - If not → a second dropdown asks the Producer to choose a `vimeo_code` from the Vimeo locale list. Codes already assigned to another Subtitle language are excluded.
