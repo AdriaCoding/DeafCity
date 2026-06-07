@@ -168,6 +168,88 @@
         .save-feedback.ok { color: #4a8a4a; }
         .save-feedback.warn { color: #b58a4a; }
         .save-feedback.err { color: #a55; }
+
+        .caption-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.75rem;
+            font-size: 0.82rem;
+        }
+        .caption-table th {
+            text-align: left;
+            font-weight: 500;
+            color: #666;
+            padding: 0.35rem 0.5rem 0.35rem 0;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        .caption-table td {
+            padding: 0.4rem 0.5rem 0.4rem 0;
+            color: #888;
+            vertical-align: top;
+        }
+        .caption-table td.caption-source {
+            color: #aaa;
+            font-weight: 500;
+        }
+        .caption-table tbody tr + tr td {
+            border-top: 1px solid #1e1e1e;
+        }
+
+        .caption-upload-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .caption-upload-row input[type="file"] {
+            flex: 1;
+            min-width: 0;
+            padding: 0.4rem 0.5rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #ccc;
+            font-size: 0.82rem;
+        }
+        .caption-upload-row select {
+            width: 9rem;
+            flex-shrink: 0;
+            padding: 0.45rem 0.5rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-size: 0.82rem;
+            outline: none;
+        }
+        .caption-upload-row select:focus { border-color: #555; }
+        .btn-remove-row {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            padding: 0.2rem 0.35rem;
+            flex-shrink: 0;
+        }
+        .btn-remove-row:hover { color: #a55; }
+        .btn-add-caption {
+            margin-top: 0.25rem;
+            padding: 0.4rem 0.75rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #888;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .btn-add-caption:hover { background: #222; color: #bbb; }
+        .field-hint {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 0.3rem;
+        }
     </style>
 </head>
 <body>
@@ -209,6 +291,39 @@
                 <div class="tag-suggestions"></div>
             </div>
         </div>
+        <div class="field">
+            <label class="field-label">Subtítols</label>
+            <?php if (!empty($video['captions'])): ?>
+            <?php
+            $langLabels = [];
+            foreach ($subtitleLanguages as $sl) {
+                $langLabels[$sl['id']] = $sl['label'];
+            }
+            ?>
+            <table class="caption-table">
+                <thead>
+                    <tr>
+                        <th>Idioma</th>
+                        <th>Fitxer original</th>
+                        <th>Fitxer al servidor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($video['captions'] as $caption): ?>
+                    <?php $langId = $caption['lang'] ?? ''; ?>
+                    <tr>
+                        <td><?= htmlspecialchars($langLabels[$langId] ?? $langId, ENT_QUOTES) ?></td>
+                        <td class="caption-source"><?= htmlspecialchars($caption['label'] ?? '', ENT_QUOTES) ?></td>
+                        <td><?= htmlspecialchars($caption['file'] ?? '', ENT_QUOTES) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php endif; ?>
+            <div class="caption-uploads"></div>
+            <button type="button" class="btn-add-caption">Afegir fitxer</button>
+            <p class="field-hint">WebVTT (.vtt) o SubRip (.srt). En desar, es reemplaçarà el fitxer de la llengua seleccionada.</p>
+        </div>
         <button class="btn-save">Desa</button>
         <div class="save-feedback"></div>
     </div>
@@ -217,6 +332,7 @@
 <script>
 (function () {
     var ALL_TAGS = <?= json_encode($catalogTags, JSON_UNESCAPED_UNICODE) ?>;
+    var SUBTITLE_LANGUAGES = <?= json_encode($subtitleLanguages, JSON_UNESCAPED_UNICODE) ?>;
 
     var form = document.querySelector('.video-edit-form');
     var titleInput = form.querySelector('.title-input');
@@ -227,8 +343,12 @@
     var feedback = form.querySelector('.save-feedback');
     var heroTitle = document.getElementById('video-hero-title');
     var vimeoId = form.dataset.vimeoId;
+    var captionUploads = form.querySelector('.caption-uploads');
+    var addCaptionBtn = form.querySelector('.btn-add-caption');
 
     setupChipInput(chipBox, textInput, suggestions);
+    addCaptionRow();
+    addCaptionBtn.addEventListener('click', addCaptionRow);
 
     saveBtn.addEventListener('click', function () {
         feedback.textContent = '';
@@ -242,6 +362,15 @@
         body.append('vimeo_id', vimeoId);
         body.append('title', titleInput.value.trim());
         tags.forEach(function (t) { body.append('tags[]', t); });
+
+        captionUploads.querySelectorAll('.caption-upload-row').forEach(function (row) {
+            var fileInput = row.querySelector('input[type="file"]');
+            var langSelect = row.querySelector('select');
+            if (fileInput.files.length > 0) {
+                body.append('caption_file[]', fileInput.files[0]);
+                body.append('caption_lang[]', langSelect.value);
+            }
+        });
 
         fetch('?action=continguts-save-video', { method: 'POST', body: body })
             .then(function (r) { return r.json(); })
@@ -360,6 +489,41 @@
         idx = Math.max(0, Math.min(items.length - 1, idx));
         if (current) current.classList.remove('focused');
         items[idx].classList.add('focused');
+    }
+
+    function addCaptionRow() {
+        var row = document.createElement('div');
+        row.className = 'caption-upload-row';
+
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.vtt,.srt';
+
+        var langSelect = document.createElement('select');
+        SUBTITLE_LANGUAGES.forEach(function (lang) {
+            var opt = document.createElement('option');
+            opt.value = lang.id;
+            opt.textContent = lang.label;
+            langSelect.appendChild(opt);
+        });
+
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn-remove-row';
+        removeBtn.title = 'Elimina';
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', function () {
+            if (captionUploads.querySelectorAll('.caption-upload-row').length > 1) {
+                row.remove();
+            } else {
+                fileInput.value = '';
+            }
+        });
+
+        row.appendChild(fileInput);
+        row.appendChild(langSelect);
+        row.appendChild(removeBtn);
+        captionUploads.appendChild(row);
     }
 })();
 </script>

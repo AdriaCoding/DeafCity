@@ -47,6 +47,61 @@ class CatalogEditor
         fclose($fp);
     }
 
+    /**
+     * @param list<array{lang: string, label: string, file: string}> $newCaptions
+     */
+    public function upsertCaptions(string $videoId, array $newCaptions): void
+    {
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog) || !isset($catalog['videos'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid catalog JSON.');
+        }
+
+        $found = false;
+        foreach ($catalog['videos'] as &$entry) {
+            if (($entry['vimeo_id'] ?? '') !== $videoId) {
+                continue;
+            }
+
+            $byLang = [];
+            foreach ($entry['captions'] ?? [] as $caption) {
+                $lang = $caption['lang'] ?? '';
+                if ($lang !== '') {
+                    $byLang[$lang] = $caption;
+                }
+            }
+            foreach ($newCaptions as $caption) {
+                $byLang[$caption['lang']] = $caption;
+            }
+            $entry['captions'] = array_values($byLang);
+            $found = true;
+            break;
+        }
+        unset($entry);
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Video $videoId not found in catalog.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+
     /** @return ?array<string, mixed> */
     public function findVideoByVimeoId(string $vimeoId): ?array
     {

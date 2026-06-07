@@ -161,6 +161,36 @@ class CatalogEditorTest extends TestCase
         $this->assertNull((new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111'));
     }
 
+    public function test_upsertCaptions_merges_by_language(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt']],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->upsertCaptions('111', [
+            ['lang' => 'en', 'label' => 'English', 'file' => '111.en.vtt'],
+            ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.new.vtt'],
+        ]);
+
+        $captions = $this->readCatalog()['videos'][0]['captions'];
+        $this->assertCount(2, $captions);
+        $byLang = [];
+        foreach ($captions as $c) {
+            $byLang[$c['lang']] = $c['file'];
+        }
+        $this->assertSame('111.en.vtt', $byLang['en']);
+        $this->assertSame('111.es.new.vtt', $byLang['es']);
+    }
+
     public function test_returns_referenced_vimeo_ids(): void
     {
         $this->writeCatalog(['videos' => [

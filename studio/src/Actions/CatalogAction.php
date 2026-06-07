@@ -2,6 +2,7 @@
 
 namespace Studio\Actions;
 
+use Studio\CaptionUploadHandler;
 use Studio\CatalogTagPool;
 use Studio\Container;
 use Studio\EditionAddHandler;
@@ -84,6 +85,7 @@ class CatalogAction
         }
         $catalogFilePath = $c->dataDir . '/catalog.json';
         $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
+        $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         require $this->view('continguts-video.php');
         exit;
     }
@@ -107,11 +109,80 @@ class CatalogAction
             echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.']);
             exit;
         }
-        echo json_encode(
-            (new VideoEditHandler($this->c->vimeoClient(), $this->c->catalogEditor()))->handle($videoId, $title, $tags),
-            JSON_UNESCAPED_UNICODE,
-        );
+
+        $captionUploads = $this->parseCaptionUploads();
+        if ($captionUploads['error'] !== null) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => $captionUploads['error']], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $result = (new VideoEditHandler($this->c->vimeoClient(), $this->c->catalogEditor()))
+            ->handle($videoId, $title, $tags);
+
+        if (!$result['ok']) {
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($captionUploads['uploads'] !== []) {
+            $captionResult = (new CaptionUploadHandler(
+                $this->c->vimeoClient(),
+                $this->c->catalogEditor(),
+                $this->c->studioConfig,
+                $this->c->dataDir . '/captions',
+            ))->handle($videoId, $captionUploads['uploads']);
+
+            if (!$captionResult['ok']) {
+                http_response_code(422);
+                echo json_encode([
+                    'ok' => false,
+                    'error' => $captionResult['error'] ?? 'Error en pujar els subtítols.',
+                    'vimeoWarning' => $result['vimeoWarning'],
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            $captionWarnings = $captionResult['vimeoWarnings'];
+            if ($captionWarnings !== []) {
+                $labels = implode(', ', $captionWarnings);
+                $captionVimeoWarning = 'Els subtítols s\'han desat localment, però Vimeo no s\'ha actualitzat per: ' . $labels;
+                $result['vimeoWarning'] = $result['vimeoWarning'] !== null
+                    ? $result['vimeoWarning'] . ' ' . $captionVimeoWarning
+                    : $captionVimeoWarning;
+            }
+        }
+
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
+    }
+
+    /** @return array{uploads: list<array{lang: string, tmpPath: string, originalName: string}>, error: ?string} */
+    private function parseCaptionUploads(): array
+    {
+        $files = $_FILES['caption_file'] ?? null;
+        if ($files === null || !isset($files['name']) || !is_array($files['name'])) {
+            return ['uploads' => [], 'error' => null];
+        }
+
+        $langs = is_array($_POST['caption_lang'] ?? null) ? $_POST['caption_lang'] : [];
+        $uploads = [];
+
+        foreach ($files['name'] as $i => $name) {
+            if ($name === '' || ($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+            if (($files['error'][$i] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
+                return ['uploads' => [], 'error' => 'No s\'ha pogut pujar un fitxer de subtítols.'];
+            }
+            $uploads[] = [
+                'lang' => trim((string) ($langs[$i] ?? '')),
+                'tmpPath' => (string) ($files['tmp_name'][$i] ?? ''),
+                'originalName' => (string) $name,
+            ];
+        }
+
+        return ['uploads' => $uploads, 'error' => null];
     }
 
     private function saveLabel(string $type): never
