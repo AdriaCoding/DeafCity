@@ -241,6 +241,75 @@
         a.caption-download-btn:hover { color: #aaa; border-color: #555; }
         a.caption-download-btn .material-icons { font-size: 0.95rem; }
 
+        .caption-action-btns { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+        button.caption-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.5rem;
+            background: transparent;
+            color: #555;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            letter-spacing: 0.04em;
+        }
+        button.caption-action-btn:hover { color: #aaa; border-color: #555; }
+        button.caption-action-btn .material-icons { font-size: 0.95rem; }
+        button.caption-action-btn.danger:hover { color: #e05555; border-color: #7c4a4a; }
+        .caption-table-feedback {
+            font-size: 0.75rem;
+            margin-bottom: 0.4rem;
+            min-height: 1em;
+        }
+        .caption-table-feedback.ok { color: #4a8a4a; }
+        .caption-table-feedback.err { color: #a55; }
+        .caption-row-spinner {
+            display: inline-block;
+            width: 0.85rem;
+            height: 0.85rem;
+            border: 2px solid #333;
+            border-top-color: #888;
+            border-radius: 50%;
+            animation: caption-spin 0.7s linear infinite;
+            vertical-align: middle;
+        }
+        @keyframes caption-spin { to { transform: rotate(360deg); } }
+
+        #caption-edit-dialog {
+            width: 100vw;
+            max-width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background: #0a0a0a;
+        }
+        #caption-edit-dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
+        .caption-edit-frame-wrap {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .caption-edit-loading {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.85rem;
+            gap: 0.75rem;
+        }
+        #caption-edit-iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: #0a0a0a;
+        }
+
         .caption-upload-row {
             display: flex;
             gap: 0.5rem;
@@ -347,19 +416,21 @@
             }
             $masterCaptionLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
             ?>
+            <div class="caption-table-feedback" id="caption-table-feedback"></div>
             <table class="caption-table" id="caption-tracks-table">
                 <thead>
                     <tr>
                         <th class="caption-master-cell">Master</th>
                         <th>Idioma</th>
                         <th>Fitxer al servidor</th>
-                        <th></th>
+                        <th>Descàrrega</th>
+                        <th>Accions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($video['captions'] as $caption): ?>
                     <?php $langId = $caption['lang'] ?? ''; ?>
-                    <tr>
+                    <tr data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>">
                         <td class="caption-master-cell">
                             <input
                                 type="radio"
@@ -371,7 +442,7 @@
                             >
                         </td>
                         <td><?= htmlspecialchars($langLabels[$langId] ?? $langId, ENT_QUOTES) ?></td>
-                        <td><?= htmlspecialchars($caption['file'] ?? '', ENT_QUOTES) ?></td>
+                        <td class="caption-file-cell"><?= htmlspecialchars($caption['file'] ?? '', ENT_QUOTES) ?></td>
                         <td>
                             <?php if (!empty($caption['file'])): ?>
                             <div class="caption-download-btns">
@@ -379,6 +450,13 @@
                                 <a class="caption-download-btn" href="?action=continguts-download-caption-srt&vimeo_id=<?= urlencode($video['vimeo_id'] ?? '') ?>&lang=<?= urlencode($langId) ?>"><span class="material-icons">download</span>SRT</a>
                             </div>
                             <?php endif; ?>
+                        </td>
+                        <td class="caption-actions-cell">
+                            <div class="caption-action-btns">
+                                <button type="button" class="caption-action-btn caption-edit-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons">edit</span>Edita</button>
+                                <button type="button" class="caption-action-btn caption-replace-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons">upload</span>Reemplaça</button>
+                                <button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons">delete</span>Elimina</button>
+                            </div>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -394,6 +472,16 @@
         <div class="save-feedback"></div>
     </div>
 </main>
+
+<dialog id="caption-edit-dialog">
+    <div class="caption-edit-frame-wrap">
+        <div class="caption-edit-loading" id="caption-edit-loading">
+            <span class="caption-row-spinner"></span>
+            Carregant editor…
+        </div>
+        <iframe id="caption-edit-iframe" title="Editor de subtítols" hidden></iframe>
+    </div>
+</dialog>
 
 <script>
 (function () {
@@ -416,6 +504,7 @@
     addCaptionRow();
     addCaptionBtn.addEventListener('click', addCaptionRow);
     setupMasterCaptionSelector();
+    setupCaptionRowActions();
 
     saveBtn.addEventListener('click', function () {
         feedback.textContent = '';
@@ -587,9 +676,15 @@
             table.innerHTML =
                 '<thead><tr>' +
                 '<th class="caption-master-cell">Master</th>' +
-                '<th>Idioma</th><th>Fitxer al servidor</th><th></th>' +
+                '<th>Idioma</th><th>Fitxer al servidor</th><th>Descàrrega</th><th>Accions</th>' +
                 '</tr></thead><tbody></tbody>';
             field.insertBefore(table, captionUploads);
+            if (!document.getElementById('caption-table-feedback')) {
+                var tableFb = document.createElement('div');
+                tableFb.className = 'caption-table-feedback';
+                tableFb.id = 'caption-table-feedback';
+                field.insertBefore(tableFb, table);
+            }
             var fb = document.createElement('div');
             fb.className = 'caption-master-feedback';
             fb.id = 'master-caption-feedback';
@@ -606,6 +701,7 @@
         captions.forEach(function (caption) {
             var langId = caption.lang || '';
             var tr = document.createElement('tr');
+            tr.dataset.lang = langId;
             tr.innerHTML =
                 '<td class="caption-master-cell">' +
                 '<input type="radio" class="caption-master-radio" name="master_caption"' +
@@ -614,22 +710,186 @@
                 ' title="Definir com a subtítol mestre">' +
                 '</td>' +
                 '<td>' + escapeHtml(langLabels[langId] || langId) + '</td>' +
-                '<td>' + escapeHtml(caption.file || '') + '</td>' +
+                '<td class="caption-file-cell">' + escapeHtml(caption.file || '') + '</td>' +
                 '<td>' + (caption.file
                     ? '<div class="caption-download-btns">' +
                       '<a class="caption-download-btn" href="?action=continguts-download-caption-vtt&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId) + '"><span class="material-icons">download</span>VTT</a>' +
                       '<a class="caption-download-btn" href="?action=continguts-download-caption-srt&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId) + '"><span class="material-icons">download</span>SRT</a>' +
                       '</div>'
-                    : '') + '</td>';
+                    : '') + '</td>' +
+                '<td class="caption-actions-cell">' + buildActionButtonsHtml(langId) + '</td>';
             tbody.appendChild(tr);
         });
 
         if (isNew) {
             setupMasterCaptionSelector();
+            setupCaptionRowActions();
         } else {
             table.querySelectorAll('.caption-master-radio').forEach(function (radio) {
                 radio.addEventListener('change', onMasterCaptionChange);
             });
+            setupCaptionRowActions();
+        }
+    }
+
+    function buildActionButtonsHtml(langId) {
+        return '<div class="caption-action-btns">' +
+            '<button type="button" class="caption-action-btn caption-edit-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons">edit</span>Edita</button>' +
+            '<button type="button" class="caption-action-btn caption-replace-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons">upload</span>Reemplaça</button>' +
+            '<button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons">delete</span>Elimina</button>' +
+            '</div>';
+    }
+
+    function setupCaptionRowActions() {
+        var table = document.getElementById('caption-tracks-table');
+        if (!table) return;
+
+        table.querySelectorAll('.caption-delete-btn').forEach(function (btn) {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', onDeleteClick);
+        });
+
+        table.querySelectorAll('.caption-replace-btn').forEach(function (btn) {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', onReplaceClick);
+        });
+
+        table.querySelectorAll('.caption-edit-btn').forEach(function (btn) {
+            if (btn.dataset.bound) return;
+            btn.dataset.bound = '1';
+            btn.addEventListener('click', onEditClick);
+        });
+    }
+
+    function setCaptionTableFeedback(message, kind) {
+        var el = document.getElementById('caption-table-feedback');
+        if (!el) return;
+        el.textContent = message || '';
+        el.className = 'caption-table-feedback' + (kind ? ' ' + kind : '');
+    }
+
+    function onDeleteClick(e) {
+        var btn = e.currentTarget;
+        var row = btn.closest('tr');
+        var lang = btn.dataset.lang;
+
+        if (!window.confirm('Eliminar aquest fitxer?')) {
+            return;
+        }
+
+        setCaptionTableFeedback('', '');
+        var body = new FormData();
+        body.append('vimeo_id', vimeoId);
+        body.append('lang', lang);
+
+        fetch('?action=continguts-delete-caption', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) {
+                    setCaptionTableFeedback(data.error || 'Error en eliminar.', 'err');
+                    return;
+                }
+
+                var table = document.getElementById('caption-tracks-table');
+                row.remove();
+
+                if (data.newMaster && table) {
+                    var radio = table.querySelector('.caption-master-radio[value="' + CSS.escape(data.newMaster) + '"]');
+                    if (radio) radio.checked = true;
+                }
+
+                if (table && !table.querySelector('tbody tr')) {
+                    table.remove();
+                    var fb = document.getElementById('master-caption-feedback');
+                    if (fb) fb.remove();
+                }
+            })
+            .catch(function () {
+                setCaptionTableFeedback('Error de connexió.', 'err');
+            });
+    }
+
+    function onReplaceClick(e) {
+        var lang = e.currentTarget.dataset.lang;
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.vtt,.srt';
+        input.style.display = 'none';
+        document.body.appendChild(input);
+
+        input.addEventListener('change', function () {
+            if (!input.files.length) {
+                input.remove();
+                return;
+            }
+
+            var row = e.currentTarget.closest('tr');
+            var actionsCell = row.querySelector('.caption-actions-cell');
+            actionsCell.querySelector('.caption-action-btns').hidden = true;
+            setCaptionTableFeedback('', '');
+            var loading = document.createElement('span');
+            loading.className = 'caption-row-spinner';
+            actionsCell.appendChild(loading);
+
+            var body = new FormData();
+            body.append('vimeo_id', vimeoId);
+            body.append('lang', lang);
+            body.append('caption_file', input.files[0]);
+
+            fetch('?action=continguts-replace-caption', { method: 'POST', body: body })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    loading.remove();
+                    actionsCell.querySelector('.caption-action-btns').hidden = false;
+                    if (!data.ok) {
+                        setCaptionTableFeedback(data.error || 'Error en reemplaçar.', 'err');
+                        return;
+                    }
+                    var fileCell = row.querySelector('.caption-file-cell');
+                    if (fileCell && data.caption && data.caption.file) {
+                        fileCell.textContent = data.caption.file;
+                    }
+                    setCaptionTableFeedback('Substituït correctament', 'ok');
+                    setTimeout(function () { setCaptionTableFeedback('', ''); }, 2500);
+                })
+                .catch(function () {
+                    loading.remove();
+                    actionsCell.querySelector('.caption-action-btns').hidden = false;
+                    setCaptionTableFeedback('Error de connexió.', 'err');
+                })
+                .finally(function () { input.remove(); });
+        });
+
+        input.click();
+    }
+
+    function onEditClick(e) {
+        var lang = e.currentTarget.dataset.lang;
+        var dialog = document.getElementById('caption-edit-dialog');
+        var iframe = document.getElementById('caption-edit-iframe');
+        var loading = document.getElementById('caption-edit-loading');
+        if (!dialog || !iframe) return;
+
+        iframe.hidden = true;
+        loading.hidden = false;
+        iframe.src = '?action=continguts-caption-review&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(lang);
+
+        iframe.onload = function () {
+            if (iframe.src.indexOf('continguts-video') !== -1) {
+                dialog.close();
+                iframe.src = 'about:blank';
+                iframe.hidden = true;
+                loading.hidden = false;
+                return;
+            }
+            loading.hidden = true;
+            iframe.hidden = false;
+        };
+
+        if (typeof dialog.showModal === 'function') {
+            dialog.showModal();
         }
     }
 

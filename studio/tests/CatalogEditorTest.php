@@ -239,6 +239,133 @@ class CatalogEditorTest extends TestCase
         $this->assertContains('lse', $editor->getReferencedSignLanguageIds());
     }
 
+    public function test_deleteCaption_removes_matching_lang_from_captions(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-a',
+                'tags' => [],
+                'master_caption_lang' => 'ca',
+                'captions' => [
+                    ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+                    ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt'],
+                ],
+            ],
+        ]]);
+
+        (new CatalogEditor($this->catalogFile))->deleteCaption('111', 'es');
+
+        $captions = $this->readCatalog()['videos'][0]['captions'];
+        $this->assertCount(1, $captions);
+        $this->assertSame('ca', $captions[0]['lang']);
+    }
+
+    public function test_deleteCaption_promotes_first_remaining_when_master_deleted(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-a',
+                'tags' => [],
+                'master_caption_lang' => 'ca',
+                'captions' => [
+                    ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+                    ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt'],
+                    ['lang' => 'en', 'label' => 'English', 'file' => '111.en.vtt'],
+                ],
+            ],
+        ]]);
+
+        (new CatalogEditor($this->catalogFile))->deleteCaption('111', 'ca');
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertSame('es', $entry['master_caption_lang']);
+        $this->assertSame('es', $entry['captions'][0]['lang']);
+    }
+
+    public function test_deleteCaption_unsets_master_when_last_caption_removed(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-a',
+                'tags' => [],
+                'master_caption_lang' => 'ca',
+                'captions' => [
+                    ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+                ],
+            ],
+        ]]);
+
+        (new CatalogEditor($this->catalogFile))->deleteCaption('111', 'ca');
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertSame([], $entry['captions']);
+        $this->assertArrayNotHasKey('master_caption_lang', $entry);
+    }
+
+    public function test_deleteCaption_leaves_master_unchanged_when_non_master_deleted(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-a',
+                'tags' => [],
+                'master_caption_lang' => 'ca',
+                'captions' => [
+                    ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+                    ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt'],
+                ],
+            ],
+        ]]);
+
+        (new CatalogEditor($this->catalogFile))->deleteCaption('111', 'es');
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertSame('ca', $entry['master_caption_lang']);
+    }
+
+    public function test_deleteCaption_throws_when_lang_not_in_catalog(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-a',
+                'tags' => [],
+                'captions' => [
+                    ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+                ],
+            ],
+        ]]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        (new CatalogEditor($this->catalogFile))->deleteCaption('111', 'es');
+    }
+
+    public function test_deleteCaption_throws_when_video_not_found(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        $this->expectException(\RuntimeException::class);
+        (new CatalogEditor($this->catalogFile))->deleteCaption('999', 'ca');
+    }
+
     public function test_returns_referenced_subtitle_language_ids_from_captions(): void
     {
         $this->writeCatalog(['videos' => [

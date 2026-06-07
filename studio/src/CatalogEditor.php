@@ -161,6 +161,74 @@ class CatalogEditor
         fclose($fp);
     }
 
+    public function deleteCaption(string $vimeoId, string $lang): void
+    {
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog) || !isset($catalog['videos'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid catalog JSON.');
+        }
+
+        $found = false;
+        $langFound = false;
+        $wasMaster = false;
+        foreach ($catalog['videos'] as &$entry) {
+            if (($entry['vimeo_id'] ?? '') !== $vimeoId) {
+                continue;
+            }
+
+            $found = true;
+            $captions = $entry['captions'] ?? [];
+            $remaining = [];
+            foreach ($captions as $caption) {
+                if (($caption['lang'] ?? '') === $lang) {
+                    $langFound = true;
+                    if (($entry['master_caption_lang'] ?? '') === $lang) {
+                        $wasMaster = true;
+                    }
+                    continue;
+                }
+                $remaining[] = $caption;
+            }
+
+            if (!$langFound) {
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                throw new \InvalidArgumentException("Caption lang '$lang' not found for video $vimeoId.");
+            }
+
+            $entry['captions'] = $remaining;
+            if ($remaining === []) {
+                unset($entry['master_caption_lang']);
+            } elseif ($wasMaster) {
+                $entry['master_caption_lang'] = $remaining[0]['lang'];
+            }
+            break;
+        }
+        unset($entry);
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Video $vimeoId not found in catalog.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+
     public function setMasterCaptionLang(string $videoId, string $lang): void
     {
         $fp = fopen($this->catalogFilePath, 'c+');

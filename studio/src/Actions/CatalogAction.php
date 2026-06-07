@@ -2,6 +2,8 @@
 
 namespace Studio\Actions;
 
+use Studio\CaptionDeleteHandler;
+use Studio\CaptionReplaceHandler;
 use Studio\CaptionUploadHandler;
 use Studio\CatalogTagPool;
 use Studio\CatalogVideoAddHandler;
@@ -71,13 +73,15 @@ class CatalogAction
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
+            'continguts-delete-caption'              => $this->deleteCaption(),
+            'continguts-replace-caption'             => $this->replaceCaption(),
+            'continguts-caption-review'              => $this->captionReview(),
             default                               => (function () { http_response_code(404); exit; })(),
         };
     }
 
     private function continguts(): never
     {
-        $this->guardNoActiveJob();
         $c = $this->c;
         $catalogFilePath = $c->dataDir . '/catalog.json';
         $catalogData = is_file($catalogFilePath)
@@ -97,7 +101,6 @@ class CatalogAction
 
     private function contingutsVideo(): never
     {
-        $this->guardNoActiveJob();
         $c = $this->c;
         $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
         if ($vimeoId === '') {
@@ -164,14 +167,6 @@ class CatalogAction
         $result['edition_label'] = $editionLabel;
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
-    }
-
-    private function guardNoActiveJob(): void
-    {
-        if ($this->c->jobManager->exists()) {
-            header('Location: ' . $this->c->baseUrl);
-            exit;
-        }
     }
 
     private function downloadCaption(string $format): never
@@ -358,6 +353,173 @@ class CatalogAction
             http_response_code(422);
             echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
+        exit;
+    }
+
+    private function deleteCaption(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        $lang = trim((string) ($_POST['lang'] ?? ''));
+        if ($vimeoId === '' || $lang === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $result = (new CaptionDeleteHandler(
+            $this->c->catalogEditor(),
+            $this->c->dataDir . '/captions',
+        ))->handle($vimeoId, $lang);
+
+        if (!$result['ok']) {
+            http_response_code(422);
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function replaceCaption(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        $lang = trim((string) ($_POST['lang'] ?? ''));
+        if ($vimeoId === '' || $lang === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $file = $_FILES['caption_file'] ?? null;
+        if ($file === null || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || ($file['name'] ?? '') === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'No s\'ha pogut pujar el fitxer de subtítols.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $result = (new CaptionReplaceHandler(
+            $this->c->catalogEditor(),
+            new CaptionUploadHandler(
+                $this->c->vimeoClient(),
+                $this->c->catalogEditor(),
+                $this->c->studioConfig,
+                $this->c->dataDir . '/captions',
+            ),
+        ))->handle($vimeoId, $lang, [
+            'lang' => $lang,
+            'tmpPath' => (string) ($file['tmp_name'] ?? ''),
+            'originalName' => (string) ($file['name'] ?? ''),
+        ]);
+
+        if (!$result['ok']) {
+            http_response_code(422);
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function captionReview(): never
+    {
+        $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
+        $lang = trim((string) ($_GET['lang'] ?? ''));
+        if ($vimeoId === '' || $lang === '') {
+            $this->renderEmbedError('Falten paràmetres obligatoris.');
+        }
+
+        $video = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            $this->renderEmbedError('Vídeo no trobat al catàleg.');
+        }
+
+        $captionEntry = null;
+        foreach ($video['captions'] ?? [] as $caption) {
+            if (($caption['lang'] ?? '') === $lang) {
+                $captionEntry = $caption;
+                break;
+            }
+        }
+        if ($captionEntry === null) {
+            $this->renderEmbedError("Subtítol '$lang' no trobat per a aquest vídeo.");
+        }
+
+        $captionsDir = $this->c->dataDir . '/captions';
+        $vttPath = $captionsDir . '/' . ($captionEntry['file'] ?? '');
+        if (!is_file($vttPath)) {
+            $this->renderEmbedError('Fitxer de subtítols no trobat al servidor.');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            ini_set('display_errors', '0');
+            header('Content-Type: application/json');
+            ob_start();
+            try {
+                $decoded = json_decode((string) file_get_contents('php://input'), true);
+                if (!is_array($decoded) || !isset($decoded['cues']) || !is_array($decoded['cues'])) {
+                    $result = ['ok' => false, 'errors' => ['Cos de la sol·licitud no vàlid.']];
+                } else {
+                    $handler = new \Studio\SubtitleEditorHandler(
+                        new \Studio\VttParser(),
+                        new \Studio\CaptionFileIntegrityChecker(),
+                        $this->c->jobManager,
+                    );
+                    $result = $handler->handleForFilePath($vttPath, $decoded['cues']);
+                }
+            } catch (\Throwable $e) {
+                $result = ['ok' => false, 'errors' => ['Error del servidor: ' . $e->getMessage()]];
+            }
+            ob_end_clean();
+            http_response_code($result['ok'] ? 200 : 422);
+            echo json_encode($result);
+            exit;
+        }
+
+        $vttParser = new \Studio\VttParser();
+        $translatedCues = $vttParser->parse($vttPath)['cues'];
+        $masterLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
+        $masterCues = $translatedCues;
+        if ($lang !== $masterLang) {
+            $masterCues = [];
+            $masterFile = null;
+            foreach ($video['captions'] ?? [] as $caption) {
+                if (($caption['lang'] ?? '') === $masterLang) {
+                    $masterFile = $caption['file'] ?? null;
+                    break;
+                }
+            }
+            if ($masterFile !== null) {
+                $masterPath = $captionsDir . '/' . $masterFile;
+                if (is_file($masterPath)) {
+                    $masterCues = $vttParser->parse($masterPath)['cues'];
+                }
+            }
+        }
+
+        $langLabel = $this->langLabel($lang);
+        $embedMode = true;
+        $postSaveRedirect = '?action=continguts-video&vimeo_id=' . rawurlencode($vimeoId);
+        require $this->view('translation-review.php');
+        exit;
+    }
+
+    private function langLabel(string $lang): string
+    {
+        if ($lang === '') {
+            return '';
+        }
+        foreach ($this->c->studioConfig->getSubtitleLanguages() as $language) {
+            if (($language['id'] ?? '') === $lang) {
+                return $language['label'] ?? $lang;
+            }
+        }
+        return $lang;
+    }
+
+    private function renderEmbedError(string $message): never
+    {
+        http_response_code(404);
+        echo '<!DOCTYPE html><html lang="ca"><head><meta charset="UTF-8"><title>Error</title>';
+        echo '<style>body{background:#0a0a0a;color:#e05555;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:2rem;text-align:center;}</style>';
+        echo '</head><body><p>' . htmlspecialchars($message, ENT_QUOTES) . '</p></body></html>';
         exit;
     }
 
