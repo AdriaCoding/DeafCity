@@ -48,6 +48,60 @@ class CatalogEditor
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function addVideo(
+        string $vimeoId,
+        string $title,
+        string $signLanguage,
+        string $edition,
+        ?string $thumbnailUrl = null,
+    ): array {
+        if ($this->findVideoByVimeoId($vimeoId) !== null) {
+            throw new \RuntimeException('Aquest vídeo ja és al catàleg.');
+        }
+
+        $entry = [
+            'id' => $signLanguage . '_' . $vimeoId,
+            'vimeo_id' => $vimeoId,
+            'title' => $title,
+            'sign_language' => $signLanguage,
+            'edition' => $edition,
+            'tags' => [],
+            'captions' => [],
+        ];
+        if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
+            $entry['thumbnail_url'] = $thumbnailUrl;
+        }
+
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog)) {
+            $catalog = ['videos' => []];
+        }
+        if (!isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            $catalog['videos'] = [];
+        }
+
+        $catalog['videos'][] = $entry;
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return $entry;
+    }
+
+    /**
      * @param list<array{lang: string, label: string, file: string}> $newCaptions
      */
     public function upsertCaptions(string $videoId, array $newCaptions): void

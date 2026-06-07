@@ -4,10 +4,13 @@ namespace Studio\Actions;
 
 use Studio\CaptionUploadHandler;
 use Studio\CatalogTagPool;
+use Studio\CatalogVideoAddHandler;
 use Studio\Container;
 use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
 use Studio\VideoEditHandler;
+use Studio\VimeoIdParser;
+use Studio\VimeoVideoResolver;
 
 class CatalogAction
 {
@@ -40,6 +43,8 @@ class CatalogAction
         match ($action) {
             'continguts'                          => $this->continguts(),
             'continguts-video'                    => $this->contingutsVideo(),
+            'continguts-resolve-vimeo'            => $this->resolveVimeo(),
+            'continguts-add-video'                => $this->addVideo(),
             'continguts-save-video'               => $this->saveVideo(),
             'continguts-save-edition-label'       => $this->saveLabel('edition'),
             'continguts-save-sign-language-label' => $this->saveLabel('sign_language'),
@@ -87,6 +92,54 @@ class CatalogAction
         $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         require $this->view('continguts-video.php');
+        exit;
+    }
+
+    private function resolveVimeo(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $input = trim((string) ($_POST['vimeo_input'] ?? ''));
+        $result = (new VimeoVideoResolver(
+            new VimeoIdParser(),
+            $this->c->vimeoClient(),
+            $this->c->catalogEditor(),
+        ))->resolve($input);
+        if (!$result['ok']) {
+            http_response_code(422);
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function addVideo(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        $signLanguage = trim((string) ($_POST['sign_language'] ?? ''));
+        $edition = trim((string) ($_POST['edition'] ?? ''));
+        $title = trim((string) ($_POST['title'] ?? ''));
+
+        $result = (new CatalogVideoAddHandler(
+            $this->c->vimeoClient(),
+            $this->c->catalogEditor(),
+        ))->handle($vimeoId, $signLanguage, $edition, $title);
+
+        if (!$result['ok']) {
+            http_response_code(422);
+            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $editionLabel = $edition;
+        foreach ($this->c->studioConfig->getEditions() as $ed) {
+            if (($ed['id'] ?? '') === $edition) {
+                $editionLabel = $ed['label'] ?? $edition;
+                break;
+            }
+        }
+
+        $result['edition_label'] = $editionLabel;
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
     }
 

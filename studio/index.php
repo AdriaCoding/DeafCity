@@ -70,6 +70,8 @@ match ($action) {
     'add-edition'                         => (new CatalogAction($container))->addEdition(),
     'continguts',
     'continguts-video',
+    'continguts-resolve-vimeo',
+    'continguts-add-video',
     'continguts-save-video',
     'continguts-save-edition-label',
     'continguts-save-sign-language-label',

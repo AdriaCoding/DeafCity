@@ -59,6 +59,129 @@
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
 
+        .tab-panel-toolbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .btn-add-video {
+            background: #1a3a6e;
+            border: 1px solid #2a5090;
+            border-radius: 4px;
+            color: #9ab8ff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+        }
+        .btn-add-video:hover { background: #1f4580; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            padding: 1.5rem;
+            z-index: 100;
+        }
+        .modal-overlay:not([hidden]) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-dialog {
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            max-height: calc(100vh - 3rem);
+            max-width: 32rem;
+            overflow-y: auto;
+            padding: 1.5rem;
+            width: 100%;
+        }
+        .modal-dialog h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+        }
+        .modal-field { margin-bottom: 1rem; }
+        .modal-field label {
+            display: block;
+            font-size: 0.78rem;
+            color: #777;
+            margin-bottom: 0.35rem;
+        }
+        .modal-field select,
+        .modal-field input[type="text"] {
+            display: block;
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-size: 0.875rem;
+            outline: none;
+        }
+        .modal-field select:focus,
+        .modal-field input[type="text"]:focus { border-color: #555; }
+        .vimeo-preview {
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: #0d0d0d;
+            border: 1px solid #1e1e1e;
+            border-radius: 5px;
+        }
+        .vimeo-preview[hidden] { display: none; }
+        .vimeo-preview-thumb {
+            width: 120px;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: 4px;
+            background: #222;
+            flex-shrink: 0;
+        }
+        .vimeo-preview-thumb-placeholder {
+            width: 120px;
+            aspect-ratio: 16 / 9;
+            border-radius: 4px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            flex-shrink: 0;
+        }
+        .vimeo-preview-fields { flex: 1; min-width: 0; }
+        .modal-error {
+            font-size: 0.82rem;
+            color: #e05555;
+            margin-bottom: 0.75rem;
+        }
+        .modal-error:empty { display: none; }
+        .modal-resolve-status {
+            font-size: 0.78rem;
+            color: #666;
+            margin-top: 0.35rem;
+        }
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1.25rem;
+        }
+        .btn-primary-modal {
+            background: #1a3a6e;
+            border: 1px solid #2a5090;
+            border-radius: 4px;
+            color: #9ab8ff;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0.55rem 1.1rem;
+        }
+        .btn-primary-modal:hover { background: #1f4580; }
+        .btn-primary-modal:disabled { opacity: 0.5; cursor: default; }
+
         /* ── Video list ── */
         .edition-videos {
             display: none;
@@ -294,9 +417,11 @@
 
     <!-- ══ Vídeos ══════════════════════════════════════════════════════════ -->
     <div class="tab-panel active" id="tab-videos">
-        <?php if (empty($catalogVideos)): ?>
-            <p style="color:#555;font-size:0.9rem;">El catàleg no conté cap vídeo publicat.</p>
-        <?php else: ?>
+        <div class="tab-panel-toolbar">
+            <button type="button" class="btn-add-video" id="video-add-trigger">+ Afegir vídeo</button>
+        </div>
+        <p id="videos-empty-msg" style="color:#555;font-size:0.9rem;<?= empty($catalogVideos) ? '' : ' display:none;' ?>">El catàleg no conté cap vídeo publicat.</p>
+        <div id="videos-catalog">
         <?php
             $editionLabelById = array_column($editions, 'label', 'id');
             $videosByEdition = [];
@@ -312,7 +437,7 @@
         ?>
         <?php foreach ($orderedEditionIds as $edId): ?>
             <?php if (empty($videosByEdition[$edId])): continue; endif; ?>
-            <div class="edition-group">
+            <div class="edition-group" data-edition-id="<?= htmlspecialchars($edId, ENT_QUOTES) ?>">
                 <button type="button" class="edition-heading" aria-expanded="false">
                     <?= htmlspecialchars($editionLabelById[$edId] ?? $edId) ?>
                     <span class="edition-count"><?= count($videosByEdition[$edId]) ?></span>
@@ -333,7 +458,7 @@
                 </div>
             </div>
         <?php endforeach; ?>
-        <?php endif; ?>
+        </div>
     </div>
 
     <!-- ══ Ciutats ════════════════════════════════════════════════════════ -->
@@ -425,8 +550,104 @@
     </div>
 </main>
 
+<div class="modal-overlay" id="video-add-modal" hidden aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-labelledby="video-add-modal-title">
+        <h2 id="video-add-modal-title">Afegir vídeo al catàleg</h2>
+        <p class="modal-error" id="video-add-error" role="alert"></p>
+
+        <div class="modal-field">
+            <label for="modal-vimeo-input">URL o ID de Vimeo</label>
+            <input type="text" id="modal-vimeo-input" class="config-input" autocomplete="off" placeholder="p. ex. 639494119 o https://vimeo.com/…">
+            <p class="modal-resolve-status" id="modal-resolve-status"></p>
+        </div>
+
+        <div class="vimeo-preview" id="vimeo-preview" hidden>
+            <img class="vimeo-preview-thumb" id="vimeo-preview-thumb" alt="" hidden>
+            <div class="vimeo-preview-thumb-placeholder" id="vimeo-preview-thumb-placeholder" hidden></div>
+            <div class="vimeo-preview-fields">
+                <label for="modal-video-title">Títol</label>
+                <input type="text" id="modal-video-title" autocomplete="off">
+            </div>
+        </div>
+        <input type="hidden" id="modal-vimeo-id" value="">
+
+        <div class="modal-field">
+            <label for="modal-sign-language">Llengua de signes</label>
+            <select id="modal-sign-language">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($signLanguages as $sl): ?>
+                <option value="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>"><?= htmlspecialchars($sl['label']) ?></option>
+                <?php endforeach; ?>
+                <option value="__new__">+ Afegiu una llengua de signes…</option>
+            </select>
+            <div class="config-new-panel" id="modal-lang-new-panel">
+                <h3>Nova llengua de signes</h3>
+                <p class="config-add-error" id="modal-lang-add-error" role="alert"></p>
+                <div class="config-new-grid">
+                    <div>
+                        <label class="field-label" for="modal-sl-code">Codi</label>
+                        <input type="text" id="modal-sl-code" class="config-input" autocomplete="off" placeholder="p. ex. GSS">
+                    </div>
+                    <div>
+                        <label class="field-label" for="modal-sl-qualifier">País o variant</label>
+                        <input type="text" id="modal-sl-qualifier" class="config-input" autocomplete="off" placeholder="p. ex. Greek">
+                    </div>
+                </div>
+                <p class="config-preview">
+                    <strong>Nom:</strong> <span class="value" id="modal-lang-preview-label">—</span><br>
+                    <strong>Identificador:</strong> <span class="value" id="modal-lang-preview-id">—</span>
+                </p>
+                <div class="config-new-actions">
+                    <button type="button" class="btn-secondary" id="modal-lang-add-btn">Afegir a la llista</button>
+                    <button type="button" class="btn-secondary" id="modal-lang-cancel-btn" style="color:#666">Cancel·la</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label for="modal-edition">Ciutat</label>
+            <select id="modal-edition">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($editions as $ed): ?>
+                <option value="<?= htmlspecialchars($ed['id'], ENT_QUOTES) ?>"><?= htmlspecialchars($ed['label']) ?></option>
+                <?php endforeach; ?>
+                <option value="__new__">+ Afegiu una ciutat…</option>
+            </select>
+            <div class="config-new-panel" id="modal-edition-new-panel">
+                <h3>Nova ciutat</h3>
+                <p class="config-add-error" id="modal-edition-add-error" role="alert"></p>
+                <div class="config-new-grid config-new-grid--year">
+                    <div>
+                        <label class="field-label" for="modal-edition-city">Ciutat</label>
+                        <input type="text" id="modal-edition-city" class="config-input" autocomplete="off" placeholder="p. ex. Lisboa">
+                    </div>
+                    <div>
+                        <label class="field-label" for="modal-edition-year">Any</label>
+                        <input type="text" id="modal-edition-year" class="config-input" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off" placeholder="2027">
+                    </div>
+                </div>
+                <p class="config-preview">
+                    <strong>Nom:</strong> <span class="value" id="modal-edition-preview-label">—</span><br>
+                    <strong>Identificador:</strong> <span class="value" id="modal-edition-preview-id">—</span>
+                </p>
+                <div class="config-new-actions">
+                    <button type="button" class="btn-secondary" id="modal-edition-add-btn">Afegir a la llista</button>
+                    <button type="button" class="btn-secondary" id="modal-edition-cancel-btn" style="color:#666">Cancel·la</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-primary-modal" id="video-add-submit" disabled>Afegir al catàleg</button>
+            <button type="button" class="btn-secondary" id="video-add-cancel">Cancel·la</button>
+        </div>
+    </div>
+</div>
+
 <script>
 (function () {
+    var EDITION_LABELS = <?= json_encode(array_column($editions, 'label', 'id'), JSON_UNESCAPED_UNICODE) ?>;
+
     // ── Tabs ──────────────────────────────────────────────────────────────────
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -439,12 +660,396 @@
 
     // ── Edition accordions ────────────────────────────────────────────────────
     document.querySelectorAll('.edition-group').forEach(function (group) {
+        attachEditionGroupListeners(group);
+    });
+
+    function attachEditionGroupListeners(group) {
         var toggle = group.querySelector('.edition-heading');
         toggle.addEventListener('click', function () {
             var isOpen = group.classList.toggle('open');
             toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
+    }
+
+    // ── Add video modal ───────────────────────────────────────────────────────
+    var videoModal = document.getElementById('video-add-modal');
+    var videoAddTrigger = document.getElementById('video-add-trigger');
+    var videoAddCancel = document.getElementById('video-add-cancel');
+    var videoAddSubmit = document.getElementById('video-add-submit');
+    var videoAddError = document.getElementById('video-add-error');
+    var modalVimeoInput = document.getElementById('modal-vimeo-input');
+    var modalVimeoId = document.getElementById('modal-vimeo-id');
+    var modalVideoTitle = document.getElementById('modal-video-title');
+    var modalResolveStatus = document.getElementById('modal-resolve-status');
+    var vimeoPreview = document.getElementById('vimeo-preview');
+    var vimeoPreviewThumb = document.getElementById('vimeo-preview-thumb');
+    var vimeoPreviewPlaceholder = document.getElementById('vimeo-preview-thumb-placeholder');
+    var modalSignLanguage = document.getElementById('modal-sign-language');
+    var modalEdition = document.getElementById('modal-edition');
+    var videosCatalog = document.getElementById('videos-catalog');
+    var videosEmptyMsg = document.getElementById('videos-empty-msg');
+    var resolveTimer = null;
+    var resolving = false;
+
+    function openVideoModal() {
+        resetVideoModal();
+        videoModal.hidden = false;
+        videoModal.setAttribute('aria-hidden', 'false');
+        modalVimeoInput.focus();
+    }
+
+    function closeVideoModal() {
+        videoModal.hidden = true;
+        videoModal.setAttribute('aria-hidden', 'true');
+        resetVideoModal();
+    }
+
+    function resetVideoModal() {
+        videoAddError.textContent = '';
+        modalResolveStatus.textContent = '';
+        modalVimeoInput.value = '';
+        modalVimeoId.value = '';
+        modalVideoTitle.value = '';
+        modalSignLanguage.value = '';
+        modalEdition.value = '';
+        vimeoPreview.hidden = true;
+        vimeoPreviewThumb.hidden = true;
+        vimeoPreviewPlaceholder.hidden = true;
+        videoAddSubmit.disabled = true;
+        document.getElementById('modal-lang-new-panel').classList.remove('is-open');
+        document.getElementById('modal-edition-new-panel').classList.remove('is-open');
+    }
+
+    function updateSubmitState() {
+        videoAddSubmit.disabled = !(
+            modalVimeoId.value.trim() !== '' &&
+            modalSignLanguage.value.trim() !== '' &&
+            modalSignLanguage.value !== '__new__' &&
+            modalEdition.value.trim() !== '' &&
+            modalEdition.value !== '__new__' &&
+            modalVideoTitle.value.trim() !== ''
+        );
+    }
+
+    function showVimeoPreview(thumbnailUrl, title) {
+        vimeoPreview.hidden = false;
+        modalVideoTitle.value = title;
+        if (thumbnailUrl) {
+            vimeoPreviewThumb.src = thumbnailUrl;
+            vimeoPreviewThumb.hidden = false;
+            vimeoPreviewPlaceholder.hidden = true;
+        } else {
+            vimeoPreviewThumb.hidden = true;
+            vimeoPreviewPlaceholder.hidden = false;
+        }
+        updateSubmitState();
+    }
+
+    function resolveVimeoInput() {
+        var input = modalVimeoInput.value.trim();
+        if (!input) {
+            modalVimeoId.value = '';
+            vimeoPreview.hidden = true;
+            modalResolveStatus.textContent = '';
+            updateSubmitState();
+            return;
+        }
+        resolving = true;
+        modalResolveStatus.textContent = 'Resolent…';
+        videoAddError.textContent = '';
+
+        var body = new FormData();
+        body.append('vimeo_input', input);
+
+        fetch('?action=continguts-resolve-vimeo', { method: 'POST', body: body })
+            .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+            .then(function (res) {
+                if (!res.data.ok) {
+                    modalVimeoId.value = '';
+                    vimeoPreview.hidden = true;
+                    modalResolveStatus.textContent = '';
+                    videoAddError.textContent = res.data.error || 'No s\'ha pogut resoldre el vídeo.';
+                    updateSubmitState();
+                    return;
+                }
+                modalVimeoId.value = res.data.vimeo_id;
+                modalResolveStatus.textContent = 'ID: ' + res.data.vimeo_id;
+                showVimeoPreview(res.data.thumbnail_url || null, res.data.title || '');
+            })
+            .catch(function () {
+                videoAddError.textContent = 'Error de connexió.';
+            })
+            .finally(function () { resolving = false; });
+    }
+
+    function scheduleResolve() {
+        clearTimeout(resolveTimer);
+        resolveTimer = setTimeout(resolveVimeoInput, 300);
+    }
+
+    videoAddTrigger.addEventListener('click', openVideoModal);
+    videoAddCancel.addEventListener('click', closeVideoModal);
+    videoModal.addEventListener('click', function (e) {
+        if (e.target === videoModal) closeVideoModal();
     });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !videoModal.hidden) closeVideoModal();
+    });
+
+    modalVimeoInput.addEventListener('blur', resolveVimeoInput);
+    modalVimeoInput.addEventListener('paste', function () { scheduleResolve(); });
+    modalVimeoInput.addEventListener('input', function () {
+        if (modalVimeoId.value) {
+            modalVimeoId.value = '';
+            vimeoPreview.hidden = true;
+            modalResolveStatus.textContent = '';
+            updateSubmitState();
+        }
+    });
+    modalVideoTitle.addEventListener('input', updateSubmitState);
+    modalSignLanguage.addEventListener('change', updateSubmitState);
+    modalEdition.addEventListener('change', updateSubmitState);
+
+    setupModalConfigAdd({
+        select: modalSignLanguage,
+        panelId: 'modal-lang-new-panel',
+        errorId: 'modal-lang-add-error',
+        addBtnId: 'modal-lang-add-btn',
+        cancelBtnId: 'modal-lang-cancel-btn',
+        previewLabelId: 'modal-lang-preview-label',
+        previewIdId: 'modal-lang-preview-id',
+        codeInputId: 'modal-sl-code',
+        qualifierInputId: 'modal-sl-qualifier',
+        action: 'add-sign-language',
+        buildBody: function () {
+            var body = new FormData();
+            body.append('sign_language_code', document.getElementById('modal-sl-code').value.trim());
+            body.append('sign_language_qualifier', document.getElementById('modal-sl-qualifier').value.trim());
+            return body;
+        },
+        validate: function () {
+            return document.getElementById('modal-sl-code').value.trim() !== '' &&
+                document.getElementById('modal-sl-qualifier').value.trim() !== '';
+        },
+        onAdded: function (data) {
+            appendSelectOption(modalSignLanguage, data.id, data.label);
+            appendConfigListEntry('#tab-languages .config-list', data.id, data.label, 'sign-language');
+            updateSubmitState();
+        },
+        buildPreview: function () {
+            var code = document.getElementById('modal-sl-code').value.trim();
+            var qualifier = document.getElementById('modal-sl-qualifier').value.trim();
+            if (!code || !qualifier) {
+                document.getElementById('modal-lang-preview-label').textContent = '—';
+                document.getElementById('modal-lang-preview-id').textContent = '—';
+                return;
+            }
+            document.getElementById('modal-lang-preview-label').textContent = code + ' ' + qualifier + ' Sign Language';
+            document.getElementById('modal-lang-preview-id').textContent = slugify(code);
+        },
+        clearInputs: function () {
+            document.getElementById('modal-sl-code').value = '';
+            document.getElementById('modal-sl-qualifier').value = '';
+        },
+        focusInput: function () { document.getElementById('modal-sl-code').focus(); }
+    });
+
+    setupModalConfigAdd({
+        select: modalEdition,
+        panelId: 'modal-edition-new-panel',
+        errorId: 'modal-edition-add-error',
+        addBtnId: 'modal-edition-add-btn',
+        cancelBtnId: 'modal-edition-cancel-btn',
+        previewLabelId: 'modal-edition-preview-label',
+        previewIdId: 'modal-edition-preview-id',
+        codeInputId: 'modal-edition-city',
+        qualifierInputId: 'modal-edition-year',
+        action: 'add-edition',
+        buildBody: function () {
+            var body = new FormData();
+            body.append('edition_city', document.getElementById('modal-edition-city').value.trim());
+            body.append('edition_year', document.getElementById('modal-edition-year').value.trim());
+            return body;
+        },
+        validate: function () {
+            var city = document.getElementById('modal-edition-city').value.trim();
+            var year = document.getElementById('modal-edition-year').value.trim();
+            return city !== '' && /^\d{4}$/.test(year);
+        },
+        onAdded: function (data) {
+            EDITION_LABELS[data.id] = data.label;
+            appendSelectOption(modalEdition, data.id, data.label);
+            appendConfigListEntry('#tab-editions .config-list', data.id, data.label, 'edition');
+            updateSubmitState();
+        },
+        buildPreview: function () {
+            var city = document.getElementById('modal-edition-city').value.trim();
+            var year = document.getElementById('modal-edition-year').value.trim();
+            if (!city || !/^\d{4}$/.test(year)) {
+                document.getElementById('modal-edition-preview-label').textContent = '—';
+                document.getElementById('modal-edition-preview-id').textContent = '—';
+                return;
+            }
+            document.getElementById('modal-edition-preview-label').textContent = city + ' ' + year;
+            document.getElementById('modal-edition-preview-id').textContent = year + '-' + slugify(city);
+        },
+        clearInputs: function () {
+            document.getElementById('modal-edition-city').value = '';
+            document.getElementById('modal-edition-year').value = '';
+        },
+        focusInput: function () { document.getElementById('modal-edition-city').focus(); }
+    });
+
+    videoAddSubmit.addEventListener('click', function () {
+        if (videoAddSubmit.disabled || resolving) return;
+        videoAddError.textContent = '';
+        videoAddSubmit.disabled = true;
+
+        var body = new FormData();
+        body.append('vimeo_id', modalVimeoId.value);
+        body.append('sign_language', modalSignLanguage.value);
+        body.append('edition', modalEdition.value);
+        body.append('title', modalVideoTitle.value.trim());
+
+        fetch('?action=continguts-add-video', { method: 'POST', body: body })
+            .then(function (r) { return r.json().then(function (d) { return { data: d, ok: r.ok }; }); })
+            .then(function (res) {
+                if (!res.data.ok) {
+                    videoAddError.textContent = res.data.error || 'No s\'ha pogut afegir el vídeo.';
+                    updateSubmitState();
+                    return;
+                }
+                injectVideoCard(res.data.video, res.data.edition_label || res.data.video.edition);
+                closeVideoModal();
+            })
+            .catch(function () {
+                videoAddError.textContent = 'Error de connexió.';
+                updateSubmitState();
+            });
+    });
+
+    function appendSelectOption(select, id, label) {
+        var newOpt = document.createElement('option');
+        newOpt.value = id;
+        newOpt.textContent = label;
+        var last = select.querySelector('option[value="__new__"]');
+        select.insertBefore(newOpt, last);
+        select.value = id;
+    }
+
+    function appendConfigListEntry(listSelector, id, label, type) {
+        var list = document.querySelector(listSelector);
+        if (!list) return;
+        var div = document.createElement('div');
+        div.className = 'config-entry';
+        div.dataset.id = id;
+        div.dataset.type = type;
+        div.innerHTML = '<span class="config-entry-label">' + escHtml(label) + '</span>' +
+            '<input class="inline-label-input" type="text" value="' + escHtml(label) + '">' +
+            '<span class="config-id">' + escHtml(id) + '</span>' +
+            '<button class="btn-icon edit-btn" title="Edita">✏️</button>' +
+            '<button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>' +
+            '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
+        list.appendChild(div);
+        attachConfigEntryListeners(div);
+    }
+
+    function injectVideoCard(video, editionLabel) {
+        videosEmptyMsg.style.display = 'none';
+        var editionId = video.edition;
+        var group = videosCatalog.querySelector('.edition-group[data-edition-id="' + CSS.escape(editionId) + '"]');
+
+        if (!group) {
+            group = document.createElement('div');
+            group.className = 'edition-group open';
+            group.dataset.editionId = editionId;
+            group.innerHTML =
+                '<button type="button" class="edition-heading" aria-expanded="true">' +
+                    escHtml(editionLabel || EDITION_LABELS[editionId] || editionId) +
+                    '<span class="edition-count">0</span>' +
+                    '<span class="edition-chevron" aria-hidden="true">▼</span>' +
+                '</button>' +
+                '<div class="edition-videos"></div>';
+            videosCatalog.appendChild(group);
+            attachEditionGroupListeners(group);
+        }
+
+        var grid = group.querySelector('.edition-videos');
+        var card = document.createElement('a');
+        card.className = 'video-card';
+        card.href = '?action=continguts-video&vimeo_id=' + encodeURIComponent(video.vimeo_id);
+        if (video.thumbnail_url) {
+            card.innerHTML = '<img class="video-thumb" src="' + escHtml(video.thumbnail_url) + '" alt="" loading="lazy">' +
+                '<span class="video-card-title">' + escHtml(video.title) + '</span>';
+        } else {
+            card.innerHTML = '<div class="video-thumb-placeholder"></div>' +
+                '<span class="video-card-title">' + escHtml(video.title) + '</span>';
+        }
+        grid.appendChild(card);
+
+        var countEl = group.querySelector('.edition-count');
+        countEl.textContent = String(grid.querySelectorAll('.video-card').length);
+        group.classList.add('open');
+        group.querySelector('.edition-heading').setAttribute('aria-expanded', 'true');
+    }
+
+    function setupModalConfigAdd(cfg) {
+        var panel = document.getElementById(cfg.panelId);
+        var addError = document.getElementById(cfg.errorId);
+        var addBtn = document.getElementById(cfg.addBtnId);
+        var cancelBtn = document.getElementById(cfg.cancelBtnId);
+
+        function setPanelOpen(open) {
+            panel.classList.toggle('is-open', open);
+            if (!open) addError.textContent = '';
+        }
+
+        function closePanel() {
+            if (cfg.select.value === '__new__') cfg.select.value = '';
+            cfg.clearInputs();
+            cfg.buildPreview();
+            setPanelOpen(false);
+            updateSubmitState();
+        }
+
+        cfg.select.addEventListener('change', function () {
+            if (cfg.select.value === '__new__') {
+                setPanelOpen(true);
+                cfg.focusInput();
+            } else {
+                setPanelOpen(false);
+            }
+            updateSubmitState();
+        });
+
+        cancelBtn.addEventListener('click', closePanel);
+
+        document.getElementById(cfg.codeInputId).addEventListener('input', cfg.buildPreview);
+        if (cfg.qualifierInputId) {
+            document.getElementById(cfg.qualifierInputId).addEventListener('input', cfg.buildPreview);
+        }
+
+        addBtn.addEventListener('click', function () {
+            addError.textContent = '';
+            if (!cfg.validate()) {
+                addError.textContent = 'Completeu tots els camps.';
+                return;
+            }
+            addBtn.disabled = true;
+            fetch('?action=' + cfg.action, { method: 'POST', body: cfg.buildBody() })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.ok) {
+                        addError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir.';
+                        return;
+                    }
+                    cfg.onAdded(data);
+                    closePanel();
+                })
+                .catch(function () { addError.textContent = 'Error de connexió.'; })
+                .finally(function () { addBtn.disabled = false; });
+        });
+    }
 
     // ── Inline label editing ──────────────────────────────────────────────────
     document.querySelectorAll('.config-entry').forEach(function (entry) {

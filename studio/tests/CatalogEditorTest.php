@@ -154,6 +154,40 @@ class CatalogEditorTest extends TestCase
         $this->assertNull($entry);
     }
 
+    public function test_addVideo_appends_entry_to_catalog(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        $entry = (new CatalogEditor($this->catalogFile))->addVideo(
+            vimeoId: '999',
+            title: 'New Video',
+            signLanguage: 'lse',
+            edition: '2024-madrid',
+            thumbnailUrl: 'https://example.com/thumb.jpg',
+        );
+
+        $catalog = $this->readCatalog();
+        $this->assertCount(1, $catalog['videos']);
+        $this->assertSame('lse_999', $entry['id']);
+        $this->assertSame('999', $catalog['videos'][0]['vimeo_id']);
+        $this->assertSame('New Video', $catalog['videos'][0]['title']);
+        $this->assertSame('lse', $catalog['videos'][0]['sign_language']);
+        $this->assertSame('2024-madrid', $catalog['videos'][0]['edition']);
+        $this->assertSame([], $catalog['videos'][0]['tags']);
+        $this->assertSame([], $catalog['videos'][0]['captions']);
+        $this->assertSame('https://example.com/thumb.jpg', $catalog['videos'][0]['thumbnail_url']);
+    }
+
+    public function test_addVideo_throws_when_vimeo_id_already_in_catalog(): void
+    {
+        $this->writeCatalog(['videos' => [
+            ['id' => 'lse_111', 'vimeo_id' => '111', 'title' => 'T', 'sign_language' => 'lse', 'edition' => 'x', 'tags' => [], 'captions' => []],
+        ]]);
+
+        $this->expectException(\RuntimeException::class);
+        (new CatalogEditor($this->catalogFile))->addVideo('111', 'Other', 'lse', 'x');
+    }
+
     public function test_findVideoByVimeoId_returns_null_for_empty_catalog(): void
     {
         $this->writeCatalog(['videos' => []]);
