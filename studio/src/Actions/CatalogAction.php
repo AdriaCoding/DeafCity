@@ -64,6 +64,8 @@ class CatalogAction
             'continguts-add-video'                => $this->addVideo(),
             'continguts-save-video'               => $this->saveVideo(),
             'continguts-set-master-caption'       => $this->setMasterCaption(),
+            'continguts-download-caption-vtt'     => $this->downloadCaption('vtt'),
+            'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
             'continguts-delete-edition'              => $this->deleteItem('edition'),
@@ -170,6 +172,54 @@ class CatalogAction
             header('Location: ' . $this->c->baseUrl);
             exit;
         }
+    }
+
+    private function downloadCaption(string $format): never
+    {
+        $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
+        $lang    = trim((string) ($_GET['lang'] ?? ''));
+        if ($vimeoId === '' || $lang === '') {
+            http_response_code(400);
+            exit;
+        }
+
+        $video = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            http_response_code(404);
+            exit;
+        }
+
+        $captionFile = null;
+        foreach ($video['captions'] ?? [] as $caption) {
+            if (($caption['lang'] ?? '') === $lang) {
+                $captionFile = $caption['file'] ?? null;
+                break;
+            }
+        }
+
+        if ($captionFile === null) {
+            http_response_code(404);
+            exit;
+        }
+
+        $vttPath = $this->c->dataDir . '/captions/' . $captionFile;
+        if (!is_file($vttPath)) {
+            http_response_code(404);
+            exit;
+        }
+
+        $basename = pathinfo($captionFile, PATHINFO_FILENAME);
+
+        if ($format === 'srt') {
+            header('Content-Type: application/x-subrip; charset=utf-8');
+            header('Content-Disposition: attachment; filename="' . $basename . '.srt"');
+            echo (new \Studio\VttToSrtConverter())->convert($vttPath);
+        } else {
+            header('Content-Type: text/vtt; charset=utf-8');
+            header('Content-Disposition: attachment; filename="' . $basename . '.vtt"');
+            readfile($vttPath);
+        }
+        exit;
     }
 
     private function saveVideo(): never

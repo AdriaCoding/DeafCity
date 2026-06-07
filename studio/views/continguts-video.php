@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($video['title'] ?? 'Vídeo', ENT_QUOTES) ?> — Studio</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -223,6 +224,22 @@
         }
         .caption-master-feedback.ok { color: #4a8a4a; }
         .caption-master-feedback.err { color: #a55; }
+        .caption-download-btns { display: flex; gap: 0.35rem; }
+        a.caption-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.2rem 0.5rem;
+            background: transparent;
+            color: #555;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            text-decoration: none;
+            letter-spacing: 0.04em;
+        }
+        a.caption-download-btn:hover { color: #aaa; border-color: #555; }
+        a.caption-download-btn .material-icons { font-size: 0.95rem; }
 
         .caption-upload-row {
             display: flex;
@@ -336,6 +353,7 @@
                         <th class="caption-master-cell">Master</th>
                         <th>Idioma</th>
                         <th>Fitxer al servidor</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -354,6 +372,14 @@
                         </td>
                         <td><?= htmlspecialchars($langLabels[$langId] ?? $langId, ENT_QUOTES) ?></td>
                         <td><?= htmlspecialchars($caption['file'] ?? '', ENT_QUOTES) ?></td>
+                        <td>
+                            <?php if (!empty($caption['file'])): ?>
+                            <div class="caption-download-btns">
+                                <a class="caption-download-btn" href="?action=continguts-download-caption-vtt&vimeo_id=<?= urlencode($video['vimeo_id'] ?? '') ?>&lang=<?= urlencode($langId) ?>"><span class="material-icons">download</span>VTT</a>
+                                <a class="caption-download-btn" href="?action=continguts-download-caption-srt&vimeo_id=<?= urlencode($video['vimeo_id'] ?? '') ?>&lang=<?= urlencode($langId) ?>"><span class="material-icons">download</span>SRT</a>
+                            </div>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -561,7 +587,7 @@
             table.innerHTML =
                 '<thead><tr>' +
                 '<th class="caption-master-cell">Master</th>' +
-                '<th>Idioma</th><th>Fitxer al servidor</th>' +
+                '<th>Idioma</th><th>Fitxer al servidor</th><th></th>' +
                 '</tr></thead><tbody></tbody>';
             field.insertBefore(table, captionUploads);
             var fb = document.createElement('div');
@@ -588,7 +614,13 @@
                 ' title="Definir com a subtítol mestre">' +
                 '</td>' +
                 '<td>' + escapeHtml(langLabels[langId] || langId) + '</td>' +
-                '<td>' + escapeHtml(caption.file || '') + '</td>';
+                '<td>' + escapeHtml(caption.file || '') + '</td>' +
+                '<td>' + (caption.file
+                    ? '<div class="caption-download-btns">' +
+                      '<a class="caption-download-btn" href="?action=continguts-download-caption-vtt&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId) + '"><span class="material-icons">download</span>VTT</a>' +
+                      '<a class="caption-download-btn" href="?action=continguts-download-caption-srt&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId) + '"><span class="material-icons">download</span>SRT</a>' +
+                      '</div>'
+                    : '') + '</td>';
             tbody.appendChild(tr);
         });
 
