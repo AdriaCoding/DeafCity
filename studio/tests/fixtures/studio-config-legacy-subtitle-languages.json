@@ -1,0 +1,14 @@
+{
+  "sign_languages": [
+    { "id": "lse", "label": "LSE Spanish Sign Language" }
+  ],
+  "editions": [
+    { "id": "2020-valencia", "label": "2020 Valencia" }
+  ],
+  "subtitle_languages": [
+    { "id": "es", "label": "Spanish", "vimeo_code": "es" },
+    { "id": "en", "label": "English", "vimeo_code": "en" },
+    { "id": "arq", "label": "Algerian Darija", "vimeo_code": "ar" },
+    { "id": "aeb", "label": "Tunisian Arabic", "vimeo_code": "mt" }
+  ]
+}

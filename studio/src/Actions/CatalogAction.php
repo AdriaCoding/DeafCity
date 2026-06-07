@@ -11,6 +11,7 @@ use Studio\Container;
 use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
 use Studio\SubtitleLanguageAddHandler;
+use Studio\SubtitleLanguageTranslationTargetHandler;
 use Studio\VideoEditHandler;
 use Studio\VimeoIdParser;
 use Studio\VimeoVideoResolver;
@@ -70,12 +71,16 @@ class CatalogAction
             'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
+            'continguts-set-subtitle-language-translation-target' => $this->setSubtitleLanguageTranslationTarget(),
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
             'continguts-delete-caption'              => $this->deleteCaption(),
             'continguts-replace-caption'             => $this->replaceCaption(),
             'continguts-caption-review'              => $this->captionReview(),
+            'continguts-caption-translate-start'     => $this->captionTranslateStart(),
+            'continguts-caption-translate-status'    => $this->captionTranslateStatus(),
+            'continguts-caption-translate-retry'     => $this->captionTranslateRetry(),
             default                               => (function () { http_response_code(404); exit; })(),
         };
     }
@@ -332,6 +337,19 @@ class CatalogAction
         exit;
     }
 
+    private function setSubtitleLanguageTranslationTarget(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $id = trim((string) ($_POST['id'] ?? ''));
+        $value = filter_var($_POST['translation_target'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $result = (new SubtitleLanguageTranslationTargetHandler($this->c->studioConfig))->handle($id, $value);
+        if (!$result['ok']) {
+            http_response_code(422);
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     private function saveLabel(string $type): never
     {
         header('Content-Type: application/json; charset=utf-8');
@@ -544,6 +562,299 @@ class CatalogAction
             echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
         }
         exit;
+    }
+
+    private function captionTranslateStart(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+
+        if ($vimeoId === '' || !preg_match('/^\d+$/', $vimeoId)) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Paràmetre vimeo_id no vàlid.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $jobDir   = $this->captionTranslationJobDir($vimeoId);
+        $stateFile = $jobDir . '/translation.json';
+
+        if (is_file($stateFile)) {
+            $existing = json_decode((string) file_get_contents($stateFile), true);
+            if (in_array($existing['status'] ?? '', ['pending', 'running'], true)) {
+                http_response_code(409);
+                echo json_encode(['ok' => false, 'error' => 'Ja hi ha una traducció en curs per a aquest vídeo.'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+        }
+
+        $video = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            http_response_code(404);
+            echo json_encode(['ok' => false, 'error' => 'Vídeo no trobat al catàleg.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $masterLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
+        if ($masterLang === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'No hi ha subtítol mestre definit per a aquest vídeo.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $masterFile = null;
+        foreach ($video['captions'] ?? [] as $caption) {
+            if (($caption['lang'] ?? '') === $masterLang) {
+                $masterFile = $caption['file'] ?? null;
+                break;
+            }
+        }
+        if ($masterFile === null) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'El fitxer del subtítol mestre no s\'ha trobat al catàleg.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $masterVttPath = $this->c->dataDir . '/captions/' . $masterFile;
+        if (!is_file($masterVttPath)) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'El fitxer VTT mestre no existeix al servidor.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $existingLangs = array_column($video['captions'] ?? [], 'lang');
+        $targets = [];
+        foreach ($this->c->studioConfig->getTranslationTargetLanguages() as $lang) {
+            $id = (string) ($lang['id'] ?? '');
+            if ($id !== '' && $id !== $masterLang && !in_array($id, $existingLangs, true)) {
+                $targets[] = $id;
+            }
+        }
+
+        if ($targets === []) {
+            echo json_encode(['ok' => true, 'nothing_to_translate' => true], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if (!is_dir($jobDir) && !mkdir($jobDir, 0775, true) && !is_dir($jobDir)) {
+            http_response_code(500);
+            echo json_encode(['ok' => false, 'error' => 'No s\'ha pogut crear el directori de treball.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $languages = [];
+        foreach ($targets as $lang) {
+            $languages[$lang] = ['status' => 'pending'];
+        }
+        file_put_contents(
+            $stateFile,
+            json_encode(['status' => 'pending', 'languages' => $languages], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n"
+        );
+
+        $this->c->launcher->launchTranslation($masterVttPath, $stateFile, $masterLang, $jobDir, $targets);
+
+        echo json_encode(['ok' => true, 'targets' => $targets], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function captionTranslateStatus(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_GET['vimeo_id'] ?? $_POST['vimeo_id'] ?? ''));
+
+        if ($vimeoId === '' || !preg_match('/^\d+$/', $vimeoId)) {
+            echo json_encode(['status' => 'idle'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $jobDir   = $this->captionTranslationJobDir($vimeoId);
+        $stateFile = $jobDir . '/translation.json';
+
+        if (!is_file($stateFile)) {
+            echo json_encode(['status' => 'idle', 'missingTargets' => $this->computeMissingTargets($vimeoId)], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $state = json_decode((string) file_get_contents($stateFile), true);
+        if (!is_array($state)) {
+            echo json_encode(['status' => 'idle', 'missingTargets' => $this->computeMissingTargets($vimeoId)], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $topStatus = $state['status'] ?? 'pending';
+
+        if ($topStatus === 'done') {
+            $result = $this->finalizeCaptionTranslation($vimeoId, $jobDir, $state);
+            echo json_encode([
+                'status'     => 'saved',
+                'savedLangs' => $result['saved'],
+                'errorLangs' => $result['errors'],
+                'languages'  => $state['languages'] ?? [],
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($topStatus === 'saved') {
+            echo json_encode([
+                'status'     => 'saved',
+                'savedLangs' => $state['savedLangs'] ?? [],
+                'errorLangs' => $state['errorLangs'] ?? [],
+                'languages'  => $state['languages'] ?? [],
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        echo json_encode([
+            'status'    => $topStatus,
+            'languages' => $state['languages'] ?? [],
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function captionTranslateRetry(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        $lang    = trim((string) ($_POST['lang'] ?? ''));
+
+        if ($vimeoId === '' || !preg_match('/^\d+$/', $vimeoId) || $lang === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Falten paràmetres obligatoris.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $jobDir   = $this->captionTranslationJobDir($vimeoId);
+        $stateFile = $jobDir . '/translation.json';
+
+        if (!is_file($stateFile)) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'No hi ha cap estat de traducció per a aquest vídeo.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $state = json_decode((string) file_get_contents($stateFile), true);
+        if (!is_array($state) || !array_key_exists($lang, $state['languages'] ?? [])) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Idioma no trobat a l\'estat de traducció.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $video = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            http_response_code(404);
+            echo json_encode(['ok' => false, 'error' => 'Vídeo no trobat.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $masterLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
+        $masterFile = null;
+        foreach ($video['captions'] ?? [] as $caption) {
+            if (($caption['lang'] ?? '') === $masterLang) {
+                $masterFile = $caption['file'] ?? null;
+                break;
+            }
+        }
+        if ($masterFile === null) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Fitxer VTT mestre no trobat.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $masterVttPath = $this->c->dataDir . '/captions/' . $masterFile;
+
+        $state['languages'][$lang] = ['status' => 'pending'];
+        $state['status'] = 'running';
+        unset($state['savedLangs'], $state['errorLangs']);
+        file_put_contents($stateFile, json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+
+        $this->c->launcher->launchTranslation($masterVttPath, $stateFile, $masterLang, $jobDir, [$lang]);
+
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /** @return array{saved: list<string>, errors: list<string>} */
+    private function finalizeCaptionTranslation(string $vimeoId, string $jobDir, array $state): array
+    {
+        $captionsDir = $this->c->dataDir . '/captions';
+        $langLabels  = [];
+        foreach ($this->c->studioConfig->getSubtitleLanguages() as $language) {
+            $langLabels[(string) ($language['id'] ?? '')] = (string) ($language['label'] ?? '');
+        }
+
+        $savedLangs  = [];
+        $errorLangs  = [];
+        $newCaptions = [];
+
+        foreach ($state['languages'] ?? [] as $lang => $entry) {
+            $langStr = (string) $lang;
+            if (($entry['status'] ?? '') === 'error') {
+                $errorLangs[] = $langStr;
+                continue;
+            }
+            if (($entry['status'] ?? '') !== 'done') {
+                continue;
+            }
+
+            $srcPath      = $jobDir . '/draft_' . $langStr . '.vtt';
+            $destFilename = $vimeoId . '.' . $langStr . '.vtt';
+            $destPath     = $captionsDir . '/' . $destFilename;
+
+            if (!is_file($srcPath) || !copy($srcPath, $destPath)) {
+                $errorLangs[] = $langStr;
+                continue;
+            }
+
+            $newCaptions[] = [
+                'lang'  => $langStr,
+                'label' => $langLabels[$langStr] ?? $langStr,
+                'file'  => $destFilename,
+            ];
+            $savedLangs[] = $langStr;
+        }
+
+        if ($newCaptions !== []) {
+            try {
+                $this->c->catalogEditor()->upsertCaptions($vimeoId, $newCaptions);
+            } catch (\Throwable) {
+                $errorLangs = array_merge($errorLangs, $savedLangs);
+                $savedLangs = [];
+            }
+        }
+
+        $updatedState               = $state;
+        $updatedState['status']     = 'saved';
+        $updatedState['savedLangs'] = $savedLangs;
+        $updatedState['errorLangs'] = $errorLangs;
+        @file_put_contents(
+            $jobDir . '/translation.json',
+            json_encode($updatedState, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n"
+        );
+
+        return ['saved' => $savedLangs, 'errors' => $errorLangs];
+    }
+
+    /** @return list<array{id: string, label: string}> */
+    private function computeMissingTargets(string $vimeoId): array
+    {
+        $video = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            return [];
+        }
+        $masterLang    = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
+        $existingLangs = array_column($video['captions'] ?? [], 'lang');
+        $missing = [];
+        foreach ($this->c->studioConfig->getTranslationTargetLanguages() as $lang) {
+            $id = (string) ($lang['id'] ?? '');
+            if ($id !== '' && $id !== $masterLang && !in_array($id, $existingLangs, true)) {
+                $missing[] = ['id' => $id, 'label' => (string) ($lang['label'] ?? $id)];
+            }
+        }
+        return $missing;
+    }
+
+    private function captionTranslationJobDir(string $vimeoId): string
+    {
+        return $this->c->dataDir . '/caption-translation/' . $vimeoId . '/current';
     }
 
     private function view(string $name): string

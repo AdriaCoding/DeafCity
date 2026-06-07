@@ -4,6 +4,9 @@ namespace Studio;
 
 class StudioConfig
 {
+    /** @var list<string> Legacy ids defaulting to non-target when field is absent. */
+    private const TRANSLATION_TARGET_MIGRATION_DENYLIST = ['arq', 'aeb'];
+
     private array $data;
 
     public function __construct(private readonly string $configPath)
@@ -220,7 +223,12 @@ class StudioConfig
             }
         }
 
-        $entries[] = ['id' => $id, 'label' => $label, 'vimeo_code' => $vimeoCode];
+        $entries[] = [
+            'id' => $id,
+            'label' => $label,
+            'vimeo_code' => $vimeoCode,
+            'translation_target' => false,
+        ];
         $data['subtitle_languages'] = $entries;
 
         ftruncate($fp, 0);
@@ -323,7 +331,94 @@ class StudioConfig
 
     public function getSubtitleLanguages(): array
     {
-        return $this->list('subtitle_languages');
+        $entries = [];
+        foreach ($this->list('subtitle_languages') as $entry) {
+            $entries[] = $this->normalizeSubtitleLanguageEntry($entry);
+        }
+
+        return $entries;
+    }
+
+    /** @return list<array{id: string, label: string, vimeo_code?: string, translation_target: bool}> */
+    public function getTranslationTargetLanguages(): array
+    {
+        return array_values(array_filter(
+            $this->getSubtitleLanguages(),
+            fn(array $entry): bool => ($entry['translation_target'] ?? false) === true,
+        ));
+    }
+
+    public function isTranslationTarget(string $id): bool
+    {
+        foreach ($this->getSubtitleLanguages() as $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                return ($entry['translation_target'] ?? false) === true;
+            }
+        }
+
+        return false;
+    }
+
+    public function setSubtitleLanguageTranslationTarget(string $id, bool $value): void
+    {
+        $fp = fopen($this->configPath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open studio config for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $data = json_decode($raw ?: '', true);
+        if (!is_array($data)) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid studio config JSON.');
+        }
+
+        $found = false;
+        foreach ($data['subtitle_languages'] ?? [] as $i => $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                $data['subtitle_languages'][$i]['translation_target'] = $value;
+                $found = true;
+                break;
+            }
+        }
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Config entry '$id' not found in 'subtitle_languages'.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        $this->data = $data;
+    }
+
+    /** @param array<string, mixed> $entry */
+    private function normalizeSubtitleLanguageEntry(array $entry): array
+    {
+        $normalized = $entry;
+        $normalized['translation_target'] = $this->resolveTranslationTarget($entry);
+
+        return $normalized;
+    }
+
+    /** @param array<string, mixed> $entry */
+    private function resolveTranslationTarget(array $entry): bool
+    {
+        if (array_key_exists('translation_target', $entry)) {
+            return (bool) $entry['translation_target'];
+        }
+
+        $id = (string) ($entry['id'] ?? '');
+
+        return !in_array($id, self::TRANSLATION_TARGET_MIGRATION_DENYLIST, true);
     }
 
     private function list(string $key): array

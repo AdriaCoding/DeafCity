@@ -19,6 +19,9 @@ class TranslationCoordinator
 
         if ($targets === []) {
             $translationState->initiate([]);
+            if ($singleLang === null) {
+                $this->jobManager->update(['step' => 'tagging']);
+            }
             return;
         }
 
@@ -41,7 +44,7 @@ class TranslationCoordinator
     private function targetLanguages(string $masterLang): array
     {
         $targets = [];
-        foreach ($this->studioConfig->getSubtitleLanguages() as $language) {
+        foreach ($this->studioConfig->getTranslationTargetLanguages() as $language) {
             $id = $language['id'] ?? '';
             if ($id !== '' && $id !== $masterLang) {
                 $targets[] = $id;

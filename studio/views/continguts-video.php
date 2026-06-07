@@ -393,6 +393,125 @@
             color: #555;
             margin-top: 0.3rem;
         }
+
+        .btn-generate {
+            padding: 0.55rem 1.1rem;
+            background: #1a4a1a;
+            border: 1px solid #2a6a2a;
+            border-radius: 4px;
+            color: #7ed87e;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .btn-generate:hover { background: #1f5a1f; }
+        .btn-generate:disabled { opacity: 0.55; cursor: default; background: #141414; border-color: #2a2a2a; color: #555; }
+
+        #ct-dialog {
+            width: min(34rem, 92vw);
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            background: #111;
+            padding: 0;
+            color: #e0e0e0;
+            font-family: system-ui, sans-serif;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+        }
+        #ct-dialog::backdrop { background: rgba(0,0,0,0.72); }
+        .ct-inner { padding: 1.5rem; }
+        .ct-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #aaa;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+        .ct-lang-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+        .ct-lang-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+        }
+        .ct-lang-label { font-size: 0.9rem; }
+        .ct-badge {
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.25rem 0.55rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            flex-shrink: 0;
+        }
+        .ct-badge-pending { color: #888; border-color: #333; background: #141414; }
+        .ct-badge-running { color: #d4aa40; border-color: #3a2a10; background: #181410; }
+        .ct-badge-done    { color: #7ed87e; border-color: #2a4a2a; background: #101810; }
+        .ct-badge-error   { color: #e05555; border-color: #4a2020; background: #1a1010; }
+        .ct-card-right { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+        .ct-retry-btn {
+            background: transparent;
+            color: #aaa;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .ct-retry-btn:hover { color: #fff; border-color: #666; }
+        .ct-actions { display: flex; gap: 0.75rem; align-items: center; }
+        .ct-btn-primary {
+            padding: 0.55rem 1.1rem;
+            background: #1a3a6e;
+            border: 1px solid #2a5090;
+            border-radius: 4px;
+            color: #9ab8ff;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .ct-btn-primary:hover { background: #1f4580; }
+        .ct-btn-primary:disabled { opacity: 0.55; cursor: default; }
+        .ct-btn-close {
+            padding: 0.55rem 1.1rem;
+            background: transparent;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #888;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .ct-btn-close:hover { color: #ccc; border-color: #555; }
+        .ct-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1.25rem;
+            line-height: 1.5;
+        }
+        .ct-feedback {
+            font-size: 0.82rem;
+            margin-top: 0.75rem;
+            min-height: 1.2em;
+        }
+        .ct-feedback.ok  { color: #4a8a4a; }
+        .ct-feedback.err { color: #a55; }
+        .ct-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #333;
+            border-top-color: #888;
+            border-radius: 50%;
+            animation: caption-spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 0.4rem;
+        }
     </style>
 </head>
 <body>
@@ -496,10 +615,20 @@
             <button type="button" class="btn-add-caption">Afegir fitxer</button>
             <p class="field-hint">WebVTT (.vtt) o SubRip (.srt). En desar, es reemplaçarà el fitxer de la llengua seleccionada.</p>
         </div>
-        <button class="btn-save">Desa</button>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <button class="btn-save">Desa</button>
+            <button class="btn-generate" id="btn-generate-captions" type="button">Genera subtítols</button>
+        </div>
         <div class="save-feedback"></div>
     </div>
 </main>
+
+<dialog id="ct-dialog">
+    <div class="ct-inner">
+        <p class="ct-title">Genera subtítols</p>
+        <div id="ct-body"></div>
+    </div>
+</dialog>
 
 <dialog id="caption-edit-dialog">
     <div class="caption-edit-dialog-inner">
@@ -515,6 +644,8 @@
 (function () {
     var ALL_TAGS = <?= json_encode($catalogTags, JSON_UNESCAPED_UNICODE) ?>;
     var SUBTITLE_LANGUAGES = <?= json_encode($subtitleLanguages, JSON_UNESCAPED_UNICODE) ?>;
+    var EXISTING_CAPTION_LANGS = <?= json_encode(array_column($video['captions'] ?? [], 'lang'), JSON_UNESCAPED_UNICODE) ?>;
+    var MASTER_LANG = <?= json_encode($video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? ''), JSON_UNESCAPED_UNICODE) ?>;
 
     var form = document.querySelector('.video-edit-form');
     var titleInput = form.querySelector('.title-input');
@@ -1035,6 +1166,277 @@
         row.appendChild(removeBtn);
         captionUploads.appendChild(row);
     }
+    // ── Caption translation modal ──────────────────────────────────────────
+
+    var generateBtn     = document.getElementById('btn-generate-captions');
+    var ctDialog        = document.getElementById('ct-dialog');
+    var ctBody          = document.getElementById('ct-body');
+    var ctPollTimer     = null;
+    var ctBgPollTimer   = null;
+    var ctLangLabels    = {};
+    SUBTITLE_LANGUAGES.forEach(function (l) { ctLangLabels[l.id] = l.label; });
+
+    function ctStatusUrl() {
+        return '?action=continguts-caption-translate-status&vimeo_id=' + encodeURIComponent(vimeoId);
+    }
+
+    function ctFetchStatus(cb) {
+        fetch(ctStatusUrl())
+            .then(function (r) { return r.json(); })
+            .then(cb)
+            .catch(function () { cb({ status: 'error', message: 'Error de connexió.' }); });
+    }
+
+    function ctStopPoll() {
+        if (ctPollTimer) { clearInterval(ctPollTimer); ctPollTimer = null; }
+    }
+
+    function ctStartPoll() {
+        ctStopPoll();
+        ctPollTimer = setInterval(function () {
+            ctFetchStatus(function (data) {
+                if (data.status === 'saved') {
+                    ctStopPoll();
+                    ctRender('saved', data);
+                    ctScheduleReload();
+                } else if (data.status === 'pending' || data.status === 'running') {
+                    ctRender('running', data);
+                }
+            });
+        }, 2000);
+    }
+
+    function ctStartBgPoll() {
+        if (ctBgPollTimer) return;
+        ctBgPollTimer = setInterval(function () {
+            ctFetchStatus(function (data) {
+                if (data.status === 'saved') {
+                    clearInterval(ctBgPollTimer);
+                    ctBgPollTimer = null;
+                    window.location.reload();
+                }
+            });
+        }, 3000);
+    }
+
+    function ctStopBgPoll() {
+        if (ctBgPollTimer) { clearInterval(ctBgPollTimer); ctBgPollTimer = null; }
+    }
+
+    function ctScheduleReload() {
+        setTimeout(function () { window.location.reload(); }, 1800);
+    }
+
+    function ctSetPageButton(mode) {
+        if (!generateBtn) return;
+        if (mode === 'running') {
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Traduint…';
+        } else {
+            generateBtn.disabled = false;
+            generateBtn.textContent = 'Genera subtítols';
+        }
+    }
+
+    function ctBadgeHtml(status) {
+        var map = {
+            pending: ['ct-badge-pending', 'Pendent'],
+            running: ['ct-badge-running', 'Processant'],
+            done:    ['ct-badge-done',    'Generat'],
+            error:   ['ct-badge-error',   'Error'],
+        };
+        var pair = map[status] || map.pending;
+        return '<span class="ct-badge ' + pair[0] + '">' + pair[1] + '</span>';
+    }
+
+    function ctRender(state, data) {
+        var html = '';
+        switch (state) {
+            case 'loading':
+                html = '<p class="ct-info"><span class="ct-spinner"></span> Carregant…</p>';
+                break;
+
+            case 'confirming': {
+                var missing = (data && data.missingTargets) ? data.missingTargets : [];
+                if (missing.length === 0) {
+                    html = '<p class="ct-info">Tots els idiomes objectiu ja tenen subtítols per a aquest vídeo.</p>';
+                    html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
+                } else {
+                    html += '<p class="ct-info">Es generaran els subtítols que falten per als idiomes objectiu:</p>';
+                    html += '<div class="ct-lang-list">';
+                    missing.forEach(function (l) {
+                        html += '<div class="ct-lang-card"><span class="ct-lang-label">' + escapeHtml(l.label) + '</span></div>';
+                    });
+                    html += '</div>';
+                    html += '<div class="ct-actions">';
+                    html += '<button type="button" class="ct-btn-primary" id="ct-start-btn">Inicia la traducció</button>';
+                    html += '<button type="button" class="ct-btn-close" id="ct-close-btn">Cancel·la</button>';
+                    html += '</div>';
+                    html += '<div class="ct-feedback" id="ct-feedback"></div>';
+                }
+                break;
+            }
+
+            case 'nothing':
+                html = '<p class="ct-info">Tots els idiomes objectiu ja tenen subtítols per a aquest vídeo.</p>';
+                html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
+                break;
+
+            case 'running': {
+                var langs = (data && data.languages) ? data.languages : {};
+                var allIds = Object.keys(langs);
+                html += '<div class="ct-lang-list">';
+                allIds.forEach(function (id) {
+                    var entry   = langs[id] || { status: 'pending' };
+                    var status  = entry.status || 'pending';
+                    var label   = escapeHtml(ctLangLabels[id] || id);
+                    html += '<div class="ct-lang-card"><span class="ct-lang-label">' + label + '</span>';
+                    html += '<div class="ct-card-right">' + ctBadgeHtml(status) + '</div></div>';
+                });
+                html += '</div>';
+                html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
+                html += '<p class="ct-info" style="margin-top:0.75rem;margin-bottom:0;">La traducció continuarà en segon pla si tanqueu.</p>';
+                break;
+            }
+
+            case 'saved': {
+                var saved  = (data && data.savedLangs)  ? data.savedLangs  : [];
+                var errors = (data && data.errorLangs)  ? data.errorLangs  : [];
+                var langs  = (data && data.languages)   ? data.languages   : {};
+                html += '<div class="ct-lang-list">';
+                saved.forEach(function (id) {
+                    html += '<div class="ct-lang-card"><span class="ct-lang-label">' + escapeHtml(ctLangLabels[id] || id) + '</span>';
+                    html += '<div class="ct-card-right">' + ctBadgeHtml('done') + '</div></div>';
+                });
+                errors.forEach(function (id) {
+                    html += '<div class="ct-lang-card"><span class="ct-lang-label">' + escapeHtml(ctLangLabels[id] || id) + '</span>';
+                    html += '<div class="ct-card-right">' + ctBadgeHtml('error');
+                    html += '<button type="button" class="ct-retry-btn" data-lang="' + escapeHtml(id) + '">Reintenta</button>';
+                    html += '</div></div>';
+                });
+                html += '</div>';
+                if (saved.length > 0) {
+                    html += '<p class="ct-feedback ok">Subtítols desats al catàleg. Actualitzant la pàgina…</p>';
+                } else {
+                    html += '<p class="ct-feedback err">No s\'ha pogut desar cap traducció.</p>';
+                    html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
+                }
+                break;
+            }
+
+            case 'error': {
+                var msg = (data && data.message) ? data.message : 'Error desconegut.';
+                html = '<p class="ct-info" style="color:#a55;">' + escapeHtml(msg) + '</p>';
+                html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
+                break;
+            }
+        }
+
+        ctBody.innerHTML = html;
+        ctBindButtons(state, data);
+    }
+
+    function ctBindButtons(state, data) {
+        var closeBtn = document.getElementById('ct-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                ctStopPoll();
+                ctDialog.close();
+            });
+        }
+
+        var startBtn = document.getElementById('ct-start-btn');
+        if (startBtn) {
+            startBtn.addEventListener('click', function () {
+                startBtn.disabled = true;
+                var fb = document.getElementById('ct-feedback');
+                if (fb) { fb.textContent = ''; fb.className = 'ct-feedback'; }
+
+                var body = new FormData();
+                body.append('vimeo_id', vimeoId);
+                fetch('?action=continguts-caption-translate-start', { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (!d.ok) {
+                            if (fb) { fb.textContent = d.error || 'Error en iniciar.'; fb.className = 'ct-feedback err'; }
+                            startBtn.disabled = false;
+                            return;
+                        }
+                        if (d.nothing_to_translate) {
+                            ctRender('nothing', null);
+                            return;
+                        }
+                        ctSetPageButton('running');
+                        ctStopBgPoll();
+                        var initLangs = {};
+                        (d.targets || []).forEach(function (id) { initLangs[id] = { status: 'pending' }; });
+                        ctRender('running', { languages: initLangs });
+                        ctStartPoll();
+                        ctStartBgPoll();
+                    })
+                    .catch(function () {
+                        if (fb) { fb.textContent = 'Error de connexió.'; fb.className = 'ct-feedback err'; }
+                        startBtn.disabled = false;
+                    });
+            });
+        }
+
+        ctBody.querySelectorAll('.ct-retry-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var lang = btn.dataset.lang;
+                btn.disabled = true;
+                var body = new FormData();
+                body.append('vimeo_id', vimeoId);
+                body.append('lang', lang);
+                fetch('?action=continguts-caption-translate-retry', { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) {
+                        if (!d.ok) { btn.disabled = false; return; }
+                        ctSetPageButton('running');
+                        ctStopBgPoll();
+                        // Merge updated lang into running view
+                        var langs = (data && data.languages) ? Object.assign({}, data.languages) : {};
+                        langs[lang] = { status: 'pending' };
+                        var saved  = (data && data.savedLangs)  ? data.savedLangs.filter(function (id) { return id !== lang; })  : [];
+                        var errors = (data && data.errorLangs)  ? data.errorLangs.filter(function (id) { return id !== lang; })  : [];
+                        ctRender('running', { languages: langs, savedLangs: saved, errorLangs: errors });
+                        ctStartPoll();
+                        ctStartBgPoll();
+                    })
+                    .catch(function () { btn.disabled = false; });
+            });
+        });
+    }
+
+    if (generateBtn) {
+        // Check status on page load to set initial button state
+        ctFetchStatus(function (data) {
+            if (data.status === 'pending' || data.status === 'running') {
+                ctSetPageButton('running');
+                ctStartBgPoll();
+            }
+        });
+
+        generateBtn.addEventListener('click', function () {
+            ctStopPoll();
+            ctRender('loading', null);
+            if (typeof ctDialog.showModal === 'function') ctDialog.showModal();
+            ctFetchStatus(function (data) {
+                if (data.status === 'idle') {
+                    ctRender('confirming', data);
+                } else if (data.status === 'pending' || data.status === 'running') {
+                    ctRender('running', data);
+                    ctStartPoll();
+                } else if (data.status === 'saved') {
+                    ctRender('saved', data);
+                    if ((data.savedLangs || []).length > 0) ctScheduleReload();
+                } else {
+                    ctRender('error', { message: data.message || 'Error inesperat.' });
+                }
+            });
+        });
+    }
+
 })();
 </script>
 </body>

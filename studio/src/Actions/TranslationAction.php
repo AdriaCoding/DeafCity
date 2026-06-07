@@ -24,7 +24,7 @@ class TranslationAction
 
         if (in_array($topLevelStatus, ['pending', 'running'], true)) {
             $languageItems = [];
-            foreach ($c->studioConfig->getSubtitleLanguages() as $language) {
+            foreach ($c->studioConfig->getTranslationTargetLanguages() as $language) {
                 $id = $language['id'] ?? '';
                 if ($id === '' || $id === $masterLang) {
                     continue;
@@ -46,7 +46,7 @@ class TranslationAction
         }
 
         $languageCards = [];
-        foreach ($c->studioConfig->getSubtitleLanguages() as $language) {
+        foreach ($c->studioConfig->getTranslationTargetLanguages() as $language) {
             $id = $language['id'] ?? '';
             if ($id === '' || $id === $masterLang) {
                 continue;

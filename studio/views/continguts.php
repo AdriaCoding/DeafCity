@@ -330,6 +330,31 @@
             color: #7a9fd4;
             font-family: monospace;
         }
+        .subtitle-lang-list-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0 0.75rem 0.35rem;
+            font-size: 0.72rem;
+            color: #555;
+            letter-spacing: 0.04em;
+        }
+        .subtitle-lang-list-header .header-name { flex: 1; }
+        .subtitle-lang-list-header .header-target {
+            width: 7.5rem;
+            text-align: center;
+        }
+        .subtitle-lang-list-header .header-actions { width: 2.5rem; }
+        .translation-target-cell {
+            width: 7.5rem;
+            display: flex;
+            justify-content: center;
+        }
+        .translation-target-checkbox {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
         .language-picker { position: relative; }
         .language-search-input {
             width: 100%;
@@ -706,12 +731,18 @@
 
     <!-- ══ Llengues orals ═════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-subtitle-languages">
+        <div class="subtitle-lang-list-header">
+            <span class="header-name">Llengua</span>
+            <span class="header-target">Objectiu de traducció</span>
+            <span class="header-actions" aria-hidden="true"></span>
+        </div>
         <div class="config-list">
             <?php foreach ($subtitleLanguages as $sl): ?>
             <?php $isRef = in_array($sl['id'], $referencedSubtitleLanguageIds, true) ?>
             <?php
             $vimeoCode = (string) ($sl['vimeo_code'] ?? $sl['id']);
             $showVimeoBadge = $vimeoCode !== $sl['id'];
+            $isTranslationTarget = !empty($sl['translation_target']);
             ?>
             <div class="config-entry" data-id="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>" data-type="subtitle-language">
                 <span class="config-entry-label"><?= htmlspecialchars($sl['label']) ?></span>
@@ -719,6 +750,9 @@
                 <?php if ($showVimeoBadge): ?>
                 <span class="vimeo-badge" title="Locale Vimeo">→ <?= htmlspecialchars($vimeoCode) ?></span>
                 <?php endif; ?>
+                <label class="translation-target-cell">
+                    <input type="checkbox" class="translation-target-checkbox"<?= $isTranslationTarget ? ' checked' : '' ?> aria-label="Objectiu de traducció per a <?= htmlspecialchars($sl['label'], ENT_QUOTES) ?>">
+                </label>
                 <?php if (!$isRef): ?>
                 <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
                 <?php endif; ?>
@@ -1357,6 +1391,30 @@
                     .catch(function () { alert('Error de connexió.'); });
             });
         }
+
+        var targetCheckbox = entry.querySelector('.translation-target-checkbox');
+        if (targetCheckbox) {
+            targetCheckbox.addEventListener('change', function () {
+                var checked = targetCheckbox.checked;
+                var body = new FormData();
+                body.append('id', id);
+                body.append('translation_target', checked ? '1' : '0');
+                targetCheckbox.disabled = true;
+                fetch('?action=continguts-set-subtitle-language-translation-target', { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (!data.ok) {
+                            targetCheckbox.checked = !checked;
+                            alert('Error: ' + ((data.errors && data.errors[0]) || 'No s\'ha pogut desar.'));
+                        }
+                    })
+                    .catch(function () {
+                        targetCheckbox.checked = !checked;
+                        alert('Error de connexió.');
+                    })
+                    .finally(function () { targetCheckbox.disabled = false; });
+            });
+        }
     }
 
     document.querySelectorAll('.config-entry').forEach(attachConfigEntryListeners);
@@ -1802,6 +1860,9 @@
                 div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
                     '<span class="config-id">' + escHtml(data.id) + '</span>' +
                     vimeoBadge +
+                    '<label class="translation-target-cell">' +
+                    '<input type="checkbox" class="translation-target-checkbox" aria-label="Objectiu de traducció per a ' + escHtml(data.label) + '">' +
+                    '</label>' +
                     '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>';
                 list.appendChild(div);
                 attachConfigEntryListeners(div);
