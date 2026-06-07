@@ -32,6 +32,58 @@
         document.head.appendChild(s);
     }
 
+    /**
+     * CSS aspect-ratio value from Vimeo dimensions; 16/9 when unavailable.
+     * @param {number} width
+     * @param {number} height
+     * @returns {string}
+     */
+    function aspectRatioFrom(width, height) {
+        var w = typeof width === 'number' ? width : parseInt(width, 10);
+        var h = typeof height === 'number' ? height : parseInt(height, 10);
+        if (!w || !h || w <= 0 || h <= 0) return '16 / 9';
+        return w + ' / ' + h;
+    }
+
+    /**
+     * Pick caption track index matching previousLabel, or 0 when no match.
+     * @param {Array<{ label?: string }>} tracks
+     * @param {string} previousLabel
+     * @returns {number}
+     */
+    function pickStickyTrackIndex(tracks, previousLabel) {
+        if (!Array.isArray(tracks) || tracks.length === 0) return 0;
+        if (previousLabel) {
+            for (var i = 0; i < tracks.length; i++) {
+                if (tracks[i] && tracks[i].label === previousLabel) return i;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Next playlist step after a video ends, or null when already on the last entry.
+     * @param {{ shuffleMode: boolean, filteredCursor: number, shuffleStep: number, filteredCount: number, shuffledSequence: number[] }} opts
+     * @returns {{ filteredCursor: number, shuffleStep: number } | null}
+     */
+    function nextPlaylistStep(opts) {
+        var fc = opts.filteredCount;
+        if (fc <= 0) return null;
+
+        if (opts.shuffleMode) {
+            var nextStep = opts.shuffleStep + 1;
+            if (nextStep >= fc) return null;
+            return {
+                shuffleStep: nextStep,
+                filteredCursor: opts.shuffledSequence[nextStep],
+            };
+        }
+
+        var nextCursor = opts.filteredCursor + 1;
+        if (nextCursor >= fc) return null;
+        return { shuffleStep: opts.shuffleStep, filteredCursor: nextCursor };
+    }
+
     function findCaption(events, timeMs) {
         var lo = 0, hi = events.length - 1, result = -1;
         while (lo <= hi) {
@@ -122,6 +174,8 @@
         var uiTracks = Array.isArray(cfg.tracks) ? cfg.tracks : [];
 
         var activeCaptionTrackIndex = 0;
+        /** Label of the viewer's chosen caption track; persists across Videos. */
+        var stickyCaptionLabel = '';
 
         /** @type {unknown} */
         var vimeoPlayer = null;
@@ -274,6 +328,9 @@
             }
             if (index < 0 || index >= cueTracks.length) return;
             activeCaptionTrackIndex = index;
+            if (cueTracks[index] && cueTracks[index].label) {
+                stickyCaptionLabel = cueTracks[index].label;
+            }
 
             root.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
                 var idx = parseInt(btn.getAttribute('data-track-index'), 10);
@@ -328,6 +385,56 @@
             var shuffledSequence = [];
             var shuffleStep = 0;
 
+            /** Once true, subsequent Videos load unmuted (browser permits after first gesture). */
+            var sessionSoundOn = false;
+            var badgeFlashTimer = null;
+
+            var videoShell = root.querySelector('.video-shell');
+            var soundBadge = root.querySelector('.vpc-sound-badge');
+
+            function updateSoundUi(isMuted) {
+                if (videoShell) {
+                    videoShell.classList.toggle('vpc-sound-muted', isMuted);
+                    videoShell.classList.toggle('vpc-sound-unmuted', !isMuted);
+                }
+                if (soundBadge) {
+                    soundBadge.setAttribute('aria-pressed', isMuted ? 'false' : 'true');
+                    soundBadge.setAttribute(
+                        'aria-label',
+                        isMuted ? 'Unmute video' : 'Mute video'
+                    );
+                    var badgeIcon = soundBadge.querySelector('.material-icons');
+                    if (badgeIcon) {
+                        badgeIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
+                    }
+                }
+            }
+
+            function flashBadgeIfTouch() {
+                if (!videoShell || window.matchMedia('(hover: hover)').matches) return;
+                videoShell.classList.add('vpc-sound-badge-flash');
+                if (badgeFlashTimer) clearTimeout(badgeFlashTimer);
+                badgeFlashTimer = setTimeout(function () {
+                    videoShell.classList.remove('vpc-sound-badge-flash');
+                    badgeFlashTimer = null;
+                }, 2000);
+            }
+
+            function toggleMute() {
+                p.getMuted()
+                    .then(function (wasMuted) {
+                        var nextMuted = !wasMuted;
+                        if (!nextMuted) sessionSoundOn = true;
+                        return p.setMuted(nextMuted).then(function () {
+                            updateSoundUi(nextMuted);
+                            if (wasMuted) flashBadgeIfTouch();
+                        });
+                    })
+                    .catch(function () {});
+            }
+
+            updateSoundUi(true);
+
             var playBtn = root.querySelector('.vpc-play-pause-btn');
 
             function setTransportPlaying(isPlaying) {
@@ -372,7 +479,13 @@
 
             var hitArea = root.querySelector('.vpc-video-hitarea');
             if (hitArea) {
-                hitArea.addEventListener('click', togglePlayPause);
+                hitArea.addEventListener('click', toggleMute);
+            }
+            if (soundBadge) {
+                soundBadge.addEventListener('click', function (ev) {
+                    ev.stopPropagation();
+                    toggleMute();
+                });
             }
 
             function resetFromBeginning() {
@@ -401,7 +514,7 @@
                     .then(function () {
                         var mutedP =
                             typeof p.setMuted === 'function'
-                                ? p.setMuted(true)
+                                ? p.setMuted(!sessionSoundOn)
                                 : Promise.resolve();
                         return mutedP.then(function () {
                             return p.getPaused().then(function (paused) {
@@ -411,9 +524,37 @@
                     })
                     .catch(function () {})
                     .then(function () {
+                        return p.getMuted().then(function (muted) {
+                            updateSoundUi(muted);
+                        });
+                    })
+                    .then(function () {
                         refreshTransport();
                         syncAllCaptions();
                     });
+            }
+
+            function applyVideoAspectRatio() {
+                if (!videoShell) return Promise.resolve();
+                var wP =
+                    typeof p.getVideoWidth === 'function'
+                        ? p.getVideoWidth().catch(function () {
+                              return 0;
+                          })
+                        : Promise.resolve(0);
+                var hP =
+                    typeof p.getVideoHeight === 'function'
+                        ? p.getVideoHeight().catch(function () {
+                              return 0;
+                          })
+                        : Promise.resolve(0);
+                return Promise.all([wP, hP]).then(function (dims) {
+                    videoShell.style.aspectRatio = aspectRatioFrom(dims[0], dims[1]);
+                });
+            }
+
+            function resetVideoAspectPlaceholder() {
+                if (videoShell) videoShell.style.aspectRatio = '16 / 9';
             }
 
             function iframeEmbedVideoId() {
@@ -425,8 +566,9 @@
 
             function applyLoadedVideoUi() {
                 if (captionPickerDynamic) rebuildDynamicCaptionButtons();
-                activeCaptionTrackIndex = 0;
-                setActiveCaptionTrack(0);
+                var cueTracks = currentItemCueTracksRaw();
+                var trackIx = pickStickyTrackIndex(cueTracks, stickyCaptionLabel);
+                setActiveCaptionTrack(trackIx);
                 updateCaptionPickerVisibility();
             }
 
@@ -454,7 +596,7 @@
                         .loadVideo({
                             id: vidNum,
                             autoplay: wantAutoplay,
-                            muted: true,
+                            muted: !sessionSoundOn,
                         })
                         .then(function () {});
                 });
@@ -471,12 +613,17 @@
                 var vidNum = parseInt(vidRaw, 10);
                 var wantAutoplay = autoPlayPreferred !== false;
 
+                resetVideoAspectPlaceholder();
+
                 return resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay)
                     .then(function () {
                         applyLoadedVideoUi();
                         /** @type {Promise<void>} */
                         var autoplayP = wantAutoplay ? tryAutoplayFallback() : Promise.resolve();
                         return autoplayP;
+                    })
+                    .then(function () {
+                        return applyVideoAspectRatio();
                     })
                     .then(function () {
                         updatePlaylistNavButtons();
@@ -523,6 +670,27 @@
                 btn.setAttribute('aria-pressed', on ? 'true' : 'false');
                 var icon = btn.querySelector('.material-icons');
                 if (icon) icon.textContent = 'shuffle';
+            }
+
+            function advanceOnEnded() {
+                var step = nextPlaylistStep({
+                    shuffleMode: shuffleMode,
+                    filteredCursor: filteredCursor,
+                    shuffleStep: shuffleStep,
+                    filteredCount: filteredCount(),
+                    shuffledSequence: shuffledSequence,
+                });
+                if (!step) return;
+                if (shuffleMode) {
+                    shuffleStep = step.shuffleStep;
+                    filteredCursor = step.filteredCursor;
+                    var masterIx = filteredMasterIndices[filteredCursor];
+                    loadVideoMaster(masterIx, true).then(function () {
+                        updatePlaylistNavButtons();
+                    });
+                } else {
+                    seekFiltered(1, true);
+                }
             }
 
             /** @param {number} deltaFiltered */
@@ -630,6 +798,7 @@
             });
             p.on('ended', function () {
                 setTransportPlaying(false);
+                advanceOnEnded();
             });
 
             p.on('timeupdate', function (data) {

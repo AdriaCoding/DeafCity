@@ -381,6 +381,12 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             allowfullscreen></iframe>
         <button
             type="button"
+            class="vpc-sound-badge"
+            aria-pressed="false"
+            aria-label="Unmute video"
+        ><span class="material-icons" aria-hidden="true">volume_off</span></button>
+        <button
+            type="button"
             class="vpc-video-hitarea"
             tabindex="-1"
             aria-hidden="true"

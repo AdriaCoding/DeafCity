@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=12">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=13">
     <style>
         html, body {
             margin: 0;
@@ -93,6 +93,6 @@ if (count($playlist) > 0) {
             </p>
         <?php endif; ?>
     </div>
-<script src="/preview/js/vimeo_caption_player.js?v=12" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=13" defer></script>
 </body>
 </html>
