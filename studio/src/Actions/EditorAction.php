@@ -137,11 +137,8 @@ class EditorAction
             exit;
         }
         $job = $c->jobManager->read();
-        $base = ($job['job_type'] ?? '') === 'transcription'
-            ? ($job['original_filename'] ?? 'transcription')
-            : ($job['vimeo_id'] ?? 'draft');
         header('Content-Type: text/vtt; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $base . ($lang !== '' ? '_' . $lang : '') . '.vtt"');
+        header('Content-Disposition: attachment; filename="' . $this->buildDownloadFilename($job, $lang, 'vtt') . '"');
         readfile($vttPath);
         exit;
     }
@@ -160,13 +157,25 @@ class EditorAction
             exit;
         }
         $job = $c->jobManager->read();
-        $base = ($job['job_type'] ?? '') === 'transcription'
-            ? ($job['original_filename'] ?? 'transcription')
-            : ($job['vimeo_id'] ?? 'draft');
         header('Content-Type: application/x-subrip; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $base . ($lang !== '' ? '_' . $lang : '') . '.srt"');
+        header('Content-Disposition: attachment; filename="' . $this->buildDownloadFilename($job, $lang, 'srt') . '"');
         echo (new VttToSrtConverter())->convert($vttPath);
         exit;
+    }
+
+    private function buildDownloadFilename(array $job, string $lang, string $ext): string
+    {
+        $isTranscription = ($job['job_type'] ?? '') === 'transcription';
+        $base = $isTranscription
+            ? ($job['original_filename'] ?? 'transcription')
+            : ($job['vimeo_id'] ?? 'draft');
+
+        if ($isTranscription) {
+            $code = $lang !== '' ? $lang : ($job['subtitle_language'] ?? '');
+            return $base . ($code !== '' ? '_' . $code : '') . '.' . $ext;
+        }
+
+        return $base . ($lang !== '' ? '_' . $lang : '') . '.' . $ext;
     }
 
     private function langLabel(string $lang): string
