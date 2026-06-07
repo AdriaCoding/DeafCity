@@ -34,7 +34,7 @@
             letter-spacing: 0.05em;
         }
         a.nav-link:hover { color: #999; }
-        main { max-width: 860px; padding: 2rem 2rem 4rem; }
+        main { width: 100%; padding: 2rem clamp(1.5rem, 4vw, 3rem) 4rem; }
 
         /* ── Tabs ── */
         .tabs {
@@ -60,45 +60,46 @@
         .tab-panel.active { display: block; }
 
         /* ── Video list ── */
+        .edition-videos {
+            display: none;
+            padding: 0.5rem;
+            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        }
+        .edition-group.open .edition-videos { display: grid; }
         .video-card {
             display: flex;
-            align-items: center;
-            gap: 0.9rem;
-            padding: 0.75rem 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.5rem;
             background: #111;
             border: 1px solid #1e1e1e;
             border-radius: 6px;
-            margin-bottom: 0.5rem;
             text-decoration: none;
             color: inherit;
         }
-        .video-card:hover { background: #161616; }
+        .video-card:hover { background: #161616; border-color: #2a2a2a; }
         .video-thumb {
-            width: 160px;
-            height: 90px;
+            width: 100%;
+            aspect-ratio: 16 / 9;
             object-fit: cover;
-            border-radius: 3px;
+            border-radius: 4px;
             background: #222;
-            flex-shrink: 0;
         }
         .video-thumb-placeholder {
-            width: 160px;
-            height: 90px;
-            border-radius: 3px;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 4px;
             background: #1a1a1a;
             border: 1px solid #2a2a2a;
-            flex-shrink: 0;
         }
         .video-card-title {
-            flex: 1;
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-        .video-card-arrow {
-            color: #444;
             font-size: 0.85rem;
+            line-height: 1.35;
+            color: #ccc;
+            padding: 0 0.15rem 0.25rem;
         }
-        .video-card:hover .video-card-arrow { color: #888; }
+        .video-card:hover .video-card-title { color: #e0e0e0; }
 
         /* ── Edition groups ── */
         .edition-group {
@@ -141,8 +142,6 @@
             transition: transform 0.15s;
         }
         .edition-group.open .edition-chevron { transform: rotate(180deg); }
-        .edition-videos { display: none; padding: 0 0.5rem 0.5rem; }
-        .edition-group.open .edition-videos { display: block; }
 
         /* ── Config list (editions / sign languages) ── */
         .config-list { margin-bottom: 2rem; }
@@ -329,7 +328,6 @@
                         <div class="video-thumb-placeholder"></div>
                     <?php endif; ?>
                     <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
-                    <span class="video-card-arrow" aria-hidden="true">→</span>
                 </a>
                 <?php endforeach; ?>
                 </div>
