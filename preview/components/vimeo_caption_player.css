@@ -1,9 +1,39 @@
+.preview-vimeo-player-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.preview-vimeo-player-root .caption-lang-picker,
+.preview-vimeo-player-root .caption-box,
+.preview-vimeo-player-root .vpc-transport,
+.preview-vimeo-player-root .vpc-sign-language {
+    flex-shrink: 0;
+}
+.vpc-media-stage {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
 .video-shell {
     position: relative;
+    width: 100%;
     max-width: min(100vw, 1280px);
+    max-height: 100%;
     margin: 0 auto;
     aspect-ratio: 16 / 9;
+    height: auto;
     background: #fff;
+    flex-shrink: 1;
+    min-height: 0;
 }
 .video-shell iframe {
     display: block;
@@ -101,15 +131,18 @@
 .caption-box {
     max-width: min(100vw, 1280px);
     margin: 0 auto;
-    min-height: 4.25em;
-    padding: 0.75em 1rem;
+    min-height: 2.5em;
+    max-height: min(28vh, 9rem);
+    padding: 0.5em 1rem;
     box-sizing: border-box;
     background: #fff;
     color: #007800;
     font-family: 'Roboto', sans-serif;
-    font-size: clamp(1.5rem, 3.8vw, 2.35rem);
+    font-size: clamp(1rem, min(3.8vw, 4.5vh), 2.35rem);
     line-height: 1.45;
     text-align: center;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 .caption-box:empty::after {
     content: '\00a0';

@@ -53,7 +53,7 @@ $logos = [
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Jost:wght@300;400&display=swap" rel="stylesheet">
     <?php endif; ?>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=13">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=14">
     <style>
         /* ── Shared reset ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
