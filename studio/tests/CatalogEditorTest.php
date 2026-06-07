@@ -122,6 +122,45 @@ class CatalogEditorTest extends TestCase
         $this->assertContains('Second', $titles);
     }
 
+    public function test_findVideoByVimeoId_returns_matching_entry(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'My Video',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => ['humor'],
+                'captions' => [],
+            ],
+        ]]);
+
+        $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
+
+        $this->assertNotNull($entry);
+        $this->assertSame('My Video', $entry['title']);
+        $this->assertSame('111', $entry['vimeo_id']);
+    }
+
+    public function test_findVideoByVimeoId_returns_null_when_missing(): void
+    {
+        $this->writeCatalog(['videos' => [
+            ['id' => 'lse_111', 'vimeo_id' => '111', 'title' => 'T', 'sign_language' => 'lse', 'edition' => 'x', 'tags' => [], 'captions' => []],
+        ]]);
+
+        $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('999');
+
+        $this->assertNull($entry);
+    }
+
+    public function test_findVideoByVimeoId_returns_null_for_empty_catalog(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        $this->assertNull((new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111'));
+    }
+
     public function test_returns_referenced_vimeo_ids(): void
     {
         $this->writeCatalog(['videos' => [

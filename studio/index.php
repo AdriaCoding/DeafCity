@@ -69,6 +69,7 @@ match ($action) {
     'add-sign-language'                   => (new CatalogAction($container))->addSignLanguage(),
     'add-edition'                         => (new CatalogAction($container))->addEdition(),
     'continguts',
+    'continguts-video',
     'continguts-save-video',
     'continguts-save-edition-label',
     'continguts-save-sign-language-label',

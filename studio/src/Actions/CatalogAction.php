@@ -38,6 +38,7 @@ class CatalogAction
     {
         match ($action) {
             'continguts'                          => $this->continguts(),
+            'continguts-video'                    => $this->contingutsVideo(),
             'continguts-save-video'               => $this->saveVideo(),
             'continguts-save-edition-label'       => $this->saveLabel('edition'),
             'continguts-save-sign-language-label' => $this->saveLabel('sign_language'),
@@ -49,17 +50,13 @@ class CatalogAction
 
     private function continguts(): never
     {
+        $this->guardNoActiveJob();
         $c = $this->c;
-        if ($c->jobManager->exists()) {
-            header('Location: ' . $c->baseUrl);
-            exit;
-        }
         $catalogFilePath = $c->dataDir . '/catalog.json';
         $catalogData = is_file($catalogFilePath)
             ? (json_decode((string) file_get_contents($catalogFilePath), true) ?? ['videos' => []])
             : ['videos' => []];
         $catalogVideos = $catalogData['videos'] ?? [];
-        $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         $editions = $c->studioConfig->getEditions();
         $signLanguages = $c->studioConfig->getSignLanguages();
         $catalogEditor = $c->catalogEditor();
@@ -67,6 +64,36 @@ class CatalogAction
         $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
         require $this->view('continguts.php');
         exit;
+    }
+
+    private function contingutsVideo(): never
+    {
+        $this->guardNoActiveJob();
+        $c = $this->c;
+        $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
+        if ($vimeoId === '') {
+            http_response_code(404);
+            require $this->view('continguts-video-not-found.php');
+            exit;
+        }
+        $video = $c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            http_response_code(404);
+            require $this->view('continguts-video-not-found.php');
+            exit;
+        }
+        $catalogFilePath = $c->dataDir . '/catalog.json';
+        $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
+        require $this->view('continguts-video.php');
+        exit;
+    }
+
+    private function guardNoActiveJob(): void
+    {
+        if ($this->c->jobManager->exists()) {
+            header('Location: ' . $this->c->baseUrl);
+            exit;
+        }
     }
 
     private function saveVideo(): never

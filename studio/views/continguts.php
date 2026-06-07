@@ -60,22 +60,19 @@
         .tab-panel.active { display: block; }
 
         /* ── Video list ── */
-        .video-row {
-            background: #111;
-            border: 1px solid #1e1e1e;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            overflow: hidden;
-        }
-        .video-row-header {
+        .video-card {
             display: flex;
             align-items: center;
             gap: 0.9rem;
             padding: 0.75rem 1rem;
-            cursor: pointer;
-            user-select: none;
+            background: #111;
+            border: 1px solid #1e1e1e;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            color: inherit;
         }
-        .video-row-header:hover { background: #161616; }
+        .video-card:hover { background: #161616; }
         .video-thumb {
             width: 160px;
             height: 90px;
@@ -92,128 +89,16 @@
             border: 1px solid #2a2a2a;
             flex-shrink: 0;
         }
-        .video-row-title {
+        .video-card-title {
             flex: 1;
             font-size: 0.9rem;
             color: #ccc;
         }
-        .video-row-chevron {
+        .video-card-arrow {
             color: #444;
-            font-size: 0.75rem;
-            transition: transform 0.15s;
-        }
-        .video-row.open .video-row-chevron { transform: rotate(180deg); }
-
-        .video-edit-panel {
-            display: none;
-            padding: 1rem 1rem 1.25rem;
-            border-top: 1px solid #1e1e1e;
-            background: #0d0d0d;
-        }
-        .video-row.open .video-edit-panel { display: block; }
-
-        .field { margin-bottom: 1rem; }
-        label.field-label {
-            display: block;
-            font-size: 0.78rem;
-            color: #777;
-            margin-bottom: 0.3rem;
-        }
-        input.title-input {
-            display: block;
-            width: 100%;
-            padding: 0.55rem 0.75rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #e0e0e0;
-            font-size: 0.9rem;
-            outline: none;
-        }
-        input.title-input:focus { border-color: #555; }
-
-        /* chip tag input */
-        .chip-input-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            padding: 0.5rem 0.6rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            cursor: text;
-            min-height: 2.5rem;
-            align-items: center;
-        }
-        .chip-input-box:focus-within { border-color: #555; }
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: #2a3a5a;
-            color: #9ab8ff;
-            border-radius: 3px;
-            padding: 0.2rem 0.4rem;
-            font-size: 0.8rem;
-        }
-        .chip-remove {
-            background: none;
-            border: none;
-            color: #6080c0;
-            cursor: pointer;
-            padding: 0;
             font-size: 0.85rem;
-            line-height: 1;
         }
-        .chip-remove:hover { color: #e0e0e0; }
-        .chip-text-input {
-            flex: 1;
-            min-width: 100px;
-            background: none;
-            border: none;
-            color: #e0e0e0;
-            font-size: 0.875rem;
-            outline: none;
-        }
-        .tag-suggestions {
-            display: none;
-            position: absolute;
-            background: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 4px;
-            margin-top: 2px;
-            z-index: 10;
-            max-height: 10rem;
-            overflow-y: auto;
-            min-width: 160px;
-        }
-        .tag-suggestion-item {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            color: #ccc;
-        }
-        .tag-suggestion-item:hover, .tag-suggestion-item.focused { background: #2a2a2a; }
-        .chip-wrapper { position: relative; width: 100%; }
-
-        .btn-save {
-            padding: 0.55rem 1.1rem;
-            background: #1a3a6e;
-            border: 1px solid #2a5090;
-            border-radius: 4px;
-            color: #9ab8ff;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-        .btn-save:hover { background: #1f4580; }
-        .btn-save:disabled { opacity: 0.5; cursor: default; }
-        .save-feedback {
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-        }
-        .save-feedback.ok { color: #4a8a4a; }
-        .save-feedback.warn { color: #b58a4a; }
-        .save-feedback.err { color: #a55; }
+        .video-card:hover .video-card-arrow { color: #888; }
 
         /* ── Edition groups ── */
         .edition-group {
@@ -437,40 +322,15 @@
                 <div class="edition-videos">
                 <?php foreach ($videosByEdition[$edId] as $video): ?>
                 <?php $vid = htmlspecialchars($video['vimeo_id'] ?? '', ENT_QUOTES) ?>
-                <div class="video-row" data-vimeo-id="<?= $vid ?>">
-                    <div class="video-row-header">
-                        <?php if (!empty($video['thumbnail_url'])): ?>
-                            <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
-                        <?php else: ?>
-                            <div class="video-thumb-placeholder"></div>
-                        <?php endif; ?>
-                        <span class="video-row-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
-                        <span class="video-row-chevron">▼</span>
-                    </div>
-                    <div class="video-edit-panel">
-                        <div class="field">
-                            <label class="field-label">Títol</label>
-                            <input class="title-input" type="text" value="<?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?>">
-                        </div>
-                        <div class="field">
-                            <label class="field-label">Etiquetes</label>
-                            <div class="chip-wrapper">
-                                <div class="chip-input-box">
-                                    <?php foreach ($video['tags'] ?? [] as $tag): ?>
-                                    <span class="chip" data-tag="<?= htmlspecialchars($tag, ENT_QUOTES) ?>">
-                                        <?= htmlspecialchars($tag) ?>
-                                        <button type="button" class="chip-remove" title="Elimina">×</button>
-                                    </span>
-                                    <?php endforeach; ?>
-                                    <input type="text" class="chip-text-input" placeholder="Afegir etiqueta…" autocomplete="off">
-                                </div>
-                                <div class="tag-suggestions"></div>
-                            </div>
-                        </div>
-                        <button class="btn-save">Desa</button>
-                        <div class="save-feedback"></div>
-                    </div>
-                </div>
+                <a class="video-card" href="?action=continguts-video&amp;vimeo_id=<?= $vid ?>">
+                    <?php if (!empty($video['thumbnail_url'])): ?>
+                        <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
+                    <?php else: ?>
+                        <div class="video-thumb-placeholder"></div>
+                    <?php endif; ?>
+                    <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
+                    <span class="video-card-arrow" aria-hidden="true">→</span>
+                </a>
                 <?php endforeach; ?>
                 </div>
             </div>
@@ -569,9 +429,6 @@
 
 <script>
 (function () {
-    // ── Tag pool from server ──────────────────────────────────────────────────
-    var ALL_TAGS = <?= json_encode($catalogTags, JSON_UNESCAPED_UNICODE) ?>;
-
     // ── Tabs ──────────────────────────────────────────────────────────────────
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -590,163 +447,6 @@
             toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
     });
-
-    // ── Video rows ────────────────────────────────────────────────────────────
-    document.querySelectorAll('.video-row').forEach(function (row) {
-        setupVideoRow(row);
-    });
-
-    function setupVideoRow(row) {
-        var header = row.querySelector('.video-row-header');
-        var panel = row.querySelector('.video-edit-panel');
-        var titleInput = panel.querySelector('.title-input');
-        var chipBox = panel.querySelector('.chip-input-box');
-        var textInput = panel.querySelector('.chip-text-input');
-        var suggestions = panel.querySelector('.tag-suggestions');
-        var saveBtn = panel.querySelector('.btn-save');
-        var feedback = panel.querySelector('.save-feedback');
-        var vimeoId = row.dataset.vimeoId;
-
-        header.addEventListener('click', function () {
-            row.classList.toggle('open');
-        });
-
-        // chip input
-        setupChipInput(chipBox, textInput, suggestions);
-
-        saveBtn.addEventListener('click', function () {
-            feedback.textContent = '';
-            feedback.className = 'save-feedback';
-            saveBtn.disabled = true;
-
-            var chips = chipBox.querySelectorAll('.chip');
-            var tags = Array.from(chips).map(function (c) { return c.dataset.tag; });
-
-            var body = new FormData();
-            body.append('vimeo_id', vimeoId);
-            body.append('title', titleInput.value.trim());
-            tags.forEach(function (t) { body.append('tags[]', t); });
-
-            fetch('?action=continguts-save-video', { method: 'POST', body: body })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (!data.ok) {
-                        feedback.textContent = data.error || 'Error en desar.';
-                        feedback.className = 'save-feedback err';
-                    } else if (data.vimeoWarning) {
-                        feedback.textContent = 'Desat localment, però Vimeo no s\'ha actualitzat: ' + data.vimeoWarning;
-                        feedback.className = 'save-feedback warn';
-                        // Update visible title
-                        row.querySelector('.video-row-title').textContent = titleInput.value.trim();
-                    } else {
-                        feedback.textContent = 'Desat correctament.';
-                        feedback.className = 'save-feedback ok';
-                        row.querySelector('.video-row-title').textContent = titleInput.value.trim();
-                    }
-                })
-                .catch(function () {
-                    feedback.textContent = 'Error de connexió.';
-                    feedback.className = 'save-feedback err';
-                })
-                .finally(function () { saveBtn.disabled = false; });
-        });
-    }
-
-    function setupChipInput(chipBox, textInput, suggestions) {
-        chipBox.addEventListener('click', function (e) {
-            if (e.target === chipBox) textInput.focus();
-        });
-
-        chipBox.querySelectorAll('.chip-remove').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                btn.closest('.chip').remove();
-            });
-        });
-
-        textInput.addEventListener('input', function () {
-            showSuggestions(textInput, chipBox, suggestions);
-        });
-
-        textInput.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                var val = textInput.value.trim().replace(/,$/, '');
-                if (val) addChip(val, chipBox, textInput);
-                hideSuggestions(suggestions);
-            } else if (e.key === 'Backspace' && textInput.value === '') {
-                var chips = chipBox.querySelectorAll('.chip');
-                if (chips.length) chips[chips.length - 1].remove();
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                focusSuggestion(suggestions, 1);
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                focusSuggestion(suggestions, -1);
-            } else if (e.key === 'Escape') {
-                hideSuggestions(suggestions);
-            }
-        });
-
-        textInput.addEventListener('blur', function () {
-            setTimeout(function () { hideSuggestions(suggestions); }, 150);
-        });
-    }
-
-    function addChip(tag, chipBox, textInput) {
-        var existing = Array.from(chipBox.querySelectorAll('.chip')).map(function (c) { return c.dataset.tag; });
-        if (existing.indexOf(tag) !== -1) { textInput.value = ''; return; }
-        var chip = document.createElement('span');
-        chip.className = 'chip';
-        chip.dataset.tag = tag;
-        chip.textContent = tag + ' ';
-        var removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'chip-remove';
-        removeBtn.title = 'Elimina';
-        removeBtn.textContent = '×';
-        removeBtn.addEventListener('click', function () { chip.remove(); });
-        chip.appendChild(removeBtn);
-        chipBox.insertBefore(chip, textInput);
-        textInput.value = '';
-    }
-
-    function showSuggestions(textInput, chipBox, suggestions) {
-        var val = textInput.value.trim().toLowerCase();
-        if (!val) { hideSuggestions(suggestions); return; }
-        var existing = Array.from(chipBox.querySelectorAll('.chip')).map(function (c) { return c.dataset.tag; });
-        var matches = ALL_TAGS.filter(function (t) {
-            return t.toLowerCase().startsWith(val) && existing.indexOf(t) === -1;
-        }).slice(0, 8);
-        if (!matches.length) { hideSuggestions(suggestions); return; }
-        suggestions.innerHTML = '';
-        matches.forEach(function (tag) {
-            var item = document.createElement('div');
-            item.className = 'tag-suggestion-item';
-            item.textContent = tag;
-            item.addEventListener('mousedown', function (e) {
-                e.preventDefault();
-                addChip(tag, chipBox, textInput);
-                hideSuggestions(suggestions);
-            });
-            suggestions.appendChild(item);
-        });
-        suggestions.style.display = 'block';
-    }
-
-    function hideSuggestions(suggestions) {
-        suggestions.style.display = 'none';
-        suggestions.innerHTML = '';
-    }
-
-    function focusSuggestion(suggestions, direction) {
-        var items = suggestions.querySelectorAll('.tag-suggestion-item');
-        if (!items.length) return;
-        var current = suggestions.querySelector('.focused');
-        var idx = current ? Array.from(items).indexOf(current) + direction : (direction > 0 ? 0 : items.length - 1);
-        idx = Math.max(0, Math.min(items.length - 1, idx));
-        if (current) current.classList.remove('focused');
-        items[idx].classList.add('focused');
-    }
 
     // ── Inline label editing ──────────────────────────────────────────────────
     document.querySelectorAll('.config-entry').forEach(function (entry) {

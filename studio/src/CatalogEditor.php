@@ -47,6 +47,24 @@ class CatalogEditor
         fclose($fp);
     }
 
+    /** @return ?array<string, mixed> */
+    public function findVideoByVimeoId(string $vimeoId): ?array
+    {
+        if (!is_file($this->catalogFilePath)) {
+            return null;
+        }
+        $data = json_decode((string) file_get_contents($this->catalogFilePath), true);
+        if (!is_array($data)) {
+            return null;
+        }
+        foreach ($data['videos'] ?? [] as $video) {
+            if (($video['vimeo_id'] ?? '') === $vimeoId) {
+                return $video;
+            }
+        }
+        return null;
+    }
+
     /** @return string[] */
     public function getReferencedEditionIds(): array
     {
