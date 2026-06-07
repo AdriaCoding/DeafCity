@@ -78,6 +78,11 @@ class StudioConfig
         $this->updateConfigEntryLabel('sign_languages', $id, $label);
     }
 
+    public function updateSubtitleLanguageLabel(string $id, string $label): void
+    {
+        $this->updateConfigEntryLabel('subtitle_languages', $id, $label);
+    }
+
     public function removeEdition(string $id, CatalogEditor $catalogEditor): void
     {
         if (in_array($id, $catalogEditor->getReferencedEditionIds(), true)) {
@@ -92,6 +97,14 @@ class StudioConfig
             throw new \RuntimeException("Sign language '$id' is still referenced by one or more catalog videos.");
         }
         $this->removeConfigEntry('sign_languages', $id);
+    }
+
+    public function removeSubtitleLanguage(string $id, CatalogEditor $catalogEditor): void
+    {
+        if (in_array($id, $catalogEditor->getReferencedSubtitleLanguageIds(), true)) {
+            throw new \RuntimeException("Subtitle language '$id' is still referenced by one or more catalog videos.");
+        }
+        $this->removeConfigEntry('subtitle_languages', $id);
     }
 
     private function updateConfigEntryLabel(string $listKey, string $id, string $label): void
@@ -172,6 +185,15 @@ class StudioConfig
         }
 
         $this->appendConfigEntry('sign_languages', $id, $label);
+    }
+
+    public function addSubtitleLanguage(string $id, string $label): void
+    {
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid subtitle language id.');
+        }
+
+        $this->appendConfigEntry('subtitle_languages', $id, $label);
     }
 
     public function getSignLanguages(): array

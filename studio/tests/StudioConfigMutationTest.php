@@ -131,4 +131,55 @@ class StudioConfigMutationTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $config->removeSignLanguage('lse', $catalogEditor);
     }
+
+    // ── updateSubtitleLanguageLabel ───────────────────────────────────────────
+
+    public function test_update_subtitle_language_label_changes_label_not_id(): void
+    {
+        $config = new StudioConfig($this->configPath);
+        $config->updateSubtitleLanguageLabel('es', 'Castellà');
+
+        $reloaded = new StudioConfig($this->configPath);
+        $langs = $reloaded->getSubtitleLanguages();
+        $entry = array_values(array_filter($langs, fn($e) => $e['id'] === 'es'))[0];
+
+        $this->assertSame('es', $entry['id']);
+        $this->assertSame('Castellà', $entry['label']);
+    }
+
+    // ── removeSubtitleLanguage ────────────────────────────────────────────────
+
+    public function test_remove_subtitle_language_deletes_entry_when_unreferenced(): void
+    {
+        $config = new StudioConfig($this->configPath);
+        $config->addSubtitleLanguage('de', 'German');
+
+        $catalogEditor = new CatalogEditor($this->catalogFile);
+        $config->removeSubtitleLanguage('de', $catalogEditor);
+
+        $reloaded = new StudioConfig($this->configPath);
+        $ids = array_column($reloaded->getSubtitleLanguages(), 'id');
+        $this->assertNotContains('de', $ids);
+    }
+
+    public function test_remove_subtitle_language_throws_when_referenced_by_catalog_captions(): void
+    {
+        file_put_contents($this->catalogFile, json_encode(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt']],
+            ],
+        ]]));
+
+        $config = new StudioConfig($this->configPath);
+        $catalogEditor = new CatalogEditor($this->catalogFile);
+
+        $this->expectException(\RuntimeException::class);
+        $config->removeSubtitleLanguage('es', $catalogEditor);
+    }
 }

@@ -216,13 +216,30 @@
             background: #1a1a1a;
             border: 1px solid #2a2a2a;
         }
+        .video-card-meta {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+            padding: 0 0.15rem 0.25rem;
+        }
         .video-card-title {
+            flex: 1;
+            min-width: 0;
             font-size: 0.85rem;
             line-height: 1.35;
             color: #ccc;
-            padding: 0 0.15rem 0.25rem;
         }
         .video-card:hover .video-card-title { color: #e0e0e0; }
+        .video-caption-count {
+            flex-shrink: 0;
+            font-size: 0.72rem;
+            background: #142818;
+            border: 1px solid #2a5a32;
+            border-radius: 10px;
+            padding: 0.1rem 0.45rem;
+            color: #6abf73;
+            line-height: 1.35;
+        }
 
         /* ── Edition groups ── */
         .edition-group {
@@ -252,11 +269,15 @@
         .edition-heading:hover { background: #111; color: #ccc; }
         .edition-count {
             font-size: 0.72rem;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: normal;
             background: #1a1a1a;
             border: 1px solid #2a2a2a;
             border-radius: 10px;
-            padding: 0.1rem 0.5rem;
-            color: #444;
+            padding: 0.15rem 0.55rem;
+            color: #666;
+            white-space: nowrap;
         }
         .edition-chevron {
             margin-left: auto;
@@ -413,6 +434,7 @@
         <button class="tab-btn active" data-tab="videos">Vídeos</button>
         <button class="tab-btn" data-tab="editions">Ciutats</button>
         <button class="tab-btn" data-tab="languages">Llengues de signes</button>
+        <button class="tab-btn" data-tab="subtitle-languages">Llengues orals</button>
     </div>
 
     <!-- ══ Vídeos ══════════════════════════════════════════════════════════ -->
@@ -440,7 +462,8 @@
             <div class="edition-group" data-edition-id="<?= htmlspecialchars($edId, ENT_QUOTES) ?>">
                 <button type="button" class="edition-heading" aria-expanded="false">
                     <?= htmlspecialchars($editionLabelById[$edId] ?? $edId) ?>
-                    <span class="edition-count"><?= count($videosByEdition[$edId]) ?></span>
+                    <?php $editionVideoCount = count($videosByEdition[$edId]); ?>
+                    <span class="edition-count"><?= $editionVideoCount ?> vídeo<?= $editionVideoCount === 1 ? '' : 's' ?></span>
                     <span class="edition-chevron" aria-hidden="true">▼</span>
                 </button>
                 <div class="edition-videos">
@@ -452,7 +475,11 @@
                     <?php else: ?>
                         <div class="video-thumb-placeholder"></div>
                     <?php endif; ?>
-                    <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
+                    <?php $captionCount = count($video['captions'] ?? []); ?>
+                    <div class="video-card-meta">
+                        <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
+                        <span class="video-caption-count" title="<?= $captionCount ?> subtítol<?= $captionCount === 1 ? '' : 's' ?>"><?= $captionCount ?></span>
+                    </div>
                 </a>
                 <?php endforeach; ?>
                 </div>
@@ -545,6 +572,50 @@
             <div class="config-new-actions">
                 <button type="button" class="btn-secondary" id="lang-add-btn-c">Afegir</button>
                 <button type="button" class="btn-secondary" id="lang-cancel-btn-c" style="color:#666">Cancel·la</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Llengues orals ═════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-subtitle-languages">
+        <div class="config-list">
+            <?php foreach ($subtitleLanguages as $sl): ?>
+            <?php $isRef = in_array($sl['id'], $referencedSubtitleLanguageIds, true) ?>
+            <div class="config-entry" data-id="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>" data-type="subtitle-language">
+                <span class="config-entry-label"><?= htmlspecialchars($sl['label']) ?></span>
+                <input class="inline-label-input" type="text" value="<?= htmlspecialchars($sl['label'], ENT_QUOTES) ?>">
+                <span class="config-id"><?= htmlspecialchars($sl['id']) ?></span>
+                <button class="btn-icon edit-btn" title="Edita">✏️</button>
+                <button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>
+                <?php if (!$isRef): ?>
+                <button class="btn-icon danger delete-btn" title="Elimina">🗑</button>
+                <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Add subtitle language -->
+        <button class="add-trigger-btn" id="subtitle-lang-add-trigger">+ Afegir llengua oral…</button>
+        <div class="config-new-panel" id="subtitle-lang-new-panel">
+            <h3>Nova llengua oral</h3>
+            <p class="config-add-error" id="subtitle-lang-add-error" role="alert"></p>
+            <div class="config-new-grid">
+                <div>
+                    <label class="field-label" for="oral_code_c">Codi</label>
+                    <input type="text" id="oral_code_c" class="config-input" autocomplete="off" placeholder="p. ex. de">
+                </div>
+                <div>
+                    <label class="field-label" for="oral_name_c">Nom</label>
+                    <input type="text" id="oral_name_c" class="config-input" autocomplete="off" placeholder="p. ex. Alemany">
+                </div>
+            </div>
+            <p class="config-preview">
+                <strong>Nom:</strong> <span class="value" id="subtitle-lang-preview-label-c">—</span><br>
+                <strong>Identificador:</strong> <span class="value" id="subtitle-lang-preview-id-c">—</span>
+            </p>
+            <div class="config-new-actions">
+                <button type="button" class="btn-secondary" id="subtitle-lang-add-btn-c">Afegir</button>
+                <button type="button" class="btn-secondary" id="subtitle-lang-cancel-btn-c" style="color:#666">Cancel·la</button>
             </div>
         </div>
     </div>
@@ -647,6 +718,24 @@
 <script>
 (function () {
     var EDITION_LABELS = <?= json_encode(array_column($editions, 'label', 'id'), JSON_UNESCAPED_UNICODE) ?>;
+    var CONFIG_ACTIONS = {
+        'edition': {
+            save: 'continguts-save-edition-label',
+            delete: 'continguts-delete-edition'
+        },
+        'sign-language': {
+            save: 'continguts-save-sign-language-label',
+            delete: 'continguts-delete-sign-language'
+        },
+        'subtitle-language': {
+            save: 'continguts-save-subtitle-language-label',
+            delete: 'continguts-delete-subtitle-language'
+        }
+    };
+
+    function configAction(type, kind) {
+        return (CONFIG_ACTIONS[type] || {})[kind] || '';
+    }
 
     // ── Tabs ──────────────────────────────────────────────────────────────────
     document.querySelectorAll('.tab-btn').forEach(function (btn) {
@@ -966,7 +1055,7 @@
             group.innerHTML =
                 '<button type="button" class="edition-heading" aria-expanded="true">' +
                     escHtml(editionLabel || EDITION_LABELS[editionId] || editionId) +
-                    '<span class="edition-count">0</span>' +
+                    '<span class="edition-count">0 vídeos</span>' +
                     '<span class="edition-chevron" aria-hidden="true">▼</span>' +
                 '</button>' +
                 '<div class="edition-videos"></div>';
@@ -978,17 +1067,22 @@
         var card = document.createElement('a');
         card.className = 'video-card';
         card.href = '?action=continguts-video&vimeo_id=' + encodeURIComponent(video.vimeo_id);
+        var captionCount = (video.captions || []).length;
+        var captionLabel = captionCount === 1 ? '1 subtítol' : captionCount + ' subtítols';
+        var metaHtml =
+            '<div class="video-card-meta">' +
+                '<span class="video-card-title">' + escHtml(video.title) + '</span>' +
+                '<span class="video-caption-count" title="' + escHtml(captionLabel) + '">' + captionCount + '</span>' +
+            '</div>';
         if (video.thumbnail_url) {
-            card.innerHTML = '<img class="video-thumb" src="' + escHtml(video.thumbnail_url) + '" alt="" loading="lazy">' +
-                '<span class="video-card-title">' + escHtml(video.title) + '</span>';
+            card.innerHTML = '<img class="video-thumb" src="' + escHtml(video.thumbnail_url) + '" alt="" loading="lazy">' + metaHtml;
         } else {
-            card.innerHTML = '<div class="video-thumb-placeholder"></div>' +
-                '<span class="video-card-title">' + escHtml(video.title) + '</span>';
+            card.innerHTML = '<div class="video-thumb-placeholder"></div>' + metaHtml;
         }
         grid.appendChild(card);
 
         var countEl = group.querySelector('.edition-count');
-        countEl.textContent = String(grid.querySelectorAll('.video-card').length);
+        countEl.textContent = formatEditionVideoCount(grid.querySelectorAll('.video-card').length);
         group.classList.add('open');
         group.querySelector('.edition-heading').setAttribute('aria-expanded', 'true');
     }
@@ -1072,7 +1166,7 @@
         function saveLabel() {
             var newLabel = input.value.trim();
             if (!newLabel) return;
-            var action = type === 'edition' ? 'continguts-save-edition-label' : 'continguts-save-sign-language-label';
+            var action = configAction(type, 'save');
             var body = new FormData();
             body.append('id', id);
             body.append('label', newLabel);
@@ -1113,7 +1207,7 @@
             var type = entry.dataset.type;
             var label = entry.querySelector('.config-entry-label').textContent.trim();
             if (!confirm('Eliminar "' + label + '"? Aquesta acció no es pot desfer.')) return;
-            var action = type === 'edition' ? 'continguts-delete-edition' : 'continguts-delete-sign-language';
+            var action = configAction(type, 'delete');
             var body = new FormData();
             body.append('id', id);
             fetch('?action=' + action, { method: 'POST', body: body })
@@ -1284,6 +1378,82 @@
             .finally(function () { langAddBtn.disabled = false; });
     });
 
+    // ── Add subtitle language ─────────────────────────────────────────────────
+    var subtitleLangTrigger = document.getElementById('subtitle-lang-add-trigger');
+    var subtitleLangPanel = document.getElementById('subtitle-lang-new-panel');
+    var oralCode = document.getElementById('oral_code_c');
+    var oralName = document.getElementById('oral_name_c');
+    var subtitleLangPreviewLabel = document.getElementById('subtitle-lang-preview-label-c');
+    var subtitleLangPreviewId = document.getElementById('subtitle-lang-preview-id-c');
+    var subtitleLangAddError = document.getElementById('subtitle-lang-add-error');
+    var subtitleLangAddBtn = document.getElementById('subtitle-lang-add-btn-c');
+    var subtitleLangCancelBtn = document.getElementById('subtitle-lang-cancel-btn-c');
+
+    subtitleLangTrigger.addEventListener('click', function () {
+        subtitleLangPanel.classList.add('is-open');
+        oralCode.focus();
+    });
+    subtitleLangCancelBtn.addEventListener('click', function () {
+        subtitleLangPanel.classList.remove('is-open');
+        oralCode.value = '';
+        oralName.value = '';
+        subtitleLangPreviewLabel.textContent = '—';
+        subtitleLangPreviewId.textContent = '—';
+        subtitleLangAddError.textContent = '';
+    });
+
+    function updateSubtitleLangPreview() {
+        var code = oralCode.value.trim();
+        var name = oralName.value.trim();
+        if (!code || !name) {
+            subtitleLangPreviewLabel.textContent = '—';
+            subtitleLangPreviewId.textContent = '—';
+            return;
+        }
+        subtitleLangPreviewLabel.textContent = name;
+        subtitleLangPreviewId.textContent = slugify(code);
+    }
+    oralCode.addEventListener('input', updateSubtitleLangPreview);
+    oralName.addEventListener('input', updateSubtitleLangPreview);
+
+    subtitleLangAddBtn.addEventListener('click', function () {
+        subtitleLangAddError.textContent = '';
+        var code = oralCode.value.trim();
+        var name = oralName.value.trim();
+        if (!code || !name) {
+            subtitleLangAddError.textContent = 'Indiqueu un codi i un nom.';
+            return;
+        }
+        subtitleLangAddBtn.disabled = true;
+        var body = new FormData();
+        body.append('subtitle_language_code', code);
+        body.append('subtitle_language_name', name);
+        fetch('?action=add-subtitle-language', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) {
+                    subtitleLangAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la llengua oral.';
+                    return;
+                }
+                var list = document.querySelector('#tab-subtitle-languages .config-list');
+                var div = document.createElement('div');
+                div.className = 'config-entry';
+                div.dataset.id = data.id;
+                div.dataset.type = 'subtitle-language';
+                div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
+                    '<input class="inline-label-input" type="text" value="' + escHtml(data.label) + '">' +
+                    '<span class="config-id">' + escHtml(data.id) + '</span>' +
+                    '<button class="btn-icon edit-btn" title="Edita">✏️</button>' +
+                    '<button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>' +
+                    '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
+                list.appendChild(div);
+                attachConfigEntryListeners(div);
+                subtitleLangCancelBtn.click();
+            })
+            .catch(function () { subtitleLangAddError.textContent = 'Error de connexió.'; })
+            .finally(function () { subtitleLangAddBtn.disabled = false; });
+    });
+
     // ── Helpers ───────────────────────────────────────────────────────────────
     function attachConfigEntryListeners(entry) {
         var label = entry.querySelector('.config-entry-label');
@@ -1306,7 +1476,7 @@
         function saveLabel() {
             var newLabel = input.value.trim();
             if (!newLabel) return;
-            var action = type === 'edition' ? 'continguts-save-edition-label' : 'continguts-save-sign-language-label';
+            var action = configAction(type, 'save');
             var body = new FormData();
             body.append('id', id);
             body.append('label', newLabel);
@@ -1342,7 +1512,7 @@
             deleteBtn.addEventListener('click', function () {
                 var labelText = label.textContent.trim();
                 if (!confirm('Eliminar "' + labelText + '"? Aquesta acció no es pot desfer.')) return;
-                var delAction = type === 'edition' ? 'continguts-delete-edition' : 'continguts-delete-sign-language';
+                var delAction = configAction(type, 'delete');
                 var body = new FormData();
                 body.append('id', id);
                 fetch('?action=' + delAction, { method: 'POST', body: body })
@@ -1361,6 +1531,10 @@
         return normalized.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '');
+    }
+
+    function formatEditionVideoCount(count) {
+        return count + (count === 1 ? ' vídeo' : ' vídeos');
     }
 
     function escHtml(str) {

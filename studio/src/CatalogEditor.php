@@ -187,6 +187,28 @@ class CatalogEditor
     }
 
     /** @return string[] */
+    public function getReferencedSubtitleLanguageIds(): array
+    {
+        if (!is_file($this->catalogFilePath)) {
+            return [];
+        }
+        $data = json_decode((string) file_get_contents($this->catalogFilePath), true);
+        if (!is_array($data)) {
+            return [];
+        }
+        $seen = [];
+        foreach ($data['videos'] ?? [] as $video) {
+            foreach ($video['captions'] ?? [] as $caption) {
+                $lang = $caption['lang'] ?? '';
+                if ($lang !== '') {
+                    $seen[$lang] = true;
+                }
+            }
+        }
+        return array_keys($seen);
+    }
+
+    /** @return string[] */
     private function collectField(string $field): array
     {
         if (!is_file($this->catalogFilePath)) {

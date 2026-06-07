@@ -8,6 +8,7 @@ use Studio\CatalogVideoAddHandler;
 use Studio\Container;
 use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
+use Studio\SubtitleLanguageAddHandler;
 use Studio\VideoEditHandler;
 use Studio\VimeoIdParser;
 use Studio\VimeoVideoResolver;
@@ -38,6 +39,17 @@ class CatalogAction
         exit;
     }
 
+    public function addSubtitleLanguage(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $result = (new SubtitleLanguageAddHandler($this->c->studioConfig))->handle(
+            (string) ($_POST['subtitle_language_code'] ?? ''),
+            (string) ($_POST['subtitle_language_name'] ?? ''),
+        );
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     public function handle(string $action): never
     {
         match ($action) {
@@ -46,10 +58,12 @@ class CatalogAction
             'continguts-resolve-vimeo'            => $this->resolveVimeo(),
             'continguts-add-video'                => $this->addVideo(),
             'continguts-save-video'               => $this->saveVideo(),
-            'continguts-save-edition-label'       => $this->saveLabel('edition'),
-            'continguts-save-sign-language-label' => $this->saveLabel('sign_language'),
-            'continguts-delete-edition'           => $this->deleteItem('edition'),
-            'continguts-delete-sign-language'     => $this->deleteItem('sign_language'),
+            'continguts-save-edition-label'          => $this->saveLabel('edition'),
+            'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
+            'continguts-save-subtitle-language-label' => $this->saveLabel('subtitle_language'),
+            'continguts-delete-edition'              => $this->deleteItem('edition'),
+            'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
+            'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
             default                               => (function () { http_response_code(404); exit; })(),
         };
     }
@@ -65,9 +79,11 @@ class CatalogAction
         $catalogVideos = $catalogData['videos'] ?? [];
         $editions = $c->studioConfig->getEditions();
         $signLanguages = $c->studioConfig->getSignLanguages();
+        $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         $catalogEditor = $c->catalogEditor();
         $referencedEditionIds = $catalogEditor->getReferencedEditionIds();
         $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
+        $referencedSubtitleLanguageIds = $catalogEditor->getReferencedSubtitleLanguageIds();
         require $this->view('continguts.php');
         exit;
     }
@@ -249,11 +265,12 @@ class CatalogAction
             exit;
         }
         try {
-            if ($type === 'edition') {
-                $this->c->studioConfig->updateEditionLabel($id, $label);
-            } else {
-                $this->c->studioConfig->updateSignLanguageLabel($id, $label);
-            }
+            match ($type) {
+                'edition' => $this->c->studioConfig->updateEditionLabel($id, $label),
+                'sign_language' => $this->c->studioConfig->updateSignLanguageLabel($id, $label),
+                'subtitle_language' => $this->c->studioConfig->updateSubtitleLanguageLabel($id, $label),
+                default => throw new \InvalidArgumentException('Unknown label type.'),
+            };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
         } catch (\Throwable $e) {
             http_response_code(422);
@@ -272,11 +289,12 @@ class CatalogAction
             exit;
         }
         try {
-            if ($type === 'edition') {
-                $this->c->studioConfig->removeEdition($id, $this->c->catalogEditor());
-            } else {
-                $this->c->studioConfig->removeSignLanguage($id, $this->c->catalogEditor());
-            }
+            match ($type) {
+                'edition' => $this->c->studioConfig->removeEdition($id, $this->c->catalogEditor()),
+                'sign_language' => $this->c->studioConfig->removeSignLanguage($id, $this->c->catalogEditor()),
+                'subtitle_language' => $this->c->studioConfig->removeSubtitleLanguage($id, $this->c->catalogEditor()),
+                default => throw new \InvalidArgumentException('Unknown delete type.'),
+            };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
         } catch (\Throwable $e) {
             http_response_code(422);

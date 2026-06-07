@@ -238,4 +238,37 @@ class CatalogEditorTest extends TestCase
         $this->assertContains('2021-b', $editor->getReferencedEditionIds());
         $this->assertContains('lse', $editor->getReferencedSignLanguageIds());
     }
+
+    public function test_returns_referenced_subtitle_language_ids_from_captions(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-a',
+                'tags' => [],
+                'captions' => [
+                    ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt'],
+                    ['lang' => 'en', 'label' => 'English', 'file' => '111.en.vtt'],
+                ],
+            ],
+            [
+                'id' => 'lse_222',
+                'vimeo_id' => '222',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2021-b',
+                'tags' => [],
+                'captions' => [
+                    ['lang' => 'ca', 'label' => 'Catalan', 'file' => '222.ca.vtt'],
+                ],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+
+        $this->assertEqualsCanonicalizing(['es', 'en', 'ca'], $editor->getReferencedSubtitleLanguageIds());
+    }
 }
