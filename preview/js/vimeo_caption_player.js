@@ -180,8 +180,10 @@
         /** @type {unknown} */
         var vimeoPlayer = null;
 
-        /** @type {HTMLElement | null} */
-        var captionDynamicHost = root.querySelector('.vpc-caption-dynamic-btns');
+        /** @type {HTMLSelectElement | null} */
+        var captionLangSelect = /** @type {HTMLSelectElement | null} */ (
+            root.querySelector('.vpc-caption-lang-select')
+        );
 
         function recomputeFilteredMasterIndices() {
             if (
@@ -268,30 +270,28 @@
 
         /** @returns {HTMLElement | null} */
         function captionPickerOuter() {
-            return root.querySelector('.vpc-caption-lang-dynamic') || root.querySelector('.caption-lang-picker');
+            return root.querySelector('.vpc-caption-lang-filter');
         }
 
-        function rebuildDynamicCaptionButtons() {
-            if (!captionPickerDynamic || !captionDynamicHost) return;
-
-            captionDynamicHost.innerHTML = '';
+        function rebuildDynamicCaptionSelect() {
+            if (!captionPickerDynamic || !captionLangSelect) return;
 
             var tracks = currentItemCueTracksRaw();
+            var prevValue = captionLangSelect.value;
+
+            captionLangSelect.innerHTML = '';
 
             tracks.forEach(function (t, i) {
                 if (!t || typeof t.label === 'undefined') return;
-                var b = document.createElement('button');
-                b.type = 'button';
-                b.className = 'caption-lang-btn';
-                b.setAttribute('data-track-index', String(i));
-                b.textContent = t.label || '';
-                var headingEl = root.querySelector('.caption-lang-picker-label');
-                if (headingEl && headingEl.id) {
-                    b.setAttribute('aria-describedby', headingEl.id);
-                }
-                b.setAttribute('aria-controls', captionBoxId);
-                captionDynamicHost.appendChild(b);
+                var opt = document.createElement('option');
+                opt.value = String(i);
+                opt.textContent = t.label || '';
+                captionLangSelect.appendChild(opt);
             });
+
+            if (prevValue !== '' && captionLangSelect.querySelector('option[value="' + prevValue + '"]')) {
+                captionLangSelect.value = prevValue;
+            }
         }
 
         function updateCaptionPickerVisibility() {
@@ -316,13 +316,17 @@
             return tier[ix].events || [];
         }
 
+        function syncCaptionSelectValue(index) {
+            if (!captionLangSelect) return;
+            if (captionLangSelect.options.length === 0) return;
+            var safeIndex = Math.min(Math.max(index, 0), captionLangSelect.options.length - 1);
+            captionLangSelect.value = String(safeIndex);
+        }
+
         function setActiveCaptionTrack(index) {
             var cueTracks = currentItemCueTracksRaw();
             if (cueTracks.length === 0) {
                 activeCaptionTrackIndex = 0;
-                root.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
-                    btn.setAttribute('aria-pressed', 'false');
-                });
                 syncCaptionBox(captionBoxId, [], 0);
                 return;
             }
@@ -332,21 +336,16 @@
                 stickyCaptionLabel = cueTracks[index].label;
             }
 
-            root.querySelectorAll('.caption-lang-btn').forEach(function (btn) {
-                var idx = parseInt(btn.getAttribute('data-track-index'), 10);
-                btn.setAttribute('aria-pressed', idx === index ? 'true' : 'false');
-            });
+            syncCaptionSelectValue(index);
             syncAllCaptions();
         }
 
-        root.addEventListener('click', function (ev) {
-            var tgt = /** @type {HTMLElement} */ (ev.target);
-            if (!tgt.closest) return;
-            var btn = tgt.closest('.caption-lang-btn');
-            if (!btn || !root.contains(btn)) return;
-            var idx = parseInt(btn.getAttribute('data-track-index'), 10);
-            if (!isNaN(idx)) setActiveCaptionTrack(idx);
-        });
+        if (captionLangSelect) {
+            captionLangSelect.addEventListener('change', function () {
+                var idx = parseInt(captionLangSelect.value, 10);
+                if (!isNaN(idx)) setActiveCaptionTrack(idx);
+            });
+        }
 
         function syncVimeoCaptionBoxes(seconds) {
             var ms = seconds * 1000;
@@ -565,7 +564,7 @@
             }
 
             function applyLoadedVideoUi() {
-                if (captionPickerDynamic) rebuildDynamicCaptionButtons();
+                if (captionPickerDynamic) rebuildDynamicCaptionSelect();
                 var cueTracks = currentItemCueTracksRaw();
                 var trackIx = pickStickyTrackIndex(cueTracks, stickyCaptionLabel);
                 setActiveCaptionTrack(trackIx);

@@ -316,7 +316,10 @@ if ($useSignLanguageFilter) {
         $signLangDefault = (string) $signLangOptionsList[0]['value'];
     }
 }
-$signLangSelectId = $idBase . '__sign-language-select';
+$signLangSelectId   = $idBase . '__sign-language-select';
+$captionSelectId    = $idBase . '__caption-lang-select';
+$showCaptionFilter  = $useSignLanguageFilter || count($captionTracks) > 0;
+$showLangFiltersRow = $showCaptionFilter || $useSignLanguageFilter;
 
 $config = array(
     'iframeId'             => $iframeId,
@@ -339,36 +342,6 @@ $showPlaylistNav = count($playlistNormalized) > 1;
 ?>
 <div class="<?php echo htmlspecialchars($wrapperClass, ENT_QUOTES, 'UTF-8'); ?>">
 <script type="application/json" class="vpc-config"><?php echo $configJson; ?></script>
-
-<?php if ($useSignLanguageFilter): ?>
-    <div
-        id="<?php echo htmlspecialchars($idBase . '__caption-picker', ENT_QUOTES, 'UTF-8'); ?>"
-        class="caption-lang-picker vpc-caption-lang-dynamic vpc-caption-picker-hidden"
-        role="group"
-        aria-label="<?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>"
-    >
-        <span class="caption-lang-picker-label" id="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>">
-            <?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>
-        </span>
-        <span class="vpc-caption-dynamic-btns" aria-live="polite"></span>
-    </div>
-<?php elseif (count($captionTracks) > 0): ?>
-    <div class="caption-lang-picker" role="group" aria-label="<?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>">
-        <span class="caption-lang-picker-label" id="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>">
-            <?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>
-        </span>
-        <?php foreach ($captionTracks as $i => $track): ?>
-        <button
-            type="button"
-            class="caption-lang-btn"
-            data-track-index="<?php echo (int) $i; ?>"
-            aria-pressed="<?php echo $i === 0 ? 'true' : 'false'; ?>"
-            aria-controls="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>"
-            aria-describedby="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>"
-        ><?php echo htmlspecialchars($track['label'], ENT_QUOTES, 'UTF-8'); ?></button>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
 
     <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box"></div>
     <div class="vpc-media-stage">
@@ -437,18 +410,44 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             aria-label="Restart video from the beginning"
         ><span class="material-icons" aria-hidden="true">replay</span></button>
     </div>
-    <?php if ($useSignLanguageFilter): ?>
-    <div class="vpc-sign-language" role="group" aria-label="Sign language">
-        <label class="vpc-sign-language-label" for="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>">Sign language</label>
-        <select id="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>" class="vpc-sign-lang-select" autocomplete="off">
-            <?php foreach ($signLangOptionsList as $opt): ?>
-                <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
-            <option
-                value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
-                <?php echo (string) $opt['value'] === $signLangDefault ? ' selected' : ''; ?>
-            ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></option>
-            <?php endforeach; ?>
-        </select>
+    <?php if ($showLangFiltersRow): ?>
+    <div class="vpc-lang-filters" role="group" aria-label="Language filters">
+        <?php if ($showCaptionFilter): ?>
+        <div
+            class="vpc-lang-filter vpc-caption-lang-filter<?php echo $useSignLanguageFilter ? ' vpc-caption-lang-dynamic vpc-caption-picker-hidden' : ''; ?>"
+            role="group"
+            aria-label="<?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>"
+        >
+            <label class="vpc-lang-filter-label" id="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>" for="<?php echo htmlspecialchars($captionSelectId, ENT_QUOTES, 'UTF-8'); ?>">
+                <?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>
+            </label>
+            <select
+                id="<?php echo htmlspecialchars($captionSelectId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-lang-select vpc-caption-lang-select"
+                aria-controls="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>"
+                aria-labelledby="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>"
+                autocomplete="off"
+            ><?php if (!$useSignLanguageFilter): ?>
+                <?php foreach ($captionTracks as $i => $track): ?>
+                <option value="<?php echo (int) $i; ?>"><?php echo htmlspecialchars($track['label'], ENT_QUOTES, 'UTF-8'); ?></option>
+                <?php endforeach; ?>
+            <?php endif; ?></select>
+        </div>
+        <?php endif; ?>
+        <?php if ($useSignLanguageFilter): ?>
+        <div class="vpc-lang-filter vpc-sign-language-filter" role="group" aria-label="Sign language">
+            <label class="vpc-lang-filter-label" for="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>">Sign language</label>
+            <select id="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>" class="vpc-lang-select vpc-sign-lang-select" autocomplete="off">
+                <?php foreach ($signLangOptionsList as $opt): ?>
+                    <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
+                <option
+                    value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
+                    <?php echo (string) $opt['value'] === $signLangDefault ? ' selected' : ''; ?>
+                ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <?php endif; ?>
     </div>
     <?php endif; ?>
 </div>

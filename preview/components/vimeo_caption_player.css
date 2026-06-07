@@ -9,10 +9,9 @@
     overflow: hidden;
     box-sizing: border-box;
 }
-.preview-vimeo-player-root .caption-lang-picker,
 .preview-vimeo-player-root .caption-box,
 .preview-vimeo-player-root .vpc-transport,
-.preview-vimeo-player-root .vpc-sign-language {
+.preview-vimeo-player-root .vpc-lang-filters {
     flex-shrink: 0;
 }
 .vpc-media-stage {
@@ -147,42 +146,49 @@
 .caption-box:empty::after {
     content: '\00a0';
 }
-.caption-lang-picker {
+.vpc-lang-filters {
     max-width: min(100vw, 1280px);
-    margin: 0 auto;
-    padding: 0.75rem 1rem 0;
+    margin: 0.35rem auto 0;
+    padding: 0.5rem 1rem;
     box-sizing: border-box;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 0.5rem;
     justify-content: center;
     align-items: center;
 }
-.caption-lang-picker-label {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.875rem;
-    color: #333;
-    margin-right: 0.25rem;
+.vpc-lang-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
-.caption-lang-picker button {
+.vpc-lang-filter-label {
     font-family: 'Roboto', sans-serif;
-    font-size: 0.875rem;
-    padding: 0.35em 0.9em;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #f5f5f5;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #222;
+    white-space: nowrap;
+}
+.vpc-lang-select {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9375rem;
+    min-width: min(100%, 11rem);
+    max-width: 14rem;
+    padding: 0.45em 2em 0.45em 0.75em;
+    border: 1px solid #999;
+    border-radius: 8px;
+    background: #fafafa;
     color: #222;
     cursor: pointer;
 }
-.caption-lang-picker button:hover {
-    background: #eaeaea;
+.vpc-lang-select:focus-visible {
+    outline: 2px solid #007800;
+    outline-offset: 2px;
 }
-.caption-lang-picker button[aria-pressed="true"] {
-    background: #007800;
-    border-color: #006000;
-    color: #fff;
-}
-.caption-lang-picker.vpc-caption-picker-hidden {
+.vpc-caption-lang-filter.vpc-caption-picker-hidden {
     display: none;
 }
 
@@ -296,35 +302,3 @@
     outline-offset: 2px;
 }
 
-.vpc-sign-language {
-    max-width: min(100vw, 1280px);
-    margin: 0.35rem auto 0;
-    padding: 0.5rem 1rem;
-    box-sizing: border-box;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    justify-content: center;
-    align-items: center;
-}
-.vpc-sign-language-label {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    color: #222;
-}
-.vpc-sign-lang-select {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.9375rem;
-    min-width: min(100%, 22rem);
-    padding: 0.45em 2em 0.45em 0.75em;
-    border: 1px solid #999;
-    border-radius: 8px;
-    background: #fafafa;
-    color: #222;
-    cursor: pointer;
-}
-.vpc-sign-lang-select:focus-visible {
-    outline: 2px solid #007800;
-    outline-offset: 2px;
-}
