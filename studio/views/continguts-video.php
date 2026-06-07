@@ -185,15 +185,44 @@
         .caption-table td {
             padding: 0.4rem 0.5rem 0.4rem 0;
             color: #888;
-            vertical-align: top;
+            vertical-align: middle;
         }
-        .caption-table td.caption-source {
-            color: #aaa;
-            font-weight: 500;
-        }
-        .caption-table tbody tr + tr td {
+.caption-table tbody tr + tr td {
             border-top: 1px solid #1e1e1e;
         }
+        .caption-master-radio {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1rem;
+            height: 1rem;
+            border: 1.5px solid #444;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            background: #1a1a1a;
+            transition: border-color 0.15s;
+        }
+        .caption-master-radio:checked {
+            border-color: #4a8a4a;
+            background: #4a8a4a;
+        }
+        .caption-master-radio:checked::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 50%;
+            background: #0a0a0a;
+        }
+        .caption-master-radio:hover:not(:checked) { border-color: #666; }
+        td.caption-master-cell { width: 2rem; text-align: center; }
+        .caption-master-feedback {
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            min-height: 1em;
+        }
+        .caption-master-feedback.ok { color: #4a8a4a; }
+        .caption-master-feedback.err { color: #a55; }
 
         .caption-upload-row {
             display: flex;
@@ -299,12 +328,13 @@
             foreach ($subtitleLanguages as $sl) {
                 $langLabels[$sl['id']] = $sl['label'];
             }
+            $masterCaptionLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
             ?>
-            <table class="caption-table">
+            <table class="caption-table" id="caption-tracks-table">
                 <thead>
                     <tr>
+                        <th class="caption-master-cell">Master</th>
                         <th>Idioma</th>
-                        <th>Fitxer original</th>
                         <th>Fitxer al servidor</th>
                     </tr>
                 </thead>
@@ -312,13 +342,23 @@
                     <?php foreach ($video['captions'] as $caption): ?>
                     <?php $langId = $caption['lang'] ?? ''; ?>
                     <tr>
+                        <td class="caption-master-cell">
+                            <input
+                                type="radio"
+                                class="caption-master-radio"
+                                name="master_caption"
+                                value="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"
+                                <?= $langId === $masterCaptionLang ? 'checked' : '' ?>
+                                title="Definir com a subtítol mestre"
+                            >
+                        </td>
                         <td><?= htmlspecialchars($langLabels[$langId] ?? $langId, ENT_QUOTES) ?></td>
-                        <td class="caption-source"><?= htmlspecialchars($caption['label'] ?? '', ENT_QUOTES) ?></td>
                         <td><?= htmlspecialchars($caption['file'] ?? '', ENT_QUOTES) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <div class="caption-master-feedback" id="master-caption-feedback"></div>
             <?php endif; ?>
             <div class="caption-uploads"></div>
             <button type="button" class="btn-add-caption">Afegir fitxer</button>
@@ -349,6 +389,7 @@
     setupChipInput(chipBox, textInput, suggestions);
     addCaptionRow();
     addCaptionBtn.addEventListener('click', addCaptionRow);
+    setupMasterCaptionSelector();
 
     saveBtn.addEventListener('click', function () {
         feedback.textContent = '';
@@ -378,14 +419,19 @@
                 if (!data.ok) {
                     feedback.textContent = data.error || 'Error en desar.';
                     feedback.className = 'save-feedback err';
-                } else if (data.vimeoWarning) {
-                    feedback.textContent = 'Desat localment, però Vimeo no s\'ha actualitzat: ' + data.vimeoWarning;
-                    feedback.className = 'save-feedback warn';
-                    heroTitle.textContent = titleInput.value.trim();
                 } else {
-                    feedback.textContent = 'Desat correctament.';
-                    feedback.className = 'save-feedback ok';
+                    if (data.vimeoWarning) {
+                        feedback.textContent = 'Desat localment, però Vimeo no s\'ha actualitzat: ' + data.vimeoWarning;
+                        feedback.className = 'save-feedback warn';
+                    } else {
+                        feedback.textContent = 'Desat correctament.';
+                        feedback.className = 'save-feedback ok';
+                    }
                     heroTitle.textContent = titleInput.value.trim();
+                    if (data.captions) {
+                        updateCaptionTable(data.captions, data.masterCaptionLang || '');
+                        resetCaptionUploads();
+                    }
                 }
             })
             .catch(function () {
@@ -489,6 +535,111 @@
         idx = Math.max(0, Math.min(items.length - 1, idx));
         if (current) current.classList.remove('focused');
         items[idx].classList.add('focused');
+    }
+
+    var langLabels = {};
+    SUBTITLE_LANGUAGES.forEach(function (lang) {
+        langLabels[lang.id] = lang.label;
+    });
+
+    function escapeHtml(text) {
+        var el = document.createElement('span');
+        el.textContent = text;
+        return el.innerHTML;
+    }
+
+    function updateCaptionTable(captions, masterLang) {
+        if (!captions || !captions.length) return;
+
+        var field = captionUploads.parentElement;
+        var table = field.querySelector('.caption-table');
+        var isNew = !table;
+        if (isNew) {
+            table = document.createElement('table');
+            table.className = 'caption-table';
+            table.id = 'caption-tracks-table';
+            table.innerHTML =
+                '<thead><tr>' +
+                '<th class="caption-master-cell">Master</th>' +
+                '<th>Idioma</th><th>Fitxer al servidor</th>' +
+                '</tr></thead><tbody></tbody>';
+            field.insertBefore(table, captionUploads);
+            var fb = document.createElement('div');
+            fb.className = 'caption-master-feedback';
+            fb.id = 'master-caption-feedback';
+            field.insertBefore(fb, captionUploads);
+        }
+
+        var currentMaster = masterLang || (function () {
+            var checked = table.querySelector('.caption-master-radio:checked');
+            return checked ? checked.value : (captions[0] ? captions[0].lang : '');
+        })();
+
+        var tbody = table.querySelector('tbody');
+        tbody.innerHTML = '';
+        captions.forEach(function (caption) {
+            var langId = caption.lang || '';
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td class="caption-master-cell">' +
+                '<input type="radio" class="caption-master-radio" name="master_caption"' +
+                ' value="' + escapeHtml(langId) + '"' +
+                (langId === currentMaster ? ' checked' : '') +
+                ' title="Definir com a subtítol mestre">' +
+                '</td>' +
+                '<td>' + escapeHtml(langLabels[langId] || langId) + '</td>' +
+                '<td>' + escapeHtml(caption.file || '') + '</td>';
+            tbody.appendChild(tr);
+        });
+
+        if (isNew) {
+            setupMasterCaptionSelector();
+        } else {
+            table.querySelectorAll('.caption-master-radio').forEach(function (radio) {
+                radio.addEventListener('change', onMasterCaptionChange);
+            });
+        }
+    }
+
+    function setupMasterCaptionSelector() {
+        var table = document.getElementById('caption-tracks-table');
+        if (!table) return;
+        table.querySelectorAll('.caption-master-radio').forEach(function (radio) {
+            radio.addEventListener('change', onMasterCaptionChange);
+        });
+    }
+
+    function onMasterCaptionChange(e) {
+        var radio = e.target;
+        var lang = radio.value;
+        var feedbackEl = document.getElementById('master-caption-feedback');
+        if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = 'caption-master-feedback'; }
+
+        var body = new FormData();
+        body.append('vimeo_id', vimeoId);
+        body.append('lang', lang);
+
+        fetch('?action=continguts-set-master-caption', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!feedbackEl) return;
+                if (data.ok) {
+                    feedbackEl.textContent = 'Subtítol mestre actualitzat.';
+                    feedbackEl.className = 'caption-master-feedback ok';
+                    setTimeout(function () { feedbackEl.textContent = ''; feedbackEl.className = 'caption-master-feedback'; }, 2500);
+                } else {
+                    feedbackEl.textContent = data.error || 'Error en desar.';
+                    feedbackEl.className = 'caption-master-feedback err';
+                }
+            })
+            .catch(function () {
+                if (feedbackEl) { feedbackEl.textContent = 'Error de connexió.'; feedbackEl.className = 'caption-master-feedback err'; }
+            });
+    }
+
+    function resetCaptionUploads() {
+        captionUploads.innerHTML = '';
+        addCaptionRow();
     }
 
     function addCaptionRow() {

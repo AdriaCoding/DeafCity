@@ -135,10 +135,61 @@ class CatalogEditor
                     $byLang[$lang] = $caption;
                 }
             }
+            $hadCaptions = $byLang !== [];
             foreach ($newCaptions as $caption) {
                 $byLang[$caption['lang']] = $caption;
             }
             $entry['captions'] = array_values($byLang);
+            if (!$hadCaptions && $entry['captions'] !== [] && !isset($entry['master_caption_lang'])) {
+                $entry['master_caption_lang'] = $entry['captions'][0]['lang'];
+            }
+            $found = true;
+            break;
+        }
+        unset($entry);
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Video $videoId not found in catalog.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+
+    public function setMasterCaptionLang(string $videoId, string $lang): void
+    {
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog) || !isset($catalog['videos'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid catalog JSON.');
+        }
+
+        $found = false;
+        foreach ($catalog['videos'] as &$entry) {
+            if (($entry['vimeo_id'] ?? '') !== $videoId) {
+                continue;
+            }
+            $langs = array_column($entry['captions'] ?? [], 'lang');
+            if (!in_array($lang, $langs, true)) {
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                throw new \InvalidArgumentException("Caption lang '$lang' not found for video $videoId.");
+            }
+            $entry['master_caption_lang'] = $lang;
             $found = true;
             break;
         }

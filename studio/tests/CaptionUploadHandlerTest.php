@@ -66,6 +66,10 @@ class CaptionUploadHandlerTest extends TestCase
         $this->assertCount(1, $entry['captions']);
         $this->assertSame('es', $entry['captions'][0]['lang']);
         $this->assertSame('111.es.vtt', $entry['captions'][0]['file']);
+
+        $this->assertCount(1, $result['captions']);
+        $this->assertSame('es', $result['captions'][0]['lang']);
+        $this->assertSame('111.es.vtt', $result['captions'][0]['file']);
     }
 
     public function test_rejects_invalid_language(): void

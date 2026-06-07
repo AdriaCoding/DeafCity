@@ -16,7 +16,7 @@ class CaptionUploadHandler
 
     /**
      * @param list<array{lang: string, tmpPath: string, originalName: string}> $uploads
-     * @return array{ok: bool, error?: string, vimeoWarnings: string[]}
+     * @return array{ok: bool, error?: string, vimeoWarnings: string[], captions?: list<array{lang: string, label: string, file: string}>}
      */
     public function handle(string $vimeoId, array $uploads): array
     {
@@ -79,6 +79,8 @@ class CaptionUploadHandler
         return [
             'ok' => true,
             'vimeoWarnings' => $this->syncVimeoCaptions($vimeoId, $allCaptions),
+            'captions' => $allCaptions,
+            'masterCaptionLang' => $video['master_caption_lang'] ?? ($allCaptions[0]['lang'] ?? ''),
         ];
     }
 

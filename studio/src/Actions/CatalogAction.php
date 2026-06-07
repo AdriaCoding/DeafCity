@@ -63,6 +63,7 @@ class CatalogAction
             'continguts-resolve-vimeo'            => $this->resolveVimeo(),
             'continguts-add-video'                => $this->addVideo(),
             'continguts-save-video'               => $this->saveVideo(),
+            'continguts-set-master-caption'       => $this->setMasterCaption(),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
             'continguts-delete-edition'              => $this->deleteItem('edition'),
@@ -224,6 +225,11 @@ class CatalogAction
                     ? $result['vimeoWarning'] . ' ' . $captionVimeoWarning
                     : $captionVimeoWarning;
             }
+
+            if (isset($captionResult['captions'])) {
+                $result['captions'] = $captionResult['captions'];
+                $result['masterCaptionLang'] = $captionResult['masterCaptionLang'] ?? '';
+            }
         }
 
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -256,6 +262,29 @@ class CatalogAction
         }
 
         return ['uploads' => $uploads, 'error' => null];
+    }
+
+    private function setMasterCaption(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        $lang = trim((string) ($_POST['lang'] ?? ''));
+        if ($vimeoId === '' || $lang === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.']);
+            exit;
+        }
+        try {
+            $this->c->catalogEditor()->setMasterCaptionLang($vimeoId, $lang);
+            echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+        } catch (\InvalidArgumentException $e) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['ok' => false, 'error' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+        }
+        exit;
     }
 
     private function saveLabel(string $type): never
