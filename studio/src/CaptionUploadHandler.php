@@ -117,7 +117,7 @@ class CaptionUploadHandler
                 $this->vimeoClient->uploadAndActivateTextTrack(
                     $vimeoId,
                     $path,
-                    $caption['lang'],
+                    $this->studioConfig->vimeoCodeFor($caption['lang']),
                     $caption['label'],
                 );
             } catch (\Throwable) {

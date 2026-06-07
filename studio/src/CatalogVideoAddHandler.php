@@ -42,6 +42,13 @@ class CatalogVideoAddHandler
             // non-fatal
         }
 
+        $tags = [];
+        try {
+            $tags = $this->vimeoClient->getTagNames($vimeoId);
+        } catch (\Throwable) {
+            // non-fatal
+        }
+
         try {
             $video = $this->catalogEditor->addVideo(
                 $vimeoId,
@@ -49,6 +56,7 @@ class CatalogVideoAddHandler
                 $signLanguage,
                 $edition,
                 $thumbnailUrl,
+                $tags,
             );
         } catch (\RuntimeException $e) {
             return ['ok' => false, 'error' => $e->getMessage()];

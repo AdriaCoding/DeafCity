@@ -320,6 +320,128 @@
             color: #444;
             font-family: monospace;
         }
+        .vimeo-badge {
+            font-size: 0.68rem;
+            background: #1a2438;
+            border: 1px solid #2a4060;
+            border-radius: 10px;
+            padding: 0.1rem 0.45rem;
+            color: #7a9fd4;
+            font-family: monospace;
+        }
+        .language-picker { position: relative; }
+        .language-search-input {
+            width: 100%;
+            padding-right: 2rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+        }
+        .language-picker-results {
+            display: none;
+            position: absolute;
+            z-index: 20;
+            left: 0;
+            right: 0;
+            max-height: 240px;
+            overflow-y: auto;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 6px;
+            margin-top: 0.35rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        }
+        .language-picker-results.is-open { display: block; }
+        .language-picker-empty {
+            padding: 0.75rem 1rem;
+            font-size: 0.82rem;
+            color: #666;
+        }
+        .language-picker-option {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 0.75rem;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            border-bottom: 1px solid #1a1a1a;
+            color: #ddd;
+            cursor: pointer;
+            font-size: 0.88rem;
+            padding: 0.65rem 1rem;
+        }
+        .language-picker-option:last-child { border-bottom: none; }
+        .language-picker-option:hover,
+        .language-picker-option.is-active { background: #1a2a44; color: #fff; }
+        .language-picker-option-code {
+            flex-shrink: 0;
+            color: #666;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        .language-picker-option:hover .language-picker-option-code,
+        .language-picker-option.is-active .language-picker-option-code { color: #8ab0d8; }
+        #subtitle-lang-new-panel {
+            padding: 1.35rem 1.5rem 1.5rem;
+        }
+        #subtitle-lang-new-panel .field-label {
+            display: block;
+            font-size: 0.78rem;
+            color: #888;
+            margin-bottom: 0.45rem;
+        }
+        #subtitle-lang-new-panel .config-new-actions {
+            margin-top: 1.35rem;
+            padding-top: 1.15rem;
+            border-top: 1px solid #222;
+        }
+        .oral-lang-selected {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin-top: 0.85rem;
+            padding: 0.65rem 0.8rem;
+            background: #161616;
+            border: 1px solid #2a2a2a;
+            border-radius: 5px;
+        }
+        .oral-lang-selected-name {
+            font-size: 0.9rem;
+            color: #e0e0e0;
+        }
+        .oral-lang-selected-code {
+            font-size: 0.72rem;
+            color: #555;
+            font-family: monospace;
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 3px;
+            padding: 0.1rem 0.4rem;
+        }
+        .btn-text {
+            background: none;
+            border: none;
+            color: #6a8fc4;
+            cursor: pointer;
+            font-size: 0.78rem;
+            margin-left: auto;
+            padding: 0.15rem 0;
+            text-decoration: none;
+        }
+        .btn-text:hover { color: #9ab8ff; text-decoration: underline; }
+        .oral-lang-vimeo-step {
+            margin-top: 1.15rem;
+            padding-top: 1.15rem;
+            border-top: 1px solid #222;
+        }
+        .oral-lang-vimeo-hint {
+            font-size: 0.8rem;
+            color: #777;
+            line-height: 1.45;
+            margin-bottom: 0.75rem;
+        }
         .btn-icon {
             background: none;
             border: 1px solid #333;
@@ -581,12 +703,16 @@
         <div class="config-list">
             <?php foreach ($subtitleLanguages as $sl): ?>
             <?php $isRef = in_array($sl['id'], $referencedSubtitleLanguageIds, true) ?>
+            <?php
+            $vimeoCode = (string) ($sl['vimeo_code'] ?? $sl['id']);
+            $showVimeoBadge = $vimeoCode !== $sl['id'];
+            ?>
             <div class="config-entry" data-id="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>" data-type="subtitle-language">
                 <span class="config-entry-label"><?= htmlspecialchars($sl['label']) ?></span>
-                <input class="inline-label-input" type="text" value="<?= htmlspecialchars($sl['label'], ENT_QUOTES) ?>">
                 <span class="config-id"><?= htmlspecialchars($sl['id']) ?></span>
-                <button class="btn-icon edit-btn" title="Edita">✏️</button>
-                <button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>
+                <?php if ($showVimeoBadge): ?>
+                <span class="vimeo-badge" title="Locale Vimeo">→ <?= htmlspecialchars($vimeoCode) ?></span>
+                <?php endif; ?>
                 <?php if (!$isRef): ?>
                 <button class="btn-icon danger delete-btn" title="Elimina">🗑</button>
                 <?php endif; ?>
@@ -599,22 +725,32 @@
         <div class="config-new-panel" id="subtitle-lang-new-panel">
             <h3>Nova llengua oral</h3>
             <p class="config-add-error" id="subtitle-lang-add-error" role="alert"></p>
-            <div class="config-new-grid">
-                <div>
-                    <label class="field-label" for="oral_code_c">Codi</label>
-                    <input type="text" id="oral_code_c" class="config-input" autocomplete="off" placeholder="p. ex. de">
-                </div>
-                <div>
-                    <label class="field-label" for="oral_name_c">Nom</label>
-                    <input type="text" id="oral_name_c" class="config-input" autocomplete="off" placeholder="p. ex. Alemany">
+
+            <div class="language-picker" id="oral-lang-picker">
+                <label class="field-label" for="oral_lang_search_c">Cerca una llengua</label>
+                <input type="search" id="oral_lang_search_c" class="config-input language-search-input" autocomplete="off" placeholder="Escriviu el nom, p. ex. Alemany, Spanish, Algerian…" role="combobox" aria-expanded="false" aria-controls="oral_lang_results_c">
+                <div class="language-picker-results" id="oral_lang_results_c" role="listbox"></div>
+                <input type="hidden" id="oral_lang_code_c" value="">
+            </div>
+
+            <div class="oral-lang-selected" id="oral-lang-selected" hidden>
+                <span class="oral-lang-selected-name" id="oral-selected-label-display"></span>
+                <span class="oral-lang-selected-code" id="oral-selected-code-display"></span>
+                <button type="button" class="btn-text" id="oral-lang-change-btn">Canvia</button>
+            </div>
+
+            <div class="oral-lang-vimeo-step" id="oral-vimeo-picker" hidden>
+                <p class="oral-lang-vimeo-hint" id="oral-vimeo-hint"></p>
+                <div class="language-picker">
+                    <label class="field-label" for="oral_vimeo_search_c">Locale Vimeo</label>
+                    <input type="search" id="oral_vimeo_search_c" class="config-input language-search-input" autocomplete="off" placeholder="Cerca un locale Vimeo…">
+                    <div class="language-picker-results" id="oral_vimeo_results_c" role="listbox"></div>
+                    <input type="hidden" id="oral_vimeo_code_c" value="">
                 </div>
             </div>
-            <p class="config-preview">
-                <strong>Nom:</strong> <span class="value" id="subtitle-lang-preview-label-c">—</span><br>
-                <strong>Identificador:</strong> <span class="value" id="subtitle-lang-preview-id-c">—</span>
-            </p>
+
             <div class="config-new-actions">
-                <button type="button" class="btn-secondary" id="subtitle-lang-add-btn-c">Afegir</button>
+                <button type="button" class="btn-secondary" id="subtitle-lang-add-btn-c" disabled>Afegir</button>
                 <button type="button" class="btn-secondary" id="subtitle-lang-cancel-btn-c" style="color:#666">Cancel·la</button>
             </div>
         </div>
@@ -728,7 +864,6 @@
             delete: 'continguts-delete-sign-language'
         },
         'subtitle-language': {
-            save: 'continguts-save-subtitle-language-label',
             delete: 'continguts-delete-subtitle-language'
         }
     };
@@ -1145,83 +1280,80 @@
         });
     }
 
-    // ── Inline label editing ──────────────────────────────────────────────────
-    document.querySelectorAll('.config-entry').forEach(function (entry) {
+    function attachConfigEntryListeners(entry) {
         var label = entry.querySelector('.config-entry-label');
         var input = entry.querySelector('.inline-label-input');
         var editBtn = entry.querySelector('.edit-btn');
         var confirmBtn = entry.querySelector('.confirm-btn');
+        var deleteBtn = entry.querySelector('.delete-btn');
         var id = entry.dataset.id;
         var type = entry.dataset.type;
 
-        editBtn.addEventListener('click', function () {
-            label.classList.add('editing');
-            input.classList.add('editing');
-            confirmBtn.style.display = '';
-            editBtn.style.display = 'none';
-            input.focus();
-            input.select();
-        });
+        if (editBtn && input && confirmBtn) {
+            editBtn.addEventListener('click', function () {
+                label.classList.add('editing');
+                input.classList.add('editing');
+                confirmBtn.style.display = '';
+                editBtn.style.display = 'none';
+                input.focus();
+                input.select();
+            });
 
-        function saveLabel() {
-            var newLabel = input.value.trim();
-            if (!newLabel) return;
-            var action = configAction(type, 'save');
-            var body = new FormData();
-            body.append('id', id);
-            body.append('label', newLabel);
-            fetch('?action=' + action, { method: 'POST', body: body })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (data.ok) {
-                        label.textContent = newLabel;
-                        label.classList.remove('editing');
-                        input.classList.remove('editing');
-                        confirmBtn.style.display = 'none';
-                        editBtn.style.display = '';
-                    } else {
-                        alert('Error: ' + (data.error || 'No s\'ha pogut desar.'));
-                    }
-                })
-                .catch(function () { alert('Error de connexió.'); });
+            function saveLabel() {
+                var newLabel = input.value.trim();
+                if (!newLabel) return;
+                var action = configAction(type, 'save');
+                var body = new FormData();
+                body.append('id', id);
+                body.append('label', newLabel);
+                fetch('?action=' + action, { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.ok) {
+                            label.textContent = newLabel;
+                            label.classList.remove('editing');
+                            input.classList.remove('editing');
+                            confirmBtn.style.display = 'none';
+                            editBtn.style.display = '';
+                        } else {
+                            alert('Error: ' + (data.error || 'No s\'ha pogut desar.'));
+                        }
+                    })
+                    .catch(function () { alert('Error de connexió.'); });
+            }
+
+            confirmBtn.addEventListener('click', saveLabel);
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') { e.preventDefault(); saveLabel(); }
+                if (e.key === 'Escape') {
+                    label.classList.remove('editing');
+                    input.classList.remove('editing');
+                    confirmBtn.style.display = 'none';
+                    editBtn.style.display = '';
+                    input.value = label.textContent.trim();
+                }
+            });
         }
 
-        confirmBtn.addEventListener('click', saveLabel);
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') { e.preventDefault(); saveLabel(); }
-            if (e.key === 'Escape') {
-                label.classList.remove('editing');
-                input.classList.remove('editing');
-                confirmBtn.style.display = 'none';
-                editBtn.style.display = '';
-                input.value = label.textContent.trim();
-            }
-        });
-    });
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function () {
+                var labelText = label.textContent.trim();
+                if (!confirm('Eliminar "' + labelText + '"? Aquesta acció no es pot desfer.')) return;
+                var delAction = configAction(type, 'delete');
+                var body = new FormData();
+                body.append('id', id);
+                fetch('?action=' + delAction, { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.ok) { entry.remove(); }
+                        else { alert('Error: ' + (data.error || 'No s\'ha pogut eliminar.')); }
+                    })
+                    .catch(function () { alert('Error de connexió.'); });
+            });
+        }
+    }
 
-    // ── Delete entries ────────────────────────────────────────────────────────
-    document.querySelectorAll('.delete-btn').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var entry = btn.closest('.config-entry');
-            var id = entry.dataset.id;
-            var type = entry.dataset.type;
-            var label = entry.querySelector('.config-entry-label').textContent.trim();
-            if (!confirm('Eliminar "' + label + '"? Aquesta acció no es pot desfer.')) return;
-            var action = configAction(type, 'delete');
-            var body = new FormData();
-            body.append('id', id);
-            fetch('?action=' + action, { method: 'POST', body: body })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (data.ok) {
-                        entry.remove();
-                    } else {
-                        alert('Error: ' + (data.error || 'No s\'ha pogut eliminar.'));
-                    }
-                })
-                .catch(function () { alert('Error de connexió.'); });
-        });
-    });
+    document.querySelectorAll('.config-entry').forEach(attachConfigEntryListeners);
 
     // ── Add edition ───────────────────────────────────────────────────────────
     var editionTrigger = document.getElementById('edition-add-trigger');
@@ -1381,53 +1513,266 @@
     // ── Add subtitle language ─────────────────────────────────────────────────
     var subtitleLangTrigger = document.getElementById('subtitle-lang-add-trigger');
     var subtitleLangPanel = document.getElementById('subtitle-lang-new-panel');
-    var oralCode = document.getElementById('oral_code_c');
-    var oralName = document.getElementById('oral_name_c');
-    var subtitleLangPreviewLabel = document.getElementById('subtitle-lang-preview-label-c');
-    var subtitleLangPreviewId = document.getElementById('subtitle-lang-preview-id-c');
+    var oralLangPicker = document.getElementById('oral-lang-picker');
+    var oralLangSearch = document.getElementById('oral_lang_search_c');
+    var oralLangResults = document.getElementById('oral_lang_results_c');
+    var oralLangCode = document.getElementById('oral_lang_code_c');
+    var oralLangSelected = document.getElementById('oral-lang-selected');
+    var oralSelectedLabelDisplay = document.getElementById('oral-selected-label-display');
+    var oralSelectedCodeDisplay = document.getElementById('oral-selected-code-display');
+    var oralLangChangeBtn = document.getElementById('oral-lang-change-btn');
+    var oralVimeoPicker = document.getElementById('oral-vimeo-picker');
+    var oralVimeoHint = document.getElementById('oral-vimeo-hint');
+    var selectedIsoLabel = '';
+    var oralVimeoSearch = document.getElementById('oral_vimeo_search_c');
+    var oralVimeoResults = document.getElementById('oral_vimeo_results_c');
+    var oralVimeoCode = document.getElementById('oral_vimeo_code_c');
     var subtitleLangAddError = document.getElementById('subtitle-lang-add-error');
     var subtitleLangAddBtn = document.getElementById('subtitle-lang-add-btn-c');
     var subtitleLangCancelBtn = document.getElementById('subtitle-lang-cancel-btn-c');
 
+    var isoLanguages = [];
+    var vimeoLocales = [];
+    var isoLanguagesReady = false;
+    var usedVimeoCodes = <?= json_encode(array_map(
+        fn($sl) => (string) ($sl['vimeo_code'] ?? $sl['id']),
+        $subtitleLanguages,
+    ), JSON_UNESCAPED_UNICODE) ?>;
+    var existingSubtitleIds = <?= json_encode(array_column($subtitleLanguages, 'id'), JSON_UNESCAPED_UNICODE) ?>;
+
+    Promise.all([
+        fetch('js/iso-639-3.json').then(function (r) { return r.json(); }),
+        fetch('js/vimeo-texttrack-locales.json').then(function (r) { return r.json(); }),
+    ]).then(function (data) {
+        isoLanguages = (data[0].languages || []).filter(function (item) {
+            return existingSubtitleIds.indexOf(item.code) === -1;
+        });
+        vimeoLocales = data[1].locales || [];
+        isoLanguagesReady = true;
+    });
+
+    function vimeoCodesInUse() {
+        return usedVimeoCodes.slice();
+    }
+
+    function vimeoLocaleAvailable(code) {
+        return vimeoCodesInUse().indexOf(code) === -1;
+    }
+
+    function filterByLabel(items, query) {
+        var q = query.trim().toLowerCase();
+        if (!q) {
+            return [];
+        }
+        return items.filter(function (item) {
+            return item.label.toLowerCase().indexOf(q) !== -1;
+        }).sort(function (a, b) {
+            var aStarts = a.label.toLowerCase().indexOf(q) === 0 ? 0 : 1;
+            var bStarts = b.label.toLowerCase().indexOf(q) === 0 ? 0 : 1;
+            if (aStarts !== bStarts) {
+                return aStarts - bStarts;
+            }
+            return a.label.localeCompare(b.label);
+        }).slice(0, 14);
+    }
+
+    function setupLabelPicker(searchInput, resultsEl, hiddenInput, getItems, onSelect) {
+        var activeIndex = -1;
+
+        function closeResults() {
+            resultsEl.classList.remove('is-open');
+            resultsEl.innerHTML = '';
+            activeIndex = -1;
+            searchInput.setAttribute('aria-expanded', 'false');
+        }
+
+        function setActiveOption(options) {
+            options.forEach(function (btn, idx) {
+                btn.classList.toggle('is-active', idx === activeIndex);
+            });
+            if (activeIndex >= 0 && options[activeIndex]) {
+                options[activeIndex].scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        function renderResults(query) {
+            if (!isoLanguagesReady && searchInput === oralLangSearch) {
+                resultsEl.innerHTML = '<div class="language-picker-empty">Carregant llengües…</div>';
+                resultsEl.classList.add('is-open');
+                searchInput.setAttribute('aria-expanded', 'true');
+                return;
+            }
+
+            var matches = filterByLabel(getItems(), query);
+            resultsEl.innerHTML = '';
+            activeIndex = -1;
+
+            if (!query.trim()) {
+                closeResults();
+                return;
+            }
+
+            if (matches.length === 0) {
+                resultsEl.innerHTML = '<div class="language-picker-empty">Cap llengua coincideix amb aquest nom.</div>';
+                resultsEl.classList.add('is-open');
+                searchInput.setAttribute('aria-expanded', 'true');
+                return;
+            }
+
+            matches.forEach(function (item, idx) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'language-picker-option';
+                btn.setAttribute('role', 'option');
+                btn.innerHTML = '<span>' + escHtml(item.label) + '</span>' +
+                    '<span class="language-picker-option-code">' + escHtml(item.code) + '</span>';
+                btn.addEventListener('click', function () {
+                    hiddenInput.value = item.code;
+                    closeResults();
+                    onSelect(item);
+                });
+                btn.addEventListener('mouseenter', function () {
+                    activeIndex = idx;
+                    setActiveOption(resultsEl.querySelectorAll('.language-picker-option'));
+                });
+                resultsEl.appendChild(btn);
+            });
+            resultsEl.classList.add('is-open');
+            searchInput.setAttribute('aria-expanded', 'true');
+        }
+
+        searchInput.addEventListener('input', function () {
+            hiddenInput.value = '';
+            renderResults(searchInput.value);
+        });
+        searchInput.addEventListener('focus', function () {
+            if (searchInput.value.trim()) {
+                renderResults(searchInput.value);
+            }
+        });
+        searchInput.addEventListener('keydown', function (e) {
+            var options = resultsEl.querySelectorAll('.language-picker-option');
+            if (!resultsEl.classList.contains('is-open') || options.length === 0) {
+                return;
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = Math.min(activeIndex + 1, options.length - 1);
+                setActiveOption(options);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = Math.max(activeIndex - 1, 0);
+                setActiveOption(options);
+            } else if (e.key === 'Enter' && activeIndex >= 0) {
+                e.preventDefault();
+                options[activeIndex].click();
+            } else if (e.key === 'Escape') {
+                closeResults();
+            }
+        });
+        document.addEventListener('click', function (e) {
+            if (!searchInput.contains(e.target) && !resultsEl.contains(e.target)) {
+                closeResults();
+            }
+        });
+    }
+
+    function updateSubtitleLangAddButton() {
+        var code = oralLangCode.value.trim();
+        var vimeoCode = oralVimeoCode.value.trim();
+        subtitleLangAddBtn.disabled = !(code && selectedIsoLabel && vimeoCode);
+    }
+
+    function clearIsoSelection() {
+        oralLangCode.value = '';
+        selectedIsoLabel = '';
+        oralLangSearch.value = '';
+        oralLangSelected.hidden = true;
+        oralLangPicker.hidden = false;
+        oralVimeoPicker.hidden = true;
+        oralVimeoSearch.value = '';
+        oralVimeoCode.value = '';
+        updateSubtitleLangAddButton();
+    }
+
+    function resetOralLangForm() {
+        clearIsoSelection();
+        subtitleLangAddError.textContent = '';
+        subtitleLangAddBtn.disabled = true;
+    }
+
+    function onIsoLanguageSelected(item) {
+        oralLangCode.value = item.code;
+        selectedIsoLabel = item.label;
+        oralSelectedLabelDisplay.textContent = item.label;
+        oralSelectedCodeDisplay.textContent = item.code;
+        oralLangPicker.hidden = true;
+        oralLangSelected.hidden = false;
+
+        var vimeoHasCode = vimeoLocales.some(function (loc) { return loc.code === item.code; });
+        if (vimeoHasCode && vimeoLocaleAvailable(item.code)) {
+            oralVimeoCode.value = item.code;
+            oralVimeoPicker.hidden = true;
+        } else {
+            oralVimeoCode.value = '';
+            oralVimeoHint.textContent = 'Vimeo no reconeix «' + item.code + '». Trieu un locale de còpia de seguretat:';
+            oralVimeoPicker.hidden = false;
+            oralVimeoSearch.value = '';
+            setTimeout(function () { oralVimeoSearch.focus(); }, 0);
+        }
+        updateSubtitleLangAddButton();
+    }
+
+    setupLabelPicker(
+        oralLangSearch,
+        oralLangResults,
+        oralLangCode,
+        function () { return isoLanguages; },
+        onIsoLanguageSelected,
+    );
+
+    setupLabelPicker(
+        oralVimeoSearch,
+        oralVimeoResults,
+        oralVimeoCode,
+        function () {
+            return vimeoLocales.filter(function (loc) { return vimeoLocaleAvailable(loc.code); });
+        },
+        function (item) {
+            oralVimeoCode.value = item.code;
+            oralVimeoSearch.value = item.label + ' (' + item.code + ')';
+            updateSubtitleLangAddButton();
+        },
+    );
+
+    oralLangChangeBtn.addEventListener('click', function () {
+        clearIsoSelection();
+        oralLangSearch.focus();
+    });
+
     subtitleLangTrigger.addEventListener('click', function () {
         subtitleLangPanel.classList.add('is-open');
-        oralCode.focus();
+        resetOralLangForm();
+        oralLangSearch.focus();
     });
     subtitleLangCancelBtn.addEventListener('click', function () {
         subtitleLangPanel.classList.remove('is-open');
-        oralCode.value = '';
-        oralName.value = '';
-        subtitleLangPreviewLabel.textContent = '—';
-        subtitleLangPreviewId.textContent = '—';
-        subtitleLangAddError.textContent = '';
+        resetOralLangForm();
     });
-
-    function updateSubtitleLangPreview() {
-        var code = oralCode.value.trim();
-        var name = oralName.value.trim();
-        if (!code || !name) {
-            subtitleLangPreviewLabel.textContent = '—';
-            subtitleLangPreviewId.textContent = '—';
-            return;
-        }
-        subtitleLangPreviewLabel.textContent = name;
-        subtitleLangPreviewId.textContent = slugify(code);
-    }
-    oralCode.addEventListener('input', updateSubtitleLangPreview);
-    oralName.addEventListener('input', updateSubtitleLangPreview);
 
     subtitleLangAddBtn.addEventListener('click', function () {
         subtitleLangAddError.textContent = '';
-        var code = oralCode.value.trim();
-        var name = oralName.value.trim();
-        if (!code || !name) {
-            subtitleLangAddError.textContent = 'Indiqueu un codi i un nom.';
+        var code = oralLangCode.value.trim();
+        var vimeoCode = oralVimeoCode.value.trim();
+        if (!code || !selectedIsoLabel || !vimeoCode) {
+            subtitleLangAddError.textContent = 'Seleccioneu una llengua i, si cal, un locale Vimeo.';
             return;
         }
         subtitleLangAddBtn.disabled = true;
         var body = new FormData();
         body.append('subtitle_language_code', code);
-        body.append('subtitle_language_name', name);
+        body.append('subtitle_language_name', selectedIsoLabel);
+        body.append('subtitle_language_vimeo_code', vimeoCode);
         fetch('?action=add-subtitle-language', { method: 'POST', body: body })
             .then(function (r) { return r.json(); })
             .then(function (data) {
@@ -1435,16 +1780,22 @@
                     subtitleLangAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la llengua oral.';
                     return;
                 }
+                usedVimeoCodes.push(data.vimeo_code);
+                existingSubtitleIds.push(data.id);
+                isoLanguages = isoLanguages.filter(function (item) {
+                    return item.code !== data.id;
+                });
                 var list = document.querySelector('#tab-subtitle-languages .config-list');
                 var div = document.createElement('div');
                 div.className = 'config-entry';
                 div.dataset.id = data.id;
                 div.dataset.type = 'subtitle-language';
+                var vimeoBadge = (data.vimeo_code && data.vimeo_code !== data.id)
+                    ? '<span class="vimeo-badge" title="Locale Vimeo">→ ' + escHtml(data.vimeo_code) + '</span>'
+                    : '';
                 div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
-                    '<input class="inline-label-input" type="text" value="' + escHtml(data.label) + '">' +
                     '<span class="config-id">' + escHtml(data.id) + '</span>' +
-                    '<button class="btn-icon edit-btn" title="Edita">✏️</button>' +
-                    '<button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>' +
+                    vimeoBadge +
                     '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
                 list.appendChild(div);
                 attachConfigEntryListeners(div);
@@ -1455,77 +1806,6 @@
     });
 
     // ── Helpers ───────────────────────────────────────────────────────────────
-    function attachConfigEntryListeners(entry) {
-        var label = entry.querySelector('.config-entry-label');
-        var input = entry.querySelector('.inline-label-input');
-        var editBtn = entry.querySelector('.edit-btn');
-        var confirmBtn = entry.querySelector('.confirm-btn');
-        var deleteBtn = entry.querySelector('.delete-btn');
-        var id = entry.dataset.id;
-        var type = entry.dataset.type;
-
-        editBtn.addEventListener('click', function () {
-            label.classList.add('editing');
-            input.classList.add('editing');
-            confirmBtn.style.display = '';
-            editBtn.style.display = 'none';
-            input.focus();
-            input.select();
-        });
-
-        function saveLabel() {
-            var newLabel = input.value.trim();
-            if (!newLabel) return;
-            var action = configAction(type, 'save');
-            var body = new FormData();
-            body.append('id', id);
-            body.append('label', newLabel);
-            fetch('?action=' + action, { method: 'POST', body: body })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    if (data.ok) {
-                        label.textContent = newLabel;
-                        label.classList.remove('editing');
-                        input.classList.remove('editing');
-                        confirmBtn.style.display = 'none';
-                        editBtn.style.display = '';
-                    } else {
-                        alert('Error: ' + (data.error || 'No s\'ha pogut desar.'));
-                    }
-                })
-                .catch(function () { alert('Error de connexió.'); });
-        }
-
-        confirmBtn.addEventListener('click', saveLabel);
-        input.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter') { e.preventDefault(); saveLabel(); }
-            if (e.key === 'Escape') {
-                label.classList.remove('editing');
-                input.classList.remove('editing');
-                confirmBtn.style.display = 'none';
-                editBtn.style.display = '';
-                input.value = label.textContent.trim();
-            }
-        });
-
-        if (deleteBtn) {
-            deleteBtn.addEventListener('click', function () {
-                var labelText = label.textContent.trim();
-                if (!confirm('Eliminar "' + labelText + '"? Aquesta acció no es pot desfer.')) return;
-                var delAction = configAction(type, 'delete');
-                var body = new FormData();
-                body.append('id', id);
-                fetch('?action=' + delAction, { method: 'POST', body: body })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (data.ok) { entry.remove(); }
-                        else { alert('Error: ' + (data.error || 'No s\'ha pogut eliminar.')); }
-                    })
-                    .catch(function () { alert('Error de connexió.'); });
-            });
-        }
-    }
-
     function slugify(value) {
         var normalized = value.trim().normalize('NFD').replace(/[̀-ͯ]/g, '');
         return normalized.toLowerCase()

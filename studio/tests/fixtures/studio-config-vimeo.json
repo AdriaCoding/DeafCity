@@ -8,7 +8,6 @@
   "subtitle_languages": [
     { "id": "es", "label": "Spanish", "vimeo_code": "es" },
     { "id": "en", "label": "English", "vimeo_code": "en" },
-    { "id": "ca", "label": "Catalan", "vimeo_code": "ca" },
-    { "id": "arq", "label": "Algerian Darija", "vimeo_code": "ar" }
+    { "id": "ca", "label": "Catalan", "vimeo_code": "ca" }
   ]
 }

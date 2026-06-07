@@ -43,7 +43,7 @@ class PublicationHandler
                 $this->vimeoClient->uploadAndActivateTextTrack(
                     $vimeoId,
                     $caption['sourcePath'],
-                    $caption['lang'],
+                    $this->studioConfig->vimeoCodeFor($caption['lang']),
                     $caption['label'],
                 );
             } catch (\Throwable) {

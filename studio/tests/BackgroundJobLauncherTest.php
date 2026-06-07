@@ -125,6 +125,19 @@ class BackgroundJobLauncherTest extends TestCase
         $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
     }
 
+    public function test_launch_sync_uses_push_script(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchSync('/data/sync-status.json');
+
+        $this->assertStringContainsString('sync_to_vimeo.php', $captured);
+        $this->assertStringContainsString(escapeshellarg('/data/sync-status.json'), $captured);
+    }
+
     public function test_launch_transcription_pipeline_passes_translation_status_path(): void
     {
         $captured = null;

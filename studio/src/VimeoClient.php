@@ -14,18 +14,6 @@ class VimeoClient
     ) {
     }
 
-    private const LANGUAGE_MAP = [
-        'es' => 'es',
-        'en' => 'en',
-        'it' => 'it',
-        'fr' => 'fr',
-        'ca' => 'ca',
-        'pt' => 'pt',
-        // Vimeo text tracks only expose generic Arabic (`ar`); dialect ids map here for upload.
-        'arq' => 'ar',
-        'aeb' => 'ar',
-    ];
-
     /** @return array<int, array{uri: string}> */
     public function getTextTracks(string $videoId): array
     {
@@ -47,21 +35,17 @@ class VimeoClient
     public function uploadAndActivateTextTrack(
         string $videoId,
         string $filePath,
-        string $lang,
+        string $vimeoCode,
         string $label,
     ): void {
-        if (!array_key_exists($lang, self::LANGUAGE_MAP)) {
-            throw new \RuntimeException("Codi d'idioma no reconegut: $lang");
-        }
-        $bcp47 = self::LANGUAGE_MAP[$lang];
         $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
         $trackUri = $client->uploadTexttrack(
             '/videos/' . $videoId . '/texttracks',
             $filePath,
             'captions',
-            $bcp47,
+            $vimeoCode,
         );
-        $patchResponse = $client->request($trackUri, ['active' => true, 'language' => $bcp47, 'name' => $label], 'PATCH');
+        $patchResponse = $client->request($trackUri, ['active' => true, 'language' => $vimeoCode, 'name' => $label], 'PATCH');
         $status = $patchResponse['status'] ?? 0;
         if ($status < 200 || $status >= 300) {
             throw new \RuntimeException("Error en activar la pista de text: $trackUri");

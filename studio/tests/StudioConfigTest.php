@@ -21,9 +21,10 @@ class StudioConfigTest extends TestCase
         );
         $this->assertSame(
             [
-                ['id' => 'es', 'label' => 'Spanish'],
-                ['id' => 'en', 'label' => 'English'],
-                ['id' => 'ca', 'label' => 'Catalan'],
+                ['id' => 'es', 'label' => 'Spanish', 'vimeo_code' => 'es'],
+                ['id' => 'en', 'label' => 'English', 'vimeo_code' => 'en'],
+                ['id' => 'ca', 'label' => 'Catalan', 'vimeo_code' => 'ca'],
+                ['id' => 'arq', 'label' => 'Algerian Darija', 'vimeo_code' => 'ar'],
             ],
             $config->getSubtitleLanguages()
         );

@@ -191,7 +191,7 @@
                             <?php if ($isSyncing): ?>
                                 <span class="spinner-sm"></span> Sincronitzant…
                             <?php else: ?>
-                                Sincronitzar web amb Vimeo
+                                Sincronitzar a Vimeo
                             <?php endif; ?>
                         </button>
                     </form>
@@ -224,12 +224,12 @@
                                 var total = data.total || 0;
                                 if (data.status === 'done') {
                                     btn.disabled = false;
-                                    btn.innerHTML = 'Sincronitzar web amb Vimeo';
+                                    btn.innerHTML = 'Sincronitzar a Vimeo';
                                     msg.className = 'sync-status done';
                                     msg.textContent = 'Sincronitzat (' + synced + '/' + total + ' vídeos)';
                                 } else if (data.status === 'error') {
                                     btn.disabled = false;
-                                    btn.innerHTML = 'Sincronitzar web amb Vimeo';
+                                    btn.innerHTML = 'Sincronitzar a Vimeo';
                                     msg.className = 'sync-status error';
                                     msg.textContent = 'Error en la sincronització. Torneu-ho a provar.';
                                 } else {

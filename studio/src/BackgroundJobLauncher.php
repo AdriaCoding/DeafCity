@@ -44,7 +44,7 @@ class BackgroundJobLauncher
     /** @param string $statusFilePath */
     public function launchSync($statusFilePath)
     {
-        $script = $this->scriptsDir . '/sync_from_vimeo.php';
+        $script = $this->scriptsDir . '/sync_to_vimeo.php';
         $cmd = sprintf(
             'nohup php %s --status-file %s > /dev/null 2>&1 &',
             escapeshellarg($script),

@@ -65,6 +65,22 @@ class CatalogVideoAddHandlerTest extends TestCase
         $this->assertStringContainsString('not found', $result['error']);
     }
 
+    public function test_seeds_tags_from_vimeo_on_add(): void
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getVideo')->willReturn('Vimeo Title');
+        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->expects($this->once())->method('getTagNames')->with('333')->willReturn(['humor', 'deaf']);
+
+        $result = $this->makeHandler($vimeo)->handle('333', 'lse', '2024-madrid', 'Title');
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame(['humor', 'deaf'], $result['video']['tags']);
+
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertSame(['humor', 'deaf'], $catalog['videos'][0]['tags']);
+    }
+
     public function test_returns_error_when_video_already_in_catalog(): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [

@@ -76,7 +76,6 @@ match ($action) {
     'continguts-save-video',
     'continguts-save-edition-label',
     'continguts-save-sign-language-label',
-    'continguts-save-subtitle-language-label',
     'continguts-delete-edition',
     'continguts-delete-sign-language',
     'continguts-delete-subtitle-language' => (new CatalogAction($container))->handle($action),

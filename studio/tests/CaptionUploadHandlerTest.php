@@ -137,6 +137,25 @@ class CaptionUploadHandlerTest extends TestCase
         $this->assertFileExists($this->captionsDir . '/111.en.vtt');
     }
 
+    public function test_upload_uses_resolved_vimeo_code_for_dialect(): void
+    {
+        $vtt = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nSalut\n");
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getTextTracks')->willReturn([]);
+        $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
+            ->with('111', $this->captionsDir . '/111.arq.vtt', 'ar', 'Algerian Darija');
+
+        $result = $this->makeHandler($vimeo)->handle('111', [[
+            'lang' => 'arq',
+            'tmpPath' => $vtt,
+            'originalName' => 'subtitles.vtt',
+        ]]);
+
+        $this->assertTrue($result['ok']);
+    }
+
     public function test_empty_uploads_returns_ok_without_changes(): void
     {
         $vimeo = $this->createMock(VimeoClient::class);

@@ -132,27 +132,12 @@ class StudioConfigMutationTest extends TestCase
         $config->removeSignLanguage('lse', $catalogEditor);
     }
 
-    // ── updateSubtitleLanguageLabel ───────────────────────────────────────────
-
-    public function test_update_subtitle_language_label_changes_label_not_id(): void
-    {
-        $config = new StudioConfig($this->configPath);
-        $config->updateSubtitleLanguageLabel('es', 'Castellà');
-
-        $reloaded = new StudioConfig($this->configPath);
-        $langs = $reloaded->getSubtitleLanguages();
-        $entry = array_values(array_filter($langs, fn($e) => $e['id'] === 'es'))[0];
-
-        $this->assertSame('es', $entry['id']);
-        $this->assertSame('Castellà', $entry['label']);
-    }
-
     // ── removeSubtitleLanguage ────────────────────────────────────────────────
 
     public function test_remove_subtitle_language_deletes_entry_when_unreferenced(): void
     {
         $config = new StudioConfig($this->configPath);
-        $config->addSubtitleLanguage('de', 'German');
+        $config->addSubtitleLanguage('de', 'German', 'de');
 
         $catalogEditor = new CatalogEditor($this->catalogFile);
         $config->removeSubtitleLanguage('de', $catalogEditor);

@@ -42,9 +42,14 @@ class CatalogAction
     public function addSubtitleLanguage(): never
     {
         header('Content-Type: application/json; charset=utf-8');
-        $result = (new SubtitleLanguageAddHandler($this->c->studioConfig))->handle(
+        $result = (new SubtitleLanguageAddHandler(
+            $this->c->studioConfig,
+            new \Studio\Iso639LanguageRegistry(__DIR__ . '/../../js/iso-639-3.json'),
+            new \Studio\VimeoLocaleRegistry(__DIR__ . '/../../js/vimeo-texttrack-locales.json'),
+        ))->handle(
             (string) ($_POST['subtitle_language_code'] ?? ''),
             (string) ($_POST['subtitle_language_name'] ?? ''),
+            (string) ($_POST['subtitle_language_vimeo_code'] ?? ''),
         );
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
@@ -60,7 +65,6 @@ class CatalogAction
             'continguts-save-video'               => $this->saveVideo(),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
-            'continguts-save-subtitle-language-label' => $this->saveLabel('subtitle_language'),
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
@@ -268,7 +272,6 @@ class CatalogAction
             match ($type) {
                 'edition' => $this->c->studioConfig->updateEditionLabel($id, $label),
                 'sign_language' => $this->c->studioConfig->updateSignLanguageLabel($id, $label),
-                'subtitle_language' => $this->c->studioConfig->updateSubtitleLanguageLabel($id, $label),
                 default => throw new \InvalidArgumentException('Unknown label type.'),
             };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);

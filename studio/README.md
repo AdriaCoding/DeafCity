@@ -8,16 +8,18 @@ All six pipeline slices are **shipped** (see `docs/studio-pipeline-features.md`)
 
 **Publication ops:** `data/catalog.json` and `data/captions/` must be writable by the web server user (`www-data`). Vimeo token needs `private`, `upload`, `edit` scopes — see `config/config.example.php`. Test with `php studio/scripts/test_vimeo_publish.php`.
 
-**Catalog sync:** Pull title, tags, captions, and thumbnail URLs for every video in `catalog.json` from Vimeo. Downloads VTT files to `data/captions/` and overwrites each catalog entry in place. Also backfills `thumbnail_url` from the Vimeo `pictures.sizes` array (missing on older entries until next sync).
+**Catalog sync (push to Vimeo):** Push title, tags, and caption files for every video in `catalog.json` to Vimeo using each Subtitle language's `vimeo_code`. The server catalog and `data/captions/` are never overwritten from Vimeo. Thumbnail URLs are pulled from Vimeo only when missing on a catalog entry.
 
 Can be triggered two ways:
 
 ```bash
 # Run from the public_html root (blocking)
-php studio/scripts/sync_from_vimeo.php
+php studio/scripts/sync_to_vimeo.php
 ```
 
-Or via the Studio idle screen (**Sincronitzar web amb Vimeo**), which launches the same script as a background process. Progress is written to `data/sync-status.json`; the shell polls `?action=sync-status` every few seconds and shows a progress indicator. A sync already in progress blocks a second launch.
+Or via the Studio idle screen (**Sincronitzar a Vimeo**), which launches the same script as a background process. Progress is written to `data/sync-status.json`; the shell polls `?action=sync-status` every few seconds and shows a progress indicator. A sync already in progress blocks a second launch.
+
+**After deploying `vimeo_code` backfill:** run **Sincronitzar a Vimeo** once so existing Vimeo text tracks (especially `aeb`, previously uploaded under `ar`) are re-uploaded under the correct locale codes.
 
 ## Continguts
 
@@ -58,7 +60,7 @@ Scripts under `studio/scripts/` that are not part of the runtime request path:
 
 | Script | Purpose | Usage |
 |---|---|---|
-| `sync_from_vimeo.php` | Pull titles, tags, captions, and `thumbnail_url` from Vimeo into `catalog.json` / `data/captions/` | `php studio/scripts/sync_from_vimeo.php` |
+| `sync_to_vimeo.php` | Push titles, tags, and captions to Vimeo; backfill missing `thumbnail_url` only | `php studio/scripts/sync_to_vimeo.php` |
 | `test_vimeo_publish.php` | Smoke-test the Vimeo publish flow (text track upload) | `php studio/scripts/test_vimeo_publish.php` |
 | `test_groq_transcribe.php` | Smoke-test the Groq transcription API | `GROQ_SMOKE=1 php studio/scripts/test_groq_transcribe.php` |
 | `test-translate-integration.php` | Integration test for Gemini translation | `php studio/scripts/test-translate-integration.php` |

@@ -56,6 +56,7 @@ class CatalogEditor
         string $signLanguage,
         string $edition,
         ?string $thumbnailUrl = null,
+        array $tags = [],
     ): array {
         if ($this->findVideoByVimeoId($vimeoId) !== null) {
             throw new \RuntimeException('Aquest vídeo ja és al catàleg.');
@@ -67,7 +68,7 @@ class CatalogEditor
             'title' => $title,
             'sign_language' => $signLanguage,
             'edition' => $edition,
-            'tags' => [],
+            'tags' => array_values($tags),
             'captions' => [],
         ];
         if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
@@ -156,6 +157,20 @@ class CatalogEditor
         fclose($fp);
     }
 
+    /** @return list<array<string, mixed>> */
+    public function getAllVideos(): array
+    {
+        if (!is_file($this->catalogFilePath)) {
+            return [];
+        }
+        $data = json_decode((string) file_get_contents($this->catalogFilePath), true);
+        if (!is_array($data)) {
+            return [];
+        }
+
+        return $data['videos'] ?? [];
+    }
+
     /** @return ?array<string, mixed> */
     public function findVideoByVimeoId(string $vimeoId): ?array
     {
@@ -206,6 +221,46 @@ class CatalogEditor
             }
         }
         return array_keys($seen);
+    }
+
+    public function updateThumbnailUrl(string $videoId, string $thumbnailUrl): void
+    {
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog) || !isset($catalog['videos'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid catalog JSON.');
+        }
+
+        $found = false;
+        foreach ($catalog['videos'] as &$entry) {
+            if (($entry['vimeo_id'] ?? '') === $videoId) {
+                $entry['thumbnail_url'] = $thumbnailUrl;
+                $found = true;
+                break;
+            }
+        }
+        unset($entry);
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Video $videoId not found in catalog.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
     }
 
     /** @return string[] */
