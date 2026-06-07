@@ -171,6 +171,39 @@ class CaptionUploadHandlerTest extends TestCase
         $this->assertSame([], $result['vimeoWarnings']);
     }
 
+    public function test_syncToVimeo_false_overwrites_file_without_vimeo_calls(): void
+    {
+        file_put_contents($this->catalogFile, json_encode(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'Test',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt']],
+            ],
+        ]]));
+        file_put_contents($this->captionsDir . '/111.es.vtt', "WEBVTT\n\nold\n");
+
+        $vtt = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nNou\n");
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->expects($this->never())->method('getTextTracks');
+        $vimeo->expects($this->never())->method('uploadAndActivateTextTrack');
+
+        $result = $this->makeHandler($vimeo)->handle('111', [[
+            'lang' => 'es',
+            'tmpPath' => $vtt,
+            'originalName' => 'new.vtt',
+        ]], syncToVimeo: false);
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame([], $result['vimeoWarnings']);
+        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/111.es.vtt'));
+    }
+
     private function makeHandler(VimeoClient $vimeo): CaptionUploadHandler
     {
         return new CaptionUploadHandler(

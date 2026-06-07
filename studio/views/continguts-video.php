@@ -258,6 +258,31 @@
         button.caption-action-btn:hover { color: #aaa; border-color: #555; }
         button.caption-action-btn .material-icons { font-size: 0.95rem; }
         button.caption-action-btn.danger:hover { color: #e05555; border-color: #7c4a4a; }
+        button.caption-action-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+        button.caption-action-btn.is-loading {
+            position: relative;
+            opacity: 0.75;
+            cursor: wait;
+        }
+        button.caption-action-btn.is-loading .material-icons,
+        button.caption-action-btn.is-loading .caption-action-label {
+            visibility: hidden;
+        }
+        button.caption-action-btn.is-loading::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            margin: auto;
+            width: 0.85rem;
+            height: 0.85rem;
+            border: 2px solid #444;
+            border-top-color: #aaa;
+            border-radius: 50%;
+            animation: caption-spin 0.7s linear infinite;
+        }
         .caption-table-feedback {
             font-size: 0.75rem;
             margin-bottom: 0.4rem;
@@ -288,24 +313,27 @@
             background: #0a0a0a;
         }
         #caption-edit-dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
-        .caption-edit-frame-wrap {
+        .caption-edit-dialog-inner {
+            position: relative;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
         }
-        .caption-edit-loading {
-            flex: 1;
+        .caption-edit-dialog-status {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666;
-            font-size: 0.85rem;
             gap: 0.75rem;
+            background: #0a0a0a;
+            color: #888;
+            font-size: 0.88rem;
         }
+        .caption-edit-dialog-status[hidden] { display: none; }
         #caption-edit-iframe {
-            flex: 1;
             width: 100%;
+            height: 100%;
             border: none;
             background: #0a0a0a;
         }
@@ -453,9 +481,9 @@
                         </td>
                         <td class="caption-actions-cell">
                             <div class="caption-action-btns">
-                                <button type="button" class="caption-action-btn caption-edit-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons">edit</span>Edita</button>
-                                <button type="button" class="caption-action-btn caption-replace-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons">upload</span>Reemplaça</button>
-                                <button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons">delete</span>Elimina</button>
+                                <button type="button" class="caption-action-btn caption-edit-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons" aria-hidden="true">edit</span><span class="caption-action-label">Edita</span></button>
+                                <button type="button" class="caption-action-btn caption-replace-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons" aria-hidden="true">upload</span><span class="caption-action-label">Reemplaça</span></button>
+                                <button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons" aria-hidden="true">delete</span><span class="caption-action-label">Elimina</span></button>
                             </div>
                         </td>
                     </tr>
@@ -474,12 +502,12 @@
 </main>
 
 <dialog id="caption-edit-dialog">
-    <div class="caption-edit-frame-wrap">
-        <div class="caption-edit-loading" id="caption-edit-loading">
+    <div class="caption-edit-dialog-inner">
+        <div class="caption-edit-dialog-status" id="caption-edit-dialog-status" hidden>
             <span class="caption-row-spinner"></span>
-            Carregant editor…
+            <span>Carregant editor…</span>
         </div>
-        <iframe id="caption-edit-iframe" title="Editor de subtítols" hidden></iframe>
+        <iframe id="caption-edit-iframe" title="Editor de subtítols"></iframe>
     </div>
 </dialog>
 
@@ -734,10 +762,33 @@
 
     function buildActionButtonsHtml(langId) {
         return '<div class="caption-action-btns">' +
-            '<button type="button" class="caption-action-btn caption-edit-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons">edit</span>Edita</button>' +
-            '<button type="button" class="caption-action-btn caption-replace-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons">upload</span>Reemplaça</button>' +
-            '<button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons">delete</span>Elimina</button>' +
+            '<button type="button" class="caption-action-btn caption-edit-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons" aria-hidden="true">edit</span><span class="caption-action-label">Edita</span></button>' +
+            '<button type="button" class="caption-action-btn caption-replace-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons" aria-hidden="true">upload</span><span class="caption-action-label">Reemplaça</span></button>' +
+            '<button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons" aria-hidden="true">delete</span><span class="caption-action-label">Elimina</span></button>' +
             '</div>';
+    }
+
+    function setActionButtonLoading(btn, loading) {
+        if (!btn) return;
+        btn.classList.toggle('is-loading', loading);
+        btn.disabled = loading;
+        btn.setAttribute('aria-busy', loading ? 'true' : 'false');
+    }
+
+    function setRowActionsBusy(row, busy) {
+        if (!row) return;
+        row.querySelectorAll('.caption-action-btn').forEach(function (btn) {
+            if (!btn.classList.contains('is-loading')) {
+                btn.disabled = busy;
+            }
+        });
+    }
+
+    function clearRowActionLoading(row) {
+        if (!row) return;
+        row.querySelectorAll('.caption-action-btn').forEach(function (btn) {
+            setActionButtonLoading(btn, false);
+        });
     }
 
     function setupCaptionRowActions() {
@@ -780,6 +831,9 @@
         }
 
         setCaptionTableFeedback('', '');
+        setRowActionsBusy(row, true);
+        setActionButtonLoading(btn, true);
+
         var body = new FormData();
         body.append('vimeo_id', vimeoId);
         body.append('lang', lang);
@@ -788,6 +842,7 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (!data.ok) {
+                    clearRowActionLoading(row);
                     setCaptionTableFeedback(data.error || 'Error en eliminar.', 'err');
                     return;
                 }
@@ -807,12 +862,15 @@
                 }
             })
             .catch(function () {
+                clearRowActionLoading(row);
                 setCaptionTableFeedback('Error de connexió.', 'err');
             });
     }
 
     function onReplaceClick(e) {
-        var lang = e.currentTarget.dataset.lang;
+        var btn = e.currentTarget;
+        var lang = btn.dataset.lang;
+        var row = btn.closest('tr');
         var input = document.createElement('input');
         input.type = 'file';
         input.accept = '.vtt,.srt';
@@ -825,13 +883,15 @@
                 return;
             }
 
-            var row = e.currentTarget.closest('tr');
-            var actionsCell = row.querySelector('.caption-actions-cell');
-            actionsCell.querySelector('.caption-action-btns').hidden = true;
+            if (!row) {
+                input.remove();
+                setCaptionTableFeedback('Error en reemplaçar.', 'err');
+                return;
+            }
+
             setCaptionTableFeedback('', '');
-            var loading = document.createElement('span');
-            loading.className = 'caption-row-spinner';
-            actionsCell.appendChild(loading);
+            setRowActionsBusy(row, true);
+            setActionButtonLoading(btn, true);
 
             var body = new FormData();
             body.append('vimeo_id', vimeoId);
@@ -841,8 +901,7 @@
             fetch('?action=continguts-replace-caption', { method: 'POST', body: body })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
-                    loading.remove();
-                    actionsCell.querySelector('.caption-action-btns').hidden = false;
+                    clearRowActionLoading(row);
                     if (!data.ok) {
                         setCaptionTableFeedback(data.error || 'Error en reemplaçar.', 'err');
                         return;
@@ -855,8 +914,7 @@
                     setTimeout(function () { setCaptionTableFeedback('', ''); }, 2500);
                 })
                 .catch(function () {
-                    loading.remove();
-                    actionsCell.querySelector('.caption-action-btns').hidden = false;
+                    clearRowActionLoading(row);
                     setCaptionTableFeedback('Error de connexió.', 'err');
                 })
                 .finally(function () { input.remove(); });
@@ -866,27 +924,36 @@
     }
 
     function onEditClick(e) {
-        var lang = e.currentTarget.dataset.lang;
+        var btn = e.currentTarget;
+        var lang = btn.dataset.lang;
+        var row = btn.closest('tr');
         var dialog = document.getElementById('caption-edit-dialog');
         var iframe = document.getElementById('caption-edit-iframe');
-        var loading = document.getElementById('caption-edit-loading');
+        var status = document.getElementById('caption-edit-dialog-status');
         if (!dialog || !iframe) return;
 
-        iframe.hidden = true;
-        loading.hidden = false;
-        iframe.src = '?action=continguts-caption-review&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(lang);
+        setActionButtonLoading(btn, true);
+        if (status) status.hidden = false;
 
         iframe.onload = function () {
-            if (iframe.src.indexOf('continguts-video') !== -1) {
-                dialog.close();
-                iframe.src = 'about:blank';
-                iframe.hidden = true;
-                loading.hidden = false;
+            var search = '';
+            try {
+                search = iframe.contentWindow.location.search;
+            } catch (err) {
                 return;
             }
-            loading.hidden = true;
-            iframe.hidden = false;
+            if (search.indexOf('action=continguts-video') !== -1) {
+                if (status) status.hidden = true;
+                dialog.close();
+                iframe.src = 'about:blank';
+                setActionButtonLoading(btn, false);
+                return;
+            }
+            if (status) status.hidden = true;
+            setActionButtonLoading(btn, false);
         };
+
+        iframe.src = '?action=continguts-caption-review&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(lang);
 
         if (typeof dialog.showModal === 'function') {
             dialog.showModal();

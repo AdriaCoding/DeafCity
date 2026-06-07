@@ -18,7 +18,7 @@ class CaptionUploadHandler
      * @param list<array{lang: string, tmpPath: string, originalName: string}> $uploads
      * @return array{ok: bool, error?: string, vimeoWarnings: string[], captions?: list<array{lang: string, label: string, file: string}>}
      */
-    public function handle(string $vimeoId, array $uploads): array
+    public function handle(string $vimeoId, array $uploads, bool $syncToVimeo = true): array
     {
         if ($uploads === []) {
             return ['ok' => true, 'vimeoWarnings' => []];
@@ -29,10 +29,26 @@ class CaptionUploadHandler
             $labelMap[$lang['id']] = $lang['label'];
         }
 
+        $catalogLabels = [];
+        $video = $this->catalogEditor->findVideoByVimeoId($vimeoId);
+        if ($video !== null) {
+            foreach ($video['captions'] ?? [] as $caption) {
+                $captionLang = $caption['lang'] ?? '';
+                if ($captionLang !== '') {
+                    $catalogLabels[$captionLang] = $caption['label'] ?? $captionLang;
+                }
+            }
+        }
+
         $newCaptions = [];
         foreach ($uploads as $upload) {
             $lang = $upload['lang'];
-            if ($lang === '' || !isset($labelMap[$lang])) {
+            if ($lang === '') {
+                return ['ok' => false, 'error' => 'Seleccioneu una llengua vàlida per a cada fitxer de subtítols.', 'vimeoWarnings' => []];
+            }
+
+            $label = $labelMap[$lang] ?? $catalogLabels[$lang] ?? null;
+            if ($label === null) {
                 return ['ok' => false, 'error' => 'Seleccioneu una llengua vàlida per a cada fitxer de subtítols.', 'vimeoWarnings' => []];
             }
 
@@ -46,6 +62,9 @@ class CaptionUploadHandler
             $destPath = $this->captionsDirPath . '/' . $filename;
 
             try {
+                if (is_file($destPath)) {
+                    unlink($destPath);
+                }
                 if ($this->sourceDetector->isSubRip($upload['tmpPath'], $upload['originalName'])) {
                     $vttContent = $this->srtConverter->convert($upload['tmpPath']);
                     if (file_put_contents($destPath, $vttContent) === false) {
@@ -62,7 +81,7 @@ class CaptionUploadHandler
 
             $newCaptions[] = [
                 'lang' => $lang,
-                'label' => $labelMap[$lang],
+                'label' => $label,
                 'file' => $filename,
             ];
         }
@@ -78,7 +97,7 @@ class CaptionUploadHandler
 
         return [
             'ok' => true,
-            'vimeoWarnings' => $this->syncVimeoCaptions($vimeoId, $allCaptions),
+            'vimeoWarnings' => $syncToVimeo ? $this->syncVimeoCaptions($vimeoId, $allCaptions) : [],
             'captions' => $allCaptions,
             'masterCaptionLang' => $video['master_caption_lang'] ?? ($allCaptions[0]['lang'] ?? ''),
         ];

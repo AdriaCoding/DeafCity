@@ -65,17 +65,7 @@
             border-radius: 6px;
             padding: 1rem 1.25rem;
         }
-        a.lang-card-link {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            text-decoration: none;
-            color: inherit;
-        }
-        a.lang-card-link:hover .lang-label { color: #fff; }
-        .lang-label { font-size: 1rem; }
+.lang-label { font-size: 1rem; }
         .badge {
             font-size: 0.72rem;
             letter-spacing: 0.06em;
@@ -181,25 +171,20 @@
             </div>
             <?php foreach ($languageCards as $card): ?>
                 <div class="lang-card">
-                    <?php if ($card['clickable']): ?>
-                        <a class="lang-card-link" href="?action=translation-review&amp;lang=<?= urlencode($card['id']) ?>">
-                            <span class="lang-label"><?= htmlspecialchars($card['label']) ?></span>
-                            <span class="badge badge-<?= htmlspecialchars($card['badgeClass']) ?>"><?= htmlspecialchars($card['badgeLabel']) ?></span>
-                        </a>
+                    <span class="lang-label"><?= htmlspecialchars($card['label']) ?></span>
+                    <div class="actions">
+                        <span class="badge badge-<?= htmlspecialchars($card['badgeClass']) ?>"><?= htmlspecialchars($card['badgeLabel']) ?></span>
+                        <?php if ($card['canRetry']): ?>
+                            <form method="POST" action="?action=translation-retry" class="retry-form">
+                                <input type="hidden" name="lang" value="<?= htmlspecialchars($card['id']) ?>">
+                                <button type="submit" class="retry-btn">Reintenta</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                    <?php if ($card['hasFile']): ?>
                         <div class="download-btns">
                             <a class="download-btn" href="?action=download-vtt&amp;lang=<?= urlencode($card['id']) ?>"><span class="material-icons">download</span>VTT</a>
                             <a class="download-btn" href="?action=download-srt&amp;lang=<?= urlencode($card['id']) ?>"><span class="material-icons">download</span>SRT</a>
-                        </div>
-                    <?php else: ?>
-                        <span class="lang-label"><?= htmlspecialchars($card['label']) ?></span>
-                        <div class="actions">
-                            <span class="badge badge-<?= htmlspecialchars($card['badgeClass']) ?>"><?= htmlspecialchars($card['badgeLabel']) ?></span>
-                            <?php if ($card['canRetry']): ?>
-                                <form method="POST" action="?action=translation-retry" class="retry-form">
-                                    <input type="hidden" name="lang" value="<?= htmlspecialchars($card['id']) ?>">
-                                    <button type="submit" class="retry-btn">Reintenta</button>
-                                </form>
-                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
                 </div>

@@ -58,8 +58,8 @@ class TranslationAction
                 'label'      => $language['label'] ?? $id,
                 'badgeClass' => match ($status) { 'error' => 'error', 'reviewed' => 'reviewed', 'done' => 'generated', default => 'pending' },
                 'badgeLabel' => match ($status) { 'error' => 'Error', 'reviewed' => 'Revisat', 'done' => 'Generat', default => 'Pendent' },
-                'clickable'  => in_array($status, ['reviewed', 'done'], true),
                 'canRetry'   => $status === 'error',
+                'hasFile'    => in_array($status, ['reviewed', 'done'], true),
             ];
         }
 

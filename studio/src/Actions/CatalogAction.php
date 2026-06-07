@@ -495,9 +495,8 @@ class CatalogAction
         }
 
         $langLabel = $this->langLabel($lang);
-        $embedMode = true;
         $postSaveRedirect = '?action=continguts-video&vimeo_id=' . rawurlencode($vimeoId);
-        require $this->view('translation-review.php');
+        require $this->view('continguts-caption-editor.php');
         exit;
     }
 

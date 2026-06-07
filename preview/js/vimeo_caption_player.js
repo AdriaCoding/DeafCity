@@ -62,6 +62,21 @@
     }
 
     /**
+     * Resolve filtered cursor from shuffle step, or null when sequence is invalid.
+     * @param {unknown} sequence
+     * @param {number} step
+     * @param {number} filteredCount
+     * @returns {number | null}
+     */
+    function filteredCursorFromShuffleStep(sequence, step, filteredCount) {
+        if (!Array.isArray(sequence) || sequence.length < filteredCount) return null;
+        if (step < 0 || step >= filteredCount) return null;
+        var cursor = sequence[step];
+        if (typeof cursor !== 'number' || cursor < 0 || cursor >= filteredCount) return null;
+        return cursor;
+    }
+
+    /**
      * Next playlist step after a video ends, or null when already on the last entry.
      * @param {{ shuffleMode: boolean, filteredCursor: number, shuffleStep: number, filteredCount: number, shuffledSequence: number[] }} opts
      * @returns {{ filteredCursor: number, shuffleStep: number } | null}
@@ -73,9 +88,11 @@
         if (opts.shuffleMode) {
             var nextStep = opts.shuffleStep + 1;
             if (nextStep >= fc) return null;
+            var shuffledCursor = filteredCursorFromShuffleStep(opts.shuffledSequence, nextStep, fc);
+            if (shuffledCursor === null) return null;
             return {
                 shuffleStep: nextStep,
-                filteredCursor: opts.shuffledSequence[nextStep],
+                filteredCursor: shuffledCursor,
             };
         }
 
@@ -684,6 +701,7 @@
                     shuffleStep = step.shuffleStep;
                     filteredCursor = step.filteredCursor;
                     var masterIx = filteredMasterIndices[filteredCursor];
+                    if (masterIx === undefined) return;
                     loadVideoMaster(masterIx, true).then(function () {
                         updatePlaylistNavButtons();
                     });
@@ -712,9 +730,12 @@
                 if (fc <= 0 || ni < 0 || ni >= fc) {
                     return Promise.resolve();
                 }
+                var shuffledCursor = filteredCursorFromShuffleStep(shuffledSequence, ni, fc);
+                if (shuffledCursor === null) return Promise.resolve();
                 shuffleStep = ni;
-                filteredCursor = shuffledSequence[shuffleStep];
+                filteredCursor = shuffledCursor;
                 var masterIx = filteredMasterIndices[filteredCursor];
+                if (masterIx === undefined) return Promise.resolve();
                 return loadVideoMaster(masterIx, autoplayPreferred !== false).then(function () {
                     updatePlaylistNavButtons();
                 });

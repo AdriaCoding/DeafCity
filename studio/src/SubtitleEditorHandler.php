@@ -56,6 +56,32 @@ class SubtitleEditorHandler
     }
 
     /**
+     * @param array $cues
+     * @return array{ok: bool, errors?: string[], cueErrors?: array}
+     */
+    public function handleForFilePath(string $vttPath, array $cues): array
+    {
+        $cueErrors = $this->checker->check($cues);
+        if ($cueErrors !== []) {
+            return [
+                'ok' => false,
+                'errors' => array_values(array_unique(array_column($cueErrors, 'message'))),
+                'cueErrors' => $cueErrors,
+            ];
+        }
+
+        $existing = $this->vttParser->parse($vttPath);
+        $existing['cues'] = $cues;
+        $vttContent = $this->vttParser->write($existing);
+
+        if (file_put_contents($vttPath, $vttContent) === false) {
+            return ['ok' => false, 'errors' => ['No s\'ha pogut desar el fitxer de subtítols.']];
+        }
+
+        return ['ok' => true];
+    }
+
+    /**
      * Decode and handle a raw JSON POST body.
      *
      * @param array{lang?: string|null, advanceStep?: bool, translate?: bool} $options
