@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Continguts — Studio</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -448,9 +449,14 @@
             border-radius: 3px;
             color: #666;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.75rem;
-            padding: 0.3rem 0.55rem;
+            padding: 0.25rem;
+            line-height: 1;
         }
+        .btn-icon .material-icons { font-size: 1rem; }
         .btn-icon:hover { color: #bbb; border-color: #555; }
         .btn-icon.danger:hover { color: #e55; border-color: #744; }
         .btn-icon.confirm { background: #1a3a6e; border-color: #2a5090; color: #9ab8ff; }
@@ -619,10 +625,10 @@
                 <span class="config-entry-label"><?= htmlspecialchars($ed['label']) ?></span>
                 <input class="inline-label-input" type="text" value="<?= htmlspecialchars($ed['label'], ENT_QUOTES) ?>">
                 <span class="config-id"><?= htmlspecialchars($ed['id']) ?></span>
-                <button class="btn-icon edit-btn" title="Edita">✏️</button>
+                <button class="btn-icon edit-btn" title="Edita"><span class="material-icons" aria-hidden="true">edit</span></button>
                 <button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>
                 <?php if (!$isRef): ?>
-                <button class="btn-icon danger delete-btn" title="Elimina">🗑</button>
+                <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
@@ -663,10 +669,10 @@
                 <span class="config-entry-label"><?= htmlspecialchars($sl['label']) ?></span>
                 <input class="inline-label-input" type="text" value="<?= htmlspecialchars($sl['label'], ENT_QUOTES) ?>">
                 <span class="config-id"><?= htmlspecialchars($sl['id']) ?></span>
-                <button class="btn-icon edit-btn" title="Edita">✏️</button>
+                <button class="btn-icon edit-btn" title="Edita"><span class="material-icons" aria-hidden="true">edit</span></button>
                 <button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>
                 <?php if (!$isRef): ?>
-                <button class="btn-icon danger delete-btn" title="Elimina">🗑</button>
+                <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
@@ -714,7 +720,7 @@
                 <span class="vimeo-badge" title="Locale Vimeo">→ <?= htmlspecialchars($vimeoCode) ?></span>
                 <?php endif; ?>
                 <?php if (!$isRef): ?>
-                <button class="btn-icon danger delete-btn" title="Elimina">🗑</button>
+                <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
@@ -1171,9 +1177,9 @@
         div.innerHTML = '<span class="config-entry-label">' + escHtml(label) + '</span>' +
             '<input class="inline-label-input" type="text" value="' + escHtml(label) + '">' +
             '<span class="config-id">' + escHtml(id) + '</span>' +
-            '<button class="btn-icon edit-btn" title="Edita">✏️</button>' +
+            '<button class="btn-icon edit-btn" title="Edita"><span class="material-icons" aria-hidden="true">edit</span></button>' +
             '<button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>' +
-            '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
+            '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>';
         list.appendChild(div);
         attachConfigEntryListeners(div);
     }
@@ -1422,9 +1428,9 @@
                 div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
                     '<input class="inline-label-input" type="text" value="' + escHtml(data.label) + '">' +
                     '<span class="config-id">' + escHtml(data.id) + '</span>' +
-                    '<button class="btn-icon edit-btn" title="Edita">✏️</button>' +
+                    '<button class="btn-icon edit-btn" title="Edita"><span class="material-icons" aria-hidden="true">edit</span></button>' +
                     '<button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>' +
-                    '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
+                    '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>';
                 list.appendChild(div);
                 attachConfigEntryListeners(div);
                 editionCancelBtn.click();
@@ -1499,9 +1505,9 @@
                 div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
                     '<input class="inline-label-input" type="text" value="' + escHtml(data.label) + '">' +
                     '<span class="config-id">' + escHtml(data.id) + '</span>' +
-                    '<button class="btn-icon edit-btn" title="Edita">✏️</button>' +
+                    '<button class="btn-icon edit-btn" title="Edita"><span class="material-icons" aria-hidden="true">edit</span></button>' +
                     '<button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>' +
-                    '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
+                    '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>';
                 list.appendChild(div);
                 attachConfigEntryListeners(div);
                 langCancelBtn.click();
@@ -1796,7 +1802,7 @@
                 div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
                     '<span class="config-id">' + escHtml(data.id) + '</span>' +
                     vimeoBadge +
-                    '<button class="btn-icon danger delete-btn" title="Elimina">🗑</button>';
+                    '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>';
                 list.appendChild(div);
                 attachConfigEntryListeners(div);
                 subtitleLangCancelBtn.click();
