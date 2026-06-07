@@ -47,7 +47,7 @@ class IntakeAction
                 if (($values['intake_mode'] ?? 'upload') === 'generate') {
                     $outcome = $c->transcriptionOrchestrator()->run();
                     if ($outcome['result'] === 'editor') {
-                        header('Location: ?action=subtitle-editor');
+                        header('Location: ?action=translation');
                         exit;
                     }
                     if ($outcome['result'] === 'loading') {

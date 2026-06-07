@@ -84,7 +84,7 @@ class IntakeHandler
             'sign_language' => $values['sign_language'],
             'edition' => $values['edition'],
             'subtitle_language' => $values['subtitle_language'],
-            'step' => 'subtitle-editor',
+            'step' => 'translation',
             'intake_mode' => $intakeMode,
         ];
 

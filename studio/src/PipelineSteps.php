@@ -5,10 +5,9 @@ namespace Studio;
 class PipelineSteps
 {
     private const LABELS = [
-        'subtitle-editor' => 'Editor de subtítols',
-        'translation'     => 'Traducció',
-        'tagging'         => 'Etiquetatge',
-        'publication'     => 'Publicació',
+        'translation' => 'Traducció',
+        'tagging'     => 'Etiquetatge',
+        'publication' => 'Publicació',
     ];
 
     public static function label(string $step): string

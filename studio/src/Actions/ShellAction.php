@@ -55,7 +55,11 @@ class ShellAction
 
         if ($hasActiveJob) {
             $job = $c->jobManager->read();
-            $step = $job['step'] ?? 'subtitle-editor';
+            $step = $job['step'] ?? 'translation';
+            if ($step === 'subtitle-editor') {
+                $c->jobManager->update(['step' => 'translation']);
+                $step = 'translation';
+            }
             $stepLabel = PipelineSteps::label($step);
             $resumeUrl = PipelineSteps::route($step);
             $editionLabel = $job['edition'];

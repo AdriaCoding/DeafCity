@@ -285,7 +285,7 @@
                                 .then(function (r) { return r.json(); })
                                 .then(function (data) {
                                     if (data.status === 'done') {
-                                        window.location.href = '?action=subtitle-editor';
+                                        window.location.href = '?action=translation';
                                     } else if (data.status === 'error') {
                                         document.getElementById('status-label').textContent =
                                             data.message || 'Error en la generació de subtítols';

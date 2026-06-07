@@ -15,55 +15,7 @@ class EditorAction
 
     public function handle(): never
     {
-        $c = $this->c;
-        if (!$c->jobManager->exists()) {
-            header('Location: ' . $c->baseUrl);
-            exit;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            ini_set('display_errors', '0');
-            header('Content-Type: application/json');
-            ob_start();
-            try {
-                $job = $c->jobManager->read();
-                $lang = trim((string) ($_GET['lang'] ?? ''));
-                $handler = new SubtitleEditorHandler(new VttParser(), new CaptionFileIntegrityChecker(), $c->jobManager);
-                $result = $handler->handleRawJson((string) file_get_contents('php://input'), ['lang' => $lang !== '' ? $lang : null]);
-                if ($result['ok'] && $lang !== '') {
-                    (new TranslationJobState($c->jobManager))->markLanguageReviewed($lang);
-                }
-                if ($result['ok'] && !empty($result['translate'])) {
-                    $c->translationCoordinator()->spawn($job['subtitle_language'] ?? 'es');
-                }
-            } catch (\Throwable $e) {
-                $result = ['ok' => false, 'errors' => ['Error del servidor: ' . $e->getMessage()]];
-            }
-            ob_end_clean();
-            http_response_code($result['ok'] ? 200 : 422);
-            echo json_encode($result);
-            exit;
-        }
-
-        $job = $c->jobManager->read();
-        $lang = trim((string) ($_GET['lang'] ?? ''));
-        $vttPath = $lang !== '' ? $c->jobManager->draftVttPathForLang($lang) : $c->jobManager->draftVttPath();
-
-        if (!is_file($vttPath)) {
-            if (($job['intake_mode'] ?? '') === 'generate' && !$c->jobManager->hasDraftVtt()) {
-                header('Location: ' . $c->baseUrl);
-                exit;
-            }
-            header('Location: ?action=translation');
-            exit;
-        }
-
-        $parsed = (new VttParser())->parse($vttPath);
-        $cues = $parsed['cues'];
-        $vimeoId = $job['vimeo_id'] ?? '';
-        $editorMode = $lang !== '' ? 'translation' : 'master';
-        $langLabel = $this->langLabel($lang);
-        require $this->view('subtitle-editor.php');
+        header('Location: ?action=translation');
         exit;
     }
 
