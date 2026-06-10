@@ -46,6 +46,10 @@ _Avoid_: User, operator, editor, participant, developer (as a Studio role)
 A reusable label a Producer attaches to a Video before publication (e.g. city edition, theme, installation). Tags can be newly created or reused from previous Videos.
 _Avoid_: Category, label, keyword
 
+**Typology**:
+A closed, enumerable classification of the kind of humorous performance in a Video (e.g. Joke, Anecdote, Riddle). Each Video has at most one Typology. The list of valid Typologies is managed in Studio config. UI label in Catalan: "Tipologia" / "Tipologies".
+_Avoid_: Tag, category, type (alone)
+
 **Subtitle language**:
 The language a Subtitle is written in (e.g. Spanish, English, Italian). Distinct from Sign language — what is signed on camera vs what is written for the audience. A Subtitle language may exist in Studio config without being a Translation target — it can still be chosen at Intake as the Master language and published to Vimeo; it is simply excluded from automatic translation generation.
 _Avoid_: Idioma alone, spoken language, locale code alone

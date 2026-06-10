@@ -132,6 +132,48 @@ class StudioConfigMutationTest extends TestCase
         $config->removeSignLanguage('lse', $catalogEditor);
     }
 
+    // ── removeTypology ────────────────────────────────────────────────────────
+
+    public function test_remove_typology_deletes_entry_when_unreferenced(): void
+    {
+        $config = new StudioConfig($this->configPath);
+        $config->addTypology('endevinalles', 'ENDEVINALLES');
+
+        $catalogEditor = new CatalogEditor($this->catalogFile);
+        $config->removeTypology('endevinalles', $catalogEditor);
+
+        $reloaded = new StudioConfig($this->configPath);
+        $ids = array_column($reloaded->getTypologies(), 'id');
+        $this->assertNotContains('endevinalles', $ids);
+    }
+
+    public function test_remove_typology_throws_when_referenced_by_catalog(): void
+    {
+        file_put_contents($this->catalogFile, json_encode(['videos' => [
+            ['id' => 'lse_111', 'vimeo_id' => '111', 'title' => 'T', 'sign_language' => 'lse', 'edition' => '2020-valencia', 'typology' => 'acudits', 'tags' => [], 'captions' => []],
+        ]]));
+
+        $config = new StudioConfig($this->configPath);
+        $catalogEditor = new CatalogEditor($this->catalogFile);
+
+        $this->expectException(\RuntimeException::class);
+        $config->removeTypology('acudits', $catalogEditor);
+    }
+
+    // ── updateTypologyLabel ───────────────────────────────────────────────────
+
+    public function test_update_typology_label_changes_label_not_id(): void
+    {
+        $config = new StudioConfig($this->configPath);
+        $config->updateTypologyLabel('acudits', 'ACUDITS I BROMES');
+
+        $reloaded = new StudioConfig($this->configPath);
+        $entry = array_values(array_filter($reloaded->getTypologies(), fn($e) => $e['id'] === 'acudits'))[0];
+
+        $this->assertSame('acudits', $entry['id']);
+        $this->assertSame('ACUDITS I BROMES', $entry['label']);
+    }
+
     // ── removeSubtitleLanguage ────────────────────────────────────────────────
 
     public function test_remove_subtitle_language_deletes_entry_when_unreferenced(): void

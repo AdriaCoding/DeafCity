@@ -28,5 +28,9 @@ class StudioConfigTest extends TestCase
             ],
             $config->getSubtitleLanguages()
         );
+        $this->assertSame(
+            [['id' => 'acudits', 'label' => 'ACUDITS']],
+            $config->getTypologies()
+        );
     }
 }

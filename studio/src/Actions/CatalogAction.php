@@ -12,6 +12,7 @@ use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
 use Studio\SubtitleLanguageAddHandler;
 use Studio\SubtitleLanguageTranslationTargetHandler;
+use Studio\TypologyAddHandler;
 use Studio\VideoEditHandler;
 use Studio\VimeoIdParser;
 use Studio\VimeoVideoResolver;
@@ -37,6 +38,16 @@ class CatalogAction
         $result = (new EditionAddHandler($this->c->studioConfig))->handle(
             (string) ($_POST['edition_city'] ?? ''),
             (string) ($_POST['edition_year'] ?? ''),
+        );
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    public function addTypology(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $result = (new TypologyAddHandler($this->c->studioConfig))->handle(
+            (string) ($_POST['typology_label'] ?? ''),
         );
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
@@ -71,10 +82,12 @@ class CatalogAction
             'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
+            'continguts-save-typology-label'         => $this->saveLabel('typology'),
             'continguts-set-subtitle-language-translation-target' => $this->setSubtitleLanguageTranslationTarget(),
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
+            'continguts-delete-typology'             => $this->deleteItem('typology'),
             'continguts-delete-caption'              => $this->deleteCaption(),
             'continguts-replace-caption'             => $this->replaceCaption(),
             'continguts-caption-review'              => $this->captionReview(),
@@ -96,10 +109,12 @@ class CatalogAction
         $editions = $c->studioConfig->getEditions();
         $signLanguages = $c->studioConfig->getSignLanguages();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        $typologies = $c->studioConfig->getTypologies();
         $catalogEditor = $c->catalogEditor();
         $referencedEditionIds = $catalogEditor->getReferencedEditionIds();
         $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
         $referencedSubtitleLanguageIds = $catalogEditor->getReferencedSubtitleLanguageIds();
+        $referencedTypologyIds = $catalogEditor->getReferencedTypologyIds();
         require $this->view('continguts.php');
         exit;
     }
@@ -122,6 +137,7 @@ class CatalogAction
         $catalogFilePath = $c->dataDir . '/catalog.json';
         $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        $typologies = $c->studioConfig->getTypologies();
         require $this->view('continguts-video.php');
         exit;
     }
@@ -149,11 +165,12 @@ class CatalogAction
         $signLanguage = trim((string) ($_POST['sign_language'] ?? ''));
         $edition = trim((string) ($_POST['edition'] ?? ''));
         $title = trim((string) ($_POST['title'] ?? ''));
+        $typology = trim((string) ($_POST['typology'] ?? ''));
 
         $result = (new CatalogVideoAddHandler(
             $this->c->vimeoClient(),
             $this->c->catalogEditor(),
-        ))->handle($vimeoId, $signLanguage, $edition, $title);
+        ))->handle($vimeoId, $signLanguage, $edition, $title, $typology);
 
         if (!$result['ok']) {
             http_response_code(422);
@@ -227,6 +244,7 @@ class CatalogAction
         header('Content-Type: application/json; charset=utf-8');
         $videoId = trim((string) ($_POST['vimeo_id'] ?? ''));
         $title = trim((string) ($_POST['title'] ?? ''));
+        $typology = trim((string) ($_POST['typology'] ?? ''));
         $tags = is_array($_POST['tags'] ?? null) ? array_values(array_filter(array_map('trim', $_POST['tags']))) : [];
         if ($videoId === '' || $title === '') {
             http_response_code(422);
@@ -242,7 +260,7 @@ class CatalogAction
         }
 
         $result = (new VideoEditHandler($this->c->vimeoClient(), $this->c->catalogEditor()))
-            ->handle($videoId, $title, $tags);
+            ->handle($videoId, $title, $tags, $typology !== '' ? $typology : null);
 
         if (!$result['ok']) {
             echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -364,6 +382,7 @@ class CatalogAction
             match ($type) {
                 'edition' => $this->c->studioConfig->updateEditionLabel($id, $label),
                 'sign_language' => $this->c->studioConfig->updateSignLanguageLabel($id, $label),
+                'typology' => $this->c->studioConfig->updateTypologyLabel($id, $label),
                 default => throw new \InvalidArgumentException('Unknown label type.'),
             };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
@@ -554,6 +573,7 @@ class CatalogAction
                 'edition' => $this->c->studioConfig->removeEdition($id, $this->c->catalogEditor()),
                 'sign_language' => $this->c->studioConfig->removeSignLanguage($id, $this->c->catalogEditor()),
                 'subtitle_language' => $this->c->studioConfig->removeSubtitleLanguage($id, $this->c->catalogEditor()),
+                'typology' => $this->c->studioConfig->removeTypology($id, $this->c->catalogEditor()),
                 default => throw new \InvalidArgumentException('Unknown delete type.'),
             };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);

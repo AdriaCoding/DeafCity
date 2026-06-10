@@ -6,7 +6,7 @@ class CatalogEditor
 {
     public function __construct(private readonly string $catalogFilePath) {}
 
-    public function updateVideo(string $videoId, string $title, array $tags): void
+    public function updateVideo(string $videoId, string $title, array $tags, ?string $typology = null): void
     {
         $fp = fopen($this->catalogFilePath, 'c+');
         if ($fp === false) {
@@ -28,6 +28,11 @@ class CatalogEditor
             if (($entry['vimeo_id'] ?? '') === $videoId) {
                 $entry['title'] = $title;
                 $entry['tags'] = $tags;
+                if ($typology !== null && $typology !== '') {
+                    $entry['typology'] = $typology;
+                } else {
+                    unset($entry['typology']);
+                }
                 $found = true;
                 break;
             }
@@ -57,6 +62,7 @@ class CatalogEditor
         string $edition,
         ?string $thumbnailUrl = null,
         array $tags = [],
+        ?string $typology = null,
     ): array {
         if ($this->findVideoByVimeoId($vimeoId) !== null) {
             throw new \RuntimeException('Aquest vídeo ja és al catàleg.');
@@ -71,6 +77,9 @@ class CatalogEditor
             'tags' => array_values($tags),
             'captions' => [],
         ];
+        if ($typology !== null && $typology !== '') {
+            $entry['typology'] = $typology;
+        }
         if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
             $entry['thumbnail_url'] = $thumbnailUrl;
         }
@@ -318,6 +327,12 @@ class CatalogEditor
     public function getReferencedSignLanguageIds(): array
     {
         return $this->collectField('sign_language');
+    }
+
+    /** @return string[] */
+    public function getReferencedTypologyIds(): array
+    {
+        return $this->collectField('typology');
     }
 
     /** @return string[] */

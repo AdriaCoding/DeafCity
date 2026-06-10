@@ -10,5 +10,8 @@
     { "id": "en", "label": "English", "vimeo_code": "en" },
     { "id": "ca", "label": "Catalan", "vimeo_code": "ca" },
     { "id": "arq", "label": "Algerian Darija", "vimeo_code": "ar" }
+  ],
+  "typologies": [
+    { "id": "acudits", "label": "ACUDITS" }
   ]
 }

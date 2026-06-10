@@ -588,6 +588,7 @@
         <button class="tab-btn" data-tab="editions">Ciutats</button>
         <button class="tab-btn" data-tab="languages">Llengues de signes</button>
         <button class="tab-btn" data-tab="subtitle-languages">Llengues orals</button>
+        <button class="tab-btn" data-tab="typologies">Tipologies</button>
     </div>
 
     <!-- ══ Vídeos ══════════════════════════════════════════════════════════ -->
@@ -725,6 +726,43 @@
             <div class="config-new-actions">
                 <button type="button" class="btn-secondary" id="lang-add-btn-c">Afegir</button>
                 <button type="button" class="btn-secondary" id="lang-cancel-btn-c" style="color:#666">Cancel·la</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Tipologies ═════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-typologies">
+        <div class="config-list">
+            <?php foreach ($typologies as $ty): ?>
+            <?php $isRef = in_array($ty['id'], $referencedTypologyIds, true) ?>
+            <div class="config-entry" data-id="<?= htmlspecialchars($ty['id'], ENT_QUOTES) ?>" data-type="typology">
+                <span class="config-entry-label"><?= htmlspecialchars($ty['label']) ?></span>
+                <input class="inline-label-input" type="text" value="<?= htmlspecialchars($ty['label'], ENT_QUOTES) ?>">
+                <span class="config-id"><?= htmlspecialchars($ty['id']) ?></span>
+                <button class="btn-icon edit-btn" title="Edita"><span class="material-icons" aria-hidden="true">edit</span></button>
+                <button class="btn-icon confirm-btn" title="Desa" style="display:none">✓</button>
+                <?php if (!$isRef): ?>
+                <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
+                <?php endif; ?>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Add typology -->
+        <button class="add-trigger-btn" id="typology-add-trigger">+ Afegir tipologia…</button>
+        <div class="config-new-panel" id="typology-new-panel">
+            <h3>Nova tipologia</h3>
+            <p class="config-add-error" id="typology-add-error" role="alert"></p>
+            <div style="margin-bottom: 0.75rem;">
+                <label class="field-label" for="typology_label_c">Nom</label>
+                <input type="text" id="typology_label_c" class="config-input" autocomplete="off" placeholder="p. ex. ACUDITS">
+            </div>
+            <p class="config-preview">
+                <strong>Identificador:</strong> <span class="value" id="typology-preview-id-c">—</span>
+            </p>
+            <div class="config-new-actions">
+                <button type="button" class="btn-secondary" id="typology-add-btn-c">Afegir</button>
+                <button type="button" class="btn-secondary" id="typology-cancel-btn-c" style="color:#666">Cancel·la</button>
             </div>
         </div>
     </div>
@@ -884,6 +922,32 @@
             </div>
         </div>
 
+        <div class="modal-field">
+            <label for="modal-typology">Tipologia</label>
+            <select id="modal-typology">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($typologies as $ty): ?>
+                <option value="<?= htmlspecialchars($ty['id'], ENT_QUOTES) ?>"><?= htmlspecialchars($ty['label']) ?></option>
+                <?php endforeach; ?>
+                <option value="__new__">+ Afegiu una tipologia…</option>
+            </select>
+            <div class="config-new-panel" id="modal-typology-new-panel">
+                <h3>Nova tipologia</h3>
+                <p class="config-add-error" id="modal-typology-add-error" role="alert"></p>
+                <div style="margin-bottom: 0.75rem;">
+                    <label class="field-label" for="modal-typology-label">Nom</label>
+                    <input type="text" id="modal-typology-label" class="config-input" autocomplete="off" placeholder="p. ex. ACUDITS">
+                </div>
+                <p class="config-preview">
+                    <strong>Identificador:</strong> <span class="value" id="modal-typology-preview-id">—</span>
+                </p>
+                <div class="config-new-actions">
+                    <button type="button" class="btn-secondary" id="modal-typology-add-btn">Afegir a la llista</button>
+                    <button type="button" class="btn-secondary" id="modal-typology-cancel-btn" style="color:#666">Cancel·la</button>
+                </div>
+            </div>
+        </div>
+
         <div class="modal-actions">
             <button type="button" class="btn-primary-modal" id="video-add-submit" disabled>Afegir al catàleg</button>
             <button type="button" class="btn-secondary" id="video-add-cancel">Cancel·la</button>
@@ -905,6 +969,10 @@
         },
         'subtitle-language': {
             delete: 'continguts-delete-subtitle-language'
+        },
+        'typology': {
+            save: 'continguts-save-typology-label',
+            delete: 'continguts-delete-typology'
         }
     };
 
@@ -950,6 +1018,7 @@
     var vimeoPreviewPlaceholder = document.getElementById('vimeo-preview-thumb-placeholder');
     var modalSignLanguage = document.getElementById('modal-sign-language');
     var modalEdition = document.getElementById('modal-edition');
+    var modalTypology = document.getElementById('modal-typology');
     var videosCatalog = document.getElementById('videos-catalog');
     var videosEmptyMsg = document.getElementById('videos-empty-msg');
     var resolveTimer = null;
@@ -976,12 +1045,14 @@
         modalVideoTitle.value = '';
         modalSignLanguage.value = '';
         modalEdition.value = '';
+        modalTypology.value = '';
         vimeoPreview.hidden = true;
         vimeoPreviewThumb.hidden = true;
         vimeoPreviewPlaceholder.hidden = true;
         videoAddSubmit.disabled = true;
         document.getElementById('modal-lang-new-panel').classList.remove('is-open');
         document.getElementById('modal-edition-new-panel').classList.remove('is-open');
+        document.getElementById('modal-typology-new-panel').classList.remove('is-open');
     }
 
     function updateSubmitState() {
@@ -991,6 +1062,8 @@
             modalSignLanguage.value !== '__new__' &&
             modalEdition.value.trim() !== '' &&
             modalEdition.value !== '__new__' &&
+            modalTypology.value.trim() !== '' &&
+            modalTypology.value !== '__new__' &&
             modalVideoTitle.value.trim() !== ''
         );
     }
@@ -1073,6 +1146,7 @@
     modalVideoTitle.addEventListener('input', updateSubmitState);
     modalSignLanguage.addEventListener('change', updateSubmitState);
     modalEdition.addEventListener('change', updateSubmitState);
+    modalTypology.addEventListener('change', updateSubmitState);
 
     setupModalConfigAdd({
         select: modalSignLanguage,
@@ -1164,6 +1238,37 @@
         focusInput: function () { document.getElementById('modal-edition-city').focus(); }
     });
 
+    setupModalConfigAdd({
+        select: modalTypology,
+        panelId: 'modal-typology-new-panel',
+        errorId: 'modal-typology-add-error',
+        addBtnId: 'modal-typology-add-btn',
+        cancelBtnId: 'modal-typology-cancel-btn',
+        codeInputId: 'modal-typology-label',
+        action: 'add-typology',
+        buildBody: function () {
+            var body = new FormData();
+            body.append('typology_label', document.getElementById('modal-typology-label').value.trim());
+            return body;
+        },
+        validate: function () {
+            return document.getElementById('modal-typology-label').value.trim() !== '';
+        },
+        onAdded: function (data) {
+            appendSelectOption(modalTypology, data.id, data.label);
+            appendConfigListEntry('#tab-typologies .config-list', data.id, data.label, 'typology');
+            updateSubmitState();
+        },
+        buildPreview: function () {
+            var label = document.getElementById('modal-typology-label').value.trim();
+            document.getElementById('modal-typology-preview-id').textContent = label ? slugify(label) : '—';
+        },
+        clearInputs: function () {
+            document.getElementById('modal-typology-label').value = '';
+        },
+        focusInput: function () { document.getElementById('modal-typology-label').focus(); }
+    });
+
     videoAddSubmit.addEventListener('click', function () {
         if (videoAddSubmit.disabled || resolving) return;
         videoAddError.textContent = '';
@@ -1173,6 +1278,7 @@
         body.append('vimeo_id', modalVimeoId.value);
         body.append('sign_language', modalSignLanguage.value);
         body.append('edition', modalEdition.value);
+        body.append('typology', modalTypology.value);
         body.append('title', modalVideoTitle.value.trim());
 
         fetch('?action=continguts-add-video', { method: 'POST', body: body })
@@ -1191,6 +1297,17 @@
                 updateSubmitState();
             });
     });
+
+    function removeModalSelectOption(type, id) {
+        var select = {
+            'edition': modalEdition,
+            'sign-language': modalSignLanguage,
+            'typology': modalTypology
+        }[type];
+        if (!select) return;
+        var opt = select.querySelector('option[value="' + CSS.escape(id) + '"]');
+        if (opt) opt.remove();
+    }
 
     function appendSelectOption(select, id, label) {
         var newOpt = document.createElement('option');
@@ -1385,7 +1502,10 @@
                 fetch('?action=' + delAction, { method: 'POST', body: body })
                     .then(function (r) { return r.json(); })
                     .then(function (data) {
-                        if (data.ok) { entry.remove(); }
+                        if (data.ok) {
+                            entry.remove();
+                            removeModalSelectOption(type, id);
+                        }
                         else { alert('Error: ' + (data.error || 'No s\'ha pogut eliminar.')); }
                     })
                     .catch(function () { alert('Error de connexió.'); });
@@ -1572,6 +1692,57 @@
             })
             .catch(function () { langAddError.textContent = 'Error de connexió.'; })
             .finally(function () { langAddBtn.disabled = false; });
+    });
+
+    // ── Add typology ──────────────────────────────────────────────────────────
+    var typologyTrigger = document.getElementById('typology-add-trigger');
+    var typologyPanel = document.getElementById('typology-new-panel');
+    var typologyLabel = document.getElementById('typology_label_c');
+    var typologyPreviewId = document.getElementById('typology-preview-id-c');
+    var typologyAddError = document.getElementById('typology-add-error');
+    var typologyAddBtn = document.getElementById('typology-add-btn-c');
+    var typologyCancelBtn = document.getElementById('typology-cancel-btn-c');
+
+    typologyTrigger.addEventListener('click', function () {
+        typologyPanel.classList.add('is-open');
+        typologyLabel.focus();
+    });
+    typologyCancelBtn.addEventListener('click', function () {
+        typologyPanel.classList.remove('is-open');
+        typologyLabel.value = '';
+        typologyPreviewId.textContent = '—';
+        typologyAddError.textContent = '';
+    });
+
+    typologyLabel.addEventListener('input', function () {
+        var label = typologyLabel.value.trim();
+        typologyPreviewId.textContent = label ? slugify(label) : '—';
+    });
+
+    typologyAddBtn.addEventListener('click', function () {
+        typologyAddError.textContent = '';
+        var label = typologyLabel.value.trim();
+        if (!label) {
+            typologyAddError.textContent = 'Indiqueu un nom per a la tipologia.';
+            return;
+        }
+        typologyAddBtn.disabled = true;
+        var body = new FormData();
+        body.append('typology_label', label);
+        fetch('?action=add-typology', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) {
+                    typologyAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la tipologia.';
+                    return;
+                }
+                appendConfigListEntry('#tab-typologies .config-list', data.id, data.label, 'typology');
+                appendSelectOption(modalTypology, data.id, data.label);
+                modalTypology.value = '';
+                typologyCancelBtn.click();
+            })
+            .catch(function () { typologyAddError.textContent = 'Error de connexió.'; })
+            .finally(function () { typologyAddBtn.disabled = false; });
     });
 
     // ── Add subtitle language ─────────────────────────────────────────────────

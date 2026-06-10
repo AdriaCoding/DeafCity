@@ -81,6 +81,11 @@ class StudioConfig
         $this->updateConfigEntryLabel('sign_languages', $id, $label);
     }
 
+    public function updateTypologyLabel(string $id, string $label): void
+    {
+        $this->updateConfigEntryLabel('typologies', $id, $label);
+    }
+
     public function removeEdition(string $id, CatalogEditor $catalogEditor): void
     {
         if (in_array($id, $catalogEditor->getReferencedEditionIds(), true)) {
@@ -95,6 +100,14 @@ class StudioConfig
             throw new \RuntimeException("Sign language '$id' is still referenced by one or more catalog videos.");
         }
         $this->removeConfigEntry('sign_languages', $id);
+    }
+
+    public function removeTypology(string $id, CatalogEditor $catalogEditor): void
+    {
+        if (in_array($id, $catalogEditor->getReferencedTypologyIds(), true)) {
+            throw new \RuntimeException("Typology '$id' is still referenced by one or more catalog videos.");
+        }
+        $this->removeConfigEntry('typologies', $id);
     }
 
     public function removeSubtitleLanguage(string $id, CatalogEditor $catalogEditor): void
@@ -183,6 +196,15 @@ class StudioConfig
         }
 
         $this->appendConfigEntry('sign_languages', $id, $label);
+    }
+
+    public function addTypology(string $id, string $label): void
+    {
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid typology id.');
+        }
+
+        $this->appendConfigEntry('typologies', $id, $label);
     }
 
     public function addSubtitleLanguage(string $id, string $label, string $vimeoCode): void
@@ -327,6 +349,11 @@ class StudioConfig
     public function getEditions(): array
     {
         return $this->list('editions');
+    }
+
+    public function getTypologies(): array
+    {
+        return $this->list('typologies');
     }
 
     public function getSubtitleLanguages(): array

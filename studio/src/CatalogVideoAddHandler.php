@@ -10,12 +10,13 @@ class CatalogVideoAddHandler
     ) {}
 
     /** @return array{ok: bool, video?: array<string, mixed>, error?: string} */
-    public function handle(string $vimeoId, string $signLanguage, string $edition, string $title): array
+    public function handle(string $vimeoId, string $signLanguage, string $edition, string $title, string $typology = ''): array
     {
         $vimeoId = trim($vimeoId);
         $signLanguage = trim($signLanguage);
         $edition = trim($edition);
         $title = trim($title);
+        $typology = trim($typology);
 
         if ($vimeoId === '' || $signLanguage === '' || $edition === '') {
             return ['ok' => false, 'error' => 'Falten camps obligatoris.'];
@@ -57,6 +58,7 @@ class CatalogVideoAddHandler
                 $edition,
                 $thumbnailUrl,
                 $tags,
+                $typology !== '' ? $typology : null,
             );
         } catch (\RuntimeException $e) {
             return ['ok' => false, 'error' => $e->getMessage()];

@@ -96,6 +96,36 @@ class CatalogVideoAddHandlerTest extends TestCase
         $this->assertStringContainsString('ja és al catàleg', $result['error']);
     }
 
+    public function test_adds_video_with_typology(): void
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getVideo')->willReturn('Vimeo Title');
+        $vimeo->method('getThumbnailUrl')->willReturn(null);
+
+        $result = $this->makeHandler($vimeo)->handle('444', 'lse', '2024-madrid', 'Title', 'acudits');
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame('acudits', $result['video']['typology']);
+
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertSame('acudits', $catalog['videos'][0]['typology']);
+    }
+
+    public function test_adds_video_without_typology_stores_no_typology_field(): void
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getVideo')->willReturn('Vimeo Title');
+        $vimeo->method('getThumbnailUrl')->willReturn(null);
+
+        $result = $this->makeHandler($vimeo)->handle('555', 'lse', '2024-madrid', 'Title');
+
+        $this->assertTrue($result['ok']);
+        $this->assertArrayNotHasKey('typology', $result['video']);
+
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertArrayNotHasKey('typology', $catalog['videos'][0]);
+    }
+
     private function makeHandler(VimeoClient $vimeo): CatalogVideoAddHandler
     {
         return new CatalogVideoAddHandler($vimeo, new CatalogEditor($this->catalogFile));

@@ -87,6 +87,18 @@
             outline: none;
         }
         input.title-input:focus { border-color: #555; }
+        select.typology-select {
+            display: block;
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        select.typology-select:focus { border-color: #555; }
 
         .chip-input-box {
             display: flex;
@@ -539,6 +551,15 @@
             <input class="title-input" type="text" value="<?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?>">
         </div>
         <div class="field">
+            <label class="field-label">Tipologia</label>
+            <select class="typology-select">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($typologies as $ty): ?>
+                <option value="<?= htmlspecialchars($ty['id'], ENT_QUOTES) ?>"<?= ($video['typology'] ?? '') === $ty['id'] ? ' selected' : '' ?>><?= htmlspecialchars($ty['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="field">
             <label class="field-label">Etiquetes</label>
             <div class="chip-wrapper">
                 <div class="chip-input-box">
@@ -649,6 +670,7 @@
 
     var form = document.querySelector('.video-edit-form');
     var titleInput = form.querySelector('.title-input');
+    var typologySelect = form.querySelector('.typology-select');
     var chipBox = form.querySelector('.chip-input-box');
     var textInput = form.querySelector('.chip-text-input');
     var suggestions = form.querySelector('.tag-suggestions');
@@ -676,6 +698,7 @@
         var body = new FormData();
         body.append('vimeo_id', vimeoId);
         body.append('title', titleInput.value.trim());
+        body.append('typology', typologySelect.value);
         tags.forEach(function (t) { body.append('tags[]', t); });
 
         captionUploads.querySelectorAll('.caption-upload-row').forEach(function (row) {

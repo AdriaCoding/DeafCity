@@ -82,6 +82,32 @@ class VideoEditHandlerTest extends TestCase
         $this->assertNotNull($result['vimeoWarning']);
     }
 
+    public function test_typology_is_written_to_catalog_entry(): void
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+
+        $result = $this->makeHandler($vimeo)->handle('111', 'New Title', ['a'], 'acudits');
+
+        $this->assertTrue($result['ok']);
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertSame('acudits', $catalog['videos'][0]['typology']);
+    }
+
+    public function test_null_typology_clears_field_on_catalog_entry(): void
+    {
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $catalog['videos'][0]['typology'] = 'acudits';
+        file_put_contents($this->catalogFile, json_encode($catalog));
+
+        $vimeo = $this->createMock(VimeoClient::class);
+
+        $result = $this->makeHandler($vimeo)->handle('111', 'New Title', ['a'], null);
+
+        $this->assertTrue($result['ok']);
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertArrayNotHasKey('typology', $catalog['videos'][0]);
+    }
+
     public function test_catalog_failure_returns_ok_false(): void
     {
         $vimeo = $this->createMock(VimeoClient::class);
