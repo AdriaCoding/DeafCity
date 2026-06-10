@@ -225,15 +225,15 @@ class CatalogAction
             exit;
         }
 
-        $basename = pathinfo($captionFile, PATHINFO_FILENAME);
+        $downloadBasename = $vimeoId . '.' . strtoupper($lang);
 
         if ($format === 'srt') {
             header('Content-Type: application/x-subrip; charset=utf-8');
-            header('Content-Disposition: attachment; filename="' . $basename . '.srt"');
+            header('Content-Disposition: attachment; filename="' . $downloadBasename . '.srt"');
             echo (new \Studio\VttToSrtConverter())->convert($vttPath);
         } else {
             header('Content-Type: text/vtt; charset=utf-8');
-            header('Content-Disposition: attachment; filename="' . $basename . '.vtt"');
+            header('Content-Disposition: attachment; filename="' . $downloadBasename . '.vtt"');
             readfile($vttPath);
         }
         exit;

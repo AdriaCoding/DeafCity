@@ -128,13 +128,13 @@
 
     function downloadVtt() {
         var lang = window.__lang || '';
-        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '');
+        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang.toUpperCase() : '');
         CaptionUtils.triggerDownload(CaptionUtils.generateVtt(translatedCues), base + '.vtt', 'text/vtt');
     }
 
     function downloadSrt() {
         var lang = window.__lang || '';
-        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang : '');
+        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang.toUpperCase() : '');
         CaptionUtils.triggerDownload(CaptionUtils.generateSrt(translatedCues), base + '.srt', 'application/x-subrip');
     }
 

@@ -124,10 +124,10 @@ class EditorAction
 
         if ($isTranscription) {
             $code = $lang !== '' ? $lang : ($job['subtitle_language'] ?? '');
-            return $base . ($code !== '' ? '_' . $code : '') . '.' . $ext;
+            return $base . ($code !== '' ? '_' . strtoupper($code) : '') . '.' . $ext;
         }
 
-        return $base . ($lang !== '' ? '_' . $lang : '') . '.' . $ext;
+        return $base . ($lang !== '' ? '_' . strtoupper($lang) : '') . '.' . $ext;
     }
 
     private function langLabel(string $lang): string
