@@ -61,11 +61,19 @@
             border: 1px solid #2a2a2a;
             flex-shrink: 0;
         }
+        .video-hero-meta {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
         .video-hero h2 {
             font-size: 1.15rem;
             font-weight: 500;
             color: #e0e0e0;
             line-height: 1.35;
+            margin: 0;
         }
 
         .field { margin-bottom: 1rem; }
@@ -174,6 +182,52 @@
         }
         .btn-save:hover { background: #1f4580; }
         .btn-save:disabled { opacity: 0.5; cursor: default; }
+        .visibility-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            align-self: flex-start;
+            flex-wrap: wrap;
+        }
+        .visibility-status {
+            font-size: 0.72rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            letter-spacing: 0.02em;
+        }
+        .visibility-status--visible {
+            color: #7ed87e;
+            border-color: #2a4a2a;
+            background: #101810;
+        }
+        .visibility-status--hidden {
+            color: #d4a0a0;
+            border-color: #4a3030;
+            background: #1a1010;
+        }
+        .visibility-action {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 0.72rem;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            padding: 0;
+        }
+        .visibility-action:hover { color: #ccc; }
+        .visibility-action:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .visibility-feedback {
+            font-size: 0.72rem;
+            min-height: 1em;
+            line-height: 1.3;
+        }
+        .visibility-feedback.err { color: #a55; }
+
         .save-feedback {
             margin-top: 0.5rem;
             font-size: 0.8rem;
@@ -542,7 +596,14 @@
         <?php else: ?>
             <div class="video-thumb-placeholder"></div>
         <?php endif; ?>
-        <h2 id="video-hero-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></h2>
+        <div class="video-hero-meta">
+            <h2 id="video-hero-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></h2>
+            <div class="visibility-control" data-invisible="<?= !empty($video['invisible']) ? '1' : '0' ?>">
+                <span class="visibility-status" id="visibility-status"></span>
+                <button type="button" class="visibility-action" id="visibility-action"></button>
+            </div>
+            <div class="visibility-feedback" id="visibility-feedback"></div>
+        </div>
     </div>
 
     <div class="video-edit-form" data-vimeo-id="<?= htmlspecialchars($video['vimeo_id'] ?? '', ENT_QUOTES) ?>">
@@ -686,6 +747,63 @@
     addCaptionBtn.addEventListener('click', addCaptionRow);
     setupMasterCaptionSelector();
     setupCaptionRowActions();
+    setupVisibilityControl();
+
+    function setupVisibilityControl() {
+        var control = document.querySelector('.visibility-control');
+        var statusEl = document.getElementById('visibility-status');
+        var actionBtn = document.getElementById('visibility-action');
+        var visFeedback = document.getElementById('visibility-feedback');
+        if (!control || !statusEl || !actionBtn) return;
+
+        function isInvisible() {
+            return control.dataset.invisible === '1';
+        }
+
+        function renderVisibilityState(invisible) {
+            control.dataset.invisible = invisible ? '1' : '0';
+            if (invisible) {
+                statusEl.textContent = 'Ocult del web';
+                statusEl.className = 'visibility-status visibility-status--hidden';
+                actionBtn.textContent = 'Torna a fer visible';
+            } else {
+                statusEl.textContent = 'Visible al web';
+                statusEl.className = 'visibility-status visibility-status--visible';
+                actionBtn.textContent = 'Oculta del web';
+            }
+        }
+
+        renderVisibilityState(isInvisible());
+
+        actionBtn.addEventListener('click', function () {
+            var nextInvisible = !isInvisible();
+            visFeedback.textContent = '';
+            visFeedback.className = 'visibility-feedback';
+            actionBtn.disabled = true;
+
+            var body = new FormData();
+            body.append('vimeo_id', vimeoId);
+            body.append('invisible', nextInvisible ? '1' : '0');
+
+            fetch('?action=continguts-set-video-invisible', { method: 'POST', body: body })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.ok) {
+                        visFeedback.textContent = data.error || 'Error en desar la visibilitat.';
+                        visFeedback.className = 'visibility-feedback err';
+                    } else {
+                        renderVisibilityState(nextInvisible);
+                    }
+                })
+                .catch(function () {
+                    visFeedback.textContent = 'Error de connexió.';
+                    visFeedback.className = 'visibility-feedback err';
+                })
+                .finally(function () {
+                    actionBtn.disabled = false;
+                });
+        });
+    }
 
     saveBtn.addEventListener('click', function () {
         feedback.textContent = '';

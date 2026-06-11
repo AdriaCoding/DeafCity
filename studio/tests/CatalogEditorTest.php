@@ -398,4 +398,85 @@ class CatalogEditorTest extends TestCase
 
         $this->assertEqualsCanonicalizing(['es', 'en', 'ca'], $editor->getReferencedSubtitleLanguageIds());
     }
+
+    public function test_setVideoInvisible_sets_invisible_flag(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => ['tag-a'],
+                'captions' => [],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->setVideoInvisible('111', true);
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertTrue($entry['invisible']);
+        $this->assertSame('T', $entry['title']);
+        $this->assertSame('2020-valencia', $entry['edition']);
+    }
+
+    public function test_setVideoInvisible_clears_flag_when_restored(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'invisible' => true,
+                'captions' => [],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->setVideoInvisible('111', false);
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertArrayNotHasKey('invisible', $entry);
+    }
+
+    public function test_setVideoInvisible_throws_when_video_not_found(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        $this->expectException(\RuntimeException::class);
+        (new CatalogEditor($this->catalogFile))->setVideoInvisible('999', true);
+    }
+
+    public function test_isVideoVisible_treats_missing_flag_as_visible(): void
+    {
+        $editor = new CatalogEditor($this->catalogFile);
+
+        $this->assertTrue($editor->isVideoVisible(['vimeo_id' => '111']));
+        $this->assertFalse($editor->isVideoVisible(['vimeo_id' => '111', 'invisible' => true]));
+    }
+
+    public function test_getReferencedEditionIds_includes_invisible_videos(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'T',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'invisible' => true,
+                'captions' => [],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+
+        $this->assertSame(['2020-valencia'], $editor->getReferencedEditionIds());
+    }
 }

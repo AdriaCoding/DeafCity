@@ -68,6 +68,15 @@ if (!function_exists('vpc_load_videos_catalog')) {
     }
 }
 
+if (!function_exists('vpc_catalog_entry_is_visible')) {
+    /**
+     * @param array<string, mixed> $entry
+     */
+    function vpc_catalog_entry_is_visible(array $entry) {
+        return (isset($entry['invisible']) ? $entry['invisible'] : false) !== true;
+    }
+}
+
 if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
     /**
      * Build a $vpc-compatible playlist from ordered catalog ids.
@@ -81,6 +90,9 @@ if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
         $byId = array();
         foreach ($catalog['videos'] as $v) {
             if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
+                continue;
+            }
+            if (!vpc_catalog_entry_is_visible($v)) {
                 continue;
             }
             $byId[$v['id']] = $v;
@@ -144,6 +156,9 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
     function vpc_sign_language_options_from_catalog(array $catalog, $studioConfigPath) {
         $seen = array();
         foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
             $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
             if ($sl !== '' && !isset($seen[$sl])) {
                 $seen[$sl] = true;
@@ -188,6 +203,9 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
         $playlist = array();
         foreach ($catalog['videos'] as $v) {
             if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
+                continue;
+            }
+            if (!vpc_catalog_entry_is_visible($v)) {
                 continue;
             }
             $entry = array();

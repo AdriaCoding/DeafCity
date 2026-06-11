@@ -357,6 +357,57 @@ class CatalogEditor
         return array_keys($seen);
     }
 
+    public function setVideoInvisible(string $videoId, bool $invisible): void
+    {
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog) || !isset($catalog['videos'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid catalog JSON.');
+        }
+
+        $found = false;
+        foreach ($catalog['videos'] as &$entry) {
+            if (($entry['vimeo_id'] ?? '') !== $videoId) {
+                continue;
+            }
+            if ($invisible) {
+                $entry['invisible'] = true;
+            } else {
+                unset($entry['invisible']);
+            }
+            $found = true;
+            break;
+        }
+        unset($entry);
+
+        if (!$found) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException("Video $videoId not found in catalog.");
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+    }
+
+    /** @param array<string, mixed> $entry */
+    public function isVideoVisible(array $entry): bool
+    {
+        return ($entry['invisible'] ?? false) !== true;
+    }
+
     public function updateThumbnailUrl(string $videoId, string $thumbnailUrl): void
     {
         $fp = fopen($this->catalogFilePath, 'c+');

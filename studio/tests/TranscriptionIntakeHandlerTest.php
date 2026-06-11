@@ -236,6 +236,22 @@ class TranscriptionIntakeHandlerTest extends TestCase
         $this->assertSame([], $result['errors']);
     }
 
+    public function test_english_source_skips_translation_launch(): void
+    {
+        $launched = null;
+        $handler = $this->handlerWithFakeOrchestrator(
+            ['result' => 'pipeline_transcribed'],
+            function ($cmd) use (&$launched) { $launched = $cmd; },
+        );
+
+        $handler->handlePost(['subtitle_language' => 'en'], ['intake_file' => $this->audioUpload()]);
+
+        $this->assertNull($launched);
+        $state = json_decode($this->jobManager->readTranslationState() ?? '{}', true);
+        $this->assertSame('done', $state['status'] ?? null);
+        $this->assertSame([], $state['languages'] ?? null);
+    }
+
     // ── Local fallback path ──────────────────────────────────────────────────
 
     public function test_local_fallback_returns_created_without_extra_launch(): void

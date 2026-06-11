@@ -49,6 +49,7 @@ class ShellAction
                     break;
                 }
             }
+            $englishTranslationSkipped = ($job['subtitle_language'] ?? '') === 'en';
             require $this->view('transcription-loading.php');
             exit;
         }

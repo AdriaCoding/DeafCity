@@ -53,6 +53,14 @@ fi
 
 # ── Step 2: chain translation (fire-and-forget) ──────────────────────────────
 mkdir -p "$(dirname "$LOG_FILE")"
+
+if [ "$SOURCE_LANG" = "$TARGET_LANG" ]; then
+    printf '%s [run_transcription_pipeline.sh] Skipping translation (source equals target: %s)\n' \
+        "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" >> "$LOG_FILE"
+    echo '{"status":"done","languages":{}}' > "$TRANSLATION_STATUS"
+    exit 0
+fi
+
 printf '%s [run_transcription_pipeline.sh] Transcription done, spawning translation %s -> %s\n' \
     "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" "$TARGET_LANG" >> "$LOG_FILE"
 

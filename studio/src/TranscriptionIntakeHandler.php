@@ -58,14 +58,18 @@ class TranscriptionIntakeHandler
         $outcome = $this->orchestrator->run();
 
         if ($outcome['result'] === 'pipeline_transcribed') {
-            $this->translationState->initiate(['en']);
-            $this->launcher->launchTranslation(
-                $this->jobManager->draftVttPath(),
-                $this->jobManager->translationStatePath(),
-                $values['subtitle_language'],
-                dirname($this->jobManager->draftVttPath()),
-                ['en'],
-            );
+            if ($this->shouldSkipEnglishTranslation($values['subtitle_language'])) {
+                $this->translationState->initiate([]);
+            } else {
+                $this->translationState->initiate(['en']);
+                $this->launcher->launchTranslation(
+                    $this->jobManager->draftVttPath(),
+                    $this->jobManager->translationStatePath(),
+                    $values['subtitle_language'],
+                    dirname($this->jobManager->draftVttPath()),
+                    ['en'],
+                );
+            }
             return ['errors' => [], 'values' => $values, 'created' => true];
         }
 
@@ -86,5 +90,10 @@ class TranscriptionIntakeHandler
             }
         }
         return false;
+    }
+
+    private function shouldSkipEnglishTranslation(string $sourceLang): bool
+    {
+        return $sourceLang === 'en';
     }
 }

@@ -75,6 +75,7 @@ match ($action) {
     'continguts-resolve-vimeo',
     'continguts-add-video',
     'continguts-save-video',
+    'continguts-set-video-invisible',
     'continguts-set-master-caption',
     'continguts-download-caption-vtt',
     'continguts-download-caption-srt',

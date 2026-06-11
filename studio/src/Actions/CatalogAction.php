@@ -14,6 +14,7 @@ use Studio\SubtitleLanguageAddHandler;
 use Studio\SubtitleLanguageTranslationTargetHandler;
 use Studio\TypologyAddHandler;
 use Studio\VideoEditHandler;
+use Studio\VideoVisibilityHandler;
 use Studio\VimeoIdParser;
 use Studio\VimeoVideoResolver;
 
@@ -77,6 +78,7 @@ class CatalogAction
             'continguts-resolve-vimeo'            => $this->resolveVimeo(),
             'continguts-add-video'                => $this->addVideo(),
             'continguts-save-video'               => $this->saveVideo(),
+            'continguts-set-video-invisible'      => $this->setVideoInvisible(),
             'continguts-set-master-caption'       => $this->setMasterCaption(),
             'continguts-download-caption-vtt'     => $this->downloadCaption('vtt'),
             'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
@@ -225,7 +227,7 @@ class CatalogAction
             exit;
         }
 
-        $downloadBasename = $vimeoId . '.' . strtoupper($lang);
+        $downloadBasename = $vimeoId . '_' . strtoupper($lang);
 
         if ($format === 'srt') {
             header('Content-Type: application/x-subrip; charset=utf-8');
@@ -236,6 +238,24 @@ class CatalogAction
             header('Content-Disposition: attachment; filename="' . $downloadBasename . '.vtt"');
             readfile($vttPath);
         }
+        exit;
+    }
+
+    private function setVideoInvisible(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $videoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        $invisibleRaw = $_POST['invisible'] ?? '';
+        $invisible = in_array($invisibleRaw, [true, 1, '1', 'true', 'on'], true);
+
+        $result = (new VideoVisibilityHandler($this->c->catalogEditor()))
+            ->handle($videoId, $invisible);
+
+        if (!$result['ok']) {
+            http_response_code($videoId === '' ? 422 : 404);
+        }
+
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
     }
 

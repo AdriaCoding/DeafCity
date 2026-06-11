@@ -292,6 +292,7 @@
                     <a class="file-download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
                 </div>
             </div>
+            <?php if (empty($englishTranslationSkipped)): ?>
             <div class="file-card">
                 <span class="file-card-lang">Anglès</span>
                 <div class="file-download-btns">
@@ -299,6 +300,7 @@
                     <a class="file-download-btn" href="?action=download-srt&amp;lang=en"><span class="material-icons">download</span>SRT</a>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
         <form method="POST" action="?action=cancel" id="finish-form">
             <button type="submit" class="btn-finish">Finalitza</button>

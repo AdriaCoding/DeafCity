@@ -29,4 +29,7 @@ We run two PHP versions — match the tree you are editing:
 - **Studio** (`studio/`) — **PHP 8.4** (`studio/.htaccess`). Use modern idioms already in `studio/src/`; do not use features above 8.4. Lint with `php8.4 -l`.
 
 ### Frontend testing
-You may, at any time, open up the browser and test the `https://deaf.city/studio` webapp on your own. The password to it is "hola" (I will change it later)
+
+You may test the Studio webapp at `https://deaf.city/studio` (password: `hola`).
+
+When you need a catalog video for manual testing, use **#SHEEP by Hamida** (`vimeo_id` `1197992193`, edition Salamanca 2028). Details page: `?action=continguts-video&vimeo_id=1197992193`.

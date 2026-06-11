@@ -108,6 +108,19 @@ class TranscriptionPipelineStatusTest extends TestCase
         $this->assertSame('download_ready', (new TranscriptionPipelineStatus($this->jobManager))->getState());
     }
 
+    public function test_download_ready_when_english_source_and_draft_vtt_exists(): void
+    {
+        file_put_contents($this->jobsDir . '/current/job.json', json_encode([
+            'job_type'          => 'transcription',
+            'subtitle_language' => 'en',
+            'original_filename' => 'talk',
+            'intake_mode'       => 'generate',
+        ]));
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+
+        $this->assertSame('download_ready', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
     public function test_translation_error_when_en_vtt_absent_despite_done_status(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");

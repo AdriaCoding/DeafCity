@@ -287,6 +287,11 @@
             transition: transform 0.15s;
         }
         .edition-group.open .edition-chevron { transform: rotate(180deg); }
+        .edition-group.invisibles-section {
+            margin-top: 2.5rem;
+            border-color: #2a2222;
+        }
+        .edition-group.invisibles-section .edition-heading { color: #a88; }
 
         /* ── Config list (editions / sign languages) ── */
         .config-list { margin-bottom: 2rem; }
@@ -600,8 +605,17 @@
         <div id="videos-catalog">
         <?php
             $editionLabelById = array_column($editions, 'label', 'id');
-            $videosByEdition = [];
+            $visibleVideos = [];
+            $invisibleVideos = [];
             foreach ($catalogVideos as $video) {
+                if ($catalogEditor->isVideoVisible($video)) {
+                    $visibleVideos[] = $video;
+                } else {
+                    $invisibleVideos[] = $video;
+                }
+            }
+            $videosByEdition = [];
+            foreach ($visibleVideos as $video) {
                 $videosByEdition[$video['edition'] ?? ''][] = $video;
             }
             $orderedEditionIds = array_column($editions, 'id');
@@ -639,6 +653,33 @@
                 </div>
             </div>
         <?php endforeach; ?>
+        <?php if (!empty($invisibleVideos)): ?>
+            <div class="edition-group invisibles-section" data-section="invisibles">
+                <button type="button" class="edition-heading" aria-expanded="false">
+                    Invisibles
+                    <?php $invisibleVideoCount = count($invisibleVideos); ?>
+                    <span class="edition-count"><?= $invisibleVideoCount ?> vídeo<?= $invisibleVideoCount === 1 ? '' : 's' ?></span>
+                    <span class="edition-chevron" aria-hidden="true">▼</span>
+                </button>
+                <div class="edition-videos">
+                <?php foreach ($invisibleVideos as $video): ?>
+                <?php $vid = htmlspecialchars($video['vimeo_id'] ?? '', ENT_QUOTES) ?>
+                <a class="video-card" href="?action=continguts-video&amp;vimeo_id=<?= $vid ?>">
+                    <?php if (!empty($video['thumbnail_url'])): ?>
+                        <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
+                    <?php else: ?>
+                        <div class="video-thumb-placeholder"></div>
+                    <?php endif; ?>
+                    <?php $captionCount = count($video['captions'] ?? []); ?>
+                    <div class="video-card-meta">
+                        <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
+                        <span class="video-caption-count" title="<?= $captionCount ?> subtítol<?= $captionCount === 1 ? '' : 's' ?>"><?= $captionCount ?></span>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
         </div>
     </div>
 

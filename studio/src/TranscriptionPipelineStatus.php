@@ -13,6 +13,10 @@ class TranscriptionPipelineStatus
             return 'transcribing';
         }
 
+        if ($this->isEnglishSource()) {
+            return 'download_ready';
+        }
+
         $raw = $this->jobManager->readTranslationState();
         if ($raw === null) {
             return 'translating';
@@ -36,5 +40,12 @@ class TranscriptionPipelineStatus
         }
 
         return 'translating';
+    }
+
+    private function isEnglishSource(): bool
+    {
+        $job = $this->jobManager->read();
+
+        return ($job['subtitle_language'] ?? '') === 'en';
     }
 }

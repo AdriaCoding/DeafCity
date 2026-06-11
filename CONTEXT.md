@@ -96,3 +96,7 @@ _Avoid_: Draft, task, upload, session
 **Catalog**:
 The authoritative metadata registry of all Videos — ids, Sign language, Edition, Tags, and caption file references. The Preview site and Studio read from the Catalog; Publication writes to it. During transition, the legacy homepage still reads Playlists separately; the Catalog becomes the sole source of truth when the Preview site replaces the homepage.
 _Avoid_: Video database, registry, index
+
+**Invisible Video**:
+A published Video marked in the Catalog as hidden from all public surfaces (Website, Preview site, Playlists). The Catalog entry — Edition, captions, Tags, and all metadata — is preserved; only visibility changes. In Studio Continguts, Invisible Videos appear in a separate "Invisibles" section, not under their Edition group. A Producer can restore visibility at any time.
+_Avoid_: Deleted, archived, unpublished, hidden (alone — say Invisible Video)
