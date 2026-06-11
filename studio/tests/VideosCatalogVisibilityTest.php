@@ -37,6 +37,34 @@ class VideosCatalogVisibilityTest extends TestCase
         $this->assertSame('111', $playlist[0]['video_id']);
     }
 
+    public function test_sign_language_options_are_sorted_alphabetically_by_label(): void
+    {
+        $catalog = [
+            'videos' => [
+                ['id' => 'z_111', 'vimeo_id' => '111', 'sign_language' => 'zsl', 'captions' => []],
+                ['id' => 'a_222', 'vimeo_id' => '222', 'sign_language' => 'asl', 'captions' => []],
+            ],
+        ];
+
+        $configPath = sys_get_temp_dir() . '/studio-config-sl-sort-' . uniqid() . '.json';
+        file_put_contents($configPath, json_encode([
+            'sign_languages' => [
+                ['id' => 'zsl', 'label' => 'Zulu Sign Language'],
+                ['id' => 'asl', 'label' => 'Alpha Sign Language'],
+            ],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+
+        try {
+            $opts = vpc_sign_language_options_from_catalog($catalog, $configPath);
+
+            $this->assertSame(['asl', 'zsl'], array_column($opts, 'value'));
+        } finally {
+            if (is_file($configPath)) {
+                unlink($configPath);
+            }
+        }
+    }
+
     public function test_sign_language_options_exclude_languages_with_only_invisible_videos(): void
     {
         $catalog = [

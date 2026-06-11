@@ -343,7 +343,7 @@ class StudioConfig
 
     public function getSignLanguages(): array
     {
-        return $this->list('sign_languages');
+        return $this->listSortedByLabel('sign_languages');
     }
 
     public function getEditions(): array
@@ -359,7 +359,7 @@ class StudioConfig
     public function getSubtitleLanguages(): array
     {
         $entries = [];
-        foreach ($this->list('subtitle_languages') as $entry) {
+        foreach ($this->listSortedByLabel('subtitle_languages') as $entry) {
             $entries[] = $this->normalizeSubtitleLanguageEntry($entry);
         }
 
@@ -451,5 +451,19 @@ class StudioConfig
     private function list(string $key): array
     {
         return $this->data[$key] ?? [];
+    }
+
+    private function listSortedByLabel(string $key): array
+    {
+        $entries = $this->list($key);
+        usort(
+            $entries,
+            fn(array $a, array $b): int => strcasecmp(
+                (string) ($a['label'] ?? ''),
+                (string) ($b['label'] ?? ''),
+            ),
+        );
+
+        return $entries;
     }
 }

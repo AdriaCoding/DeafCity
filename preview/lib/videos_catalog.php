@@ -185,6 +185,9 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
                 'label' => isset($labelMap[$id]) ? $labelMap[$id] : $id,
             );
         }
+        usort($opts, function ($a, $b) {
+            return strcasecmp($a['label'], $b['label']);
+        });
         return $opts;
     }
 }
