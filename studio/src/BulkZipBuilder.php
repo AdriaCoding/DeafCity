@@ -4,12 +4,18 @@ namespace Studio;
 
 class BulkZipBuilder
 {
+    private readonly SubtitleOutputBasename $basename;
+
     public function __construct(
+        private readonly StudioConfig $studioConfig,
         private readonly VttToSrtConverter $converter = new VttToSrtConverter(),
-    ) {}
+        ?SubtitleOutputBasename $basename = null,
+    ) {
+        $this->basename = $basename ?? new SubtitleOutputBasename($studioConfig);
+    }
 
     /**
-     * @param list<array{originalFilename: string, vttPath: string}> $entries
+     * @param list<array{originalFilename: string, language: string, enVttPath: string, srcVttPath: string}> $entries
      */
     public function build(array $entries): string
     {
@@ -24,16 +30,25 @@ class BulkZipBuilder
         }
 
         foreach ($entries as $entry) {
-            $langSuffix = '_' . strtoupper($entry['language']);
             try {
                 if ($entry['language'] !== 'en') {
                     $zip->addFromString(
-                        $entry['originalFilename'] . $langSuffix . '.srt',
+                        $this->basename->transcriptionDownloadFilename(
+                            $entry['originalFilename'],
+                            $entry['language'],
+                            $entry['language'],
+                            'srt',
+                        ),
                         $this->converter->convert($entry['srcVttPath']),
                     );
                 }
                 $zip->addFromString(
-                    $entry['originalFilename'] . '_EN.srt',
+                    $this->basename->transcriptionDownloadFilename(
+                        $entry['originalFilename'],
+                        $entry['language'],
+                        'en',
+                        'srt',
+                    ),
                     $this->converter->convert($entry['enVttPath']),
                 );
             } catch (\RuntimeException $e) {

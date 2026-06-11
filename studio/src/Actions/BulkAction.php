@@ -56,7 +56,7 @@ class BulkAction
             exit;
         }
 
-        $zip = (new BulkZipBuilder())->build($entries);
+        $zip = (new BulkZipBuilder($this->c->studioConfig))->build($entries);
         $queue->destroy();
 
         header('Content-Type: application/zip');

@@ -69,6 +69,12 @@
         .status-processing { color: #7ed87e; }
         .status-done { color: #5a9a5a; }
         .status-failed { color: #e05555; }
+        a.back {
+            font-size: 0.8rem;
+            color: #555;
+            text-decoration: none;
+        }
+        a.back:hover { color: #999; }
         .reason {
             display: block;
             font-size: 0.78rem;
@@ -119,7 +125,14 @@
             </tbody>
         </table>
 
-        <p class="download-msg" id="download-msg" style="display:none">Descarregant ZIP…</p>
+        <div id="completed-actions" style="display:none; margin-top:1.5rem;">
+            <p class="download-msg">Descàrrega iniciada.</p>
+            <p style="margin-top:0.6rem; font-size:0.85rem; color:#666;">
+                Si la descàrrega no s'inicia automàticament,
+                <a href="?action=bulk-download" id="manual-download-link" style="color:#7ed87e;">feu clic aquí</a>.
+            </p>
+            <p style="margin-top:1rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
+        </div>
     </main>
     <script>
     (function () {
@@ -150,16 +163,23 @@
             cell.innerHTML = html;
         }
 
+        function triggerDownload() {
+            document.getElementById('completed-actions').style.display = 'block';
+            var a = document.createElement('a');
+            a.href = '?action=bulk-download';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
         function poll() {
             fetch('?action=bulk-status')
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
                     (data.items || []).forEach(updateRow);
                     if (data.completed) {
-                        document.getElementById('download-msg').style.display = 'block';
-                        setTimeout(function () {
-                            window.location.href = '?action=bulk-download';
-                        }, 1500);
+                        triggerDownload();
                         return;
                     }
                     setTimeout(poll, 2000);

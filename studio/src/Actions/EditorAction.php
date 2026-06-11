@@ -5,6 +5,7 @@ namespace Studio\Actions;
 use Studio\CaptionFileIntegrityChecker;
 use Studio\Container;
 use Studio\SubtitleEditorHandler;
+use Studio\SubtitleOutputBasename;
 use Studio\TranslationJobState;
 use Studio\VttParser;
 use Studio\VttToSrtConverter;
@@ -117,15 +118,16 @@ class EditorAction
 
     private function buildDownloadFilename(array $job, string $lang, string $ext): string
     {
-        $isTranscription = ($job['job_type'] ?? '') === 'transcription';
-        $base = $isTranscription
-            ? ($job['original_filename'] ?? 'transcription')
-            : ($job['vimeo_id'] ?? 'draft');
-
-        if ($isTranscription) {
-            $code = $lang !== '' ? $lang : ($job['subtitle_language'] ?? '');
-            return $base . ($code !== '' ? '_' . strtoupper($code) : '') . '.' . $ext;
+        if (($job['job_type'] ?? '') === 'transcription') {
+            return (new SubtitleOutputBasename($this->c->studioConfig))->transcriptionDownloadFilename(
+                $job['original_filename'] ?? 'transcription',
+                $job['subtitle_language'] ?? '',
+                $lang,
+                $ext,
+            );
         }
+
+        $base = $job['vimeo_id'] ?? 'draft';
 
         return $base . ($lang !== '' ? '_' . strtoupper($lang) : '') . '.' . $ext;
     }
