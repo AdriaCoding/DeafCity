@@ -16,8 +16,16 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
             padding: 1.25rem 2rem;
             border-bottom: 1px solid #1e1e1e;
+        }
+        .header-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
         }
         h1 {
             font-size: 0.95rem;
@@ -67,27 +75,29 @@
         }
         a.btn-primary {
             display: inline-block;
-            padding: 0.65rem 1.25rem;
+            padding: 0.5rem 1rem;
             background: #e0e0e0;
             color: #0a0a0a;
             text-decoration: none;
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            white-space: nowrap;
         }
         a.btn-primary:hover { background: #fff; }
         button.btn-secondary {
-            padding: 0.65rem 1.25rem;
+            padding: 0.5rem 1rem;
             background: transparent;
             color: #888;
             border: 1px solid #333;
             border-radius: 4px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
+            white-space: nowrap;
         }
         button.btn-secondary:hover:not(:disabled) { color: #bbb; border-color: #555; }
         button.btn-secondary:disabled { opacity: 0.5; cursor: default; }
@@ -175,26 +185,30 @@
 <body>
     <header>
         <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Tanca la sessió</a>
+        <div class="header-nav">
+            <?php if (!$hasActiveJob): ?>
+                <a class="btn-primary" href="?action=intake">Nova feina</a>
+                <a class="btn-primary" href="?action=transcription-intake" style="background:#1a3a2e;color:#7ed87e;border:1px solid #2a6040;">Nova transcripció</a>
+                <form method="POST" action="?action=sync" id="sync-form">
+                    <button type="submit" class="btn-secondary" id="sync-btn"
+                        <?= $isSyncing ? 'disabled' : '' ?>>
+                        <?php if ($isSyncing): ?>
+                            <span class="spinner-sm"></span> Sincronitzant…
+                        <?php else: ?>
+                            Sincronitzar a Vimeo
+                        <?php endif; ?>
+                    </button>
+                </form>
+            <?php endif; ?>
+            <a class="logout" href="?action=logout">Tanca la sessió</a>
+        </div>
     </header>
     <main>
         <?php if (!$hasActiveJob): ?>
             <div class="idle">
                 <p>No hi ha cap feina en curs. Inicieu la recepció per registrar un vídeo de Vimeo i pujar un fitxer de subtítols esborrany.</p>
                 <div class="actions">
-                    <a class="btn-primary" href="?action=intake">Nova feina</a>
-                    <a class="btn-primary" href="?action=transcription-intake" style="background:#1a3a2e;color:#7ed87e;border:1px solid #2a6040;">Nova transcripció</a>
                     <a class="btn-primary" href="?action=continguts" style="background:#1a3a6e;color:#9ab8ff;border:1px solid #2a5090;">Continguts</a>
-                    <form method="POST" action="?action=sync" id="sync-form">
-                        <button type="submit" class="btn-secondary" id="sync-btn"
-                            <?= $isSyncing ? 'disabled' : '' ?>>
-                            <?php if ($isSyncing): ?>
-                                <span class="spinner-sm"></span> Sincronitzant…
-                            <?php else: ?>
-                                Sincronitzar a Vimeo
-                            <?php endif; ?>
-                        </button>
-                    </form>
                 </div>
                 <p class="sync-status" id="sync-status-msg"><?php
                     $s = $syncStatus['status'] ?? 'idle';
