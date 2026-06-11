@@ -146,5 +146,21 @@
         </form>
         <p style="margin-top: 1.5rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
     </main>
+    <script>
+        window.TRANSCRIPTION_INTAKE_LANGUAGES = <?= json_encode(
+            array_map(
+                static fn (array $lang): array => [
+                    'id' => $lang['id'] ?? '',
+                    'vimeo_code' => $lang['vimeo_code'] ?? '',
+                ],
+                $subtitleLanguages
+            ),
+            JSON_UNESCAPED_UNICODE
+        ) ?>;
+    </script>
+    <script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
+    <script>
+        window.TranscriptionIntake.initIntakeLanguageDetection(window.TRANSCRIPTION_INTAKE_LANGUAGES);
+    </script>
 </body>
 </html>
