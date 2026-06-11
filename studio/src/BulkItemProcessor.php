@@ -63,22 +63,32 @@ class BulkItemProcessor
                 throw new \RuntimeException($wait['reason'] ?? 'Error en el processament.');
             }
 
-            $vttSource = $this->resolveEnglishVttPath($item['language']);
-            if (!is_file($vttSource)) {
+            $enVttSource = $this->resolveEnglishVttPath($item['language']);
+            if (!is_file($enVttSource)) {
                 throw new \RuntimeException('No s\'ha generat el fitxer de subtítols.');
+            }
+
+            $srcVttSource = $this->jobManager->draftVttPath();
+            if (!is_file($srcVttSource)) {
+                throw new \RuntimeException('No s\'ha generat el fitxer de subtítols original.');
             }
 
             if (!is_dir($this->bulkQueue->bulkOutputDir())) {
                 mkdir($this->bulkQueue->bulkOutputDir(), 0775, true);
             }
 
-            $dest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_EN.vtt';
-            if (!copy($vttSource, $dest)) {
-                throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida.');
+            $enDest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_EN.vtt';
+            if (!copy($enVttSource, $enDest)) {
+                throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida en anglès.');
+            }
+
+            $srcDest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_SRC.vtt';
+            if (!copy($srcVttSource, $srcDest)) {
+                throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida original.');
             }
 
             $this->jobManager->cancel();
-            $this->bulkQueue->markDone($item['id'], $dest);
+            $this->bulkQueue->markDone($item['id'], $enDest, $srcDest);
         } catch (\Throwable $e) {
             $this->jobManager->cancel();
             $this->bulkQueue->markFailed($item['id'], $e->getMessage());

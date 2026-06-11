@@ -4,6 +4,10 @@ namespace Studio;
 
 class BulkZipBuilder
 {
+    public function __construct(
+        private readonly VttToSrtConverter $converter = new VttToSrtConverter(),
+    ) {}
+
     /**
      * @param list<array{originalFilename: string, vttPath: string}> $entries
      */
@@ -20,13 +24,22 @@ class BulkZipBuilder
         }
 
         foreach ($entries as $entry) {
-            $name = $entry['originalFilename'] . '_EN.vtt';
-            $content = file_get_contents($entry['vttPath']);
-            if ($content === false) {
+            $langSuffix = '_' . strtoupper($entry['language']);
+            try {
+                if ($entry['language'] !== 'en') {
+                    $zip->addFromString(
+                        $entry['originalFilename'] . $langSuffix . '.srt',
+                        $this->converter->convert($entry['srcVttPath']),
+                    );
+                }
+                $zip->addFromString(
+                    $entry['originalFilename'] . '_EN.srt',
+                    $this->converter->convert($entry['enVttPath']),
+                );
+            } catch (\RuntimeException $e) {
                 $zip->close();
-                throw new \RuntimeException('No s\'ha pogut llegir el fitxer VTT.');
+                throw new \RuntimeException('No s\'ha pogut convertir el fitxer VTT: ' . $e->getMessage());
             }
-            $zip->addFromString($name, $content);
         }
 
         $zip->close();

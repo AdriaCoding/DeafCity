@@ -89,7 +89,7 @@
     </header>
     <main>
         <h2>Transcripció en massa</h2>
-        <p class="lead">Processant els fitxers d'àudio. Quan acabi, es descarregarà un ZIP amb tots els subtítols en anglès.</p>
+        <p class="lead">Processant els fitxers d'àudio. Quan acabi, es descarregarà un ZIP amb tots els subtítols en anglès en format SRT.</p>
 
         <table>
             <thead>

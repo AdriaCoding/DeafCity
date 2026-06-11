@@ -92,7 +92,7 @@ class BulkIntakeQueueTest extends TestCase
     {
         $this->queue->create($this->sampleItems());
         $this->queue->markProcessing('item-1');
-        $this->queue->markDone('item-1', '/out/item-1_EN.vtt');
+        $this->queue->markDone('item-1', '/out/item-1_EN.vtt', '/out/item-1_SRC.vtt');
 
         $this->assertSame('item-2', $this->queue->current()['id']);
         $snap = $this->queue->statusSnapshot();
@@ -115,7 +115,7 @@ class BulkIntakeQueueTest extends TestCase
     {
         $this->queue->create($this->sampleItems());
         $this->queue->markProcessing('item-1');
-        $this->queue->markDone('item-1', '/out/item-1_EN.vtt');
+        $this->queue->markDone('item-1', '/out/item-1_EN.vtt', '/out/item-1_SRC.vtt');
         $this->queue->markProcessing('item-2');
         $this->queue->markFailed('item-2', 'Fitxer corrupte');
 

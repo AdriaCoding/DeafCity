@@ -95,7 +95,7 @@ class BulkItemProcessorTest extends TestCase
         );
     }
 
-    public function test_pipeline_transcribed_marks_item_done_and_saves_vtt(): void
+    public function test_pipeline_transcribed_marks_item_done_and_saves_both_vtts(): void
     {
         $item = $this->seedQueueItem();
         $processor = $this->processor(['result' => 'pipeline_transcribed'], function (): array {
@@ -109,6 +109,7 @@ class BulkItemProcessorTest extends TestCase
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('done', $snap['items'][0]['status']);
         $this->assertTrue(is_file($this->jobsDir . '/bulk-output/item-1_EN.vtt'));
+        $this->assertTrue(is_file($this->jobsDir . '/bulk-output/item-1_SRC.vtt'));
         $this->assertFalse($this->jobManager->exists());
     }
 
