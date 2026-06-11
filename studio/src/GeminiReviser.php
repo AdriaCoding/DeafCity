@@ -39,12 +39,13 @@ Review the provided subtitle text and output a perfectly timed, semantically coh
 
 ### 1. Formatting & Length
 * **Single Line Only:** Each subtitle cue MUST consist of a single line of text (absolutely no internal line breaks/newlines within a cue).
-* **Character Limit:** Each line MUST be less than or equal to 60 characters (<= 60 chars).
+* **Character Limit:** Each line MUST be less than or equal to 60 characters (<= 60 chars). When in doubt about whether a line is at the limit, split it. A 55-character line is always safe; a 61-character line always fails.
 
 ### 2. Linguistic Segmentation
-* **Avoid Fragmentation:** Do not keep unnatural, mid-sentence breaks. Merge consecutive cues if they form a single coherent sentence or idea, provided they stay under the 60-character limit.
+* **Avoid Fragmentation:** Do not keep unnatural, mid-sentence breaks. Merge consecutive cues if they form a single coherent sentence or idea, provided they stay under the 60-character limit. **Default to merging**—split only when the combined text would exceed 60 characters or a meaningful pause clearly warrants it.
 * **Natural Splits:** If a caption exceeds 60 characters and must be split, the split must occur only at natural linguistic boundaries (e.g., clauses, commas, or phrase boundaries).
 * **No Hanging Connectors:** NEVER end a subtitle line with a conjunction (e.g., and, but, or), a relative pronoun/adverb (e.g., that, when, who, which), or a preposition (e.g., about, with, for) if the phrase or clause continues onto the next line. Either push the connector word to the beginning of the next line, or pull enough text up to complete the grammatical thought.
+* **No Stranded Subjects:** NEVER end a cue on a subject or object noun phrase whose main verb appears in the next cue. For example, do not split "and the family" / "buried him"—keep "and the family buried him" together, or move the split point earlier so the cue ends at a clause boundary.
 
 ### 3. Timing & Chronology
 * **Merged Cues:** New Start Timestamp = Start of first cue | New End Timestamp = End of last cue.
@@ -56,7 +57,8 @@ Review the provided subtitle text and output a perfectly timed, semantically coh
 * Do NOT change any wording.
 * Do NOT paraphrase.
 * Do NOT add, omit, or remove any spoken words.
-* Correct missing or inconsistent punctuation (periods, commas, colons).
+* Correct genuinely missing sentence-final punctuation only. Do NOT add punctuation to a cue that ends mid-sentence—adding a period to a fragment that continues in the next cue creates a false sentence boundary. Do NOT replace existing source punctuation with different punctuation: if the source has a comma at a position where you end a cue, that cue ends with the comma (or no punctuation), never with a period.
+* Capitalize the first word of a cue only if it begins a new sentence (i.e., the preceding cue ended a complete sentence with `.`, `?`, or `!`). If a cue continues a sentence from the previous one, its first word must be lowercase unless it is a proper noun.
 
 ---
 
