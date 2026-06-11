@@ -130,14 +130,22 @@
             failed: 'Error'
         };
 
+        function esc(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
         function updateRow(item) {
             var row = document.querySelector('tr[data-id="' + item.id + '"]');
             if (!row) return;
             var cell = row.querySelector('.status-cell');
-            cell.className = 'status-cell status-' + item.status;
-            var html = statusLabels[item.status] || item.status;
+            cell.className = 'status-cell status-' + esc(item.status);
+            var html = statusLabels[item.status] || esc(item.status);
             if (item.reason) {
-                html += '<span class="reason">' + item.reason.replace(/</g, '&lt;') + '</span>';
+                html += '<span class="reason">' + esc(item.reason) + '</span>';
             }
             cell.innerHTML = html;
         }

@@ -110,12 +110,7 @@ class BulkItemProcessor
             return $this->jobManager->draftVttPath();
         }
 
-        $enPath = $this->jobManager->draftVttPathForLang('en');
-        if (is_file($enPath)) {
-            return $enPath;
-        }
-
-        return $this->jobManager->draftVttPath();
+        return $this->jobManager->draftVttPathForLang('en');
     }
 
     /** @return array{success: bool, reason?: string} */

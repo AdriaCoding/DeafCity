@@ -124,4 +124,19 @@ class BulkItemProcessorTest extends TestCase
         $this->assertStringContainsString('Format d\'àudio', $snap['items'][0]['reason']);
         $this->assertFalse($this->jobManager->exists());
     }
+
+    public function test_non_english_without_en_vtt_marks_failed_not_source_vtt(): void
+    {
+        $this->seedQueueItem();
+        $processor = $this->processor(['result' => 'pipeline_transcribed'], function (): array {
+            file_put_contents($this->jobManager->draftVttPath(), "WEBVTT source only\n\n");
+            return ['success' => true];
+        });
+
+        $processor->processNext();
+
+        $snap = $this->bulkQueue->statusSnapshot();
+        $this->assertSame('failed', $snap['items'][0]['status']);
+        $this->assertFalse(is_file($this->jobsDir . '/bulk-output/item-1_EN.vtt'));
+    }
 }

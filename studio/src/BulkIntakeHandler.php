@@ -91,9 +91,11 @@ class BulkIntakeHandler
             $ext = strtolower(pathinfo($item['originalName'], PATHINFO_EXTENSION));
             $dest = $tmpDir . '/' . $id . ($ext !== '' ? ".$ext" : '');
 
-            if (!rename($item['tmpPath'], $dest)) {
-                $errors['_form'] = 'No s\'ha pogut desar un dels fitxers d\'àudio.';
-                return ['errors' => $errors, 'values' => $values];
+            if (!move_uploaded_file($item['tmpPath'], $dest)) {
+                if (!rename($item['tmpPath'], $dest)) {
+                    $errors['_form'] = 'No s\'ha pogut desar un dels fitxers d\'àudio.';
+                    return ['errors' => $errors, 'values' => $values];
+                }
             }
 
             $queueItems[] = [
