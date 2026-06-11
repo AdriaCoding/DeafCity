@@ -110,6 +110,7 @@ class BackgroundJobLauncherTest extends TestCase
             audioPath:            '/data/interview.mp3',
             vttOutputPath:        '/data/draft.vtt',
             statusPath:           '/data/transcription.json',
+            revisionStatePath:    '/data/revision_status.json',
             translationStatePath: '/data/translation.json',
             jobDir:               '/data',
             sourceLang:           'ca',
@@ -119,9 +120,36 @@ class BackgroundJobLauncherTest extends TestCase
 
         $this->assertStringContainsString('run_transcription_pipeline.sh', $captured);
         $this->assertStringContainsString(escapeshellarg('/data/interview.mp3'), $captured);
+        $this->assertStringContainsString(escapeshellarg('/data/revision_status.json'), $captured);
         $this->assertStringContainsString(escapeshellarg('ca'), $captured);
         $this->assertStringContainsString(escapeshellarg('en'), $captured);
         $this->assertStringContainsString(escapeshellarg('gemini-key'), $captured);
+        $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
+    }
+
+    public function test_launch_revision_and_translation_includes_gemini_key_and_paths(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'my-secret-key', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchRevisionAndTranslation(
+            '/master.vtt',
+            '/revision.json',
+            '/translation.json',
+            'ca',
+            '/jobdir',
+            ['en'],
+        );
+
+        $this->assertNotNull($captured);
+        $this->assertStringContainsString(escapeshellarg('my-secret-key'), $captured);
+        $this->assertStringContainsString('run_revise.sh', $captured);
+        $this->assertStringContainsString(escapeshellarg('/master.vtt'), $captured);
+        $this->assertStringContainsString(escapeshellarg('/revision.json'), $captured);
+        $this->assertStringContainsString(escapeshellarg('/translation.json'), $captured);
+        $this->assertStringContainsString(escapeshellarg('en'), $captured);
         $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
     }
 
@@ -149,6 +177,7 @@ class BackgroundJobLauncherTest extends TestCase
             audioPath:            '/a.mp3',
             vttOutputPath:        '/d.vtt',
             statusPath:           '/t.json',
+            revisionStatePath:    '/rev.json',
             translationStatePath: '/tr.json',
             jobDir:               '/dir',
             sourceLang:           'es',
@@ -156,5 +185,6 @@ class BackgroundJobLauncherTest extends TestCase
         );
 
         $this->assertStringContainsString(escapeshellarg('/tr.json'), $captured);
+        $this->assertStringContainsString(escapeshellarg('/rev.json'), $captured);
     }
 }

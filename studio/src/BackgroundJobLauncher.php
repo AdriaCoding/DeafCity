@@ -57,6 +57,7 @@ class BackgroundJobLauncher
         string $audioPath,
         string $vttOutputPath,
         string $statusPath,
+        string $revisionStatePath,
         string $translationStatePath,
         string $jobDir,
         string $sourceLang,
@@ -65,12 +66,13 @@ class BackgroundJobLauncher
     ): void {
         $cmd = sprintf(
             'GEMINI_API_KEY=%s nohup %s --audio_file %s --vtt_output %s --status_file %s'
-            . ' --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s > /dev/null 2>&1 &',
+            . ' --revision_status %s --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s > /dev/null 2>&1 &',
             escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_transcription_pipeline.sh'),
             escapeshellarg($audioPath),
             escapeshellarg($vttOutputPath),
             escapeshellarg($statusPath),
+            escapeshellarg($revisionStatePath),
             escapeshellarg($translationStatePath),
             escapeshellarg($jobDir),
             escapeshellarg($sourceLang),
@@ -98,6 +100,38 @@ class BackgroundJobLauncher
             escapeshellarg($sourceLang),
             escapeshellarg($jobDir),
             escapeshellarg(implode(',', $targetLangs))
+        );
+        call_user_func($this->exec, $cmd);
+    }
+
+    /**
+     * @param string $masterVttPath
+     * @param string $revisionStatusPath
+     * @param string $translationStatusPath
+     * @param string $sourceLang
+     * @param string $jobDir
+     * @param string[] $targetLangs
+     */
+    public function launchRevisionAndTranslation(
+        $masterVttPath,
+        $revisionStatusPath,
+        $translationStatusPath,
+        $sourceLang,
+        $jobDir,
+        array $targetLangs,
+    ): void {
+        $targetLangsArg = implode(',', $targetLangs);
+        $cmd = sprintf(
+            'GEMINI_API_KEY=%s nohup %s --vtt_path %s --revision_status %s --source_lang %s --job_dir %s'
+            . ' --translation_status %s --target_langs %s > /dev/null 2>&1 &',
+            escapeshellarg($this->geminiApiKey),
+            escapeshellarg($this->scriptsDir . '/run_revise.sh'),
+            escapeshellarg($masterVttPath),
+            escapeshellarg($revisionStatusPath),
+            escapeshellarg($sourceLang),
+            escapeshellarg($jobDir),
+            escapeshellarg($translationStatusPath),
+            escapeshellarg($targetLangsArg),
         );
         call_user_func($this->exec, $cmd);
     }

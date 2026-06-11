@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Fire-and-forget pipeline: transcribe audio then chain translation to a target language.
 #
-# Args: --audio_file, --vtt_output, --status_file, --translation_status,
-#       --job_dir, --source_lang, --target_lang, --model
+# Args: --audio_file, --vtt_output, --status_file, --revision_status,
+#       --translation_status, --job_dir, --source_lang, --target_lang, --model
 
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgomp.so.1
 export OMP_NUM_THREADS=1
@@ -12,7 +12,7 @@ LOG_FILE="/srv/www/deaf.city/public_html/data/logs/studio.log"
 SCRIPTS_DIR="$(dirname "$0")"
 
 # ── Parse args ───────────────────────────────────────────────────────────────
-AUDIO_FILE="" VTT_OUTPUT="" STATUS_FILE="" TRANSLATION_STATUS=""
+AUDIO_FILE="" VTT_OUTPUT="" STATUS_FILE="" REVISION_STATUS="" TRANSLATION_STATUS=""
 JOB_DIR="" SOURCE_LANG="" TARGET_LANG="" MODEL="whisper-large-v3-turbo"
 PREV=""
 for ARG in "$@"; do
@@ -20,6 +20,7 @@ for ARG in "$@"; do
         --audio_file)         AUDIO_FILE="$ARG" ;;
         --vtt_output)         VTT_OUTPUT="$ARG" ;;
         --status_file)        STATUS_FILE="$ARG" ;;
+        --revision_status)    REVISION_STATUS="$ARG" ;;
         --translation_status) TRANSLATION_STATUS="$ARG" ;;
         --job_dir)            JOB_DIR="$ARG" ;;
         --source_lang)        SOURCE_LANG="$ARG" ;;
@@ -51,23 +52,29 @@ if [ $EXIT -ne 0 ]; then
     exit "$EXIT"
 fi
 
-# ── Step 2: chain translation (fire-and-forget) ──────────────────────────────
+# ── Step 2: chain revision (fire-and-forget) ─────────────────────────────────
 mkdir -p "$(dirname "$LOG_FILE")"
 
-if [ "$SOURCE_LANG" = "$TARGET_LANG" ]; then
-    printf '%s [run_transcription_pipeline.sh] Skipping translation (source equals target: %s)\n' \
-        "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" >> "$LOG_FILE"
-    echo '{"status":"done","languages":{}}' > "$TRANSLATION_STATUS"
-    exit 0
+if [ -n "$REVISION_STATUS" ]; then
+    echo '{"status":"pending"}' > "$REVISION_STATUS"
 fi
 
-printf '%s [run_transcription_pipeline.sh] Transcription done, spawning translation %s -> %s\n' \
-    "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" "$TARGET_LANG" >> "$LOG_FILE"
+if [ "$SOURCE_LANG" = "$TARGET_LANG" ]; then
+    printf '%s [run_transcription_pipeline.sh] Transcription done, spawning revision only (source equals target: %s)\n' \
+        "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" >> "$LOG_FILE"
+    echo '{"status":"done","languages":{}}' > "$TRANSLATION_STATUS"
+    TARGET_LANGS_ARG=""
+else
+    printf '%s [run_transcription_pipeline.sh] Transcription done, spawning revision then translation %s -> %s\n' \
+        "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" "$TARGET_LANG" >> "$LOG_FILE"
+    TARGET_LANGS_ARG="$TARGET_LANG"
+fi
 
-GEMINI_API_KEY="$GEMINI_API_KEY" nohup bash "$SCRIPTS_DIR/run_translate.sh" \
-    --master_vtt  "$VTT_OUTPUT" \
-    --status_file "$TRANSLATION_STATUS" \
-    --source_lang "$SOURCE_LANG" \
-    --job_dir     "$JOB_DIR" \
-    --target_langs "$TARGET_LANG" \
+GEMINI_API_KEY="$GEMINI_API_KEY" nohup bash "$SCRIPTS_DIR/run_revise.sh" \
+    --vtt_path          "$VTT_OUTPUT" \
+    --revision_status   "$REVISION_STATUS" \
+    --source_lang       "$SOURCE_LANG" \
+    --job_dir           "$JOB_DIR" \
+    --translation_status "$TRANSLATION_STATUS" \
+    --target_langs      "$TARGET_LANGS_ARG" \
     > /dev/null 2>&1 &

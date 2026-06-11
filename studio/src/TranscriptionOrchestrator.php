@@ -149,11 +149,12 @@ class TranscriptionOrchestrator
         // in use and can show the "fast engine unavailable" notice.
         $this->jobManager->update(['transcription_engine' => 'local:' . $this->localModel]);
 
-        if ($this->pipelineTargetLang !== '' && $language !== $this->pipelineTargetLang) {
+        if ($this->pipelineTargetLang !== '') {
             $this->launcher->launchTranscriptionPipeline(
                 audioPath:            $this->jobManager->interpreterAudioPath(),
                 vttOutputPath:        $this->jobManager->draftVttPath(),
                 statusPath:           $this->jobManager->transcriptionStatusPath(),
+                revisionStatePath:    $this->jobManager->revisionStatePath(),
                 translationStatePath: $this->jobManager->translationStatePath(),
                 jobDir:               dirname($this->jobManager->draftVttPath()),
                 sourceLang:           $language,

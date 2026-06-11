@@ -190,7 +190,7 @@ class TranscriptionIntakeHandlerTest extends TestCase
 
     // ── Groq success path ────────────────────────────────────────────────────
 
-    public function test_groq_success_spawns_translation_to_english(): void
+    public function test_groq_success_spawns_revision_and_translation_to_english(): void
     {
         $launched = null;
         $handler = $this->handlerWithFakeOrchestrator(
@@ -201,7 +201,7 @@ class TranscriptionIntakeHandlerTest extends TestCase
         $handler->handlePost(['subtitle_language' => 'ca'], ['intake_file' => $this->audioUpload('talk.mp3')]);
 
         $this->assertNotNull($launched);
-        $this->assertStringContainsString('run_translate.sh', $launched);
+        $this->assertStringContainsString('run_revise.sh', $launched);
         $this->assertStringContainsString(escapeshellarg('en'), $launched);
     }
 
@@ -236,7 +236,7 @@ class TranscriptionIntakeHandlerTest extends TestCase
         $this->assertSame([], $result['errors']);
     }
 
-    public function test_english_source_skips_translation_launch(): void
+    public function test_english_source_launches_revision_only(): void
     {
         $launched = null;
         $handler = $this->handlerWithFakeOrchestrator(
@@ -246,10 +246,23 @@ class TranscriptionIntakeHandlerTest extends TestCase
 
         $handler->handlePost(['subtitle_language' => 'en'], ['intake_file' => $this->audioUpload()]);
 
-        $this->assertNull($launched);
+        $this->assertNotNull($launched);
+        $this->assertStringContainsString('run_revise.sh', $launched);
+        $this->assertStringContainsString(escapeshellarg(''), $launched);
         $state = json_decode($this->jobManager->readTranslationState() ?? '{}', true);
         $this->assertSame('done', $state['status'] ?? null);
         $this->assertSame([], $state['languages'] ?? null);
+    }
+
+    public function test_groq_success_writes_revision_status_pending_before_launch(): void
+    {
+        $handler = $this->handlerWithFakeOrchestrator(['result' => 'pipeline_transcribed']);
+        $handler->handlePost(['subtitle_language' => 'ca'], ['intake_file' => $this->audioUpload()]);
+
+        $revisionPath = $this->jobManager->revisionStatePath();
+        $this->assertFileExists($revisionPath);
+        $revision = json_decode(file_get_contents($revisionPath), true);
+        $this->assertSame('pending', $revision['status'] ?? null);
     }
 
     // ── Local fallback path ──────────────────────────────────────────────────

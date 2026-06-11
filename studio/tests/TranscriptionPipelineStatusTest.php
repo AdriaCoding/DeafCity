@@ -56,9 +56,48 @@ class TranscriptionPipelineStatusTest extends TestCase
         $this->assertSame('transcribing', (new TranscriptionPipelineStatus($this->jobManager))->getState());
     }
 
+    public function test_revising_when_revision_pending(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'pending']));
+
+        $this->assertSame('revising', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
+    public function test_revising_when_revision_running(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'running']));
+
+        $this->assertSame('revising', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
+    public function test_revision_error_when_revision_failed(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode([
+            'status' => 'error',
+            'message' => 'Gemini timeout',
+        ]));
+
+        $this->assertSame('revision_error', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
+    public function test_legacy_job_without_revision_status_skips_to_translating(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/translation.json', json_encode([
+            'status'    => 'pending',
+            'languages' => ['en' => ['status' => 'pending']],
+        ]));
+
+        $this->assertSame('translating', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
     public function test_translating_when_draft_vtt_exists_and_translation_pending(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
         file_put_contents($this->jobsDir . '/current/translation.json', json_encode([
             'status'    => 'pending',
             'languages' => ['en' => ['status' => 'pending']],
@@ -70,6 +109,7 @@ class TranscriptionPipelineStatusTest extends TestCase
     public function test_translating_when_translation_running(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
         file_put_contents($this->jobsDir . '/current/translation.json', json_encode([
             'status'    => 'running',
             'languages' => ['en' => ['status' => 'running']],
@@ -81,6 +121,7 @@ class TranscriptionPipelineStatusTest extends TestCase
     public function test_translating_when_no_translation_json_yet(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
 
         $this->assertSame('translating', (new TranscriptionPipelineStatus($this->jobManager))->getState());
     }
@@ -88,6 +129,7 @@ class TranscriptionPipelineStatusTest extends TestCase
     public function test_translation_error_when_english_failed(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
         file_put_contents($this->jobsDir . '/current/translation.json', json_encode([
             'status'    => 'done',
             'languages' => ['en' => ['status' => 'error', 'message' => 'Gemini timeout']],
@@ -100,6 +142,7 @@ class TranscriptionPipelineStatusTest extends TestCase
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt',    "WEBVTT\n");
         file_put_contents($this->jobsDir . '/current/draft_en.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
         file_put_contents($this->jobsDir . '/current/translation.json', json_encode([
             'status'    => 'done',
             'languages' => ['en' => ['status' => 'done']],
@@ -108,7 +151,21 @@ class TranscriptionPipelineStatusTest extends TestCase
         $this->assertSame('download_ready', (new TranscriptionPipelineStatus($this->jobManager))->getState());
     }
 
-    public function test_download_ready_when_english_source_and_draft_vtt_exists(): void
+    public function test_download_ready_when_english_source_and_revision_done(): void
+    {
+        file_put_contents($this->jobsDir . '/current/job.json', json_encode([
+            'job_type'          => 'transcription',
+            'subtitle_language' => 'en',
+            'original_filename' => 'talk',
+            'intake_mode'       => 'generate',
+        ]));
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
+
+        $this->assertSame('download_ready', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
+    public function test_download_ready_when_english_source_legacy_without_revision_file(): void
     {
         file_put_contents($this->jobsDir . '/current/job.json', json_encode([
             'job_type'          => 'transcription',
@@ -124,6 +181,7 @@ class TranscriptionPipelineStatusTest extends TestCase
     public function test_translation_error_when_en_vtt_absent_despite_done_status(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
         file_put_contents($this->jobsDir . '/current/translation.json', json_encode([
             'status'    => 'done',
             'languages' => ['en' => ['status' => 'error', 'message' => 'x']],

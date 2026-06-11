@@ -140,6 +140,11 @@ class JobManager
         file_put_contents($this->draftVttPathForLang($lang), $content);
     }
 
+    public function revisionStatePath(): string
+    {
+        return $this->currentDir . '/revision_status.json';
+    }
+
     public function translationStatePath(): string
     {
         return $this->currentDir . '/translation.json';

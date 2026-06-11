@@ -220,6 +220,42 @@
     }());
     </script>
 
+    <?php elseif ($pipelineStatus === 'revising'): ?>
+    <div class="stage">
+        <p class="filename"><?= htmlspecialchars($originalFilename) ?></p>
+        <div class="spinner"></div>
+        <p class="status-label">Revisant subtítols…</p>
+        <form method="POST" action="?action=cancel" id="cancel-form">
+            <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
+        </form>
+    </div>
+    <script>
+    (function () {
+        document.getElementById('cancel-form').addEventListener('submit', function (e) {
+            if (!confirm('Voleu cancel·lar aquesta transcripció?')) e.preventDefault();
+        });
+        setTimeout(function () { window.location.reload(); }, 3000);
+    }());
+    </script>
+
+    <?php elseif ($pipelineStatus === 'revision_error'): ?>
+    <div class="stage">
+        <p class="filename"><?= htmlspecialchars($originalFilename) ?></p>
+        <div class="error-panel">
+            <p>No s'ha pogut revisar el fitxer de subtítols.</p>
+            <form method="POST" action="?action=cancel" id="cancel-form">
+                <button type="submit" class="btn-danger">Cancel·la</button>
+            </form>
+        </div>
+    </div>
+    <script>
+    (function () {
+        document.getElementById('cancel-form').addEventListener('submit', function (e) {
+            if (!confirm('Voleu cancel·lar aquesta transcripció?')) e.preventDefault();
+        });
+    }());
+    </script>
+
     <?php elseif ($pipelineStatus === 'translating'): ?>
     <div class="stage">
         <p class="filename"><?= htmlspecialchars($originalFilename) ?></p>

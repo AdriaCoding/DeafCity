@@ -20,6 +20,87 @@ class VttParser
         return $this->parseString($content);
     }
 
+    /**
+     * Normalise Gemini-style VTT (inline cue text, missing blank-line separators)
+     * into canonical blocks that parseString() understands.
+     */
+    public function canonicalize(string $content): string
+    {
+        return $this->write($this->parseLoose($content));
+    }
+
+    /**
+     * @return array{cues: array<int, array<string, mixed>>, header: string, opaque_blocks: array<int, string>}
+     */
+    public function parseLoose(string $content): array
+    {
+        $content = str_replace("\r\n", "\n", $content);
+        $content = str_replace("\r", "\n", $content);
+        $lines = explode("\n", trim($content));
+
+        $header = 'WEBVTT';
+        $cues = [];
+        $i = 0;
+
+        if (isset($lines[0]) && preg_match('/^WEBVTT([ \t]|$)/', $lines[0])) {
+            $header = rtrim($lines[0]);
+            $i = 1;
+        }
+
+        while ($i < count($lines)) {
+            while ($i < count($lines) && trim($lines[$i]) === '') {
+                $i++;
+            }
+            if ($i >= count($lines)) {
+                break;
+            }
+
+            $id = '';
+            if (!str_contains($lines[$i], '-->')) {
+                $id = trim($lines[$i]);
+                $i++;
+                while ($i < count($lines) && trim($lines[$i]) === '') {
+                    $i++;
+                }
+                if ($i >= count($lines)) {
+                    break;
+                }
+            }
+
+            $line = $lines[$i];
+            if (!preg_match(
+                '/^(\d+:\d{2}:\d{2}\.\d+|\d{2}:\d{2}\.\d+)\s+-->\s+(\d+:\d{2}:\d{2}\.\d+|\d{2}:\d{2}\.\d+)(.*)$/',
+                $line,
+                $m
+            )) {
+                $i++;
+                continue;
+            }
+
+            $text = trim($m[3]);
+            $i++;
+
+            if ($text === '' && $i < count($lines) && trim($lines[$i]) !== '' && !str_contains($lines[$i], '-->')) {
+                $text = trim($lines[$i]);
+                $i++;
+            }
+
+            $cues[] = [
+                'start'  => $this->parseTime($m[1]),
+                'end'    => $this->parseTime($m[2]),
+                'text'   => $text,
+                'opaque' => '',
+                'id'     => $id,
+            ];
+        }
+
+        return [
+            'cues' => $cues,
+            'header' => $header,
+            'opaque_blocks' => [],
+        ];
+    }
+
     public function parseString(string $content): array
     {
         // Normalise line endings

@@ -97,6 +97,21 @@ class VttParserTest extends TestCase
         $this->assertSame("Line one\nLine two", $result['cues'][0]['text']);
     }
 
+    public function test_canonicalize_splits_adjacent_inline_cues(): void
+    {
+        $loose = "WEBVTT\n"
+            . "00:00:01.000 --> 00:00:02.000 First cue\n"
+            . "00:00:02.000 --> 00:00:03.000 Second cue\n";
+
+        $canonical = $this->parser->canonicalize($loose);
+        $parsed = $this->parser->parseString($canonical);
+
+        $this->assertCount(2, $parsed['cues']);
+        $this->assertSame('First cue', $parsed['cues'][0]['text']);
+        $this->assertSame('Second cue', $parsed['cues'][1]['text']);
+        $this->assertStringContainsString("\n\n", $canonical);
+    }
+
     private function writeTempVtt(string $contents): string
     {
         $dir = sys_get_temp_dir() . '/studio-vtt-parser-' . uniqid();

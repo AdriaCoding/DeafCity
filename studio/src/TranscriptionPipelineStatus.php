@@ -6,11 +6,23 @@ class TranscriptionPipelineStatus
 {
     public function __construct(private readonly JobManager $jobManager) {}
 
-    /** @return 'transcribing'|'translating'|'translation_error'|'download_ready' */
+    /** @return 'transcribing'|'revising'|'revision_error'|'translating'|'translation_error'|'download_ready' */
     public function getState(): string
     {
         if (!$this->jobManager->hasDraftVtt()) {
             return 'transcribing';
+        }
+
+        $revisionPath = $this->jobManager->revisionStatePath();
+        if (is_file($revisionPath)) {
+            $revisionData = json_decode(file_get_contents($revisionPath) ?: '{}', true);
+            $revisionStatus = is_array($revisionData) ? ($revisionData['status'] ?? '') : '';
+            if (in_array($revisionStatus, ['pending', 'running'], true)) {
+                return 'revising';
+            }
+            if ($revisionStatus === 'error') {
+                return 'revision_error';
+            }
         }
 
         if ($this->isEnglishSource()) {

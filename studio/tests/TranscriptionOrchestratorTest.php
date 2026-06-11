@@ -322,7 +322,7 @@ class TranscriptionOrchestratorTest extends TestCase
         $this->assertStringContainsString(escapeshellarg('en'), $launched);
     }
 
-    public function test_pipeline_mode_english_source_uses_transcribe_script_only(): void
+    public function test_pipeline_mode_english_source_uses_pipeline_script_for_revision(): void
     {
         file_put_contents(
             $this->jobsDir . '/current/job.json',
@@ -347,8 +347,8 @@ class TranscriptionOrchestratorTest extends TestCase
 
         $this->assertSame('loading', $result['result']);
         $this->assertNotNull($launched);
-        $this->assertStringContainsString('run_transcribe.sh', $launched);
-        $this->assertStringNotContainsString('run_transcription_pipeline.sh', $launched);
+        $this->assertStringContainsString('run_transcription_pipeline.sh', $launched);
+        $this->assertStringContainsString('revision_status.json', $launched);
     }
 
     public function test_pipeline_mode_auth_failure_still_destroys_job_no_spawn(): void

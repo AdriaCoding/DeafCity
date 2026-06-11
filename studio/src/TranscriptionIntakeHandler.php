@@ -58,18 +58,25 @@ class TranscriptionIntakeHandler
         $outcome = $this->orchestrator->run();
 
         if ($outcome['result'] === 'pipeline_transcribed') {
+            $revisionPath = $this->jobManager->revisionStatePath();
+            file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
+
             if ($this->shouldSkipEnglishTranslation($values['subtitle_language'])) {
                 $this->translationState->initiate([]);
+                $targetLangs = [];
             } else {
                 $this->translationState->initiate(['en']);
-                $this->launcher->launchTranslation(
-                    $this->jobManager->draftVttPath(),
-                    $this->jobManager->translationStatePath(),
-                    $values['subtitle_language'],
-                    dirname($this->jobManager->draftVttPath()),
-                    ['en'],
-                );
+                $targetLangs = ['en'];
             }
+
+            $this->launcher->launchRevisionAndTranslation(
+                $this->jobManager->draftVttPath(),
+                $revisionPath,
+                $this->jobManager->translationStatePath(),
+                $values['subtitle_language'],
+                dirname($this->jobManager->draftVttPath()),
+                $targetLangs,
+            );
             return ['errors' => [], 'values' => $values, 'created' => true];
         }
 
