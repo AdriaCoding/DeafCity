@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continguts — Studio</title>
+    <title>Studio — DEAF.city</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,6 +17,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
             padding: 1.25rem 2rem;
             border-bottom: 1px solid #1e1e1e;
         }
@@ -27,7 +29,63 @@
             text-transform: uppercase;
             color: #888;
         }
-        .header-nav { display: flex; gap: 1.25rem; align-items: center; }
+        .header-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        a.btn-primary {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #e0e0e0;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        a.btn-primary:hover { background: #fff; }
+        a.btn-primary.btn-transcription {
+            background: #1a3a2e;
+            color: #7ed87e;
+            border: 1px solid #2a6040;
+        }
+        a.btn-primary.btn-transcription:hover { background: #234a38; }
+        button.btn-secondary {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            color: #888;
+            border: 1px solid #333;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        button.btn-secondary:hover:not(:disabled) { color: #bbb; border-color: #555; }
+        button.btn-secondary:disabled { opacity: 0.5; cursor: default; }
+        .sync-status {
+            font-size: 0.75rem;
+            color: #555;
+        }
+        .sync-status.done { color: #4a8a4a; }
+        .sync-status.error { color: #a55; }
+        @keyframes spin-sm { to { transform: rotate(360deg); } }
+        .spinner-sm {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #444;
+            border-top-color: #888;
+            border-radius: 50%;
+            animation: spin-sm 0.8s linear infinite;
+            flex-shrink: 0;
+        }
         a.nav-link {
             font-size: 0.8rem;
             color: #555;
@@ -581,11 +639,8 @@
 </head>
 <body>
 <header>
-    <h1>Studio — Continguts</h1>
-    <div class="header-nav">
-        <a class="nav-link" href="./">← Inici</a>
-        <a class="nav-link" href="?action=logout">Tanca la sessió</a>
-    </div>
+    <h1>Studio</h1>
+    <?php require __DIR__ . '/partials/studio-header-nav.php'; ?>
 </header>
 <main>
     <div class="tabs">

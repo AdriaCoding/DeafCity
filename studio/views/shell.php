@@ -45,11 +45,6 @@
             padding: 3rem 2rem;
             max-width: 640px;
         }
-        .idle p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1.5rem;
-        }
         .job-card {
             background: #141414;
             border: 1px solid #222;
@@ -85,40 +80,6 @@
             white-space: nowrap;
         }
         a.btn-primary:hover { background: #fff; }
-        button.btn-secondary {
-            padding: 0.5rem 1rem;
-            background: transparent;
-            color: #888;
-            border: 1px solid #333;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-        button.btn-secondary:hover:not(:disabled) { color: #bbb; border-color: #555; }
-        button.btn-secondary:disabled { opacity: 0.5; cursor: default; }
-        .sync-status {
-            font-size: 0.8rem;
-            color: #555;
-            margin-top: 0.75rem;
-        }
-        .sync-status.done { color: #4a8a4a; }
-        .sync-status.error { color: #a55; }
-        @keyframes spin-sm { to { transform: rotate(360deg); } }
-        .spinner-sm {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 1.5px solid #444;
-            border-top-color: #888;
-            border-radius: 50%;
-            animation: spin-sm 0.8s linear infinite;
-            flex-shrink: 0;
-        }
         button.btn-danger {
             padding: 0.65rem 1.25rem;
             background: transparent;
@@ -186,79 +147,11 @@
     <header>
         <h1>Studio</h1>
         <div class="header-nav">
-            <?php if (!$hasActiveJob): ?>
-                <a class="btn-primary" href="?action=intake">Nova feina</a>
-                <a class="btn-primary" href="?action=transcription-intake" style="background:#1a3a2e;color:#7ed87e;border:1px solid #2a6040;">Nova transcripció</a>
-                <form method="POST" action="?action=sync" id="sync-form">
-                    <button type="submit" class="btn-secondary" id="sync-btn"
-                        <?= $isSyncing ? 'disabled' : '' ?>>
-                        <?php if ($isSyncing): ?>
-                            <span class="spinner-sm"></span> Sincronitzant…
-                        <?php else: ?>
-                            Sincronitzar a Vimeo
-                        <?php endif; ?>
-                    </button>
-                </form>
-            <?php endif; ?>
             <a class="logout" href="?action=logout">Tanca la sessió</a>
         </div>
     </header>
     <main>
-        <?php if (!$hasActiveJob): ?>
-            <div class="idle">
-                <p>No hi ha cap feina en curs. Inicieu la recepció per registrar un vídeo de Vimeo i pujar un fitxer de subtítols esborrany.</p>
-                <div class="actions">
-                    <a class="btn-primary" href="?action=continguts" style="background:#1a3a6e;color:#9ab8ff;border:1px solid #2a5090;">Continguts</a>
-                </div>
-                <p class="sync-status" id="sync-status-msg"><?php
-                    $s = $syncStatus['status'] ?? 'idle';
-                    if ($s === 'running') {
-                        $n = (int) ($syncStatus['synced'] ?? 0);
-                        $t = (int) ($syncStatus['total'] ?? 0);
-                        echo htmlspecialchars("Sincronitzant… ($n/$t)");
-                    } elseif ($s === 'done') {
-                        $n = (int) ($syncStatus['synced'] ?? 0);
-                        $t = (int) ($syncStatus['total'] ?? 0);
-                        echo htmlspecialchars("Sincronitzat ($n/$t vídeos)");
-                    }
-                ?></p>
-            </div>
-            <?php if ($isSyncing): ?>
-            <script>
-                (function () {
-                    var btn = document.getElementById('sync-btn');
-                    var msg = document.getElementById('sync-status-msg');
-                    msg.className = 'sync-status';
-
-                    function poll() {
-                        fetch('?action=sync-status')
-                            .then(function (r) { return r.json(); })
-                            .then(function (data) {
-                                var synced = data.synced || 0;
-                                var total = data.total || 0;
-                                if (data.status === 'done') {
-                                    btn.disabled = false;
-                                    btn.innerHTML = 'Sincronitzar a Vimeo';
-                                    msg.className = 'sync-status done';
-                                    msg.textContent = 'Sincronitzat (' + synced + '/' + total + ' vídeos)';
-                                } else if (data.status === 'error') {
-                                    btn.disabled = false;
-                                    btn.innerHTML = 'Sincronitzar a Vimeo';
-                                    msg.className = 'sync-status error';
-                                    msg.textContent = 'Error en la sincronització. Torneu-ho a provar.';
-                                } else {
-                                    msg.textContent = 'Sincronitzant… (' + synced + '/' + total + ')';
-                                    setTimeout(poll, 2000);
-                                }
-                            })
-                            .catch(function () { setTimeout(poll, 3000); });
-                    }
-
-                    setTimeout(poll, 2000);
-                }());
-            </script>
-            <?php endif; ?>
-        <?php elseif ($isTranscribing): ?>
+        <?php if ($isTranscribing): ?>
             <?php if ($transcriptionError !== null): ?>
                 <div class="transcribing">
                     <p class="job-title"><?= htmlspecialchars($job['video_title']) ?></p>

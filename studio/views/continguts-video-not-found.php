@@ -53,16 +53,15 @@
 </head>
 <body>
 <header>
-    <h1>Studio — Continguts</h1>
+    <h1>Studio</h1>
     <div class="header-nav">
-        <a class="nav-link" href="./">← Inici</a>
-        <a class="nav-link" href="?action=continguts">← Continguts</a>
+        <a class="nav-link" href="./">← Catàleg</a>
         <a class="nav-link" href="?action=logout">Tanca la sessió</a>
     </div>
 </header>
 <main>
     <p>Vídeo no trobat al catàleg.</p>
-    <a class="back-link" href="?action=continguts">← Torna a Continguts</a>
+    <a class="back-link" href="./">← Torna al catàleg</a>
 </main>
 </body>
 </html>

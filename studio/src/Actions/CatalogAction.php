@@ -100,7 +100,18 @@ class CatalogAction
         };
     }
 
-    private function continguts(): never
+    /** @param array{syncStatus?: array|null, isSyncing?: bool}|null $syncContext */
+    public function renderContinguts(?array $syncContext = null): never
+    {
+        foreach ($this->contingutsContext($syncContext) as $name => $value) {
+            $$name = $value;
+        }
+        require $this->view('continguts.php');
+        exit;
+    }
+
+    /** @return array<string, mixed> */
+    public function contingutsContext(?array $syncContext = null): array
     {
         $c = $this->c;
         $catalogFilePath = $c->dataDir . '/catalog.json';
@@ -117,8 +128,48 @@ class CatalogAction
         $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
         $referencedSubtitleLanguageIds = $catalogEditor->getReferencedSubtitleLanguageIds();
         $referencedTypologyIds = $catalogEditor->getReferencedTypologyIds();
-        require $this->view('continguts.php');
+        [$syncStatus, $isSyncing] = $this->resolveSyncContext($syncContext);
+
+        return compact(
+            'catalogVideos',
+            'editions',
+            'signLanguages',
+            'subtitleLanguages',
+            'typologies',
+            'catalogEditor',
+            'referencedEditionIds',
+            'referencedSignLanguageIds',
+            'referencedSubtitleLanguageIds',
+            'referencedTypologyIds',
+            'syncStatus',
+            'isSyncing',
+        );
+    }
+
+    private function continguts(): never
+    {
+        header('Location: ' . $this->c->baseUrl);
         exit;
+    }
+
+    /** @param array{syncStatus?: array|null, isSyncing?: bool}|null $syncContext
+     *  @return array{0: array|null, 1: bool}
+     */
+    private function resolveSyncContext(?array $syncContext): array
+    {
+        if ($syncContext !== null) {
+            $syncStatus = $syncContext['syncStatus'] ?? null;
+            $isSyncing = $syncContext['isSyncing'] ?? (($syncStatus['status'] ?? '') === 'running');
+
+            return [$syncStatus, $isSyncing];
+        }
+
+        $syncStatusPath = $this->c->dataDir . '/sync-status.json';
+        $raw = is_file($syncStatusPath) ? @file_get_contents($syncStatusPath) : false;
+        $syncStatus = $raw ? json_decode($raw, true) : null;
+        $isSyncing = ($syncStatus['status'] ?? '') === 'running';
+
+        return [$syncStatus, $isSyncing];
     }
 
     private function contingutsVideo(): never

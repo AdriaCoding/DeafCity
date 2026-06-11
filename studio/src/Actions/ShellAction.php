@@ -2,8 +2,10 @@
 
 namespace Studio\Actions;
 
+use Studio\Actions\CatalogAction;
 use Studio\Container;
 use Studio\PipelineSteps;
+use Studio\StudioHomeRoute;
 use Studio\TranscriptionPipelineStatus;
 
 class ShellAction
@@ -30,6 +32,7 @@ class ShellAction
         $isSyncing = ($syncStatus['status'] ?? '') === 'running';
 
         $hasActiveJob = $c->jobManager->exists();
+        $isTranscriptionJob = $hasActiveJob && ($c->jobManager->read()['job_type'] ?? '') === 'transcription';
         $job = [];
         $editionLabel = '';
         $stepLabel = '';
@@ -38,7 +41,11 @@ class ShellAction
         $transcriptionError = null;
         $isLocalFallback = false;
 
-        if ($hasActiveJob && ($c->jobManager->read()['job_type'] ?? '') === 'transcription') {
+        if (StudioHomeRoute::resolveDefaultView($hasActiveJob, $isTranscriptionJob) === StudioHomeRoute::VIEW_CONTINGUTS) {
+            (new CatalogAction($c))->renderContinguts(['syncStatus' => $syncStatus, 'isSyncing' => $isSyncing]);
+        }
+
+        if ($isTranscriptionJob) {
             $job = $c->jobManager->read();
             $pipelineStatus = (new TranscriptionPipelineStatus($c->jobManager))->getState();
             $originalFilename = $job['original_filename'] ?? 'transcripció';
