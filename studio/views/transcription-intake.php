@@ -69,6 +69,29 @@
             outline: none;
         }
         select:focus, input:focus { border-color: #555; }
+        .bulk-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .bulk-table th, .bulk-table td {
+            text-align: left;
+            padding: 0.55rem 0.35rem;
+            border-bottom: 1px solid #1e1e1e;
+        }
+        .bulk-table th {
+            color: #666;
+            font-size: 0.72rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .bulk-table select {
+            width: 100%;
+            padding: 0.45rem 0.55rem;
+            font-size: 0.85rem;
+        }
         .error {
             font-size: 0.82rem;
             color: #e05555;
@@ -116,8 +139,8 @@
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
         <?php endif; ?>
 
-        <form method="POST" action="?action=transcription-intake" enctype="multipart/form-data">
-            <div class="field">
+        <form method="POST" action="?action=transcription-intake" enctype="multipart/form-data" id="intake-form">
+            <div class="field" id="single-language-field">
                 <label for="subtitle_language">Llengua de l'àudio</label>
                 <select id="subtitle_language" name="subtitle_language" required>
                     <option value="">Seleccioneu…</option>
@@ -134,9 +157,10 @@
             </div>
 
             <div class="field">
-                <label for="intake_file">Fitxer d'àudio de l'intèrpret</label>
-                <input type="file" id="intake_file" name="intake_file"
+                <label for="intake_file">Fitxer(s) d'àudio de l'intèrpret</label>
+                <input type="file" id="intake_file" name="intake_file[]" multiple
                     accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" required>
+                <div id="bulk-language-table" style="display:none"></div>
                 <?php if (!empty($errors['intake_file'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['intake_file']) ?></p>
                 <?php endif; ?>
@@ -151,6 +175,7 @@
             array_map(
                 static fn (array $lang): array => [
                     'id' => $lang['id'] ?? '',
+                    'label' => $lang['label'] ?? '',
                     'vimeo_code' => $lang['vimeo_code'] ?? '',
                 ],
                 $subtitleLanguages

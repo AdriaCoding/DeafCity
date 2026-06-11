@@ -2,6 +2,7 @@
 
 namespace Studio\Actions;
 
+use Studio\BulkIntakeHandler;
 use Studio\Container;
 use Studio\IntakeHandler;
 use Studio\TranscriptionIntakeHandler;
@@ -72,7 +73,13 @@ class IntakeAction
     public function handleTranscription(): never
     {
         $c = $this->c;
+        $bulkQueue = $c->bulkIntakeQueue();
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            if ($bulkQueue->exists()) {
+                header('Location: ?action=bulk-progress');
+                exit;
+            }
             if ($c->jobManager->exists()) {
                 header('Location: ' . $c->baseUrl);
                 exit;
@@ -84,6 +91,35 @@ class IntakeAction
             exit;
         }
 
+        if ($bulkQueue->exists()) {
+            $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+            $errors = ['_form' => 'Ja hi ha una transcripció en massa en curs.'];
+            $values = ['subtitle_language' => ''];
+            require $this->view('transcription-intake.php');
+            exit;
+        }
+
+        if ($this->isBulkUpload($_FILES)) {
+            $handler = new BulkIntakeHandler(
+                studioConfig: $c->studioConfig,
+                jobManager: $c->jobManager,
+                bulkQueue: $bulkQueue,
+                launcher: $c->launcher,
+                dataDir: $c->dataDir,
+            );
+            $result = $handler->handlePost($_POST, $_FILES);
+            if (!empty($result['created'])) {
+                header('Location: ?action=bulk-progress');
+                exit;
+            }
+            $errors = $result['errors'];
+            $values = $result['values'];
+            $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+            require $this->view('transcription-intake.php');
+            exit;
+        }
+
+        $files = $this->normalizeSingleUpload($_FILES);
         $handler = new TranscriptionIntakeHandler(
             studioConfig: $c->studioConfig,
             jobManager: $c->jobManager,
@@ -91,7 +127,7 @@ class IntakeAction
             launcher: $c->launcher,
             translationState: new TranslationJobState($c->jobManager),
         );
-        $result = $handler->handlePost($_POST, $_FILES);
+        $result = $handler->handlePost($_POST, $files);
         if (!empty($result['created'])) {
             header('Location: ' . $c->baseUrl);
             exit;
@@ -109,6 +145,36 @@ class IntakeAction
         header('Content-Type: application/json');
         echo $this->c->jobManager->readTranscriptionStatus() ?? json_encode(['status' => 'pending']);
         exit;
+    }
+
+    private function isBulkUpload(array $files): bool
+    {
+        $upload = $files['intake_file'] ?? null;
+        if (!$upload || !is_array($upload['name'] ?? null)) {
+            return false;
+        }
+
+        return count($upload['name']) >= 2;
+    }
+
+    private function normalizeSingleUpload(array $files): array
+    {
+        $upload = $files['intake_file'] ?? null;
+        if (!$upload || !is_array($upload['name'] ?? null)) {
+            return $files;
+        }
+
+        if (count($upload['name']) === 1) {
+            $files['intake_file'] = [
+                'name' => $upload['name'][0],
+                'type' => $upload['type'][0] ?? '',
+                'tmp_name' => $upload['tmp_name'][0] ?? '',
+                'error' => $upload['error'][0] ?? UPLOAD_ERR_NO_FILE,
+                'size' => $upload['size'][0] ?? 0,
+            ];
+        }
+
+        return $files;
     }
 
     private function view(string $name): string

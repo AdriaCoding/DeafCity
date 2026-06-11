@@ -9,6 +9,7 @@ if (!defined('GROQ_BASE_URL'))                 { define('GROQ_BASE_URL', 'https:
 if (!defined('GROQ_TIMEOUT_SECONDS'))          { define('GROQ_TIMEOUT_SECONDS', 20); }
 if (!defined('STUDIO_LOCAL_TRANSCRIBE_MODEL')) { define('STUDIO_LOCAL_TRANSCRIBE_MODEL', 'whisper-large-v3-turbo'); }
 
+use Studio\Actions\BulkAction;
 use Studio\Actions\CatalogAction;
 use Studio\Actions\EditorAction;
 use Studio\Actions\IntakeAction;
@@ -66,6 +67,9 @@ match ($action) {
     'intake'                              => (new IntakeAction($container))->handle(),
     'transcription-intake'                => (new IntakeAction($container))->handleTranscription(),
     'transcription-status'                => (new IntakeAction($container))->transcriptionStatus(),
+    'bulk-progress'                       => (new BulkAction($container))->progress(),
+    'bulk-status'                         => (new BulkAction($container))->status(),
+    'bulk-download'                       => (new BulkAction($container))->download(),
     'add-sign-language'                   => (new CatalogAction($container))->addSignLanguage(),
     'add-edition'                         => (new CatalogAction($container))->addEdition(),
     'add-typology'                        => (new CatalogAction($container))->addTypology(),

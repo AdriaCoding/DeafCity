@@ -39,6 +39,11 @@ class Container
         );
     }
 
+    public function bulkIntakeQueue(): BulkIntakeQueue
+    {
+        return new BulkIntakeQueue($this->dataDir . '/jobs');
+    }
+
     public function transcriptionOrchestrator(string $pipelineTargetLang = ''): TranscriptionOrchestrator
     {
         return new TranscriptionOrchestrator(

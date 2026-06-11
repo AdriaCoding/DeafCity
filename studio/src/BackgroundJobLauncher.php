@@ -101,4 +101,14 @@ class BackgroundJobLauncher
         );
         call_user_func($this->exec, $cmd);
     }
+
+    public function launchBulkQueue(string $dataDir): void
+    {
+        $cmd = sprintf(
+            'nohup bash %s --data_dir %s > /dev/null 2>&1 &',
+            escapeshellarg($this->scriptsDir . '/run_bulk.sh'),
+            escapeshellarg($dataDir),
+        );
+        call_user_func($this->exec, $cmd);
+    }
 }
