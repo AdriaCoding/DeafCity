@@ -87,7 +87,7 @@ Add two new rendering branches:
 
 ### Gemini API contract
 
-**Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
+**Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent`
 
 **System instruction** (the source language name is substituted at call time using the same `PROMPT_LANGUAGE_NAMES` map as `GeminiTranslator`):
 
@@ -194,6 +194,6 @@ Good tests verify observable behaviour through the public interface, not interna
 
 - The revision prompt was developed iteratively with a changelog output for evaluation; the changelog is removed from the production prompt as it serves no automated purpose.
 - The same `GEMINI_API_KEY` used for translation is reused for revision. No additional credential management is required.
-- Gemini 2.5 Flash is used (same model as translation). If the model identifier changes, update `GeminiReviser::ENDPOINT` in one place.
+- Gemini 3.5 Flash is used for revision (translation still uses 2.5 Flash). If the model identifier changes, update `GeminiReviser::DEFAULT_MODEL` in one place.
 - At typical monologue lengths (~20–80 cues), the full VTT blob fits comfortably within Gemini's input token window.
 - The `run_revise.sh` script passes `GEMINI_API_KEY` as an environment variable in the same way `run_translate.sh` does.

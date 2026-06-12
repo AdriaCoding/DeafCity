@@ -4,7 +4,7 @@ namespace Studio;
 
 class GeminiReviser
 {
-    private const DEFAULT_MODEL = 'gemini-2.5-flash';
+    private const DEFAULT_MODEL = 'gemini-3.5-flash';
     private const DEFAULT_TIMEOUT_SECONDS = 300;
     private const ENDPOINT_TEMPLATE = 'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent';
     private const MAX_ATTEMPTS = 3;
