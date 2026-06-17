@@ -551,7 +551,7 @@
             }
 
             function applyVideoAspectRatio() {
-                if (!videoShell) return Promise.resolve();
+                if (!iframe) return Promise.resolve();
                 var wP =
                     typeof p.getVideoWidth === 'function'
                         ? p.getVideoWidth().catch(function () {
@@ -565,12 +565,12 @@
                           })
                         : Promise.resolve(0);
                 return Promise.all([wP, hP]).then(function (dims) {
-                    videoShell.style.aspectRatio = aspectRatioFrom(dims[0], dims[1]);
+                    iframe.style.aspectRatio = aspectRatioFrom(dims[0], dims[1]);
                 });
             }
 
             function resetVideoAspectPlaceholder() {
-                if (videoShell) videoShell.style.aspectRatio = '16 / 9';
+                if (iframe) iframe.style.aspectRatio = '16 / 9';
             }
 
             function iframeEmbedVideoId() {

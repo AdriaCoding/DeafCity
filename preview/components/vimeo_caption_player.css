@@ -28,20 +28,29 @@
     max-width: min(100vw, 1280px);
     max-height: 100%;
     margin: 0 auto;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1.77 / 1;
     height: auto;
     background: #fff;
     flex-shrink: 1;
     min-height: 0;
+    overflow: hidden;
 }
 .video-shell iframe {
     display: block;
-    width: 100%;
+    position: absolute;
+    width: auto;
     height: 100%;
     border: 0;
-    vertical-align: top;
-    position: relative;
+    aspect-ratio: 16 / 9; /* overridden at runtime from Vimeo dimensions */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     z-index: 0;
+}
+@media screen and (max-width: 650px) {
+    .video-shell {
+        aspect-ratio: 1.2 / 1;
+    }
 }
 .vpc-sound-badge {
     position: absolute;
