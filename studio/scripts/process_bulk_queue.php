@@ -13,6 +13,7 @@ if (!defined('STUDIO_LOCAL_TRANSCRIBE_MODEL')) { define('STUDIO_LOCAL_TRANSCRIBE
 use Studio\BackgroundJobLauncher;
 use Studio\BulkIntakeQueue;
 use Studio\BulkItemProcessor;
+use Studio\GeminiReviser;
 use Studio\JobManager;
 use Studio\StudioConfig;
 use Studio\TranslationJobState;
@@ -64,12 +65,16 @@ $orchestrator = new TranscriptionOrchestrator(
     pipelineTargetLang: 'en',
 );
 
+$geminiApiKey = defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '';
+$reviser = $geminiApiKey !== '' ? new GeminiReviser($geminiApiKey) : null;
+
 $processor = new BulkItemProcessor(
     bulkQueue: $bulkQueue,
     jobManager: $jobManager,
     orchestrator: $orchestrator,
     launcher: $launcher,
     translationState: new TranslationJobState($jobManager),
+    reviser: $reviser,
 );
 
 while ($processor->processNext()) {

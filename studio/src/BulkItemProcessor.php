@@ -17,6 +17,7 @@ class BulkItemProcessor
         private readonly BackgroundJobLauncher $launcher,
         private readonly TranslationJobState $translationState,
         ?callable $waitForCompletion = null,
+        private readonly ?GeminiReviser $reviser = null,
     ) {
         $this->waitForCompletion = $waitForCompletion ?? fn (): array => $this->pollUntilReady();
     }
@@ -55,6 +56,14 @@ class BulkItemProcessor
             }
 
             if ($outcome['result'] === 'pipeline_transcribed') {
+                if ($this->reviser !== null) {
+                    $draftPath = $this->jobManager->draftVttPath();
+                    $revised = $this->reviser->revise(
+                        (string) file_get_contents($draftPath),
+                        $item['language'],
+                    );
+                    file_put_contents($draftPath, $revised);
+                }
                 $this->startTranslationIfNeeded($item['language']);
             }
 
