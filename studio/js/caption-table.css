@@ -86,7 +86,8 @@ a.caption-download-btn {
 a.caption-download-btn:hover { color: #aaa; border-color: #555; }
 a.caption-download-btn .material-icons { font-size: 0.95rem; }
 
-.caption-action-btns { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+td.caption-actions-cell { white-space: nowrap; width: 1%; }
+.caption-action-btns { display: flex; flex-wrap: nowrap; gap: 0.35rem; }
 button.caption-action-btn {
     display: inline-flex;
     align-items: center;
@@ -143,7 +144,7 @@ button.caption-action-btn.is-loading::after {
 @keyframes caption-spin { to { transform: rotate(360deg); } }
 
 /* Drop zone */
-.caption-table-component { margin-top: 0.35rem; }
+.caption-table-component { margin-top: 0.35rem; overflow-x: auto; }
 .caption-uploader-dropzone {
     border: 1px dashed #444;
     border-radius: 4px;

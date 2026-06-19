@@ -13,7 +13,7 @@
             font-family: system-ui, sans-serif;
             color: #e0e0e0;
         }
-        main { max-width: 42rem; padding: 2rem 2rem 4rem; }
+        main { width: 100%; padding: 2rem clamp(1.5rem, 4vw, 3rem) 4rem; }
 
         .video-hero {
             display: flex;
