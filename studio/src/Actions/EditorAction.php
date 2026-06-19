@@ -4,6 +4,7 @@ namespace Studio\Actions;
 
 use Studio\CaptionFileIntegrityChecker;
 use Studio\Container;
+use Studio\StudioHeader;
 use Studio\SubtitleEditorHandler;
 use Studio\SubtitleOutputBasename;
 use Studio\TranslationJobState;
@@ -72,6 +73,7 @@ class EditorAction
             $masterCues = $vttParser->parse($masterVttPath)['cues'];
         }
         $langLabel = $this->langLabel($lang);
+        extract($c->headerContext(null, StudioHeader::pipelineStepFromAction('translation-review')));
         require $this->view('translation-review.php');
         exit;
     }

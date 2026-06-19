@@ -12,27 +12,6 @@
             font-family: system-ui, sans-serif;
             color: #e0e0e0;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.logout {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.logout:hover { color: #999; }
         main {
             max-width: 520px;
             padding: 2.5rem 2rem 4rem;
@@ -118,19 +97,10 @@
             cursor: pointer;
         }
         button[type="submit"]:hover { background: #336b49; }
-        a.back {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-        }
-        a.back:hover { color: #999; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Tanca la sessió</a>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Nova transcripció</h2>
         <p class="lead">Pugeu l'àudio de l'intèrpret. El sistema el transcriurà i el traduirà automàticament a l'anglès, i descarregarà els dos fitxers de subtítols quan estigui llest.</p>
@@ -168,7 +138,6 @@
 
             <button type="submit">Comença la transcripció</button>
         </form>
-        <p style="margin-top: 1.5rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
     </main>
     <script>
         window.TRANSCRIPTION_INTAKE_LANGUAGES = <?= json_encode(

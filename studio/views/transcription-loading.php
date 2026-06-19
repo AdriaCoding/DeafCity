@@ -15,28 +15,6 @@
             display: flex;
             flex-direction: column;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid #1e1e1e;
-            flex-shrink: 0;
-        }
-        h1 {
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.logout {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.logout:hover { color: #999; }
         .stage {
             flex: 1;
             display: flex;
@@ -181,10 +159,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Tanca la sessió</a>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
 
     <?php if ($pipelineStatus === 'transcribing'): ?>
     <div class="stage" id="stage">

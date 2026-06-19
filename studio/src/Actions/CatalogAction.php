@@ -2,6 +2,7 @@
 
 namespace Studio\Actions;
 
+use Studio\ActiveJobBanner;
 use Studio\CaptionDeleteHandler;
 use Studio\CaptionReplaceHandler;
 use Studio\CaptionUploadHandler;
@@ -12,6 +13,7 @@ use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
 use Studio\SubtitleLanguageAddHandler;
 use Studio\SubtitleLanguageTranslationTargetHandler;
+use Studio\StudioHeader;
 use Studio\TypologyAddHandler;
 use Studio\VideoEditHandler;
 use Studio\VideoVisibilityHandler;
@@ -131,20 +133,26 @@ class CatalogAction
         $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         [$syncStatus, $isSyncing] = $this->resolveSyncContext($syncContext);
 
-        return compact(
-            'catalogVideos',
-            'editions',
-            'signLanguages',
-            'subtitleLanguages',
-            'typologies',
-            'catalogEditor',
-            'referencedEditionIds',
-            'referencedSignLanguageIds',
-            'referencedSubtitleLanguageIds',
-            'referencedTypologyIds',
-            'catalogTags',
-            'syncStatus',
-            'isSyncing',
+        return array_merge(
+            compact(
+                'catalogVideos',
+                'editions',
+                'signLanguages',
+                'subtitleLanguages',
+                'typologies',
+                'catalogEditor',
+                'referencedEditionIds',
+                'referencedSignLanguageIds',
+                'referencedSubtitleLanguageIds',
+                'referencedTypologyIds',
+                'catalogTags',
+                'syncStatus',
+                'isSyncing',
+            ),
+            [
+                'activeJobBanner' => ActiveJobBanner::resolve($c),
+            ],
+            StudioHeader::vars($c, StudioHeader::NAV_CATALOG, null, $syncStatus, $isSyncing),
         );
     }
 
@@ -180,12 +188,14 @@ class CatalogAction
         $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
         if ($vimeoId === '') {
             http_response_code(404);
+            extract($this->c->headerContext(StudioHeader::NAV_CATALOG));
             require $this->view('continguts-video-not-found.php');
             exit;
         }
         $video = $c->catalogEditor()->findVideoByVimeoId($vimeoId);
         if ($video === null) {
             http_response_code(404);
+            extract($this->c->headerContext(StudioHeader::NAV_CATALOG));
             require $this->view('continguts-video-not-found.php');
             exit;
         }
@@ -193,6 +203,7 @@ class CatalogAction
         $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         $typologies = $c->studioConfig->getTypologies();
+        extract($this->c->headerContext(StudioHeader::NAV_CATALOG));
         require $this->view('continguts-video.php');
         exit;
     }

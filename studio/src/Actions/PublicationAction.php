@@ -5,6 +5,7 @@ namespace Studio\Actions;
 use Studio\CatalogTagPool;
 use Studio\Container;
 use Studio\PublicationHandler;
+use Studio\StudioHeader;
 use Studio\TaggingHandler;
 use Studio\TranslationJobState;
 
@@ -33,6 +34,7 @@ class PublicationAction
             $jobTags = is_array($_POST['tags'] ?? null) ? $_POST['tags'] : [];
             $errors = $result['errors'];
         }
+        extract($c->headerContext(null, StudioHeader::pipelineStepFromAction('tagging')));
         require $this->view('tagging.php');
         exit;
     }
@@ -114,6 +116,7 @@ class PublicationAction
                 $publicationError = 'No s\'ha pogut completar la publicació. ' . $e->getMessage();
             }
         }
+        extract($c->headerContext(null, StudioHeader::pipelineStepFromAction('publication')));
         require $this->view('publication.php');
         exit;
     }

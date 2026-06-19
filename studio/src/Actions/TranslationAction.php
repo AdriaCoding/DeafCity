@@ -3,6 +3,7 @@
 namespace Studio\Actions;
 
 use Studio\Container;
+use Studio\StudioHeader;
 use Studio\TranslationJobState;
 
 class TranslationAction
@@ -32,6 +33,7 @@ class TranslationAction
                 $entry = $translationState->getLanguageStatus($id);
                 $languageItems[] = ['id' => $id, 'label' => $language['label'] ?? $id, 'status' => $entry['status'] ?? 'pending'];
             }
+            extract($c->headerContext(null, StudioHeader::pipelineStepFromAction('translation')));
             require $this->view('translation-loading.php');
             exit;
         }
@@ -63,6 +65,7 @@ class TranslationAction
             ];
         }
 
+        extract($c->headerContext(null, StudioHeader::pipelineStepFromAction('translation')));
         require $this->view('translation-hub.php');
         exit;
     }

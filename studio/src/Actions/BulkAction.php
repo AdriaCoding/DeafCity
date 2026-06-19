@@ -4,6 +4,7 @@ namespace Studio\Actions;
 
 use Studio\BulkZipBuilder;
 use Studio\Container;
+use Studio\StudioHeader;
 
 class BulkAction
 {
@@ -18,6 +19,7 @@ class BulkAction
         }
 
         $snapshot = $queue->statusSnapshot();
+        extract($this->c->headerContext());
         require $this->view('bulk-progress.php');
         exit;
     }

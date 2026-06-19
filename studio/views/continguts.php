@@ -13,86 +13,6 @@
             font-family: system-ui, sans-serif;
             color: #e0e0e0;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        .header-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-        }
-        a.btn-primary {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: #e0e0e0;
-            color: #0a0a0a;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        a.btn-primary:hover { background: #fff; }
-        a.btn-primary.btn-transcription {
-            background: #1a3a2e;
-            color: #7ed87e;
-            border: 1px solid #2a6040;
-        }
-        a.btn-primary.btn-transcription:hover { background: #234a38; }
-        button.btn-secondary {
-            padding: 0.5rem 1rem;
-            background: transparent;
-            color: #888;
-            border: 1px solid #333;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-        button.btn-secondary:hover:not(:disabled) { color: #bbb; border-color: #555; }
-        button.btn-secondary:disabled { opacity: 0.5; cursor: default; }
-        .sync-status {
-            font-size: 0.75rem;
-            color: #555;
-        }
-        .sync-status.done { color: #4a8a4a; }
-        .sync-status.error { color: #a55; }
-        @keyframes spin-sm { to { transform: rotate(360deg); } }
-        .spinner-sm {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border: 1.5px solid #444;
-            border-top-color: #888;
-            border-radius: 50%;
-            animation: spin-sm 0.8s linear infinite;
-            flex-shrink: 0;
-        }
-        a.nav-link {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.nav-link:hover { color: #999; }
         main { width: 100%; padding: 2rem clamp(1.5rem, 4vw, 3rem) 4rem; }
 
         /* ── Tabs ── */
@@ -640,10 +560,10 @@
     <link rel="stylesheet" href="js/caption-uploader.css?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.css') ?>">
 </head>
 <body>
-<header>
-    <h1>Studio</h1>
-    <?php require __DIR__ . '/partials/studio-header-nav.php'; ?>
-</header>
+<?php require __DIR__ . '/partials/studio-header.php'; ?>
+<?php if (!empty($activeJobBanner)): ?>
+    <?php require __DIR__ . '/partials/studio-job-banner.php'; ?>
+<?php endif; ?>
 <main>
     <div class="tabs">
         <button class="tab-btn active" data-tab="videos">Vídeos</button>

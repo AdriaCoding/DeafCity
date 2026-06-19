@@ -12,27 +12,6 @@
             font-family: system-ui, sans-serif;
             color: #e0e0e0;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.back, a.logout {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.back:hover, a.logout:hover { color: #999; }
         main {
             max-width: 560px;
             padding: 2.5rem 2rem 4rem;
@@ -172,10 +151,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Tanca la sessió</a>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Nova feina</h2>
         <p class="lead">Enganxeu la URL o l'ID de Vimeo d'un vídeo que ja sigui al vostre compte, trieu les metadades i pugeu un fitxer WebVTT, SubRip (.srt) o l'àudio de l'intèrpret.</p>
@@ -300,7 +276,6 @@
 
             <button type="submit">Crea la feina</button>
         </form>
-        <p style="margin-top: 1.5rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
     </main>
     <script>
     (function () {

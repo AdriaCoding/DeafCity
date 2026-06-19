@@ -12,27 +12,6 @@
             font-family: system-ui, sans-serif;
             min-height: 100vh;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.nav-link {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            margin-left: 1rem;
-        }
-        a.nav-link:hover { color: #999; }
         main {
             max-width: 42rem;
             margin: 0 auto;
@@ -112,13 +91,7 @@
     </style>
 </head>
 <body>
-<header>
-    <h1>Studio — Publicació</h1>
-    <nav>
-        <a href="./" class="nav-link">Inici</a>
-        <a href="?action=logout" class="nav-link">Sortir</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/studio-header.php'; ?>
 <main>
     <div class="step-header">
         <h2>Confirma i publica</h2>

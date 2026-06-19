@@ -14,27 +14,6 @@
             display: flex;
             flex-direction: column;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.nav-link {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            margin-left: 1rem;
-        }
-        a.nav-link:hover { color: #999; }
         main {
             flex: 1;
             display: flex;
@@ -131,13 +110,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Traducció</h1>
-        <div>
-            <a class="nav-link" href="./">← Estudi</a>
-            <a class="nav-link" href="?action=logout">Tanca la sessió</a>
-        </div>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <div class="transcribing" id="translating-view">
             <p class="job-title"><?= htmlspecialchars($job['video_title'] ?? '') ?></p>

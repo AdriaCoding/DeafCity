@@ -17,36 +17,8 @@
             color: #e0e0e0;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #1e1e1e;
-            flex-shrink: 0;
-        }
-        h1 {
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        a.nav-link {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.nav-link:hover { color: #999; }
-
-        /* ── Toolbar ───────────────────────────────────────────────── */
         .toolbar {
             display: flex;
             align-items: center;
@@ -224,13 +196,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Revisió — <?= htmlspecialchars($langLabel) ?></h1>
-        <div class="header-actions">
-            <a class="nav-link" href="?action=translation">← Traduccions</a>
-            <a class="nav-link" href="?action=logout">Tanca la sessió</a>
-        </div>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
 
     <div class="toolbar">
         <button id="save-btn" type="button">Desa i tanca</button>

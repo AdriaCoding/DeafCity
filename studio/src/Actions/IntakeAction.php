@@ -5,6 +5,7 @@ namespace Studio\Actions;
 use Studio\BulkIntakeHandler;
 use Studio\Container;
 use Studio\IntakeHandler;
+use Studio\StudioHeader;
 use Studio\TranscriptionIntakeHandler;
 use Studio\TranslationJobState;
 use Studio\VimeoIdParser;
@@ -52,7 +53,7 @@ class IntakeAction
                         exit;
                     }
                     if ($outcome['result'] === 'loading') {
-                        header('Location: ' . $c->baseUrl);
+                        header('Location: ?action=resume-job');
                         exit;
                     }
                     $errors['_form'] = $outcome['message'] ?? 'Error en la generació de subtítols';
@@ -66,6 +67,7 @@ class IntakeAction
         $signLanguages = $c->studioConfig->getSignLanguages();
         $editions = $c->studioConfig->getEditions();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        extract($c->headerContext(StudioHeader::NAV_INTAKE));
         require $this->view('intake.php');
         exit;
     }
@@ -81,12 +83,13 @@ class IntakeAction
                 exit;
             }
             if ($c->jobManager->exists()) {
-                header('Location: ' . $c->baseUrl);
+                header('Location: ?action=resume-job');
                 exit;
             }
             $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
             $errors = [];
             $values = ['subtitle_language' => ''];
+            extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
             require $this->view('transcription-intake.php');
             exit;
         }
@@ -95,6 +98,7 @@ class IntakeAction
             $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
             $errors = ['_form' => 'Ja hi ha una transcripció en massa en curs.'];
             $values = ['subtitle_language' => ''];
+            extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
             require $this->view('transcription-intake.php');
             exit;
         }
@@ -115,6 +119,7 @@ class IntakeAction
             $errors = $result['errors'];
             $values = $result['values'];
             $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+            extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
             require $this->view('transcription-intake.php');
             exit;
         }
@@ -129,12 +134,13 @@ class IntakeAction
         );
         $result = $handler->handlePost($_POST, $files);
         if (!empty($result['created'])) {
-            header('Location: ' . $c->baseUrl);
+            header('Location: ?action=resume-job');
             exit;
         }
         $errors = $result['errors'];
         $values = $result['values'];
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
         require $this->view('transcription-intake.php');
         exit;
     }

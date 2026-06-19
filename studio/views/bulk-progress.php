@@ -12,27 +12,6 @@
             font-family: system-ui, sans-serif;
             color: #e0e0e0;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.logout {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.logout:hover { color: #999; }
         main {
             max-width: 720px;
             padding: 2.5rem 2rem 4rem;
@@ -89,10 +68,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Studio</h1>
-        <a class="logout" href="?action=logout">Tanca la sessió</a>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Transcripció en massa</h2>
         <p class="lead">Processant els fitxers d'àudio. Quan acabi, es descarregarà un ZIP amb tots els subtítols.</p>
@@ -131,7 +107,6 @@
                 Si la descàrrega no s'inicia automàticament,
                 <a href="?action=bulk-download" id="manual-download-link" style="color:#7ed87e;">feu clic aquí</a>.
             </p>
-            <p style="margin-top:1rem;"><a class="back" href="./">← Torna a l'estudi</a></p>
         </div>
     </main>
     <script>

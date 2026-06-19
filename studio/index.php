@@ -110,5 +110,6 @@ match ($action) {
     'publication'                         => (new PublicationAction($container))->handle(),
     'sync'                                => (new SyncAction($container))->launch(),
     'sync-status'                         => (new SyncAction($container))->status(),
+    'resume-job'                          => (new ShellAction($container))->handle('resume-job'),
     default                               => (new ShellAction($container))->handle($action),
 };

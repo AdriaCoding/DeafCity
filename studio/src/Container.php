@@ -44,6 +44,12 @@ class Container
         return new BulkIntakeQueue($this->dataDir . '/jobs');
     }
 
+    /** @return array<string, mixed> */
+    public function headerContext(?string $activeNav = null, ?string $pipelineStep = null): array
+    {
+        return StudioHeader::vars($this, $activeNav, $pipelineStep);
+    }
+
     public function transcriptionOrchestrator(string $pipelineTargetLang = ''): TranscriptionOrchestrator
     {
         return new TranscriptionOrchestrator(

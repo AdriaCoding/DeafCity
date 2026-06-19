@@ -13,27 +13,6 @@
             font-family: system-ui, sans-serif;
             min-height: 100vh;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        a.nav-link {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            margin-left: 1rem;
-        }
-        a.nav-link:hover { color: #999; }
         main {
             max-width: 42rem;
             margin: 0 auto;
@@ -147,13 +126,7 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Traducció</h1>
-        <div>
-            <a class="nav-link" href="./">← Estudi</a>
-            <a class="nav-link" href="?action=logout">Tanca la sessió</a>
-        </div>
-    </header>
+    <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2 class="job-title"><?= htmlspecialchars($job['video_title'] ?? '') ?></h2>
         <p class="intro">Reviseu les traduccions generades si cal, o continueu directament a l'etiquetatge.</p>

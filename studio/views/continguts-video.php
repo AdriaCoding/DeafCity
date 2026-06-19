@@ -13,28 +13,6 @@
             font-family: system-ui, sans-serif;
             color: #e0e0e0;
         }
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid #1e1e1e;
-        }
-        h1 {
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: #888;
-        }
-        .header-nav { display: flex; gap: 1.25rem; align-items: center; }
-        a.nav-link {
-            font-size: 0.8rem;
-            color: #555;
-            text-decoration: none;
-            letter-spacing: 0.05em;
-        }
-        a.nav-link:hover { color: #999; }
         main { max-width: 42rem; padding: 2rem 2rem 4rem; }
 
         .video-hero {
@@ -471,13 +449,7 @@
     <link rel="stylesheet" href="js/caption-uploader.css?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.css') ?>">
 </head>
 <body>
-<header>
-    <h1>Studio</h1>
-    <div class="header-nav">
-        <a class="nav-link" href="./">← Catàleg</a>
-        <a class="nav-link" href="?action=logout">Tanca la sessió</a>
-    </div>
-</header>
+<?php require __DIR__ . '/partials/studio-header.php'; ?>
 <main>
     <div class="video-hero">
         <?php if (!empty($video['thumbnail_url'])): ?>

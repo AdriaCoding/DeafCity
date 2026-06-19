@@ -5,7 +5,7 @@ namespace Studio\Actions;
 use Studio\Actions\CatalogAction;
 use Studio\Container;
 use Studio\PipelineSteps;
-use Studio\StudioHomeRoute;
+use Studio\StudioHeader;
 use Studio\TranscriptionPipelineStatus;
 
 class ShellAction
@@ -16,14 +16,23 @@ class ShellAction
     {
         $c = $this->c;
 
-        // Step placeholder for any action string matching the current job's step
+        if ($action === 'resume-job') {
+            $this->renderResumeJob();
+        }
+
         if ($action !== null && $c->jobManager->exists()) {
             $job = $c->jobManager->read();
             if (($job['step'] ?? '') === $action) {
                 $stepLabel = PipelineSteps::label($action);
+                extract($c->headerContext(null, StudioHeader::pipelineStepFromAction($action)));
                 require $this->view('step-placeholder.php');
                 exit;
             }
+        }
+
+        if ($action !== null) {
+            header('Location: ' . $c->baseUrl);
+            exit;
         }
 
         $syncStatusPath = $c->dataDir . '/sync-status.json';
@@ -31,19 +40,16 @@ class ShellAction
         $syncStatus = $raw ? json_decode($raw, true) : null;
         $isSyncing = ($syncStatus['status'] ?? '') === 'running';
 
+        (new CatalogAction($c))->renderContinguts(['syncStatus' => $syncStatus, 'isSyncing' => $isSyncing]);
+    }
+
+    private function renderResumeJob(): never
+    {
+        $c = $this->c;
+        extract($c->headerContext());
+
         $hasActiveJob = $c->jobManager->exists();
         $isTranscriptionJob = $hasActiveJob && ($c->jobManager->read()['job_type'] ?? '') === 'transcription';
-        $job = [];
-        $editionLabel = '';
-        $stepLabel = '';
-        $resumeUrl = './';
-        $isTranscribing = false;
-        $transcriptionError = null;
-        $isLocalFallback = false;
-
-        if (StudioHomeRoute::resolveDefaultView($hasActiveJob, $isTranscriptionJob) === StudioHomeRoute::VIEW_CONTINGUTS) {
-            (new CatalogAction($c))->renderContinguts(['syncStatus' => $syncStatus, 'isSyncing' => $isSyncing]);
-        }
 
         if ($isTranscriptionJob) {
             $job = $c->jobManager->read();
@@ -60,6 +66,14 @@ class ShellAction
             require $this->view('transcription-loading.php');
             exit;
         }
+
+        $job = [];
+        $editionLabel = '';
+        $stepLabel = '';
+        $resumeUrl = './';
+        $isTranscribing = false;
+        $transcriptionError = null;
+        $isLocalFallback = false;
 
         if ($hasActiveJob) {
             $job = $c->jobManager->read();
@@ -88,6 +102,9 @@ class ShellAction
                     }
                 }
             }
+        } else {
+            header('Location: ' . $c->baseUrl);
+            exit;
         }
 
         require $this->view('shell.php');
