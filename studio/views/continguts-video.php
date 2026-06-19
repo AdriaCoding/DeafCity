@@ -341,6 +341,24 @@
             <input class="title-input" type="text" value="<?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?>">
         </div>
         <div class="field">
+            <label class="field-label">Llengua de signes</label>
+            <select class="typology-select sign-language-select">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($signLanguages as $sl): ?>
+                <option value="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>"<?= ($video['sign_language'] ?? '') === $sl['id'] ? ' selected' : '' ?>><?= htmlspecialchars($sl['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="field">
+            <label class="field-label">Ciutat</label>
+            <select class="typology-select edition-select">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($editions as $ed): ?>
+                <option value="<?= htmlspecialchars($ed['id'], ENT_QUOTES) ?>"<?= ($video['edition'] ?? '') === $ed['id'] ? ' selected' : '' ?>><?= htmlspecialchars($ed['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="field">
             <label class="field-label">Tipologia</label>
             <select class="typology-select">
                 <option value="">Seleccioneu…</option>
@@ -406,7 +424,9 @@
 
     var form = document.querySelector('.video-edit-form');
     var titleInput = form.querySelector('.title-input');
-    var typologySelect = form.querySelector('.typology-select');
+    var signLanguageSelect = form.querySelector('.sign-language-select');
+    var editionSelect = form.querySelector('.edition-select');
+    var typologySelect = form.querySelector('.typology-select:not(.sign-language-select):not(.edition-select)');
     var chipBox = form.querySelector('.chip-input-box');
     var textInput = form.querySelector('.chip-text-input');
     var suggestions = form.querySelector('.tag-suggestions');
@@ -495,6 +515,8 @@
         var body = new FormData();
         body.append('vimeo_id', vimeoId);
         body.append('title', titleInput.value.trim());
+        body.append('sign_language', signLanguageSelect.value);
+        body.append('edition', editionSelect.value);
         body.append('typology', typologySelect.value);
         tags.forEach(function (t) { body.append('tags[]', t); });
 

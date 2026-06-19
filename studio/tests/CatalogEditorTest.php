@@ -55,6 +55,54 @@ class CatalogEditorTest extends TestCase
         $this->assertSame(['tag-a', 'tag-b'], $entry['tags']);
     }
 
+    public function test_updates_sign_language_and_edition_and_regenerates_id(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'Old',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->updateVideo('111', 'New', [], null, 'libras', '2023-sao-paulo');
+
+        $entry = $this->readCatalog()['videos'][0];
+
+        $this->assertSame('libras', $entry['sign_language']);
+        $this->assertSame('2023-sao-paulo', $entry['edition']);
+        $this->assertSame('libras_111', $entry['id']);
+    }
+
+    public function test_leaves_sign_language_and_edition_when_omitted(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'Old',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [],
+            ],
+        ]]);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->updateVideo('111', 'New', [], null, '', '');
+
+        $entry = $this->readCatalog()['videos'][0];
+
+        $this->assertSame('lse', $entry['sign_language']);
+        $this->assertSame('2020-valencia', $entry['edition']);
+        $this->assertSame('lse_111', $entry['id']);
+    }
+
     public function test_leaves_other_fields_untouched(): void
     {
         $this->writeCatalog(['videos' => [

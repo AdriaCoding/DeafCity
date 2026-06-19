@@ -10,8 +10,14 @@ class VideoEditHandler
     ) {}
 
     /** @return array{ok: bool, vimeoWarning: ?string} */
-    public function handle(string $videoId, string $title, array $tags, ?string $typology = null): array
-    {
+    public function handle(
+        string $videoId,
+        string $title,
+        array $tags,
+        ?string $typology = null,
+        ?string $signLanguage = null,
+        ?string $edition = null,
+    ): array {
         $vimeoWarning = null;
 
         try {
@@ -22,7 +28,7 @@ class VideoEditHandler
         }
 
         try {
-            $this->catalogEditor->updateVideo($videoId, $title, $tags, $typology);
+            $this->catalogEditor->updateVideo($videoId, $title, $tags, $typology, $signLanguage, $edition);
         } catch (\Throwable $e) {
             return ['ok' => false, 'vimeoWarning' => $vimeoWarning];
         }

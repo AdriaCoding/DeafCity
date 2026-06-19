@@ -203,6 +203,8 @@ class CatalogAction
         $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         $typologies = $c->studioConfig->getTypologies();
+        $signLanguages = $c->studioConfig->getSignLanguages();
+        $editions = $c->studioConfig->getEditions();
         extract($this->c->headerContext(StudioHeader::NAV_CATALOG));
         require $this->view('continguts-video.php');
         exit;
@@ -329,8 +331,10 @@ class CatalogAction
         $videoId = trim((string) ($_POST['vimeo_id'] ?? ''));
         $title = trim((string) ($_POST['title'] ?? ''));
         $typology = trim((string) ($_POST['typology'] ?? ''));
+        $signLanguage = trim((string) ($_POST['sign_language'] ?? ''));
+        $edition = trim((string) ($_POST['edition'] ?? ''));
         $tags = is_array($_POST['tags'] ?? null) ? array_values(array_filter(array_map('trim', $_POST['tags']))) : [];
-        if ($videoId === '' || $title === '') {
+        if ($videoId === '' || $title === '' || $signLanguage === '' || $edition === '') {
             http_response_code(422);
             echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.']);
             exit;
@@ -344,7 +348,7 @@ class CatalogAction
         }
 
         $result = (new VideoEditHandler($this->c->vimeoClient(), $this->c->catalogEditor()))
-            ->handle($videoId, $title, $tags, $typology !== '' ? $typology : null);
+            ->handle($videoId, $title, $tags, $typology !== '' ? $typology : null, $signLanguage, $edition);
 
         if (!$result['ok']) {
             echo json_encode($result, JSON_UNESCAPED_UNICODE);

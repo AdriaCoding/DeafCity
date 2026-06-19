@@ -6,8 +6,14 @@ class CatalogEditor
 {
     public function __construct(private readonly string $catalogFilePath) {}
 
-    public function updateVideo(string $videoId, string $title, array $tags, ?string $typology = null): void
-    {
+    public function updateVideo(
+        string $videoId,
+        string $title,
+        array $tags,
+        ?string $typology = null,
+        ?string $signLanguage = null,
+        ?string $edition = null,
+    ): void {
         $fp = fopen($this->catalogFilePath, 'c+');
         if ($fp === false) {
             throw new \RuntimeException('Could not open catalog for writing.');
@@ -32,6 +38,14 @@ class CatalogEditor
                     $entry['typology'] = $typology;
                 } else {
                     unset($entry['typology']);
+                }
+                if ($signLanguage !== null && $signLanguage !== '') {
+                    $entry['sign_language'] = $signLanguage;
+                    // The entry id embeds the sign language; keep it consistent.
+                    $entry['id'] = $signLanguage . '_' . $videoId;
+                }
+                if ($edition !== null && $edition !== '') {
+                    $entry['edition'] = $edition;
                 }
                 $found = true;
                 break;
