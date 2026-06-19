@@ -85,7 +85,7 @@
             color: #e05555;
             font-size: 0.85rem;
         }
-        button[type="submit"] {
+        main button[type="submit"] {
             margin-top: 0.5rem;
             padding: 0.7rem 1.5rem;
             background: #2a6040;
@@ -96,7 +96,7 @@
             font-weight: 600;
             cursor: pointer;
         }
-        button[type="submit"]:hover { background: #336b49; }
+        main button[type="submit"]:hover { background: #336b49; }
     </style>
 </head>
 <body>

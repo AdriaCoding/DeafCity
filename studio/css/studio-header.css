@@ -84,32 +84,34 @@
     margin: 0;
 }
 
-.studio-sync-btn {
-    padding: 0.5rem 0.85rem;
-    background: transparent;
-    color: #aaa;
-    border: 1px solid #444;
+.studio-header button.studio-sync-btn {
+    padding: 0.5rem 1rem;
+    background: #e0e0e0;
+    color: #0a0a0a;
+    border: none;
     border-radius: 4px;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     white-space: nowrap;
+    font-family: inherit;
 }
 
-.studio-sync-btn:hover:not(:disabled) {
-    color: #ddd;
-    border-color: #666;
+.studio-header button.studio-sync-btn:hover:not(:disabled) {
+    background: #fff;
+    color: #0a0a0a;
+    border: none;
 }
 
-.studio-sync-btn:disabled {
+.studio-header button.studio-sync-btn:disabled {
     opacity: 0.55;
     cursor: default;
 }
 
-.studio-sync-btn:focus-visible {
+.studio-header button.studio-sync-btn:focus-visible {
     outline: 2px solid #9ab8ff;
     outline-offset: 2px;
 }

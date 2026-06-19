@@ -64,6 +64,7 @@ class StudioHeaderTest extends TestCase
         $this->assertStringContainsString('aria-label="Torna al catàleg"', $html);
         $this->assertStringContainsString('>Catàleg</a>', $html);
         $this->assertStringContainsString('aria-current="page"', $html);
+        $this->assertStringContainsString('class="studio-sync-btn"', $html);
         $this->assertStringContainsString('Tanca la sessió', $html);
         $this->assertStringNotContainsString('Sortir', $html);
     }
