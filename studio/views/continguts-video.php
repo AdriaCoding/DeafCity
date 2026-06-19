@@ -108,68 +108,6 @@
         }
         select.typology-select:focus { border-color: #555; }
 
-        .chip-input-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            padding: 0.5rem 0.6rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            cursor: text;
-            min-height: 2.5rem;
-            align-items: center;
-        }
-        .chip-input-box:focus-within { border-color: #555; }
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: #2a3a5a;
-            color: #9ab8ff;
-            border-radius: 3px;
-            padding: 0.2rem 0.4rem;
-            font-size: 0.8rem;
-        }
-        .chip-remove {
-            background: none;
-            border: none;
-            color: #6080c0;
-            cursor: pointer;
-            padding: 0;
-            font-size: 0.85rem;
-            line-height: 1;
-        }
-        .chip-remove:hover { color: #e0e0e0; }
-        .chip-text-input {
-            flex: 1;
-            min-width: 100px;
-            background: none;
-            border: none;
-            color: #e0e0e0;
-            font-size: 0.875rem;
-            outline: none;
-        }
-        .tag-suggestions {
-            display: none;
-            position: absolute;
-            background: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 4px;
-            margin-top: 2px;
-            z-index: 10;
-            max-height: 10rem;
-            overflow-y: auto;
-            min-width: 160px;
-        }
-        .tag-suggestion-item {
-            padding: 0.4rem 0.75rem;
-            font-size: 0.85rem;
-            cursor: pointer;
-            color: #ccc;
-        }
-        .tag-suggestion-item:hover, .tag-suggestion-item.focused { background: #2a2a2a; }
-        .chip-wrapper { position: relative; width: 100%; }
 
         .btn-save {
             padding: 0.55rem 1.1rem;
@@ -404,56 +342,6 @@
             background: #0a0a0a;
         }
 
-        .caption-upload-row {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .caption-upload-row input[type="file"] {
-            flex: 1;
-            min-width: 0;
-            padding: 0.4rem 0.5rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #ccc;
-            font-size: 0.82rem;
-        }
-        .caption-upload-row select {
-            width: 9rem;
-            flex-shrink: 0;
-            padding: 0.45rem 0.5rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #e0e0e0;
-            font-size: 0.82rem;
-            outline: none;
-        }
-        .caption-upload-row select:focus { border-color: #555; }
-        .btn-remove-row {
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: 1.1rem;
-            line-height: 1;
-            padding: 0.2rem 0.35rem;
-            flex-shrink: 0;
-        }
-        .btn-remove-row:hover { color: #a55; }
-        .btn-add-caption {
-            margin-top: 0.25rem;
-            padding: 0.4rem 0.75rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            border-radius: 4px;
-            color: #888;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-        .btn-add-caption:hover { background: #222; color: #bbb; }
         .field-hint {
             font-size: 0.75rem;
             color: #555;
@@ -579,6 +467,8 @@
             margin-right: 0.4rem;
         }
     </style>
+    <link rel="stylesheet" href="js/tag-input.css?v=<?= filemtime(__DIR__ . '/../js/tag-input.css') ?>">
+    <link rel="stylesheet" href="js/caption-uploader.css?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.css') ?>">
 </head>
 <body>
 <header>
@@ -692,8 +582,11 @@
             </table>
             <div class="caption-master-feedback" id="master-caption-feedback"></div>
             <?php endif; ?>
-            <div class="caption-uploads"></div>
-            <button type="button" class="btn-add-caption">Afegir fitxer</button>
+            <div class="caption-uploader" id="caption-uploader">
+                <div class="caption-uploader-dropzone">Arrossegueu fitxers .srt o .vtt aquí, o feu clic per triar</div>
+                <input type="file" class="caption-uploader-file-input" hidden multiple>
+                <div class="caption-uploader-rows"></div>
+            </div>
             <p class="field-hint">WebVTT (.vtt) o SubRip (.srt). En desar, es reemplaçarà el fitxer de la llengua seleccionada.</p>
         </div>
         <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
@@ -721,6 +614,9 @@
     </div>
 </dialog>
 
+<script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
+<script src="js/tag-input.js?v=<?= filemtime(__DIR__ . '/../js/tag-input.js') ?>"></script>
+<script src="js/caption-uploader.js?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.js') ?>"></script>
 <script>
 (function () {
     var ALL_TAGS = <?= json_encode($catalogTags, JSON_UNESCAPED_UNICODE) ?>;
@@ -738,12 +634,10 @@
     var feedback = form.querySelector('.save-feedback');
     var heroTitle = document.getElementById('video-hero-title');
     var vimeoId = form.dataset.vimeoId;
-    var captionUploads = form.querySelector('.caption-uploads');
-    var addCaptionBtn = form.querySelector('.btn-add-caption');
+    var captionUploaderEl = document.getElementById('caption-uploader');
+    var captionUploader = CaptionUploader.create(captionUploaderEl, SUBTITLE_LANGUAGES);
 
-    setupChipInput(chipBox, textInput, suggestions);
-    addCaptionRow();
-    addCaptionBtn.addEventListener('click', addCaptionRow);
+    TagInput.init(chipBox, textInput, suggestions, ALL_TAGS);
     setupMasterCaptionSelector();
     setupCaptionRowActions();
     setupVisibilityControl();
@@ -809,8 +703,7 @@
         feedback.className = 'save-feedback';
         saveBtn.disabled = true;
 
-        var chips = chipBox.querySelectorAll('.chip');
-        var tags = Array.from(chips).map(function (c) { return c.dataset.tag; });
+        var tags = TagInput.getTags(chipBox);
 
         var body = new FormData();
         body.append('vimeo_id', vimeoId);
@@ -818,13 +711,9 @@
         body.append('typology', typologySelect.value);
         tags.forEach(function (t) { body.append('tags[]', t); });
 
-        captionUploads.querySelectorAll('.caption-upload-row').forEach(function (row) {
-            var fileInput = row.querySelector('input[type="file"]');
-            var langSelect = row.querySelector('select');
-            if (fileInput.files.length > 0) {
-                body.append('caption_file[]', fileInput.files[0]);
-                body.append('caption_lang[]', langSelect.value);
-            }
+        captionUploader.getEntries().forEach(function (entry) {
+            body.append('caption_file[]', entry.file);
+            body.append('caption_lang[]', entry.langId);
         });
 
         fetch('?action=continguts-save-video', { method: 'POST', body: body })
@@ -844,7 +733,7 @@
                     heroTitle.textContent = titleInput.value.trim();
                     if (data.captions) {
                         updateCaptionTable(data.captions, data.masterCaptionLang || '');
-                        resetCaptionUploads();
+                        captionUploader.clear();
                     }
                 }
             })
@@ -854,102 +743,6 @@
             })
             .finally(function () { saveBtn.disabled = false; });
     });
-
-    function setupChipInput(chipBox, textInput, suggestions) {
-        chipBox.addEventListener('click', function (e) {
-            if (e.target === chipBox) textInput.focus();
-        });
-
-        chipBox.querySelectorAll('.chip-remove').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                btn.closest('.chip').remove();
-            });
-        });
-
-        textInput.addEventListener('input', function () {
-            showSuggestions(textInput, chipBox, suggestions);
-        });
-
-        textInput.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                var val = textInput.value.trim().replace(/,$/, '');
-                if (val) addChip(val, chipBox, textInput);
-                hideSuggestions(suggestions);
-            } else if (e.key === 'Backspace' && textInput.value === '') {
-                var chips = chipBox.querySelectorAll('.chip');
-                if (chips.length) chips[chips.length - 1].remove();
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                focusSuggestion(suggestions, 1);
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                focusSuggestion(suggestions, -1);
-            } else if (e.key === 'Escape') {
-                hideSuggestions(suggestions);
-            }
-        });
-
-        textInput.addEventListener('blur', function () {
-            setTimeout(function () { hideSuggestions(suggestions); }, 150);
-        });
-    }
-
-    function addChip(tag, chipBox, textInput) {
-        var existing = Array.from(chipBox.querySelectorAll('.chip')).map(function (c) { return c.dataset.tag; });
-        if (existing.indexOf(tag) !== -1) { textInput.value = ''; return; }
-        var chip = document.createElement('span');
-        chip.className = 'chip';
-        chip.dataset.tag = tag;
-        chip.textContent = tag + ' ';
-        var removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'chip-remove';
-        removeBtn.title = 'Elimina';
-        removeBtn.textContent = '×';
-        removeBtn.addEventListener('click', function () { chip.remove(); });
-        chip.appendChild(removeBtn);
-        chipBox.insertBefore(chip, textInput);
-        textInput.value = '';
-    }
-
-    function showSuggestions(textInput, chipBox, suggestions) {
-        var val = textInput.value.trim().toLowerCase();
-        if (!val) { hideSuggestions(suggestions); return; }
-        var existing = Array.from(chipBox.querySelectorAll('.chip')).map(function (c) { return c.dataset.tag; });
-        var matches = ALL_TAGS.filter(function (t) {
-            return t.toLowerCase().startsWith(val) && existing.indexOf(t) === -1;
-        }).slice(0, 8);
-        if (!matches.length) { hideSuggestions(suggestions); return; }
-        suggestions.innerHTML = '';
-        matches.forEach(function (tag) {
-            var item = document.createElement('div');
-            item.className = 'tag-suggestion-item';
-            item.textContent = tag;
-            item.addEventListener('mousedown', function (e) {
-                e.preventDefault();
-                addChip(tag, chipBox, textInput);
-                hideSuggestions(suggestions);
-            });
-            suggestions.appendChild(item);
-        });
-        suggestions.style.display = 'block';
-    }
-
-    function hideSuggestions(suggestions) {
-        suggestions.style.display = 'none';
-        suggestions.innerHTML = '';
-    }
-
-    function focusSuggestion(suggestions, direction) {
-        var items = suggestions.querySelectorAll('.tag-suggestion-item');
-        if (!items.length) return;
-        var current = suggestions.querySelector('.focused');
-        var idx = current ? Array.from(items).indexOf(current) + direction : (direction > 0 ? 0 : items.length - 1);
-        idx = Math.max(0, Math.min(items.length - 1, idx));
-        if (current) current.classList.remove('focused');
-        items[idx].classList.add('focused');
-    }
 
     var langLabels = {};
     SUBTITLE_LANGUAGES.forEach(function (lang) {
@@ -965,7 +758,7 @@
     function updateCaptionTable(captions, masterLang) {
         if (!captions || !captions.length) return;
 
-        var field = captionUploads.parentElement;
+        var field = captionUploaderEl.parentElement;
         var table = field.querySelector('.caption-table');
         var isNew = !table;
         if (isNew) {
@@ -977,7 +770,7 @@
                 '<th class="caption-master-cell">Master</th>' +
                 '<th>Idioma</th><th>Fitxer al servidor</th><th>Descàrrega</th><th>Accions</th>' +
                 '</tr></thead><tbody></tbody>';
-            field.insertBefore(table, captionUploads);
+            field.insertBefore(table, captionUploaderEl);
             if (!document.getElementById('caption-table-feedback')) {
                 var tableFb = document.createElement('div');
                 tableFb.className = 'caption-table-feedback';
@@ -987,7 +780,7 @@
             var fb = document.createElement('div');
             fb.className = 'caption-master-feedback';
             fb.id = 'master-caption-feedback';
-            field.insertBefore(fb, captionUploads);
+            field.insertBefore(fb, captionUploaderEl);
         }
 
         var currentMaster = masterLang || (function () {
@@ -1267,45 +1060,6 @@
             });
     }
 
-    function resetCaptionUploads() {
-        captionUploads.innerHTML = '';
-        addCaptionRow();
-    }
-
-    function addCaptionRow() {
-        var row = document.createElement('div');
-        row.className = 'caption-upload-row';
-
-        var fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.vtt,.srt';
-
-        var langSelect = document.createElement('select');
-        SUBTITLE_LANGUAGES.forEach(function (lang) {
-            var opt = document.createElement('option');
-            opt.value = lang.id;
-            opt.textContent = lang.label;
-            langSelect.appendChild(opt);
-        });
-
-        var removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.className = 'btn-remove-row';
-        removeBtn.title = 'Elimina';
-        removeBtn.textContent = '×';
-        removeBtn.addEventListener('click', function () {
-            if (captionUploads.querySelectorAll('.caption-upload-row').length > 1) {
-                row.remove();
-            } else {
-                fileInput.value = '';
-            }
-        });
-
-        row.appendChild(fileInput);
-        row.appendChild(langSelect);
-        row.appendChild(removeBtn);
-        captionUploads.appendChild(row);
-    }
     // ── Caption translation modal ──────────────────────────────────────────
 
     var generateBtn     = document.getElementById('btn-generate-captions');

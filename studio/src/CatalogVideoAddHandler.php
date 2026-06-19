@@ -10,7 +10,14 @@ class CatalogVideoAddHandler
     ) {}
 
     /** @return array{ok: bool, video?: array<string, mixed>, error?: string} */
-    public function handle(string $vimeoId, string $signLanguage, string $edition, string $title, string $typology = ''): array
+    public function handle(
+        string $vimeoId,
+        string $signLanguage,
+        string $edition,
+        string $title,
+        string $typology = '',
+        ?array $formTags = null,
+    ): array
     {
         $vimeoId = trim($vimeoId);
         $signLanguage = trim($signLanguage);
@@ -44,10 +51,14 @@ class CatalogVideoAddHandler
         }
 
         $tags = [];
-        try {
-            $tags = $this->vimeoClient->getTagNames($vimeoId);
-        } catch (\Throwable) {
-            // non-fatal
+        if ($formTags !== null) {
+            $tags = array_values(array_filter(array_map('trim', $formTags)));
+        } else {
+            try {
+                $tags = $this->vimeoClient->getTagNames($vimeoId);
+            } catch (\Throwable) {
+                // non-fatal
+            }
         }
 
         try {

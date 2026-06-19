@@ -636,6 +636,8 @@
         }
         .add-trigger-btn:hover { color: #999; border-color: #555; }
     </style>
+    <link rel="stylesheet" href="js/tag-input.css?v=<?= filemtime(__DIR__ . '/../js/tag-input.css') ?>">
+    <link rel="stylesheet" href="js/caption-uploader.css?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.css') ?>">
 </head>
 <body>
 <header>
@@ -1044,6 +1046,26 @@
             </div>
         </div>
 
+        <div class="modal-field">
+            <label>Etiquetes</label>
+            <div class="chip-wrapper">
+                <div class="chip-input-box" id="modal-tag-chips">
+                    <input type="text" class="chip-text-input" id="modal-tag-input" placeholder="Afegir etiqueta…" autocomplete="off">
+                </div>
+                <div class="tag-suggestions" id="modal-tag-suggestions"></div>
+            </div>
+        </div>
+
+        <div class="modal-field">
+            <label>Subtítols</label>
+            <div class="caption-uploader" id="modal-caption-uploader">
+                <div class="caption-uploader-dropzone">Arrossegueu fitxers .srt o .vtt aquí, o feu clic per triar</div>
+                <input type="file" class="caption-uploader-file-input" hidden multiple>
+                <div class="caption-uploader-rows"></div>
+            </div>
+            <p class="modal-resolve-status">Opcional. Màxim 5 MB per fitxer; una llengua per fitxer.</p>
+        </div>
+
         <div class="modal-actions">
             <button type="button" class="btn-primary-modal" id="video-add-submit" disabled>Afegir al catàleg</button>
             <button type="button" class="btn-secondary" id="video-add-cancel">Cancel·la</button>
@@ -1051,6 +1073,9 @@
     </div>
 </div>
 
+<script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
+<script src="js/tag-input.js?v=<?= filemtime(__DIR__ . '/../js/tag-input.js') ?>"></script>
+<script src="js/caption-uploader.js?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.js') ?>"></script>
 <script>
 (function () {
     var EDITION_LABELS = <?= json_encode(array_column($editions, 'label', 'id'), JSON_UNESCAPED_UNICODE) ?>;
@@ -1115,6 +1140,14 @@
     var modalSignLanguage = document.getElementById('modal-sign-language');
     var modalEdition = document.getElementById('modal-edition');
     var modalTypology = document.getElementById('modal-typology');
+    var modalTagChips = document.getElementById('modal-tag-chips');
+    var modalTagInput = document.getElementById('modal-tag-input');
+    var modalTagSuggestions = document.getElementById('modal-tag-suggestions');
+    var modalCaptionUploaderEl = document.getElementById('modal-caption-uploader');
+    var ALL_TAGS = <?= json_encode($catalogTags ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    var SUBTITLE_LANGUAGES = <?= json_encode($subtitleLanguages, JSON_UNESCAPED_UNICODE) ?>;
+    var modalCaptionUploader = CaptionUploader.create(modalCaptionUploaderEl, SUBTITLE_LANGUAGES);
+    TagInput.init(modalTagChips, modalTagInput, modalTagSuggestions, ALL_TAGS);
     var videosCatalog = document.getElementById('videos-catalog');
     var videosEmptyMsg = document.getElementById('videos-empty-msg');
     var resolveTimer = null;
@@ -1142,6 +1175,8 @@
         modalSignLanguage.value = '';
         modalEdition.value = '';
         modalTypology.value = '';
+        TagInput.clear(modalTagChips, modalTagInput);
+        modalCaptionUploader.clear();
         vimeoPreview.hidden = true;
         vimeoPreviewThumb.hidden = true;
         vimeoPreviewPlaceholder.hidden = true;
@@ -1160,9 +1195,12 @@
             modalEdition.value !== '__new__' &&
             modalTypology.value.trim() !== '' &&
             modalTypology.value !== '__new__' &&
-            modalVideoTitle.value.trim() !== ''
+            modalVideoTitle.value.trim() !== '' &&
+            modalCaptionUploader.isValid()
         );
     }
+
+    modalCaptionUploader.onChange(updateSubmitState);
 
     function showVimeoPreview(thumbnailUrl, title) {
         vimeoPreview.hidden = false;
@@ -1208,6 +1246,9 @@
                 modalVimeoId.value = res.data.vimeo_id;
                 modalResolveStatus.textContent = 'ID: ' + res.data.vimeo_id;
                 showVimeoPreview(res.data.thumbnail_url || null, res.data.title || '');
+                if (Array.isArray(res.data.tags)) {
+                    TagInput.setTags(res.data.tags, modalTagChips, modalTagInput);
+                }
             })
             .catch(function () {
                 videoAddError.textContent = 'Error de connexió.';
@@ -1376,6 +1417,11 @@
         body.append('edition', modalEdition.value);
         body.append('typology', modalTypology.value);
         body.append('title', modalVideoTitle.value.trim());
+        TagInput.getTags(modalTagChips).forEach(function (t) { body.append('tags[]', t); });
+        modalCaptionUploader.getEntries().forEach(function (entry) {
+            body.append('caption_file[]', entry.file);
+            body.append('caption_lang[]', entry.langId);
+        });
 
         fetch('?action=continguts-add-video', { method: 'POST', body: body })
             .then(function (r) { return r.json().then(function (d) { return { data: d, ok: r.ok }; }); })
@@ -1386,6 +1432,16 @@
                     return;
                 }
                 injectVideoCard(res.data.video, res.data.edition_label || res.data.video.edition);
+                if (res.data.captionError) {
+                    videoAddError.textContent = 'Vídeo afegit, però alguns subtítols no s\'han desat: ' + res.data.captionError;
+                    updateSubmitState();
+                    return;
+                }
+                if (res.data.captionWarnings && res.data.captionWarnings.length) {
+                    videoAddError.textContent = 'Vídeo afegit. Advertències de subtítols: ' + res.data.captionWarnings.join(', ');
+                    updateSubmitState();
+                    return;
+                }
                 closeVideoModal();
             })
             .catch(function () {

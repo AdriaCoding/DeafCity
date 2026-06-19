@@ -26,6 +26,17 @@ class CatalogActionTest extends TestCase
         $this->removeDir($this->dataDir);
     }
 
+    public function test_continguts_context_includes_catalog_tags(): void
+    {
+        file_put_contents($this->dataDir . '/catalog.json', json_encode(['videos' => [
+            ['id' => 'lse_1', 'vimeo_id' => '1', 'title' => 'T', 'sign_language' => 'lse', 'edition' => 'x', 'tags' => ['humor', 'art'], 'captions' => []],
+        ]]));
+
+        $context = $this->action()->contingutsContext();
+
+        $this->assertSame(['art', 'humor'], $context['catalogTags']);
+    }
+
     public function test_continguts_context_includes_catalog_and_sync_state(): void
     {
         file_put_contents(

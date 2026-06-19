@@ -6,7 +6,7 @@ use Studio\CaptionDeleteHandler;
 use Studio\CaptionReplaceHandler;
 use Studio\CaptionUploadHandler;
 use Studio\CatalogTagPool;
-use Studio\CatalogVideoAddHandler;
+use Studio\CatalogIntakeAddHandler;
 use Studio\Container;
 use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
@@ -128,6 +128,7 @@ class CatalogAction
         $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
         $referencedSubtitleLanguageIds = $catalogEditor->getReferencedSubtitleLanguageIds();
         $referencedTypologyIds = $catalogEditor->getReferencedTypologyIds();
+        $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
         [$syncStatus, $isSyncing] = $this->resolveSyncContext($syncContext);
 
         return compact(
@@ -141,6 +142,7 @@ class CatalogAction
             'referencedSignLanguageIds',
             'referencedSubtitleLanguageIds',
             'referencedTypologyIds',
+            'catalogTags',
             'syncStatus',
             'isSyncing',
         );
@@ -219,27 +221,26 @@ class CatalogAction
         $edition = trim((string) ($_POST['edition'] ?? ''));
         $title = trim((string) ($_POST['title'] ?? ''));
         $typology = trim((string) ($_POST['typology'] ?? ''));
+        $tags = is_array($_POST['tags'] ?? null) ? array_values(array_filter(array_map('trim', $_POST['tags']))) : [];
 
-        $result = (new CatalogVideoAddHandler(
-            $this->c->vimeoClient(),
-            $this->c->catalogEditor(),
-        ))->handle($vimeoId, $signLanguage, $edition, $title, $typology);
-
-        if (!$result['ok']) {
+        $captionUploads = $this->parseCaptionUploads();
+        if ($captionUploads['error'] !== null) {
             http_response_code(422);
-            echo json_encode($result, JSON_UNESCAPED_UNICODE);
+            echo json_encode(['ok' => false, 'error' => $captionUploads['error']], JSON_UNESCAPED_UNICODE);
             exit;
         }
 
-        $editionLabel = $edition;
-        foreach ($this->c->studioConfig->getEditions() as $ed) {
-            if (($ed['id'] ?? '') === $edition) {
-                $editionLabel = $ed['label'] ?? $edition;
-                break;
-            }
+        $result = (new CatalogIntakeAddHandler(
+            $this->c->vimeoClient(),
+            $this->c->catalogEditor(),
+            $this->c->studioConfig,
+            $this->c->dataDir . '/captions',
+        ))->handle($vimeoId, $signLanguage, $edition, $title, $typology, $tags, $captionUploads['uploads']);
+
+        if (!$result['ok']) {
+            http_response_code(422);
         }
 
-        $result['edition_label'] = $editionLabel;
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;
     }

@@ -1,0 +1,67 @@
+.caption-uploader { margin-top: 0.35rem; }
+.caption-uploader-dropzone {
+    border: 1px dashed #444;
+    border-radius: 4px;
+    padding: 1rem;
+    text-align: center;
+    color: #888;
+    font-size: 0.82rem;
+    cursor: pointer;
+    margin-bottom: 0.6rem;
+}
+.caption-uploader-dropzone:hover,
+.caption-uploader-dropzone--active {
+    border-color: #666;
+    color: #bbb;
+    background: #141414;
+}
+.caption-uploader-rows { display: flex; flex-direction: column; gap: 0.45rem; }
+.caption-uploader-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+}
+.caption-uploader-row--invalid .caption-uploader-lang {
+    border-color: #a55;
+}
+.caption-uploader-filename {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.82rem;
+    color: #ccc;
+}
+.caption-uploader-lang {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 9rem;
+    max-width: 11rem;
+    padding: 0.35rem 0.5rem;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: #e0e0e0;
+    font-size: 0.82rem;
+}
+.caption-uploader-remove {
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 0.2rem;
+}
+.caption-uploader-remove:hover { color: #e0e0e0; }
+
+/* Override modal form styles that force selects to full width */
+.modal-field .caption-uploader .caption-uploader-lang {
+    display: block;
+    width: auto;
+}

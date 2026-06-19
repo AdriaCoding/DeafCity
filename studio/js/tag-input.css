@@ -1,0 +1,63 @@
+/* tag-input.css — shared chip tag input with autocomplete */
+.chip-wrapper { position: relative; width: 100%; }
+.chip-input-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: text;
+    min-height: 2.5rem;
+    align-items: center;
+}
+.chip-input-box:focus-within { border-color: #555; }
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: #2a3a5a;
+    color: #9ab8ff;
+    border-radius: 3px;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+}
+.chip-remove {
+    background: none;
+    border: none;
+    color: #6080c0;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    line-height: 1;
+}
+.chip-remove:hover { color: #e0e0e0; }
+.chip-text-input {
+    flex: 1;
+    min-width: 100px;
+    background: none;
+    border: none;
+    color: #e0e0e0;
+    font-size: 0.875rem;
+    outline: none;
+}
+.tag-suggestions {
+    display: none;
+    position: absolute;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-top: 2px;
+    z-index: 20;
+    max-height: 10rem;
+    overflow-y: auto;
+    min-width: 160px;
+}
+.tag-suggestion-item {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #ccc;
+}
+.tag-suggestion-item:hover, .tag-suggestion-item.focused { background: #2a2a2a; }

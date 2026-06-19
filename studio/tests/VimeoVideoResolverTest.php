@@ -44,6 +44,22 @@ class VimeoVideoResolverTest extends TestCase
         $this->assertSame('https://example.com/t.jpg', $result['thumbnail_url']);
     }
 
+    public function test_resolve_includes_vimeo_tags_for_prefill(): void
+    {
+        $parser = $this->createMock(VimeoIdParser::class);
+        $parser->method('parse')->with('https://vimeo.com/333')->willReturn('333');
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getVideo')->with('333')->willReturn('My Title');
+        $vimeo->method('getThumbnailUrl')->with('333')->willReturn(null);
+        $vimeo->expects($this->once())->method('getTagNames')->with('333')->willReturn(['humor', 'deaf']);
+
+        $result = $this->makeResolver($parser, $vimeo)->resolve('https://vimeo.com/333');
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame(['humor', 'deaf'], $result['tags']);
+    }
+
     private function makeResolver(VimeoIdParser $parser, VimeoClient $vimeo): VimeoVideoResolver
     {
         return new VimeoVideoResolver($parser, $vimeo, new CatalogEditor($this->catalogFile));
