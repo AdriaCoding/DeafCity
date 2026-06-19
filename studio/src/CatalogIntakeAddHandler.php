@@ -24,6 +24,7 @@ class CatalogIntakeAddHandler
         string $typology,
         array $tags,
         array $captionUploads,
+        string $masterLang = '',
     ): array {
         $result = (new CatalogVideoAddHandler($this->vimeoClient, $this->catalogEditor))
             ->handle($vimeoId, $signLanguage, $edition, $title, $typology, $tags);
@@ -70,6 +71,17 @@ class CatalogIntakeAddHandler
             $response['video']['captions'] = $captionResult['captions'];
             if (isset($captionResult['masterCaptionLang'])) {
                 $response['video']['master_caption_lang'] = $captionResult['masterCaptionLang'];
+            }
+        }
+
+        // Persist the chosen master caption (the rule can pick a non-first language, e.g. English).
+        $uploadedLangs = array_column($captionResult['captions'] ?? [], 'lang');
+        if ($masterLang !== '' && in_array($masterLang, $uploadedLangs, true)) {
+            try {
+                $this->catalogEditor->setMasterCaptionLang($vimeoId, $masterLang);
+                $response['video']['master_caption_lang'] = $masterLang;
+            } catch (\Throwable) {
+                // non-fatal: keep the default master
             }
         }
 

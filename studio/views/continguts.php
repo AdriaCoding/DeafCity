@@ -78,11 +78,30 @@
             padding: 1.5rem;
             width: 100%;
         }
-        .modal-dialog h2 {
-            font-size: 1rem;
-            font-weight: 500;
+        .modal-header {
+            align-items: flex-start;
+            display: flex;
+            gap: 0.75rem;
+            justify-content: space-between;
             margin-bottom: 1.25rem;
         }
+        .modal-header h2 {
+            flex: 1;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            flex-shrink: 0;
+            font-size: 1.35rem;
+            line-height: 1;
+            padding: 0.1rem 0.35rem;
+        }
+        .modal-close:hover { color: #ccc; }
         .modal-field { margin-bottom: 1rem; }
         .modal-field label {
             display: block;
@@ -555,9 +574,21 @@
             text-align: left;
         }
         .add-trigger-btn:hover { color: #999; border-color: #555; }
+        .modal-autogenerate { margin-top: 0.6rem; font-size: 0.85rem; color: #ccc; display: flex; gap: 0.5rem; align-items: flex-start; }
+        .modal-autogenerate input[type="checkbox"] { margin-top: 0.15rem; }
+        .modal-autogenerate.is-disabled { opacity: 0.5; }
+        .modal-autogenerate-hint { font-size: 0.78rem; color: #888; margin-top: 0.2rem; }
+        .modal-translate-progress { margin-top: 0.5rem; }
+        .mtp-row { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid #1e1e1e; font-size: 0.85rem; }
+        .mtp-badge { font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 3px; }
+        .mtp-badge.pending { background: #2a2a2a; color: #999; }
+        .mtp-badge.running { background: #1a3a6e; color: #9ab8ff; }
+        .mtp-badge.done { background: #1f4a1f; color: #7ad07a; }
+        .mtp-badge.error { background: #4a1a1a; color: #e08585; }
+        .mtp-note { font-size: 0.78rem; color: #888; margin-top: 0.5rem; }
     </style>
     <link rel="stylesheet" href="js/tag-input.css?v=<?= filemtime(__DIR__ . '/../js/tag-input.css') ?>">
-    <link rel="stylesheet" href="js/caption-uploader.css?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.css') ?>">
+    <link rel="stylesheet" href="js/caption-table.css?v=<?= filemtime(__DIR__ . '/../js/caption-table.css') ?>">
 </head>
 <body>
 <?php require __DIR__ . '/partials/studio-header.php'; ?>
@@ -855,7 +886,10 @@
 
 <div class="modal-overlay" id="video-add-modal" hidden aria-hidden="true">
     <div class="modal-dialog" role="dialog" aria-labelledby="video-add-modal-title">
-        <h2 id="video-add-modal-title">Afegir vídeo al catàleg</h2>
+        <div class="modal-header">
+            <h2 id="video-add-modal-title">Afegir vídeo al catàleg</h2>
+            <button type="button" class="modal-close" id="video-add-close" aria-label="Tanca">×</button>
+        </div>
         <p class="modal-error" id="video-add-error" role="alert"></p>
 
         <div class="modal-field">
@@ -976,26 +1010,39 @@
             </div>
         </div>
 
-        <div class="modal-field">
+        <div class="modal-field" id="modal-caption-field">
             <label>Subtítols</label>
-            <div class="caption-uploader" id="modal-caption-uploader">
-                <div class="caption-uploader-dropzone">Arrossegueu fitxers .srt o .vtt aquí, o feu clic per triar</div>
-                <input type="file" class="caption-uploader-file-input" hidden multiple>
-                <div class="caption-uploader-rows"></div>
-            </div>
+            <div id="modal-caption-table"></div>
             <p class="modal-resolve-status">Opcional. Màxim 5 MB per fitxer; una llengua per fitxer.</p>
+            <label class="modal-autogenerate is-disabled" id="modal-autogenerate-wrap">
+                <input type="checkbox" id="modal-autogenerate" disabled>
+                <span>
+                    <span id="modal-autogenerate-label">Generar automàticament els subtítols de les llengües objectiu</span>
+                    <span class="modal-autogenerate-hint" id="modal-autogenerate-hint">Cal pujar un subtítol d'origen.</span>
+                </span>
+            </label>
         </div>
 
-        <div class="modal-actions">
+        <div class="modal-actions" id="modal-actions">
             <button type="button" class="btn-primary-modal" id="video-add-submit" disabled>Afegir al catàleg</button>
             <button type="button" class="btn-secondary" id="video-add-cancel">Cancel·la</button>
+        </div>
+
+        <div class="modal-translate-progress" id="modal-translate-progress" hidden>
+            <h2>Generant subtítols</h2>
+            <p class="modal-resolve-status" id="modal-translate-status"></p>
+            <div id="modal-translate-rows"></div>
+            <p class="mtp-note">La generació continua en segon pla si tanqueu.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="modal-translate-close">Tanca</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
 <script src="js/tag-input.js?v=<?= filemtime(__DIR__ . '/../js/tag-input.js') ?>"></script>
-<script src="js/caption-uploader.js?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.js') ?>"></script>
+<script src="js/caption-table.js?v=<?= filemtime(__DIR__ . '/../js/caption-table.js') ?>"></script>
 <script>
 (function () {
     var EDITION_LABELS = <?= json_encode(array_column($editions, 'label', 'id'), JSON_UNESCAPED_UNICODE) ?>;
@@ -1048,6 +1095,7 @@
     var videoModal = document.getElementById('video-add-modal');
     var videoAddTrigger = document.getElementById('video-add-trigger');
     var videoAddCancel = document.getElementById('video-add-cancel');
+    var videoAddClose = document.getElementById('video-add-close');
     var videoAddSubmit = document.getElementById('video-add-submit');
     var videoAddError = document.getElementById('video-add-error');
     var modalVimeoInput = document.getElementById('modal-vimeo-input');
@@ -1063,10 +1111,12 @@
     var modalTagChips = document.getElementById('modal-tag-chips');
     var modalTagInput = document.getElementById('modal-tag-input');
     var modalTagSuggestions = document.getElementById('modal-tag-suggestions');
-    var modalCaptionUploaderEl = document.getElementById('modal-caption-uploader');
+    var modalCaptionTableEl = document.getElementById('modal-caption-table');
+    var autogenWrap = document.getElementById('modal-autogenerate-wrap');
+    var autogenCheckbox = document.getElementById('modal-autogenerate');
     var ALL_TAGS = <?= json_encode($catalogTags ?? [], JSON_UNESCAPED_UNICODE) ?>;
     var SUBTITLE_LANGUAGES = <?= json_encode($subtitleLanguages, JSON_UNESCAPED_UNICODE) ?>;
-    var modalCaptionUploader = CaptionUploader.create(modalCaptionUploaderEl, SUBTITLE_LANGUAGES);
+    var modalCaptionTable = CaptionTable.create(modalCaptionTableEl, SUBTITLE_LANGUAGES, { mode: 'intake' });
     TagInput.init(modalTagChips, modalTagInput, modalTagSuggestions, ALL_TAGS);
     var videosCatalog = document.getElementById('videos-catalog');
     var videosEmptyMsg = document.getElementById('videos-empty-msg');
@@ -1096,15 +1146,44 @@
         modalEdition.value = '';
         modalTypology.value = '';
         TagInput.clear(modalTagChips, modalTagInput);
-        modalCaptionUploader.clear();
+        modalCaptionTable.clear();
+        autogenCheckbox.checked = false;
+        modalCaptionTable.setRequireMaster(false);
+        syncAutogenerateState();
         vimeoPreview.hidden = true;
         vimeoPreviewThumb.hidden = true;
         vimeoPreviewPlaceholder.hidden = true;
         videoAddSubmit.disabled = true;
+        document.getElementById('modal-caption-field').hidden = false;
+        document.getElementById('modal-actions').hidden = false;
+        document.getElementById('modal-translate-progress').hidden = true;
+        stopModalTranslatePoll();
         document.getElementById('modal-lang-new-panel').classList.remove('is-open');
         document.getElementById('modal-edition-new-panel').classList.remove('is-open');
         document.getElementById('modal-typology-new-panel').classList.remove('is-open');
     }
+
+    // Autogenerate checkbox depends on at least one attached caption (a source is required).
+    function syncAutogenerateState() {
+        var hasCaption = modalCaptionTable.getEntries().length > 0;
+        autogenCheckbox.disabled = !hasCaption;
+        if (!hasCaption) { autogenCheckbox.checked = false; }
+        autogenWrap.classList.toggle('is-disabled', !hasCaption);
+        var hint = document.getElementById('modal-autogenerate-hint');
+        if (!hasCaption) {
+            hint.textContent = 'Cal pujar un subtítol d\'origen.';
+        } else if (autogenCheckbox.checked && !modalCaptionTable.getMasterLang()) {
+            hint.textContent = 'Trieu el subtítol mestre.';
+        } else {
+            hint.textContent = '';
+        }
+        modalCaptionTable.setRequireMaster(autogenCheckbox.checked);
+    }
+
+    autogenCheckbox.addEventListener('change', function () {
+        syncAutogenerateState();
+        updateSubmitState();
+    });
 
     function updateSubmitState() {
         videoAddSubmit.disabled = !(
@@ -1116,11 +1195,14 @@
             modalTypology.value.trim() !== '' &&
             modalTypology.value !== '__new__' &&
             modalVideoTitle.value.trim() !== '' &&
-            modalCaptionUploader.isValid()
+            modalCaptionTable.isValid()
         );
     }
 
-    modalCaptionUploader.onChange(updateSubmitState);
+    modalCaptionTable.onChange(function () {
+        syncAutogenerateState();
+        updateSubmitState();
+    });
 
     function showVimeoPreview(thumbnailUrl, title) {
         vimeoPreview.hidden = false;
@@ -1183,11 +1265,14 @@
 
     videoAddTrigger.addEventListener('click', openVideoModal);
     videoAddCancel.addEventListener('click', closeVideoModal);
+    videoAddClose.addEventListener('click', closeVideoModal);
     videoModal.addEventListener('click', function (e) {
         if (e.target === videoModal) closeVideoModal();
     });
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !videoModal.hidden) closeVideoModal();
+        if (e.key !== 'Escape' || videoModal.hidden) return;
+        e.preventDefault();
+        closeVideoModal();
     });
 
     modalVimeoInput.addEventListener('blur', resolveVimeoInput);
@@ -1338,10 +1423,13 @@
         body.append('typology', modalTypology.value);
         body.append('title', modalVideoTitle.value.trim());
         TagInput.getTags(modalTagChips).forEach(function (t) { body.append('tags[]', t); });
-        modalCaptionUploader.getEntries().forEach(function (entry) {
+        body.append('master_lang', modalCaptionTable.getMasterLang());
+        modalCaptionTable.getEntries().forEach(function (entry) {
             body.append('caption_file[]', entry.file);
             body.append('caption_lang[]', entry.langId);
         });
+
+        var wantsAutogenerate = autogenCheckbox.checked && !autogenCheckbox.disabled;
 
         fetch('?action=continguts-add-video', { method: 'POST', body: body })
             .then(function (r) { return r.json().then(function (d) { return { data: d, ok: r.ok }; }); })
@@ -1357,6 +1445,11 @@
                     updateSubmitState();
                     return;
                 }
+                var createdId = (res.data.video && res.data.video.vimeo_id) || modalVimeoId.value;
+                if (wantsAutogenerate) {
+                    startModalTranslate(createdId);
+                    return;
+                }
                 if (res.data.captionWarnings && res.data.captionWarnings.length) {
                     videoAddError.textContent = 'Vídeo afegit. Advertències de subtítols: ' + res.data.captionWarnings.join(', ');
                     updateSubmitState();
@@ -1369,6 +1462,83 @@
                 updateSubmitState();
             });
     });
+
+    // ── In-modal autogenerate progress (non-blocking) ──────────────────────────
+    var modalTranslateTimer = null;
+    var modalTranslateLabels = {};
+    SUBTITLE_LANGUAGES.forEach(function (l) { modalTranslateLabels[l.id] = l.label; });
+
+    function stopModalTranslatePoll() {
+        if (modalTranslateTimer) { clearInterval(modalTranslateTimer); modalTranslateTimer = null; }
+    }
+
+    function showTranslateProgress() {
+        document.getElementById('modal-caption-field').hidden = true;
+        document.getElementById('modal-actions').hidden = true;
+        document.getElementById('modal-translate-progress').hidden = false;
+    }
+
+    function badge(status) {
+        var map = { pending: 'Pendent', running: 'Processant', done: 'Generat', error: 'Error' };
+        return '<span class="mtp-badge ' + status + '">' + (map[status] || status) + '</span>';
+    }
+
+    function renderTranslateRows(langs) {
+        var rowsEl = document.getElementById('modal-translate-rows');
+        var ids = Object.keys(langs || {});
+        rowsEl.innerHTML = ids.map(function (id) {
+            var st = (langs[id] && langs[id].status) || 'pending';
+            var label = modalTranslateLabels[id] || id;
+            return '<div class="mtp-row"><span>' + label + '</span>' + badge(st) + '</div>';
+        }).join('');
+    }
+
+    function startModalTranslate(createdId) {
+        showTranslateProgress();
+        var statusEl = document.getElementById('modal-translate-status');
+        statusEl.textContent = 'Iniciant…';
+        document.getElementById('modal-translate-rows').innerHTML = '';
+
+        var body = new FormData();
+        body.append('vimeo_id', createdId);
+        fetch('?action=continguts-caption-translate-start', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) {
+                    statusEl.textContent = data.error || 'No s\'ha pogut iniciar la generació.';
+                    return;
+                }
+                if (data.nothing_to_translate) {
+                    statusEl.textContent = 'No hi ha llengües objectiu per generar.';
+                    return;
+                }
+                statusEl.textContent = 'Generant subtítols en segon pla…';
+                pollModalTranslate(createdId);
+            })
+            .catch(function () { statusEl.textContent = 'Error de connexió.'; });
+    }
+
+    function pollModalTranslate(createdId) {
+        stopModalTranslatePoll();
+        var statusEl = document.getElementById('modal-translate-status');
+        var url = '?action=continguts-caption-translate-status&vimeo_id=' + encodeURIComponent(createdId);
+        modalTranslateTimer = setInterval(function () {
+            fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+                if (data.status === 'pending' || data.status === 'running') {
+                    renderTranslateRows(data.languages || {});
+                } else if (data.status === 'saved') {
+                    stopModalTranslatePoll();
+                    renderTranslateRows(data.languages || {});
+                    var saved = (data.savedLangs || []).length;
+                    statusEl.textContent = saved > 0
+                        ? 'Subtítols generats i desats al catàleg.'
+                        : 'No s\'ha pogut desar cap traducció.';
+                }
+            }).catch(function () { /* keep polling */ });
+        }, 2500);
+    }
+
+    document.getElementById('modal-translate-close').addEventListener('click', closeVideoModal);
 
     function removeModalSelectOption(type, id) {
         var select = {

@@ -152,138 +152,6 @@
         .save-feedback.warn { color: #b58a4a; }
         .save-feedback.err { color: #a55; }
 
-        .caption-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 0.75rem;
-            font-size: 0.82rem;
-        }
-        .caption-table th {
-            text-align: left;
-            font-weight: 500;
-            color: #666;
-            padding: 0.35rem 0.5rem 0.35rem 0;
-            border-bottom: 1px solid #2a2a2a;
-        }
-        .caption-table td {
-            padding: 0.4rem 0.5rem 0.4rem 0;
-            color: #888;
-            vertical-align: middle;
-        }
-.caption-table tbody tr + tr td {
-            border-top: 1px solid #1e1e1e;
-        }
-        .caption-master-radio {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 1rem;
-            height: 1rem;
-            border: 1.5px solid #444;
-            border-radius: 50%;
-            cursor: pointer;
-            position: relative;
-            flex-shrink: 0;
-            background: #1a1a1a;
-            transition: border-color 0.15s;
-        }
-        .caption-master-radio:checked {
-            border-color: #4a8a4a;
-            background: #4a8a4a;
-        }
-        .caption-master-radio:checked::after {
-            content: '';
-            position: absolute;
-            inset: 3px;
-            border-radius: 50%;
-            background: #0a0a0a;
-        }
-        .caption-master-radio:hover:not(:checked) { border-color: #666; }
-        td.caption-master-cell { width: 2rem; text-align: center; }
-        .caption-master-feedback {
-            font-size: 0.75rem;
-            margin-top: 0.3rem;
-            min-height: 1em;
-        }
-        .caption-master-feedback.ok { color: #4a8a4a; }
-        .caption-master-feedback.err { color: #a55; }
-        .caption-download-btns { display: flex; gap: 0.35rem; }
-        a.caption-download-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.2rem 0.5rem;
-            background: transparent;
-            color: #555;
-            border: 1px solid #2a2a2a;
-            border-radius: 4px;
-            font-size: 0.72rem;
-            text-decoration: none;
-            letter-spacing: 0.04em;
-        }
-        a.caption-download-btn:hover { color: #aaa; border-color: #555; }
-        a.caption-download-btn .material-icons { font-size: 0.95rem; }
-
-        .caption-action-btns { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-        button.caption-action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.2rem 0.5rem;
-            background: transparent;
-            color: #555;
-            border: 1px solid #2a2a2a;
-            border-radius: 4px;
-            font-size: 0.72rem;
-            cursor: pointer;
-            letter-spacing: 0.04em;
-        }
-        button.caption-action-btn:hover { color: #aaa; border-color: #555; }
-        button.caption-action-btn .material-icons { font-size: 0.95rem; }
-        button.caption-action-btn.danger:hover { color: #e05555; border-color: #7c4a4a; }
-        button.caption-action-btn:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-        button.caption-action-btn.is-loading {
-            position: relative;
-            opacity: 0.75;
-            cursor: wait;
-        }
-        button.caption-action-btn.is-loading .material-icons,
-        button.caption-action-btn.is-loading .caption-action-label {
-            visibility: hidden;
-        }
-        button.caption-action-btn.is-loading::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            margin: auto;
-            width: 0.85rem;
-            height: 0.85rem;
-            border: 2px solid #444;
-            border-top-color: #aaa;
-            border-radius: 50%;
-            animation: caption-spin 0.7s linear infinite;
-        }
-        .caption-table-feedback {
-            font-size: 0.75rem;
-            margin-bottom: 0.4rem;
-            min-height: 1em;
-        }
-        .caption-table-feedback.ok { color: #4a8a4a; }
-        .caption-table-feedback.err { color: #a55; }
-        .caption-row-spinner {
-            display: inline-block;
-            width: 0.85rem;
-            height: 0.85rem;
-            border: 2px solid #333;
-            border-top-color: #888;
-            border-radius: 50%;
-            animation: caption-spin 0.7s linear infinite;
-            vertical-align: middle;
-        }
-        @keyframes caption-spin { to { transform: rotate(360deg); } }
-
         #caption-edit-dialog {
             width: 100vw;
             max-width: 100vw;
@@ -446,7 +314,7 @@
         }
     </style>
     <link rel="stylesheet" href="js/tag-input.css?v=<?= filemtime(__DIR__ . '/../js/tag-input.css') ?>">
-    <link rel="stylesheet" href="js/caption-uploader.css?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.css') ?>">
+    <link rel="stylesheet" href="js/caption-table.css?v=<?= filemtime(__DIR__ . '/../js/caption-table.css') ?>">
 </head>
 <body>
 <?php require __DIR__ . '/partials/studio-header.php'; ?>
@@ -498,67 +366,7 @@
         </div>
         <div class="field">
             <label class="field-label">Subtítols</label>
-            <?php if (!empty($video['captions'])): ?>
-            <?php
-            $langLabels = [];
-            foreach ($subtitleLanguages as $sl) {
-                $langLabels[$sl['id']] = $sl['label'];
-            }
-            $masterCaptionLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
-            ?>
-            <div class="caption-table-feedback" id="caption-table-feedback"></div>
-            <table class="caption-table" id="caption-tracks-table">
-                <thead>
-                    <tr>
-                        <th class="caption-master-cell">Master</th>
-                        <th>Idioma</th>
-                        <th>Fitxer al servidor</th>
-                        <th>Descàrrega</th>
-                        <th>Accions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($video['captions'] as $caption): ?>
-                    <?php $langId = $caption['lang'] ?? ''; ?>
-                    <tr data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>">
-                        <td class="caption-master-cell">
-                            <input
-                                type="radio"
-                                class="caption-master-radio"
-                                name="master_caption"
-                                value="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"
-                                <?= $langId === $masterCaptionLang ? 'checked' : '' ?>
-                                title="Definir com a subtítol mestre"
-                            >
-                        </td>
-                        <td><?= htmlspecialchars($langLabels[$langId] ?? $langId, ENT_QUOTES) ?></td>
-                        <td class="caption-file-cell"><?= htmlspecialchars($caption['file'] ?? '', ENT_QUOTES) ?></td>
-                        <td>
-                            <?php if (!empty($caption['file'])): ?>
-                            <div class="caption-download-btns">
-                                <a class="caption-download-btn" href="?action=continguts-download-caption-vtt&vimeo_id=<?= urlencode($video['vimeo_id'] ?? '') ?>&lang=<?= urlencode($langId) ?>"><span class="material-icons">download</span>VTT</a>
-                                <a class="caption-download-btn" href="?action=continguts-download-caption-srt&vimeo_id=<?= urlencode($video['vimeo_id'] ?? '') ?>&lang=<?= urlencode($langId) ?>"><span class="material-icons">download</span>SRT</a>
-                            </div>
-                            <?php endif; ?>
-                        </td>
-                        <td class="caption-actions-cell">
-                            <div class="caption-action-btns">
-                                <button type="button" class="caption-action-btn caption-edit-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons" aria-hidden="true">edit</span><span class="caption-action-label">Edita</span></button>
-                                <button type="button" class="caption-action-btn caption-replace-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons" aria-hidden="true">upload</span><span class="caption-action-label">Reemplaça</span></button>
-                                <button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"><span class="material-icons" aria-hidden="true">delete</span><span class="caption-action-label">Elimina</span></button>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <div class="caption-master-feedback" id="master-caption-feedback"></div>
-            <?php endif; ?>
-            <div class="caption-uploader" id="caption-uploader">
-                <div class="caption-uploader-dropzone">Arrossegueu fitxers .srt o .vtt aquí, o feu clic per triar</div>
-                <input type="file" class="caption-uploader-file-input" hidden multiple>
-                <div class="caption-uploader-rows"></div>
-            </div>
+            <div id="caption-table"></div>
             <p class="field-hint">WebVTT (.vtt) o SubRip (.srt). En desar, es reemplaçarà el fitxer de la llengua seleccionada.</p>
         </div>
         <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
@@ -588,12 +396,12 @@
 
 <script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
 <script src="js/tag-input.js?v=<?= filemtime(__DIR__ . '/../js/tag-input.js') ?>"></script>
-<script src="js/caption-uploader.js?v=<?= filemtime(__DIR__ . '/../js/caption-uploader.js') ?>"></script>
+<script src="js/caption-table.js?v=<?= filemtime(__DIR__ . '/../js/caption-table.js') ?>"></script>
 <script>
 (function () {
     var ALL_TAGS = <?= json_encode($catalogTags, JSON_UNESCAPED_UNICODE) ?>;
     var SUBTITLE_LANGUAGES = <?= json_encode($subtitleLanguages, JSON_UNESCAPED_UNICODE) ?>;
-    var EXISTING_CAPTION_LANGS = <?= json_encode(array_column($video['captions'] ?? [], 'lang'), JSON_UNESCAPED_UNICODE) ?>;
+    var EXISTING_CAPTIONS = <?= json_encode(array_map(static fn(array $c): array => ['lang' => $c['lang'] ?? '', 'file' => $c['file'] ?? ''], $video['captions'] ?? []), JSON_UNESCAPED_UNICODE) ?>;
     var MASTER_LANG = <?= json_encode($video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? ''), JSON_UNESCAPED_UNICODE) ?>;
 
     var form = document.querySelector('.video-edit-form');
@@ -606,12 +414,19 @@
     var feedback = form.querySelector('.save-feedback');
     var heroTitle = document.getElementById('video-hero-title');
     var vimeoId = form.dataset.vimeoId;
-    var captionUploaderEl = document.getElementById('caption-uploader');
-    var captionUploader = CaptionUploader.create(captionUploaderEl, SUBTITLE_LANGUAGES);
+    var captionTableEl = document.getElementById('caption-table');
+    var captionTable = CaptionTable.create(captionTableEl, SUBTITLE_LANGUAGES, {
+        mode: 'detail',
+        existingCaptions: EXISTING_CAPTIONS,
+        master: MASTER_LANG,
+        vimeoId: vimeoId,
+        onMasterChange: persistMasterCaption,
+        onEdit: openCaptionEditor,
+        onReplace: replaceCaption,
+        onDelete: deleteCaption,
+    });
 
     TagInput.init(chipBox, textInput, suggestions, ALL_TAGS);
-    setupMasterCaptionSelector();
-    setupCaptionRowActions();
     setupVisibilityControl();
 
     function setupVisibilityControl() {
@@ -683,7 +498,7 @@
         body.append('typology', typologySelect.value);
         tags.forEach(function (t) { body.append('tags[]', t); });
 
-        captionUploader.getEntries().forEach(function (entry) {
+        captionTable.getEntries().forEach(function (entry) {
             body.append('caption_file[]', entry.file);
             body.append('caption_lang[]', entry.langId);
         });
@@ -704,8 +519,7 @@
                     }
                     heroTitle.textContent = titleInput.value.trim();
                     if (data.captions) {
-                        updateCaptionTable(data.captions, data.masterCaptionLang || '');
-                        captionUploader.clear();
+                        captionTable.setExisting(data.captions, data.masterCaptionLang || '');
                     }
                 }
             })
@@ -716,92 +530,10 @@
             .finally(function () { saveBtn.disabled = false; });
     });
 
-    var langLabels = {};
-    SUBTITLE_LANGUAGES.forEach(function (lang) {
-        langLabels[lang.id] = lang.label;
-    });
-
     function escapeHtml(text) {
         var el = document.createElement('span');
         el.textContent = text;
         return el.innerHTML;
-    }
-
-    function updateCaptionTable(captions, masterLang) {
-        if (!captions || !captions.length) return;
-
-        var field = captionUploaderEl.parentElement;
-        var table = field.querySelector('.caption-table');
-        var isNew = !table;
-        if (isNew) {
-            table = document.createElement('table');
-            table.className = 'caption-table';
-            table.id = 'caption-tracks-table';
-            table.innerHTML =
-                '<thead><tr>' +
-                '<th class="caption-master-cell">Master</th>' +
-                '<th>Idioma</th><th>Fitxer al servidor</th><th>Descàrrega</th><th>Accions</th>' +
-                '</tr></thead><tbody></tbody>';
-            field.insertBefore(table, captionUploaderEl);
-            if (!document.getElementById('caption-table-feedback')) {
-                var tableFb = document.createElement('div');
-                tableFb.className = 'caption-table-feedback';
-                tableFb.id = 'caption-table-feedback';
-                field.insertBefore(tableFb, table);
-            }
-            var fb = document.createElement('div');
-            fb.className = 'caption-master-feedback';
-            fb.id = 'master-caption-feedback';
-            field.insertBefore(fb, captionUploaderEl);
-        }
-
-        var currentMaster = masterLang || (function () {
-            var checked = table.querySelector('.caption-master-radio:checked');
-            return checked ? checked.value : (captions[0] ? captions[0].lang : '');
-        })();
-
-        var tbody = table.querySelector('tbody');
-        tbody.innerHTML = '';
-        captions.forEach(function (caption) {
-            var langId = caption.lang || '';
-            var tr = document.createElement('tr');
-            tr.dataset.lang = langId;
-            tr.innerHTML =
-                '<td class="caption-master-cell">' +
-                '<input type="radio" class="caption-master-radio" name="master_caption"' +
-                ' value="' + escapeHtml(langId) + '"' +
-                (langId === currentMaster ? ' checked' : '') +
-                ' title="Definir com a subtítol mestre">' +
-                '</td>' +
-                '<td>' + escapeHtml(langLabels[langId] || langId) + '</td>' +
-                '<td class="caption-file-cell">' + escapeHtml(caption.file || '') + '</td>' +
-                '<td>' + (caption.file
-                    ? '<div class="caption-download-btns">' +
-                      '<a class="caption-download-btn" href="?action=continguts-download-caption-vtt&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId) + '"><span class="material-icons">download</span>VTT</a>' +
-                      '<a class="caption-download-btn" href="?action=continguts-download-caption-srt&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId) + '"><span class="material-icons">download</span>SRT</a>' +
-                      '</div>'
-                    : '') + '</td>' +
-                '<td class="caption-actions-cell">' + buildActionButtonsHtml(langId) + '</td>';
-            tbody.appendChild(tr);
-        });
-
-        if (isNew) {
-            setupMasterCaptionSelector();
-            setupCaptionRowActions();
-        } else {
-            table.querySelectorAll('.caption-master-radio').forEach(function (radio) {
-                radio.addEventListener('change', onMasterCaptionChange);
-            });
-            setupCaptionRowActions();
-        }
-    }
-
-    function buildActionButtonsHtml(langId) {
-        return '<div class="caption-action-btns">' +
-            '<button type="button" class="caption-action-btn caption-edit-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons" aria-hidden="true">edit</span><span class="caption-action-label">Edita</span></button>' +
-            '<button type="button" class="caption-action-btn caption-replace-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons" aria-hidden="true">upload</span><span class="caption-action-label">Reemplaça</span></button>' +
-            '<button type="button" class="caption-action-btn danger caption-delete-btn" data-lang="' + escapeHtml(langId) + '"><span class="material-icons" aria-hidden="true">delete</span><span class="caption-action-label">Elimina</span></button>' +
-            '</div>';
     }
 
     function setActionButtonLoading(btn, loading) {
@@ -827,29 +559,6 @@
         });
     }
 
-    function setupCaptionRowActions() {
-        var table = document.getElementById('caption-tracks-table');
-        if (!table) return;
-
-        table.querySelectorAll('.caption-delete-btn').forEach(function (btn) {
-            if (btn.dataset.bound) return;
-            btn.dataset.bound = '1';
-            btn.addEventListener('click', onDeleteClick);
-        });
-
-        table.querySelectorAll('.caption-replace-btn').forEach(function (btn) {
-            if (btn.dataset.bound) return;
-            btn.dataset.bound = '1';
-            btn.addEventListener('click', onReplaceClick);
-        });
-
-        table.querySelectorAll('.caption-edit-btn').forEach(function (btn) {
-            if (btn.dataset.bound) return;
-            btn.dataset.bound = '1';
-            btn.addEventListener('click', onEditClick);
-        });
-    }
-
     function setCaptionTableFeedback(message, kind) {
         var el = document.getElementById('caption-table-feedback');
         if (!el) return;
@@ -857,11 +566,7 @@
         el.className = 'caption-table-feedback' + (kind ? ' ' + kind : '');
     }
 
-    function onDeleteClick(e) {
-        var btn = e.currentTarget;
-        var row = btn.closest('tr');
-        var lang = btn.dataset.lang;
-
+    function deleteCaption(lang, btn, row) {
         if (!window.confirm('Eliminar aquest fitxer?')) {
             return;
         }
@@ -882,19 +587,9 @@
                     setCaptionTableFeedback(data.error || 'Error en eliminar.', 'err');
                     return;
                 }
-
-                var table = document.getElementById('caption-tracks-table');
-                row.remove();
-
-                if (data.newMaster && table) {
-                    var radio = table.querySelector('.caption-master-radio[value="' + CSS.escape(data.newMaster) + '"]');
-                    if (radio) radio.checked = true;
-                }
-
-                if (table && !table.querySelector('tbody tr')) {
-                    table.remove();
-                    var fb = document.getElementById('master-caption-feedback');
-                    if (fb) fb.remove();
+                captionTable.removeExisting(lang);
+                if (data.newMaster) {
+                    captionTable.setMaster(data.newMaster);
                 }
             })
             .catch(function () {
@@ -903,10 +598,7 @@
             });
     }
 
-    function onReplaceClick(e) {
-        var btn = e.currentTarget;
-        var lang = btn.dataset.lang;
-        var row = btn.closest('tr');
+    function replaceCaption(lang, btn, row) {
         var input = document.createElement('input');
         input.type = 'file';
         input.accept = '.vtt,.srt';
@@ -916,12 +608,6 @@
         input.addEventListener('change', function () {
             if (!input.files.length) {
                 input.remove();
-                return;
-            }
-
-            if (!row) {
-                input.remove();
-                setCaptionTableFeedback('Error en reemplaçar.', 'err');
                 return;
             }
 
@@ -937,14 +623,13 @@
             fetch('?action=continguts-replace-caption', { method: 'POST', body: body })
                 .then(function (r) { return r.json(); })
                 .then(function (data) {
-                    clearRowActionLoading(row);
                     if (!data.ok) {
+                        clearRowActionLoading(row);
                         setCaptionTableFeedback(data.error || 'Error en reemplaçar.', 'err');
                         return;
                     }
-                    var fileCell = row.querySelector('.caption-file-cell');
-                    if (fileCell && data.caption && data.caption.file) {
-                        fileCell.textContent = data.caption.file;
+                    if (data.caption && data.caption.file) {
+                        captionTable.updateExistingFile(lang, data.caption.file);
                     }
                     setCaptionTableFeedback('Substituït correctament', 'ok');
                     setTimeout(function () { setCaptionTableFeedback('', ''); }, 2500);
@@ -959,10 +644,7 @@
         input.click();
     }
 
-    function onEditClick(e) {
-        var btn = e.currentTarget;
-        var lang = btn.dataset.lang;
-        var row = btn.closest('tr');
+    function openCaptionEditor(lang, btn) {
         var dialog = document.getElementById('caption-edit-dialog');
         var iframe = document.getElementById('caption-edit-iframe');
         var status = document.getElementById('caption-edit-dialog-status');
@@ -996,17 +678,7 @@
         }
     }
 
-    function setupMasterCaptionSelector() {
-        var table = document.getElementById('caption-tracks-table');
-        if (!table) return;
-        table.querySelectorAll('.caption-master-radio').forEach(function (radio) {
-            radio.addEventListener('change', onMasterCaptionChange);
-        });
-    }
-
-    function onMasterCaptionChange(e) {
-        var radio = e.target;
-        var lang = radio.value;
+    function persistMasterCaption(lang) {
         var feedbackEl = document.getElementById('master-caption-feedback');
         if (feedbackEl) { feedbackEl.textContent = ''; feedbackEl.className = 'caption-master-feedback'; }
 

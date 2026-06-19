@@ -233,6 +233,7 @@ class CatalogAction
         $title = trim((string) ($_POST['title'] ?? ''));
         $typology = trim((string) ($_POST['typology'] ?? ''));
         $tags = is_array($_POST['tags'] ?? null) ? array_values(array_filter(array_map('trim', $_POST['tags']))) : [];
+        $masterLang = trim((string) ($_POST['master_lang'] ?? ''));
 
         $captionUploads = $this->parseCaptionUploads();
         if ($captionUploads['error'] !== null) {
@@ -246,7 +247,7 @@ class CatalogAction
             $this->c->catalogEditor(),
             $this->c->studioConfig,
             $this->c->dataDir . '/captions',
-        ))->handle($vimeoId, $signLanguage, $edition, $title, $typology, $tags, $captionUploads['uploads']);
+        ))->handle($vimeoId, $signLanguage, $edition, $title, $typology, $tags, $captionUploads['uploads'], $masterLang);
 
         if (!$result['ok']) {
             http_response_code(422);

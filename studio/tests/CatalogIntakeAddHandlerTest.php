@@ -109,6 +109,38 @@ class CatalogIntakeAddHandlerTest extends TestCase
         $this->assertSame([], $catalog['videos'][0]['captions']);
     }
 
+    public function test_persists_chosen_master_caption_lang(): void
+    {
+        $es = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($es, "WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nHola\n");
+        $en = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($en, "WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nHello\n");
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getVideo')->willReturn('Vimeo Title');
+        $vimeo->method('getThumbnailUrl')->willReturn(null);
+
+        $result = $this->makeHandler($vimeo)->handle(
+            '444',
+            'lse',
+            '2020-valencia',
+            'Master Pick',
+            'acudits',
+            [],
+            [
+                ['lang' => 'es', 'tmpPath' => $es, 'originalName' => 'a.vtt'],
+                ['lang' => 'en', 'tmpPath' => $en, 'originalName' => 'b.vtt'],
+            ],
+            'en',
+        );
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame('en', $result['video']['master_caption_lang']);
+
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertSame('en', $catalog['videos'][0]['master_caption_lang']);
+    }
+
     private function makeHandler(VimeoClient $vimeo): CatalogIntakeAddHandler
     {
         return new CatalogIntakeAddHandler(
