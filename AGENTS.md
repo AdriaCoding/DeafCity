@@ -33,3 +33,5 @@ We run two PHP versions — match the tree you are editing:
 You may test the Studio webapp at `https://deaf.city/studio` (password: `hola`).
 
 When you need a catalog video for manual testing, use **#SHEEP by Hamida** (`vimeo_id` `1197992193`, edition Salamanca 2028). Details page: `?action=continguts-video&vimeo_id=1197992193`.
+
+The design of the website should be MINIMALISTIC.
