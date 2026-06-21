@@ -46,9 +46,4 @@ assert.strictEqual(
     null
 );
 
-// Fallback attempts wrap from the start step through the full Playlist once
-assert.deepStrictEqual(logic.playlistAttemptSteps(1, 3), [1, 2, 0]);
-assert.deepStrictEqual(logic.playlistAttemptSteps(0, 1), [0]);
-assert.deepStrictEqual(logic.playlistAttemptSteps(0, 0), []);
-
 console.log('vimeo_playlist_logic.test.js: all passed');

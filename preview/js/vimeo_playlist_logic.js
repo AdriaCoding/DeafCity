@@ -101,28 +101,11 @@
         return !!visitorStartedPlayback;
     }
 
-    /**
-     * Playlist step indices to try from a start step, wrapping at filteredCount.
-     * @param {number} startStep
-     * @param {number} filteredCount
-     * @returns {number[]}
-     */
-    function playlistAttemptSteps(startStep, filteredCount) {
-        if (filteredCount <= 0) return [];
-        var steps = [];
-        var i;
-        for (i = 0; i < filteredCount; i++) {
-            steps.push((startStep + i) % filteredCount);
-        }
-        return steps;
-    }
-
     return {
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
         createDefaultShuffleState: createDefaultShuffleState,
         nextPlaylistStep: nextPlaylistStep,
         shouldAdvanceOnEnded: shouldAdvanceOnEnded,
-        playlistAttemptSteps: playlistAttemptSteps,
     };
 }));

@@ -13,12 +13,11 @@ $studioConfigPath = dirname(__DIR__) . '/data/studio-config.json';
 $catalog  = vpc_load_videos_catalog($catalogJsonPath);
 $playlist = $catalog ? vpc_vimeo_playlist_all_from_catalog($catalog) : [];
 $signLanguageOptions = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : [];
-$defaultSignLanguage = isset($signLanguageOptions[0]['value']) ? $signLanguageOptions[0]['value'] : '';
 $vpc = null;
 if (count($playlist) > 0) {
     $vpc = ['instance_id' => 'preview-playlist-demo', 'playlist' => $playlist];
     if (count($signLanguageOptions) > 0) {
-        $vpc['sign_language_filter'] = ['options' => $signLanguageOptions, 'default' => $defaultSignLanguage];
+        $vpc['sign_language_filter'] = ['options' => $signLanguageOptions, 'default' => ''];
     }
 }
 
@@ -674,7 +673,7 @@ $logos = [
 }());
 </script>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=2"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=22" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=3"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=24" defer></script>
 </body>
 </html>

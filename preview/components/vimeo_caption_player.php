@@ -310,9 +310,6 @@ if ($useSignLanguageFilter) {
     if (isset($vpc['sign_language_filter']['default'])) {
         $signLangDefault = (string) $vpc['sign_language_filter']['default'];
     }
-    if ($signLangDefault === '' && isset($signLangOptionsList[0]['value'])) {
-        $signLangDefault = (string) $signLangOptionsList[0]['value'];
-    }
 }
 $signLangSelectId   = $idBase . '__sign-language-select';
 $captionSelectId    = $idBase . '__caption-lang-select';
@@ -432,6 +429,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
         <div class="vpc-lang-filter vpc-sign-language-filter" role="group" aria-label="Sign language">
             <label class="vpc-lang-filter-label" for="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>">Sign language</label>
             <select id="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>" class="vpc-lang-select vpc-sign-lang-select" autocomplete="off">
+                <option value=""<?php echo $signLangDefault === '' ? ' selected' : ''; ?>>All sign languages</option>
                 <?php foreach ($signLangOptionsList as $opt): ?>
                     <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
                 <option

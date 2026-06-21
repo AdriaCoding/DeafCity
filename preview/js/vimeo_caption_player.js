@@ -146,8 +146,6 @@
         var selectedSignLang = '';
         if (signLangFilter && signLangFilter.default) {
             selectedSignLang = String(signLangFilter.default);
-        } else if (signLangFilter && Array.isArray(signLangFilter.options) && signLangFilter.options[0]) {
-            selectedSignLang = String(signLangFilter.options[0].value || '');
         }
 
         /** @type {number[]} */
@@ -637,65 +635,7 @@
                     .catch(function (e) {
                         console.warn('Vimeo playlist: loadVideo failed', e);
                         refreshTransport();
-                        throw e;
                     });
-            }
-
-            function setPlaylistPositionFromStep(step) {
-                if (shuffleMode) {
-                    shuffleStep = step;
-                    filteredCursor = shuffledSequence[step];
-                } else {
-                    shuffleStep = step;
-                    filteredCursor = step;
-                }
-            }
-
-            function syncPlaylistStateToEmbedVideo() {
-                var embedId = iframeEmbedVideoId();
-                if (!embedId) return;
-                var fc = filteredCount();
-                var i;
-                for (i = 0; i < fc; i++) {
-                    var step = shuffleMode ? i : i;
-                    var cursor = shuffleMode ? shuffledSequence[step] : i;
-                    var masterIx = filteredMasterIndices[cursor];
-                    var item = masterIx !== undefined ? fullPlaylistItems[masterIx] : null;
-                    if (item && String(item.videoId) === embedId) {
-                        setPlaylistPositionFromStep(step);
-                        playlistIndex = masterIx;
-                        applyLoadedVideoUi();
-                        updatePlaylistNavButtons();
-                        syncCaptionBox(captionBoxId, eventsForSync(), 0);
-                        refreshTransport();
-                        return;
-                    }
-                }
-            }
-
-            function loadVideoWithFallback(startStep, autoPlayPreferred) {
-                var fc = filteredCount();
-                if (fc <= 0) return Promise.resolve();
-
-                var steps = L.playlistAttemptSteps(startStep, fc);
-                var attempt = 0;
-
-                function tryNext() {
-                    if (attempt >= steps.length) {
-                        syncPlaylistStateToEmbedVideo();
-                        return Promise.resolve();
-                    }
-                    var step = steps[attempt];
-                    attempt += 1;
-                    setPlaylistPositionFromStep(step);
-                    var masterIx = filteredMasterIndices[filteredCursor];
-                    if (masterIx === undefined) return tryNext();
-                    return loadVideoMaster(masterIx, autoPlayPreferred).catch(function () {
-                        return tryNext();
-                    });
-                }
-
-                return tryNext();
             }
 
             function updatePlaylistNavButtons() {
@@ -731,7 +671,13 @@
                 });
                 if (!step) return;
                 if (shuffleMode) {
-                    loadVideoWithFallback(step.shuffleStep, true);
+                    shuffleStep = step.shuffleStep;
+                    filteredCursor = step.filteredCursor;
+                    var masterIx = filteredMasterIndices[filteredCursor];
+                    if (masterIx === undefined) return;
+                    loadVideoMaster(masterIx, true).then(function () {
+                        updatePlaylistNavButtons();
+                    });
                 } else {
                     seekFiltered(1, true);
                 }
@@ -744,7 +690,10 @@
                     return Promise.resolve();
                 }
                 filteredCursor = ni;
-                return loadVideoWithFallback(filteredCursor, autoplayPreferred !== false);
+                var masterIx = filteredMasterIndices[filteredCursor];
+                return loadVideoMaster(masterIx, autoplayPreferred !== false).then(function () {
+                    updatePlaylistNavButtons();
+                });
             }
 
             /** @param {number} deltaStep +1 / -1 in shuffled order */
@@ -754,7 +703,15 @@
                 if (fc <= 0 || ni < 0 || ni >= fc) {
                     return Promise.resolve();
                 }
-                return loadVideoWithFallback(ni, autoplayPreferred !== false);
+                var shuffledCursor = L.filteredCursorFromShuffleStep(shuffledSequence, ni, fc);
+                if (shuffledCursor === null) return Promise.resolve();
+                shuffleStep = ni;
+                filteredCursor = shuffledCursor;
+                var masterIx = filteredMasterIndices[filteredCursor];
+                if (masterIx === undefined) return Promise.resolve();
+                return loadVideoMaster(masterIx, autoplayPreferred !== false).then(function () {
+                    updatePlaylistNavButtons();
+                });
             }
 
             var shuffleBtn = root.querySelector('.vpc-shuffle-btn');
@@ -823,7 +780,7 @@
 
             setShuffleToggleUi(shuffleMode);
 
-            loadVideoWithFallback(shuffleStep, false)
+            loadVideoMaster(playlistIndex, false)
                 .then(function () {})
                 .catch(function () {});
 
