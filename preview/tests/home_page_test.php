@@ -444,4 +444,8 @@ if (is_file($cssPath)) {
     echo "SKIP: CSS file not found at expected path — visual state CSS checks skipped\n";
 }
 
+// ── Issue #7: R3 Participants nav button ──────────────────────────────────────
+assert_contains('href="/preview/participants"', $html, 'Participants nav button in R3');
+assert_contains('>Participants<', $html, 'Participants button label text');
+
 echo "\nAll tests passed.\n";

@@ -385,6 +385,8 @@ $config = array(
     // distinct caption track labels in the catalog. JS uses stickyCaptionLabel to switch
     // tracks without touching filterState or the playlist queue.
     'spokenLanguageOptions' => $spokenLangForConfig,
+    // D18: Participant mode — non-empty when a participant playlist is active.
+    'participantName' => isset($vpc['participant_name']) ? (string)$vpc['participant_name'] : '',
 );
 
 $configJson = json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);

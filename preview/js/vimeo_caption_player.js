@@ -153,6 +153,10 @@
             typology: null,
         };
 
+        /** Participant name when a participant playlist is active (D18). '' = not in participant mode. */
+        var participantName = typeof cfg.participantName === 'string' ? cfg.participantName.trim() : '';
+        var isParticipantMode = participantName !== '';
+
         /** @type {boolean} */
         var captionPickerDynamic = !!cfg.captionPickerDynamic;
 
@@ -779,6 +783,11 @@
                     shuffledSequence: shuffledSequence,
                 });
                 if (!step) {
+                    if (isParticipantMode) {
+                        // D19: participant collection finished → fresh ALL paused (page reload without ?participant)
+                        window.location.href = '/preview/';
+                        return;
+                    }
                     // End of ALL playlist (D19): reset to fresh reshuffle, paused on new poster.
                     resetToFreshShuffledPlaylist();
                     return;
@@ -905,6 +914,18 @@
             }
 
             /**
+             * Update the Participants nav button label to show the active participant name (D18).
+             * Reverts to 'Participants' text when participant mode is cleared.
+             */
+            function syncParticipantButtonLabel() {
+                var participantsBtn = root.querySelector('.preview-site-nav__btn[href="/preview/participants"]');
+                if (!participantsBtn) return;
+                if (isParticipantMode && participantName) {
+                    participantsBtn.textContent = participantName;
+                }
+            }
+
+            /**
              * Apply a filter change: update filterState, recompute filtered list,
              * shuffle within the new filtered set, load video[0] of new set.
              * Clearing (value=null) re-shuffles the full catalog (D7, issue #1 behaviour).
@@ -912,6 +933,11 @@
              * @param {string|null} value
              */
             function applyFilterChange(facet, value) {
+                if (isParticipantMode) {
+                    isParticipantMode = false;
+                    participantName = '';
+                    syncParticipantButtonLabel();
+                }
                 filterState[facet] = value || null;
                 recomputeFilteredMasterIndices();
 
@@ -1041,6 +1067,9 @@
 
             // Wire up all R2 pickers in this instance
             root.querySelectorAll('.vpc-picker').forEach(initPicker);
+
+            // D18: Update Participants nav button label when in participant mode.
+            syncParticipantButtonLabel();
 
             // Close pickers when clicking outside
             document.addEventListener('click', function () {

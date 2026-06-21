@@ -15,6 +15,12 @@ $items = array(
         'chrome_label' => 'About',
         'page_label' => 'About',
     ),
+    array(
+        'route' => 'participants',
+        'href' => '/preview/participants',
+        'chrome_label' => 'Participants',
+        'page_label' => 'Participants',
+    ),
 );
 $links = array();
 foreach ($items as $item) {
