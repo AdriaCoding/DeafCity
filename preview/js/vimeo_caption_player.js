@@ -53,14 +53,15 @@
     }
 
     /**
-     * Caption font size (px) from video stack width — approximates Vimeo burned-in subtitles (~4.8%).
-     * @param {number} shellWidthPx
+     * Caption font size (px) from rendered video height — iframe is fit-to-height, so
+     * height is the stable scale axis (width swings with aspect ratio).
+     * @param {number} videoHeightPx
      * @returns {number}
      */
-    function captionFontSizePxFromShellWidth(shellWidthPx) {
-        var w = typeof shellWidthPx === 'number' ? shellWidthPx : parseFloat(shellWidthPx);
-        if (!w || w <= 0 || !isFinite(w)) return 18;
-        var size = w * 0.048;
+    function captionFontSizePxFromVideoHeight(videoHeightPx) {
+        var h = typeof videoHeightPx === 'number' ? videoHeightPx : parseFloat(videoHeightPx);
+        if (!h || h <= 0 || !isFinite(h)) return 18;
+        var size = h * 0.048;
         if (size < 14) return 14;
         if (size > 38) return 38;
         return Math.round(size * 10) / 10;
@@ -397,21 +398,37 @@
             var videoStack = root.querySelector('.video-stack');
 
             function syncCaptionTypography() {
-                var measureEl = videoStack || videoShell;
+                var measureEl = iframe || videoShell || videoStack;
                 if (!measureEl) return;
-                var w = measureEl.getBoundingClientRect().width;
+                var rect = measureEl.getBoundingClientRect();
+                var h = rect.height;
+                if (h <= 0 && videoShell) {
+                    h = videoShell.getBoundingClientRect().height;
+                }
                 root.style.setProperty(
                     '--vpc-caption-font-size',
-                    captionFontSizePxFromShellWidth(w) + 'px'
+                    captionFontSizePxFromVideoHeight(h) + 'px'
                 );
+                var w = rect.width;
+                if (videoShell) {
+                    var shellW = videoShell.getBoundingClientRect().width;
+                    if (w <= 0 || w > shellW) w = shellW;
+                }
+                if (w <= 0 && videoStack) {
+                    w = videoStack.getBoundingClientRect().width;
+                }
+                if (w > 0) {
+                    root.style.setProperty('--vpc-caption-width', w + 'px');
+                }
             }
 
             syncCaptionTypography();
-            if (typeof window.ResizeObserver === 'function' && videoStack) {
+            if (typeof window.ResizeObserver === 'function') {
                 var captionResizeObserver = new window.ResizeObserver(function () {
                     syncCaptionTypography();
                 });
-                captionResizeObserver.observe(videoStack);
+                if (iframe) captionResizeObserver.observe(iframe);
+                else if (videoShell) captionResizeObserver.observe(videoShell);
             } else {
                 window.addEventListener('resize', syncCaptionTypography);
             }

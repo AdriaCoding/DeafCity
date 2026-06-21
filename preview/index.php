@@ -54,7 +54,7 @@ $logos = [
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Jost:wght@300;400&display=swap" rel="stylesheet">
     <?php endif; ?>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=20">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=23">
     <style>
         /* ── Shared reset ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -675,6 +675,6 @@ $logos = [
 </script>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=2"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=20" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=22" defer></script>
 </body>
 </html>
