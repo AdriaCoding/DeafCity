@@ -15,13 +15,14 @@ $currentRoute = 'about';
     <title>About — DEAF.city</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=1">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
     <link rel="stylesheet" href="/preview/css/about-page.css?v=1">
 </head>
 <body>
 <div class="preview-about-page">
     <?php
     $currentRoute = 'about';
+    $navPlacement = 'page';
     include __DIR__ . '/../components/site_nav.php';
     ?>
 

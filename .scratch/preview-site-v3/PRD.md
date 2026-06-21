@@ -24,6 +24,8 @@ Implement the v3 spec as thin vertical slices: playback and Playlist behaviour f
 | D6 | Caption box width matches **visible video width** (iframe width, capped at shell width), centered in the stack |
 | D7 | Sign language filter: **no default filter** on cold visit — Playlist includes all visible Videos until the visitor picks a language |
 | D8 | Click on the video area toggles play/pause (transparent hit-area overlay over the cross-origin iframe) |
+| D9 | **Home page is non-scrollable** — `html`/`body` and player root use `overflow: hidden`; the viewport never scrolls on `/preview/` |
+| D10 | **Site navigation on home** — link buttons in the **player chrome**, below transport controls and language filters (not a top nav bar). Only **other routes** are shown (no active/current-page button). Same button style as secondary transport controls |
 
 ## Out of Scope (this batch)
 

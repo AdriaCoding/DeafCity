@@ -33,7 +33,7 @@ The home page is **non-scrollable**: only the player and site navigation. All ot
 | `/preview/tags` | Tag cloud → loads tag Playlist on home *(next sprint)* |
 | `/preview/map` | Interactive Edition map *(next sprint)* |
 
-Navigation must be designed for a viewport with **no scrollable content** below the player.
+Navigation sits **below the video controls** as text buttons (Player, About, …) — not a top nav bar. The home viewport does not scroll; see PRD D9–D10.
 
 ---
 
@@ -164,8 +164,8 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 ### 1.7 Home page layout
 
-- [ ] Home page has **no scrollable content** — player fills the viewport; navigation sits in the remaining chrome.
-- [ ] Implement navigation pattern once designed — see §5 Design tasks.
+- [ ] Home page has **no scrollable content** — player fills the viewport; site nav buttons sit below transport and filters (PRD D9–D10).
+- [ ] ~~Implement navigation pattern once designed~~ — home nav pattern locked (PRD D10); Participants button added when §2.2 ships.
 
 ---
 
@@ -258,7 +258,7 @@ Playlist selection by Tag — same interaction model as Participants.
 
 Visual and layout decisions blocked on design work. Implementation tasks above reference this section where needed.
 
-- [ ] **Home navigation** — pattern for switching between player, About, Participants (and later Tags, Map) without scrolling on the home viewport (icon bar, text tabs, etc.). Blocks §1.7.
+- [x] **Home navigation** — **decided:** text buttons below player transport + language filters; no top nav bar; home non-scrollable (PRD D9–D10). Participants / Tags / Map buttons join the same row as those routes ship.
 - [ ] **Subtitle language picker placement** — where it sits in the player chrome (transport row, filter row, near captions, etc.). Blocks §1.3 implementation.
 - [ ] **Participants grid labels** — show Participant name under each thumbnail, or image-only. Blocks §2.2 polish.
 

@@ -442,4 +442,14 @@ $showPlaylistNav = count($playlistNormalized) > 1;
         <?php endif; ?>
     </div>
     <?php endif; ?>
+    <?php
+    $siteNavRoute = isset($vpc['site_nav_route']) ? trim((string) $vpc['site_nav_route']) : '';
+    if ($siteNavRoute !== ''):
+        $currentRoute = $siteNavRoute;
+        $navPlacement = 'chrome';
+    ?>
+    <div class="vpc-site-nav-wrap">
+        <?php include dirname(__DIR__) . '/components/site_nav.php'; ?>
+    </div>
+    <?php endif; ?>
 </div>

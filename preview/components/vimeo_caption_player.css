@@ -11,7 +11,8 @@
 }
 .preview-vimeo-player-root .caption-box,
 .preview-vimeo-player-root .vpc-transport,
-.preview-vimeo-player-root .vpc-lang-filters {
+.preview-vimeo-player-root .vpc-lang-filters,
+.preview-vimeo-player-root .vpc-site-nav-wrap {
     flex-shrink: 0;
 }
 .vpc-media-stage {
