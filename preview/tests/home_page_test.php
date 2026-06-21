@@ -174,4 +174,93 @@ if (is_file($catalogJsonPathForTest)) {
     echo "SKIP: randomness check skipped — catalog.json not found at test runtime\n";
 }
 
+// ── Issue #4: R2 filter row + Sign language custom picker ──────────────────────
+
+// AC: R2 filter row renders in the player chrome (vpc-r2-filters)
+assert_contains('vpc-r2-filters', $html, 'R2 filter row renders');
+
+// AC: Sign language picker is a custom dropdown — NOT a native <select> for sign language
+assert_not_contains('<select', $html, 'no native <select> element (custom picker only)');
+assert_contains('vpc-picker', $html, 'custom picker element present');
+assert_contains('vpc-picker-btn', $html, 'custom picker button present');
+assert_contains('vpc-picker-dropdown', $html, 'custom picker dropdown present');
+assert_contains('data-picker="sign_language"', $html, 'sign_language picker attribute');
+
+// AC: Picker button shows generic label before selection (D7)
+assert_contains('data-generic-label="Sign language"', $html, 'picker button has generic label attr');
+assert_contains('>Sign language<', $html, 'picker button face shows generic label before selection');
+
+// AC: Dropdown uses role=listbox (not native select)
+assert_contains('role="listbox"', $html, 'dropdown has role=listbox');
+assert_contains('role="option"', $html, 'dropdown options have role=option');
+
+// AC: Clear/all option present
+assert_contains('vpc-picker-clear', $html, 'clear/all option present in dropdown');
+assert_contains('All sign languages', $html, 'clear option says "All sign languages"');
+
+// AC: Dropdown lists sign languages present in catalog — all 4 known IDs must appear
+// (libras, lse, lsm, gss) mapped to their config labels
+assert_contains('LIBRAS Brazilian Sign Language', $html, 'LIBRAS option in picker');
+assert_contains('LSE Spanish Sign Language', $html, 'LSE option in picker');
+assert_contains('LSM Mexican Sign Language', $html, 'LSM option in picker');
+assert_contains('GSS Greek Sign Language', $html, 'GSS option in picker');
+
+// AC: Empty facets absent — only 4 sign languages in catalog, not all 9 from config
+// Verify a config label that is NOT in the catalog is absent (e.g. LSF French Sign Language)
+assert_not_contains('LSF French Sign Language', $html, 'empty facet (LSF) absent from dropdown');
+assert_not_contains('LIS Italian Sign Language', $html, 'empty facet (LIS) absent from dropdown');
+
+// AC: R2 row appears below transport (vpc-transport) and before R3 nav (vpc-site-nav-wrap)
+$r2Pos = strpos($html, 'vpc-r2-filters');
+$transportPos2 = strpos($html, 'vpc-transport');
+$navPos2 = strpos($html, 'vpc-site-nav-wrap');
+if ($r2Pos === false) {
+    fwrite(STDERR, "FAIL: vpc-r2-filters not found in HTML\n");
+    exit(1);
+}
+if ($transportPos2 === false || $r2Pos < $transportPos2) {
+    fwrite(STDERR, "FAIL: R2 filter row should appear after R1 transport row\n");
+    exit(1);
+}
+if ($navPos2 !== false && $r2Pos > $navPos2) {
+    fwrite(STDERR, "FAIL: R2 filter row should appear before R3 nav row\n");
+    exit(1);
+}
+echo "PASS: R2 row positioned between R1 transport and R3 nav\n";
+
+// AC: Each playlist item has catalog fields (sign_language, edition, typology, participant)
+$cfg2 = $cfg; // already parsed above
+$playlistItems2 = isset($cfg2['playlist']) && is_array($cfg2['playlist']) ? $cfg2['playlist'] : [];
+if (count($playlistItems2) === 0) {
+    fwrite(STDERR, "FAIL: playlist is empty in vpc-config for field check\n");
+    exit(1);
+}
+$missingFields = [];
+foreach ($playlistItems2 as $i => $item) {
+    if (!array_key_exists('signLanguage', $item)) { $missingFields[] = "playlist[$i].signLanguage"; }
+    if (!array_key_exists('edition', $item))      { $missingFields[] = "playlist[$i].edition"; }
+    if (!array_key_exists('typology', $item))     { $missingFields[] = "playlist[$i].typology"; }
+    if (!array_key_exists('participant', $item))  { $missingFields[] = "playlist[$i].participant"; }
+}
+if (count($missingFields) > 0) {
+    fwrite(STDERR, "FAIL: Missing catalog fields in playlist JSON: " . implode(', ', $missingFields) . "\n");
+    exit(1);
+}
+echo "PASS: all playlist items have signLanguage, edition, typology, participant fields\n";
+
+// AC: signLanguageFilter config in vpc-config carries options array (D17)
+if (!isset($cfg2['signLanguageFilter']) || !is_array($cfg2['signLanguageFilter'])) {
+    fwrite(STDERR, "FAIL: signLanguageFilter missing from vpc-config JSON\n");
+    exit(1);
+}
+$slOpts = isset($cfg2['signLanguageFilter']['options']) ? $cfg2['signLanguageFilter']['options'] : null;
+if (!is_array($slOpts) || count($slOpts) === 0) {
+    fwrite(STDERR, "FAIL: signLanguageFilter.options empty or missing in vpc-config JSON\n");
+    exit(1);
+}
+echo "PASS: signLanguageFilter.options present in vpc-config (" . count($slOpts) . " options)\n";
+
+// AC: Non-scrollable body preserved (D9)
+assert_contains('overflow: hidden', $html, 'non-scrollable body still present');
+
 echo "All tests passed.\n";

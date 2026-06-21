@@ -23,11 +23,10 @@
  *     // Omit to use single video_id / embed_url at the top level. Prev/Next appear when length > 1.
  *     // Canonical metadata: data/videos.json plus data/captions/*.vtt (videos_catalog.php).
  *     //
- *     // Optional: sign-language filter (reads option labels from data/playlists.json titles).
- *     // Renders a picker under the transport row; client filters playlist by item sign_language.
+ *     // Optional: R2 filter row — sign language custom picker (D15, D17, D18).
+ *     // options: populated-from-present only (D17). Client composable filter state.
  *     'sign_language_filter' => array(
- *       'options' => array( array('value' => 'LIBRAS Brazilian Sign Language', 'label' => '...'), ),
- *       'default' => 'LIBRAS Brazilian Sign Language',
+ *       'options' => array( array('value' => 'libras', 'label' => 'LIBRAS Brazilian Sign Language'), ),
  *     ),
  *     'playlist' => array(
  *       array(
@@ -118,6 +117,15 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 $signLangMeta = isset($entry['sign_language']) && is_string($entry['sign_language'])
                     ? trim($entry['sign_language'])
                     : '';
+                $editionMeta = isset($entry['edition']) && is_string($entry['edition'])
+                    ? trim($entry['edition'])
+                    : '';
+                $typologyMeta = isset($entry['typology']) && is_string($entry['typology'])
+                    ? trim($entry['typology'])
+                    : '';
+                $participantMeta = isset($entry['participant']) && is_string($entry['participant'])
+                    ? trim($entry['participant'])
+                    : '';
 
                 $out[] = array(
                     'videoId' => $digits,
@@ -125,6 +133,9 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                     'embed_url' => $entryEmbed,
                     'embed_params' => $eParams,
                     'sign_language' => $signLangMeta,
+                    'edition' => $editionMeta,
+                    'typology' => $typologyMeta,
+                    'participant' => $participantMeta,
                 );
             }
         }
@@ -162,6 +173,12 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
             $legacySl = isset($vpc['sign_language']) && is_string($vpc['sign_language'])
                 ? trim($vpc['sign_language'])
                 : '';
+            $legacyEdition = isset($vpc['edition']) && is_string($vpc['edition'])
+                ? trim($vpc['edition']) : '';
+            $legacyTypology = isset($vpc['typology']) && is_string($vpc['typology'])
+                ? trim($vpc['typology']) : '';
+            $legacyParticipant = isset($vpc['participant']) && is_string($vpc['participant'])
+                ? trim($vpc['participant']) : '';
             $firstCaptionTracks = $legacyTracks;
             return array(array(
                 'videoId' => $digitsLegacy,
@@ -169,6 +186,9 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 'embed_url' => $legacyEmbed,
                 'embed_params' => $extraParams,
                 'sign_language' => $legacySl,
+                'edition' => $legacyEdition,
+                'typology' => $legacyTypology,
+                'participant' => $legacyParticipant,
             ));
         }
 
@@ -276,45 +296,40 @@ if (!empty($firstEntry['embed_url'])) {
 
 $playlistForJson = array();
 foreach ($playlistNormalized as $pe) {
-    $plTracks = isset($pe['caption_tracks']) && is_array($pe['caption_tracks']) ? $pe['caption_tracks'] : array();
-    $slOut      = isset($pe['sign_language']) && is_string($pe['sign_language']) ? $pe['sign_language'] : '';
+    $plTracks    = isset($pe['caption_tracks']) && is_array($pe['caption_tracks']) ? $pe['caption_tracks'] : array();
+    $slOut       = isset($pe['sign_language'])  && is_string($pe['sign_language'])  ? $pe['sign_language']  : '';
+    $edOut       = isset($pe['edition'])        && is_string($pe['edition'])        ? $pe['edition']        : '';
+    $tyOut       = isset($pe['typology'])       && is_string($pe['typology'])       ? $pe['typology']       : '';
+    $ptOut       = isset($pe['participant'])    && is_string($pe['participant'])    ? $pe['participant']    : '';
     $playlistForJson[] = array(
         'videoId'      => $pe['videoId'],
         'tracks'       => $plTracks,
         'signLanguage' => $slOut,
+        'edition'      => $edOut,
+        'typology'     => $tyOut,
+        'participant'  => $ptOut,
     );
 }
 
-$signLanguageFilterCfg = null;
-$captionPickerDynamic   = false;
-if (isset($vpc['sign_language_filter']) && is_array($vpc['sign_language_filter'])) {
-    $optRaw = isset($vpc['sign_language_filter']['options']) ? $vpc['sign_language_filter']['options'] : null;
-    if (is_array($optRaw) && count($optRaw) > 0) {
-        $captionPickerDynamic = true;
-        $def = isset($vpc['sign_language_filter']['default'])
-            ? (string) $vpc['sign_language_filter']['default']
-            : '';
-        $signLanguageFilterCfg = array(
-            'options' => $optRaw,
-            'default' => $def,
-        );
-    }
-}
-
+// ── R2 filter row: Sign language custom picker (D15, D17) ──────────────────────
+// Options come from vpc['sign_language_filter']['options'] (populated-from-present, D17).
 $signLangOptionsList = isset($vpc['sign_language_filter']['options']) && is_array($vpc['sign_language_filter']['options'])
     ? $vpc['sign_language_filter']['options']
     : array();
 $useSignLanguageFilter = count($signLangOptionsList) > 0;
-$signLangDefault = '';
-if ($useSignLanguageFilter) {
-    if (isset($vpc['sign_language_filter']['default'])) {
-        $signLangDefault = (string) $vpc['sign_language_filter']['default'];
-    }
-}
-$signLangSelectId   = $idBase . '__sign-language-select';
-$captionSelectId    = $idBase . '__caption-lang-select';
-$showCaptionFilter  = $useSignLanguageFilter || count($captionTracks) > 0;
-$showLangFiltersRow = $showCaptionFilter || $useSignLanguageFilter;
+
+// Legacy caption-picker support (spoken language select — issue #7, not yet styled as R2 picker).
+$captionPickerDynamic = false;
+$captionSelectId      = $idBase . '__caption-lang-select';
+$showCaptionFilter    = count($captionTracks) > 0;
+
+// R2 row shows when there is at least one filter picker.
+$showR2FilterRow = $useSignLanguageFilter;
+
+// Prepare sign-language picker config for JS (D18 composable filter state).
+$signLangFilterForConfig = $useSignLanguageFilter
+    ? array('options' => $signLangOptionsList)
+    : null;
 
 // playlist_index from $vpc lets the caller specify which item is the initial poster.
 // When the server has already shuffled (D12), this is always 0.
@@ -332,7 +347,9 @@ $config = array(
     // without re-shuffling, so the paused poster matches what Play will continue (D12).
     'serverShuffled'       => true,
     'captionPickerDynamic' => $captionPickerDynamic,
-    'signLanguageFilter'   => $signLanguageFilterCfg,
+    // R2 filter pickers config (D17, D18). signLanguageFilter carries options (value+label)
+    // populated only from values present in the visible catalog.
+    'signLanguageFilter'   => $signLangFilterForConfig,
 );
 
 $configJson = json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
@@ -409,43 +426,57 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             aria-label="Restart video from the beginning"
         ><span class="material-icons" aria-hidden="true">replay</span></button>
     </div>
-    <?php if ($showLangFiltersRow): ?>
-    <div class="vpc-lang-filters" role="group" aria-label="Language filters">
-        <?php if ($showCaptionFilter): ?>
-        <div
-            class="vpc-lang-filter vpc-caption-lang-filter<?php echo $useSignLanguageFilter ? ' vpc-caption-lang-dynamic vpc-caption-picker-hidden' : ''; ?>"
-            role="group"
-            aria-label="<?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>"
-        >
-            <label class="vpc-lang-filter-label" id="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>" for="<?php echo htmlspecialchars($captionSelectId, ENT_QUOTES, 'UTF-8'); ?>">
-                <?php echo htmlspecialchars($captionsHeading, ENT_QUOTES, 'UTF-8'); ?>
-            </label>
-            <select
-                id="<?php echo htmlspecialchars($captionSelectId, ENT_QUOTES, 'UTF-8'); ?>"
-                class="vpc-lang-select vpc-caption-lang-select"
-                aria-controls="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-labelledby="<?php echo htmlspecialchars($headingId, ENT_QUOTES, 'UTF-8'); ?>"
-                autocomplete="off"
-            ><?php if (!$useSignLanguageFilter): ?>
-                <?php foreach ($captionTracks as $i => $track): ?>
-                <option value="<?php echo (int) $i; ?>"><?php echo htmlspecialchars($track['label'], ENT_QUOTES, 'UTF-8'); ?></option>
-                <?php endforeach; ?>
-            <?php endif; ?></select>
-        </div>
-        <?php endif; ?>
+    <?php if ($showR2FilterRow): ?>
+    <?php
+    /*
+     * R2 — Filter row (D15, D17, D18)
+     * Contains the Sign language custom picker (and future: City/Edition, Typology, Spoken Language).
+     * Custom dropdown, NOT a native <select>. Brand green accents on active state.
+     * Built to hold 4 pickers side-by-side (flex row, wraps on mobile per D20).
+     */
+    $signLangPickerId       = $idBase . '__sign-lang-picker';
+    $signLangDropdownId     = $idBase . '__sign-lang-dropdown';
+    $signLangPickerBtnId    = $idBase . '__sign-lang-btn';
+    ?>
+    <div class="vpc-r2-filters" role="group" aria-label="Filters">
         <?php if ($useSignLanguageFilter): ?>
-        <div class="vpc-lang-filter vpc-sign-language-filter" role="group" aria-label="Sign language">
-            <label class="vpc-lang-filter-label" for="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>">Sign language</label>
-            <select id="<?php echo htmlspecialchars($signLangSelectId, ENT_QUOTES, 'UTF-8'); ?>" class="vpc-lang-select vpc-sign-lang-select" autocomplete="off">
-                <option value=""<?php echo $signLangDefault === '' ? ' selected' : ''; ?>>All sign languages</option>
+        <div
+            class="vpc-picker"
+            id="<?php echo htmlspecialchars($signLangPickerId, ENT_QUOTES, 'UTF-8'); ?>"
+            data-picker="sign_language"
+        >
+            <button
+                type="button"
+                id="<?php echo htmlspecialchars($signLangPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-btn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="<?php echo htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                data-generic-label="Sign language"
+            >Sign language</button>
+            <ul
+                role="listbox"
+                id="<?php echo htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-dropdown"
+                aria-label="Sign language"
+                hidden
+            >
+                <li
+                    role="option"
+                    class="vpc-picker-option vpc-picker-clear"
+                    data-value=""
+                    aria-selected="true"
+                >All sign languages</li>
                 <?php foreach ($signLangOptionsList as $opt): ?>
                     <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
-                <option
-                    value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
-                    <?php echo (string) $opt['value'] === $signLangDefault ? ' selected' : ''; ?>
-                ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></option>
+                <li
+                    role="option"
+                    class="vpc-picker-option"
+                    data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-selected="false"
+                ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
                 <?php endforeach; ?>
-            </select>
+            </ul>
         </div>
         <?php endif; ?>
     </div>

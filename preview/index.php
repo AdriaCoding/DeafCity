@@ -16,8 +16,9 @@ if (count($playlist) > 0) {
         // Tell JS the server already placed the chosen poster at index 0.
         'playlist_index' => 0,
     ];
+    // R2 sign language picker: populated-from-present only (D17), no default (D7).
     if (count($signLanguageOptions) > 0) {
-        $vpc['sign_language_filter'] = ['options' => $signLanguageOptions, 'default' => ''];
+        $vpc['sign_language_filter'] = ['options' => $signLanguageOptions];
     }
 }
 ?>
@@ -30,7 +31,7 @@ if (count($playlist) > 0) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=24">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=25">
     <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,6 +57,6 @@ if (count($playlist) > 0) {
 </div>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=3"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=24" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=25" defer></script>
 </body>
 </html>
