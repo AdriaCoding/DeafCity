@@ -250,9 +250,7 @@ $defaultParams = array(
     'portrait' => '0',
     'dnt'      => '1',
     'controls' => '0',
-    'autoplay'    => '1',
-    // Most browsers block audible autoplay; keep muted unless overridden via embed_params.
-    'muted'       => '1',
+    'autoplay'    => '0',
     'playsinline' => '1',
 );
 
@@ -355,16 +353,10 @@ $showPlaylistNav = count($playlistNormalized) > 1;
                 allowfullscreen></iframe>
             <button
                 type="button"
-                class="vpc-sound-badge"
-                aria-pressed="false"
-                aria-label="Unmute video"
-            ><span class="material-icons" aria-hidden="true">volume_off</span></button>
-            <button
-                type="button"
                 class="vpc-video-hitarea"
                 tabindex="-1"
-                aria-hidden="true"
                 aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                aria-label="Play or pause video"
             ></button>
         </div>
     </div>
@@ -378,7 +370,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
         <button
             type="button"
             class="vpc-shuffle-btn"
-            aria-pressed="false"
+            aria-pressed="true"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Shuffle playlist"
         ><span class="material-icons" aria-hidden="true">shuffle</span></button>

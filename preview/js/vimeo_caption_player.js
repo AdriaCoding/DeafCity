@@ -1,6 +1,13 @@
 (function () {
     'use strict';
 
+    /** @type {typeof import('./vimeo_playlist_logic')} */
+    var L = typeof VpcPlaylistLogic !== 'undefined' ? VpcPlaylistLogic : null;
+    if (!L) {
+        console.warn('Vimeo caption player: VpcPlaylistLogic missing');
+        return;
+    }
+
     function ensureVimeoSdk(onReady) {
         if (window.Vimeo && window.Vimeo.Player) {
             onReady();
@@ -59,46 +66,6 @@
             }
         }
         return 0;
-    }
-
-    /**
-     * Resolve filtered cursor from shuffle step, or null when sequence is invalid.
-     * @param {unknown} sequence
-     * @param {number} step
-     * @param {number} filteredCount
-     * @returns {number | null}
-     */
-    function filteredCursorFromShuffleStep(sequence, step, filteredCount) {
-        if (!Array.isArray(sequence) || sequence.length < filteredCount) return null;
-        if (step < 0 || step >= filteredCount) return null;
-        var cursor = sequence[step];
-        if (typeof cursor !== 'number' || cursor < 0 || cursor >= filteredCount) return null;
-        return cursor;
-    }
-
-    /**
-     * Next playlist step after a video ends, or null when already on the last entry.
-     * @param {{ shuffleMode: boolean, filteredCursor: number, shuffleStep: number, filteredCount: number, shuffledSequence: number[] }} opts
-     * @returns {{ filteredCursor: number, shuffleStep: number } | null}
-     */
-    function nextPlaylistStep(opts) {
-        var fc = opts.filteredCount;
-        if (fc <= 0) return null;
-
-        if (opts.shuffleMode) {
-            var nextStep = opts.shuffleStep + 1;
-            if (nextStep >= fc) return null;
-            var shuffledCursor = filteredCursorFromShuffleStep(opts.shuffledSequence, nextStep, fc);
-            if (shuffledCursor === null) return null;
-            return {
-                shuffleStep: nextStep,
-                filteredCursor: shuffledCursor,
-            };
-        }
-
-        var nextCursor = opts.filteredCursor + 1;
-        if (nextCursor >= fc) return null;
-        return { shuffleStep: opts.shuffleStep, filteredCursor: nextCursor };
     }
 
     function findCaption(events, timeMs) {
@@ -383,9 +350,21 @@
             }
         }
 
+        /** When true, prev/next follow shuffledSequence[shuffleStep]. */
+        var shuffleMode = false;
+        /** Permutation of filtered indices 0..n-1. */
+        var shuffledSequence = [];
+        var shuffleStep = 0;
+
         recomputeFilteredMasterIndices();
-        filteredCursor = 0;
-        if (filteredCount() > 0) playlistIndex = filteredMasterIndices[0];
+        var defaultShuffle = L.createDefaultShuffleState(filteredCount());
+        shuffleMode = defaultShuffle.shuffleMode;
+        shuffledSequence = defaultShuffle.shuffledSequence;
+        shuffleStep = defaultShuffle.shuffleStep;
+        filteredCursor = defaultShuffle.filteredCursor;
+        if (filteredCount() > 0) {
+            playlistIndex = filteredMasterIndices[filteredCursor];
+        }
 
         function attachPlayer() {
             var iframe = document.getElementById(iframeId);
@@ -395,61 +374,10 @@
             /** @type {any} */
             var p = vimeoPlayer;
 
-            /** When true, prev/next follow shuffledSequence[shuffleStep]. */
-            var shuffleMode = false;
-            /** Permutation of filtered indices 0..n-1. */
-            var shuffledSequence = [];
-            var shuffleStep = 0;
-
             /** Once true, subsequent Videos load unmuted (browser permits after first gesture). */
             var sessionSoundOn = false;
-            var badgeFlashTimer = null;
-
-            var videoShell = root.querySelector('.video-shell');
-            var soundBadge = root.querySelector('.vpc-sound-badge');
-
-            function updateSoundUi(isMuted) {
-                if (videoShell) {
-                    videoShell.classList.toggle('vpc-sound-muted', isMuted);
-                    videoShell.classList.toggle('vpc-sound-unmuted', !isMuted);
-                }
-                if (soundBadge) {
-                    soundBadge.setAttribute('aria-pressed', isMuted ? 'false' : 'true');
-                    soundBadge.setAttribute(
-                        'aria-label',
-                        isMuted ? 'Unmute video' : 'Mute video'
-                    );
-                    var badgeIcon = soundBadge.querySelector('.material-icons');
-                    if (badgeIcon) {
-                        badgeIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
-                    }
-                }
-            }
-
-            function flashBadgeIfTouch() {
-                if (!videoShell || window.matchMedia('(hover: hover)').matches) return;
-                videoShell.classList.add('vpc-sound-badge-flash');
-                if (badgeFlashTimer) clearTimeout(badgeFlashTimer);
-                badgeFlashTimer = setTimeout(function () {
-                    videoShell.classList.remove('vpc-sound-badge-flash');
-                    badgeFlashTimer = null;
-                }, 2000);
-            }
-
-            function toggleMute() {
-                p.getMuted()
-                    .then(function (wasMuted) {
-                        var nextMuted = !wasMuted;
-                        if (!nextMuted) sessionSoundOn = true;
-                        return p.setMuted(nextMuted).then(function () {
-                            updateSoundUi(nextMuted);
-                            if (wasMuted) flashBadgeIfTouch();
-                        });
-                    })
-                    .catch(function () {});
-            }
-
-            updateSoundUi(true);
+            /** Once true, end-of-video may advance within the Playlist. */
+            var visitorStartedPlayback = false;
 
             var playBtn = root.querySelector('.vpc-play-pause-btn');
 
@@ -473,11 +401,24 @@
                     .catch(function () {});
             }
 
+            function markPlaybackStarted() {
+                visitorStartedPlayback = true;
+                sessionSoundOn = true;
+            }
+
+            function unmuteForPlayback() {
+                if (typeof p.setMuted !== 'function') return Promise.resolve();
+                return p.setMuted(false);
+            }
+
             function togglePlayPause() {
                 p.getPaused()
                     .then(function (paused) {
                         if (paused) {
-                            return p.play();
+                            markPlaybackStarted();
+                            return unmuteForPlayback().then(function () {
+                                return p.play();
+                            });
                         }
                         return p.pause();
                     })
@@ -495,19 +436,16 @@
 
             var hitArea = root.querySelector('.vpc-video-hitarea');
             if (hitArea) {
-                hitArea.addEventListener('click', toggleMute);
-            }
-            if (soundBadge) {
-                soundBadge.addEventListener('click', function (ev) {
-                    ev.stopPropagation();
-                    toggleMute();
-                });
+                hitArea.addEventListener('click', togglePlayPause);
             }
 
             function resetFromBeginning() {
+                markPlaybackStarted();
                 p.setCurrentTime(0)
                     .then(function () {
-                        return p.play();
+                        return unmuteForPlayback().then(function () {
+                            return p.play();
+                        });
                     })
                     .then(function () {
                         syncVimeoCaptionBoxes(0);
@@ -539,11 +477,6 @@
                         });
                     })
                     .catch(function () {})
-                    .then(function () {
-                        return p.getMuted().then(function (muted) {
-                            updateSoundUi(muted);
-                        });
-                    })
                     .then(function () {
                         refreshTransport();
                         syncAllCaptions();
@@ -649,7 +582,65 @@
                     .catch(function (e) {
                         console.warn('Vimeo playlist: loadVideo failed', e);
                         refreshTransport();
+                        throw e;
                     });
+            }
+
+            function setPlaylistPositionFromStep(step) {
+                if (shuffleMode) {
+                    shuffleStep = step;
+                    filteredCursor = shuffledSequence[step];
+                } else {
+                    shuffleStep = step;
+                    filteredCursor = step;
+                }
+            }
+
+            function syncPlaylistStateToEmbedVideo() {
+                var embedId = iframeEmbedVideoId();
+                if (!embedId) return;
+                var fc = filteredCount();
+                var i;
+                for (i = 0; i < fc; i++) {
+                    var step = shuffleMode ? i : i;
+                    var cursor = shuffleMode ? shuffledSequence[step] : i;
+                    var masterIx = filteredMasterIndices[cursor];
+                    var item = masterIx !== undefined ? fullPlaylistItems[masterIx] : null;
+                    if (item && String(item.videoId) === embedId) {
+                        setPlaylistPositionFromStep(step);
+                        playlistIndex = masterIx;
+                        applyLoadedVideoUi();
+                        updatePlaylistNavButtons();
+                        syncCaptionBox(captionBoxId, eventsForSync(), 0);
+                        refreshTransport();
+                        return;
+                    }
+                }
+            }
+
+            function loadVideoWithFallback(startStep, autoPlayPreferred) {
+                var fc = filteredCount();
+                if (fc <= 0) return Promise.resolve();
+
+                var steps = L.playlistAttemptSteps(startStep, fc);
+                var attempt = 0;
+
+                function tryNext() {
+                    if (attempt >= steps.length) {
+                        syncPlaylistStateToEmbedVideo();
+                        return Promise.resolve();
+                    }
+                    var step = steps[attempt];
+                    attempt += 1;
+                    setPlaylistPositionFromStep(step);
+                    var masterIx = filteredMasterIndices[filteredCursor];
+                    if (masterIx === undefined) return tryNext();
+                    return loadVideoMaster(masterIx, autoPlayPreferred).catch(function () {
+                        return tryNext();
+                    });
+                }
+
+                return tryNext();
             }
 
             function updatePlaylistNavButtons() {
@@ -666,20 +657,6 @@
                 }
             }
 
-            function buildShuffledSequence() {
-                var fc = filteredCount();
-                var arr = [];
-                var i;
-                for (i = 0; i < fc; i++) arr.push(i);
-                for (i = fc - 1; i > 0; i--) {
-                    var j = Math.floor(Math.random() * (i + 1));
-                    var t = arr[i];
-                    arr[i] = arr[j];
-                    arr[j] = t;
-                }
-                return arr;
-            }
-
             function setShuffleToggleUi(on) {
                 var btn = root.querySelector('.vpc-shuffle-btn');
                 if (!btn) return;
@@ -689,7 +666,8 @@
             }
 
             function advanceOnEnded() {
-                var step = nextPlaylistStep({
+                if (!L.shouldAdvanceOnEnded(visitorStartedPlayback)) return;
+                var step = L.nextPlaylistStep({
                     shuffleMode: shuffleMode,
                     filteredCursor: filteredCursor,
                     shuffleStep: shuffleStep,
@@ -698,13 +676,7 @@
                 });
                 if (!step) return;
                 if (shuffleMode) {
-                    shuffleStep = step.shuffleStep;
-                    filteredCursor = step.filteredCursor;
-                    var masterIx = filteredMasterIndices[filteredCursor];
-                    if (masterIx === undefined) return;
-                    loadVideoMaster(masterIx, true).then(function () {
-                        updatePlaylistNavButtons();
-                    });
+                    loadVideoWithFallback(step.shuffleStep, true);
                 } else {
                     seekFiltered(1, true);
                 }
@@ -717,10 +689,7 @@
                     return Promise.resolve();
                 }
                 filteredCursor = ni;
-                var masterIx = filteredMasterIndices[filteredCursor];
-                return loadVideoMaster(masterIx, autoplayPreferred !== false).then(function () {
-                    updatePlaylistNavButtons();
-                });
+                return loadVideoWithFallback(filteredCursor, autoplayPreferred !== false);
             }
 
             /** @param {number} deltaStep +1 / -1 in shuffled order */
@@ -730,15 +699,7 @@
                 if (fc <= 0 || ni < 0 || ni >= fc) {
                     return Promise.resolve();
                 }
-                var shuffledCursor = filteredCursorFromShuffleStep(shuffledSequence, ni, fc);
-                if (shuffledCursor === null) return Promise.resolve();
-                shuffleStep = ni;
-                filteredCursor = shuffledCursor;
-                var masterIx = filteredMasterIndices[filteredCursor];
-                if (masterIx === undefined) return Promise.resolve();
-                return loadVideoMaster(masterIx, autoplayPreferred !== false).then(function () {
-                    updatePlaylistNavButtons();
-                });
+                return loadVideoWithFallback(ni, autoplayPreferred !== false);
             }
 
             var shuffleBtn = root.querySelector('.vpc-shuffle-btn');
@@ -752,7 +713,7 @@
                         return;
                     }
                     shuffleMode = true;
-                    shuffledSequence = buildShuffledSequence();
+                    shuffledSequence = L.buildShuffledSequence(filteredCount());
                     shuffleStep = 0;
                     var s;
                     for (s = 0; s < shuffledSequence.length; s++) {
@@ -805,11 +766,14 @@
                 });
             }
 
-            loadVideoMaster(playlistIndex, undefined)
+            setShuffleToggleUi(shuffleMode);
+
+            loadVideoWithFallback(shuffleStep, false)
                 .then(function () {})
                 .catch(function () {});
 
             p.on('play', function () {
+                markPlaybackStarted();
                 setTransportPlaying(true);
             });
             p.on('pause', function () {
