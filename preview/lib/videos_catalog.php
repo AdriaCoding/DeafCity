@@ -192,6 +192,30 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
     }
 }
 
+if (!function_exists('vpc_shuffle_playlist')) {
+    /**
+     * Fisher-Yates shuffle of a playlist array (returns new shuffled copy).
+     * The item at index 0 after shuffling is both the paused poster and the queue
+     * head (D12: server-side random poster = shuffled queue head). Reload = new face.
+     *
+     * @param array<int, array<string, mixed>> $playlist
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_shuffle_playlist(array $playlist) {
+        $n = count($playlist);
+        if ($n <= 1) {
+            return $playlist;
+        }
+        for ($i = $n - 1; $i > 0; $i--) {
+            $j = mt_rand(0, $i);
+            $tmp         = $playlist[$i];
+            $playlist[$i] = $playlist[$j];
+            $playlist[$j] = $tmp;
+        }
+        return array_values($playlist);
+    }
+}
+
 if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
     /**
      * Build a full $vpc playlist from all videos.json entries in array order (order defines playback within a category).

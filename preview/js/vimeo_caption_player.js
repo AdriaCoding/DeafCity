@@ -158,6 +158,14 @@
         var playlistIndex =
             typeof cfg.playlistIndex === 'number' ? cfg.playlistIndex : 0;
 
+        /**
+         * When true the server has already shuffled the playlist and placed the chosen
+         * poster at index 0 (D12). JS must NOT re-shuffle; instead treat the server's
+         * order as the shuffle sequence so the paused poster is exactly what Play continues.
+         * @type {boolean}
+         */
+        var serverShuffled = !!cfg.serverShuffled;
+
         /** @type {{ events: unknown[] }[][]} */
         var vimeoTracksState = fullPlaylistItems.map(function (item) {
             var tl = Array.isArray(item.tracks) ? item.tracks : [];
@@ -370,13 +378,25 @@
         var shuffleStep = 0;
 
         recomputeFilteredMasterIndices();
-        var defaultShuffle = L.createDefaultShuffleState(filteredCount());
-        shuffleMode = defaultShuffle.shuffleMode;
-        shuffledSequence = defaultShuffle.shuffledSequence;
-        shuffleStep = defaultShuffle.shuffleStep;
-        filteredCursor = defaultShuffle.filteredCursor;
-        if (filteredCount() > 0) {
-            playlistIndex = filteredMasterIndices[filteredCursor];
+        if (serverShuffled && filteredCount() > 0) {
+            // Server pre-shuffled (D12): the playlist order IS the shuffle order.
+            // Build the identity sequence [0, 1, 2, ... n-1] — item 0 is the poster
+            // and the queue head; pressing Play continues that exact video, no swap.
+            shuffleMode = true;
+            shuffledSequence = [];
+            for (var _si = 0; _si < filteredCount(); _si++) { shuffledSequence.push(_si); }
+            shuffleStep = 0;
+            filteredCursor = 0;
+            playlistIndex = filteredMasterIndices[0];
+        } else {
+            var defaultShuffle = L.createDefaultShuffleState(filteredCount());
+            shuffleMode = defaultShuffle.shuffleMode;
+            shuffledSequence = defaultShuffle.shuffledSequence;
+            shuffleStep = defaultShuffle.shuffleStep;
+            filteredCursor = defaultShuffle.filteredCursor;
+            if (filteredCount() > 0) {
+                playlistIndex = filteredMasterIndices[filteredCursor];
+            }
         }
 
         function attachPlayer() {
@@ -660,6 +680,26 @@
                 if (icon) icon.textContent = 'shuffle';
             }
 
+            /**
+             * Reset to a fresh reshuffled ALL Playlist, paused on a new random poster (D19).
+             * Called when the ALL Playlist (or a collection) reaches its last video.
+             */
+            function resetToFreshShuffledPlaylist() {
+                var fc = filteredCount();
+                if (fc <= 0) return;
+                // Build a brand-new shuffle — item at sequence[0] becomes the new poster.
+                shuffledSequence = L.buildShuffledSequence(fc);
+                shuffleStep = 0;
+                filteredCursor = shuffledSequence[0];
+                shuffleMode = true;
+                var masterIx = filteredMasterIndices[filteredCursor];
+                if (masterIx === undefined) return;
+                // Load the new head, paused (false = no autoplay).
+                loadVideoMaster(masterIx, false).then(function () {
+                    updatePlaylistNavButtons();
+                });
+            }
+
             function advanceOnEnded() {
                 if (!L.shouldAdvanceOnEnded(visitorStartedPlayback)) return;
                 var step = L.nextPlaylistStep({
@@ -669,7 +709,11 @@
                     filteredCount: filteredCount(),
                     shuffledSequence: shuffledSequence,
                 });
-                if (!step) return;
+                if (!step) {
+                    // End of ALL playlist (D19): reset to fresh reshuffle, paused on new poster.
+                    resetToFreshShuffledPlaylist();
+                    return;
+                }
                 if (shuffleMode) {
                     shuffleStep = step.shuffleStep;
                     filteredCursor = step.filteredCursor;
