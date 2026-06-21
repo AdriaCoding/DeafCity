@@ -7,33 +7,49 @@ Requirements from Antoni for the `/preview/` site before it replaces the live ho
 **Source of truth:** `data/catalog.json` (see [CONTEXT.md](../CONTEXT.md))  
 **Key components:** `preview/components/vimeo_caption_player.php`, `preview/lib/videos_catalog.php`
 
+**North star:** the home page must read as an **intuitive playlist video player with no explanatory text on screen**. Minimalism is the priority, won through **restraint** (quiet, evenly-styled controls; brand green only on active state) — *not* by hiding controls behind menus. The "this is a playlist" cue comes from the **transport row affordances** (`⏮ ⏯ ⏭ 🔀`), not a caption.
+
 ---
 
 ## Design system
 
 | Token | Value | Applies to |
 |-------|-------|------------|
-| Brand green | `rgb(0, 120, 0)` | Subtitles, accents, picker highlights, links |
+| Brand green | `rgb(0, 120, 0)` | Subtitles, accents, picker highlights, active state, links |
 | Body font | Roboto | All UI text, subtitles, About page |
 | Style | Minimalistic | Per project convention |
 
-Subtitles should match the **on-video subtitle scale** from the source Video — see §1.4 for the height-based sizing rule (not viewport width or stack width).
+Subtitles match the **on-video subtitle scale** from the source Video — see §1.4 for the height-based sizing rule.
 
 ---
 
 ## Information architecture
 
-The home page is **non-scrollable**: only the player and site navigation. All other content lives on dedicated routes.
+The home page is **non-scrollable**: only the player and its three-row control chrome. All other content lives on dedicated routes.
 
 | Route | Purpose |
 |-------|---------|
-| `/preview/` (home) | Full-viewport player + navigation |
+| `/preview/` (home) | Full-viewport player + three-row chrome |
 | `/preview/about` | Project text, realtime clock, gallery, credits |
 | `/preview/participants` | Participant grid → loads participant Playlist on home |
 | `/preview/tags` | Tag cloud → loads tag Playlist on home *(next sprint)* |
 | `/preview/map` | Interactive Edition map *(next sprint)* |
 
-Navigation sits **below the video controls** in the player chrome — not a top nav bar. On home, only **other routes** are shown (today: a single **[About]** button). Secondary pages use a text link **← go back to player**. Home viewport does not scroll (PRD D9–D11).
+Navigation sits in **row R3** of the player chrome (below transport and filters) — not a top nav bar. Only **other routes** are shown, and **only routes that have shipped** (no dead placeholders). Secondary pages use a **← go back to player** text link. Home never scrolls (PRD D9–D11).
+
+---
+
+## Player chrome — three control rows
+
+| Row | Contents |
+|-----|----------|
+| **R1 — Transport** | Play/Pause · Prev · Next · Shuffle · Reset |
+| **R2 — Filters** | **Sign language** · **Spoken Language** · **City/Edition** · **Typology** |
+| **R3 — Navigation** | **About** · **Participants** (later **Tags**, **Map**) |
+
+R2 holds three real playlist **filters** plus one **track selector** (Spoken Language). Spoken Language sits with the filters for tidiness but does **not** re-queue the Playlist (PRD D15–D16).
+
+**Mobile (PRD D20):** everything-visible first — controls shrink, R2 may wrap to two lines, video gives up height, non-scroll preserved. Collapse R2 behind a single filter control **only on narrow viewports** as a last resort. Desktop always shows all three rows in full.
 
 ---
 
@@ -41,134 +57,123 @@ Navigation sits **below the video controls** in the player chrome — not a top 
 
 ### 1.1 Playlist-first UX
 
-The player is **Playlist-driven**, not single-video-first. The UI must make the active Playlist obvious at all times.
+The player is **Playlist-driven**. Playlist context is read from the **picker button faces** — each shows its selected value once chosen. There is **no separate Playlist-name label** (PRD D14); the unfiltered state shows nothing, since "All videos" is noise.
 
-**Current state:** The player loads the full catalog as one flat Playlist (`vpc_vimeo_playlist_all_from_catalog`). Transport controls (prev/next/shuffle) exist but Playlist context is implicit.
+**Default Playlist (D2):** every visit loads **all visible Videos** in a **fresh random order**, equal probability per Video, re-shuffled per page load (not persisted).
 
-**Default Playlist (decided):** On every visit, load **all visible Videos** from the Catalog, in a **fresh random order**. Each Video has equal probability of appearing at any position (including first). Re-shuffle on each page load — not persisted across visits.
+**Cold-load poster (D12):** the server picks a **random** Video as the paused poster, and that Video **is the head of the shuffled queue**. The paused frame the visitor sees is exactly what plays when they press Play. Reload = a new random face.
 
 **Requirements:**
 
-- [ ] Surface the active Playlist name in the player chrome (not just transport icons).
-- [ ] When a category filter is applied, the displayed name is the **selected category value** (e.g. `LSE Spanish Sign Language`, `2023 Bilbao`, `Joke`) — not a generic picker label like "Sign language".
-- [ ] Prev/Next advance within the **current filtered Playlist**, respecting shuffle state.
-- [ ] On first load with no filters active, show the full-catalog Playlist in random order (see above).
+- [ ] Picker button faces surface the active filter value; **no standalone Playlist-name label** (D14).
+- [ ] Prev/Next advance within the **current** Playlist, respecting shuffle.
+- [ ] Cold load: server-side random poster = shuffled queue head (D12).
 
 **Acceptance criteria:**
 
-- A visitor can tell what they are watching (which Playlist / filter) without opening a picker.
-- Changing category replaces the Playlist and resets playback to the first Video in the new list (unless specified otherwise for participant/tag selection — see §2).
-- Reloading the home page produces a new random order; over many reloads every Video appears first with roughly equal frequency.
+- A visitor can tell what they are watching from the picker faces, without opening a picker.
+- Reloading produces a new random poster + order; over many reloads every Video appears first with roughly equal frequency.
+- Pressing Play continues the exact Video shown as the poster (no silent swap).
 
 ---
 
-### 1.2 Category pickers (Sign language, Edition, Typology)
+### 1.2 Category filter pickers (Sign language, City/Edition, Typology)
 
-Three Playlist filters, each rendered as a **button of the same visual class** that opens a dropdown or dropup.
+Three Playlist filters in R2, each a **button of the same visual class** opening a custom-styled dropdown/dropup (not a native `<select>`), brand green accents.
 
 | Picker | Catalog field | Label source |
 |--------|---------------|--------------|
 | Sign language | `sign_language` | `data/studio-config.json` → `sign_languages[].label` |
-| Edition (ciutat) | `edition` | `data/studio-config.json` → `editions[].label` |
+| City/Edition | `edition` | `data/studio-config.json` → `editions[].label` |
 | Typology | `typology` | `data/studio-config.json` → `typologies[].label` |
 
 **Requirements:**
 
-- [ ] Each picker shows the **currently selected value** on the button face once chosen.
-- [ ] Dropdown/dropup is **custom-styled** (not a native `<select>`), visually distinct, using brand green.
-- [ ] Pickers compose: selecting Sign language + Edition + Typology narrows the Playlist to Videos matching all active filters.
-- [ ] With no picker active, default is the full-catalog Playlist (§1.1) — pickers show their generic label until the visitor selects a value.
+- [ ] Each picker shows the **currently selected value** on the button face once chosen; the generic label before selection.
+- [ ] Dropdown is **custom-styled**, brand green.
+- [ ] Pickers **populate only from values present in the visible Catalog** — empty facets are hidden (PRD D17). Sign language shows the used languages, not all 9 config labels; City shows the real Editions, not all 10.
+- [ ] Pickers **compose (AND)** — Sign + City + Typology narrows to Videos matching all active filters.
+- [ ] Changing a filter replaces the Playlist and starts from the first Video in the new list.
 
 **Acceptance criteria:**
 
-- Pickers are visually consistent with each other and with the Participants button (§2).
-- Selected category persists in the button label after the menu closes.
+- Pickers are visually consistent with each other and with the R3 nav buttons.
+- A visitor can never select a facet value that yields an empty Playlist.
+- Selected value persists on the button face after the menu closes.
 
 ---
 
-### 1.3 Subtitle language picker
+### 1.3 Spoken Language track selector
+
+Renamed from "Captions/Subtitle language". A **track selector**, not a filter — it swaps the subtitle track of the **current** Video and does not re-queue (PRD D16).
 
 **Requirements:**
 
-- [ ] Placement per §5 Design tasks.
-- [ ] Implement chosen placement using the same green-accent picker style as category pickers.
-- [ ] Subtitle language choice sticks across Videos in the Playlist when the next Video supports that language (existing sticky-track behaviour in `vimeo_caption_player.js`).
+- [ ] Placement: **R2**, alongside the category pickers (PRD D15–D16) — design question resolved.
+- [ ] Same green-accent picker style as the category pickers (issue 07).
+- [ ] Choice **sticks across Videos** when the next Video supports that language; falls back when not (existing sticky-track behaviour in `vimeo_caption_player.js`).
 
 ---
 
 ### 1.4 Captions layout & typography
 
-**Implemented (issue 02).** Corrections applied during implementation — the draft spec below had several misalignments with the desired UX.
+**Implemented (issue 02).**
 
-**Spec corrections (was wrong in draft):**
+- [x] Caption box **above** the video, flush against the top edge — zero gap (D3).
+- [x] Wrapper reserves **two lines** (fixed height); single-line cues on the **bottom** row (D5).
+- [x] Roboto, `rgb(0, 120, 0)`.
+- [x] Font size from **iframe height** (~4.8%, 14–38px); box width = visible video width, centered (D4, D6).
 
-| Draft said | Actual requirement |
-|------------|-------------------|
-| Captions attached to the video **bottom** edge on narrow viewports | Captions sit **above** the video, flush against its **top** edge |
-| Size matched via viewport/`clamp()` or stack width | Font size scales from **rendered iframe height** (~4.8%, 14–38px) — stack width oversizes on wide screens where the mobile aspect-ratio crop (`1.2 / 1`) is not applied |
-| Single-line text centered in the reserved box | Single-line cues use the **bottom row** of the two-line reserve (`flex-end`) so text sits closest to the video |
-
-**Requirements:**
-
-- [x] Caption box **above** the video, flush against the video top edge — zero gap, especially on mobile.
-- [x] Caption wrapper reserves space for **two lines** without shifting video or controls (fixed height).
-- [x] Single-line cues render on the **bottom line** of the reserved area.
-- [x] Caption text: Roboto (loaded on `/preview/`), `rgb(0, 120, 0)`.
-- [x] Font size from **iframe height** after layout; caption box width matches visible video width (iframe, capped at shell), centered in `.video-stack`.
-
-**Acceptance criteria:**
-
-- [x] Captions appear directly above the video with no visible gap.
-- [x] A two-line cue does not cause the player chrome to jump.
-- [x] Wide-screen captions are not oversized relative to the visible video frame.
-
-**Implementation:** `preview/components/vimeo_caption_player.{php,css}`, `preview/js/vimeo_caption_player.js` (`syncCaptionTypography`, `--vpc-caption-font-size`, `--vpc-caption-width`).
+**Implementation:** `preview/components/vimeo_caption_player.{php,css}`, `preview/js/vimeo_caption_player.js`.
 
 ---
 
-### 1.5 Transport controls
+### 1.5 Transport controls (R1)
 
-| Control | Current behaviour | Required change |
-|---------|-------------------|-----------------|
-| Play/Pause | Manual + click hit-area | Keep; **remove autoplay-on-load** (see §1.6) |
-| Prev / Next | Playlist navigation | Keep |
-| Shuffle | Toggles random order within filtered Playlist | Improve UX so toggle state is obvious |
-| Reset | Restarts **current Video** from t=0 | **Decided** — keep current-Video-only behaviour for now |
+| Control | Behaviour |
+|---------|-----------|
+| Play/Pause | Manual + click hit-area (D8); **no autoplay** (§1.6) |
+| Prev / Next | Playlist navigation within current Playlist |
+| Shuffle | **On by default.** Off → catalog order from current Video onward; not persisted (D13) |
+| Reset | Restarts **current Video** from t=0 (D1) |
 
-**Shuffle UX:**
+**Shuffle UX (issue 03):**
 
-- [ ] Default on visit: shuffle **on** for the full-catalog Playlist (§1.1).
-- [ ] Make shuffle clearly a **toggle** (on/off random order within the current Playlist), not an opaque icon.
-- [ ] Visual active state when shuffle is enabled (e.g. pressed styling, label, or tooltip).
-- [ ] When shuffle is off, Prev/Next follow catalog order (or filter order); when on, follow a shuffled sequence for the session.
+- [ ] Shuffle reads clearly as a **toggle** with a visible active/inactive state (not an opaque icon).
+- [ ] On: shuffled session order. Off: catalog (or filter) order from the current Video onward (D13).
+- [ ] State **not persisted** — every visit is fresh shuffle-on.
 
 ---
 
 ### 1.6 Playback model (no autoplay)
 
-**Current state:** Vimeo embed defaults to `autoplay=1`, `muted=1`; unmute badge (`.vpc-sound-badge`) overlays the video.
-
 **Requirements:**
 
 - [ ] Remove the mute/unmute button.
-- [ ] Disable autoplay on initial load — visitor presses Play, as on the legacy homepage.
-- [ ] Define Playlist autoplay behaviour: when a Video ends, advance to the next Video in the Playlist **only if** the visitor had started playback (do not auto-start the first Video on page load).
+- [ ] **No autoplay** on load — paused poster (D12); visitor presses Play.
+- [ ] When a Video ends, advance to the next in the Playlist **only if** the visitor had started playback.
+
+**End-of-playlist behaviour (PRD D19):**
+
+- [ ] A **collection** (Participant/Tag) finishing → clear to a **fresh reshuffled unfiltered ALL Playlist, paused**.
+- [ ] The **ALL** Playlist finishing → same (fresh reshuffle, paused).
+- [ ] A **facet-filtered** Playlist finishing → **loop within the filter** (reshuffle, stay filtered), **paused on the new first Video**.
 
 **Acceptance criteria:**
 
-- Page load: video paused, no sound, no autoplay.
-- After visitor presses Play: end-of-video advances within Playlist (respecting shuffle).
+- Page load: paused poster, no sound, no autoplay.
+- End-of-Video advances within the Playlist (respecting shuffle) once playback has started.
 - No mute/unmute control visible.
 
 ---
 
 ### 1.7 Home page layout
 
-**Implemented (issues 06, 09).**
+**Implemented (issues 06, 09); R3 grows as routes ship.**
 
-- [x] Home page has **no scrollable content** — player fills the viewport; site nav below transport and filters (PRD D9–D10).
-- [x] Home shows only **[About]** in chrome nav — no redundant current-page button.
-- [ ] **Participants** button joins chrome nav when §2.2 ships (issue 08).
+- [x] Home has **no scrollable content** (D9); chrome below the video.
+- [x] R3 shows only **[About]** today — no redundant current-page button.
+- [ ] **Participants** joins R3 when §2.2 ships (issue 08).
 
 ---
 
@@ -176,13 +181,13 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 ### 2.1 Catalog: Participant field
 
-**Current state:** Participant name is embedded in the Video `title` (e.g. `LIBRAS_São Paulo_Edinho_1 #HEARING CROWD` → participant ≈ `Edinho`). No dedicated catalog field yet.
+**Current state:** Participant is embedded in the Video `title` — two formats: `LIBRAS_São Paulo_Edinho_1 #HEARING CROWD` (bulk; participant = field 3) and `#SHEEP by Hamida` (new Studio; participant after `by`). No `participant` field yet (0/24).
 
 **Requirements:**
 
-- [ ] Add `participant` (string) to catalog entries.
-- [ ] Backfill from existing titles via a one-off script or Studio migration; new Videos get the field at Publication.
-- [ ] Studio: expose Participant on the video edit form (optional for this sprint if backfill covers existing data).
+- [ ] Add `participant` (string) to Catalog entries.
+- [ ] Backfill via one-off script: field 3 of `SIGN_City_Name_N` for the bulk format, `by (Name)` fallback for the new format, then a **manual spot-check** for oddballs (casing like `sony`, surnames like `Riutort`/`Pegolino`). Review output before commit.
+- [ ] New Videos get the field at Publication going forward.
 
 ---
 
@@ -190,44 +195,28 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 **Requirements:**
 
-- [ ] Player chrome includes a **Participants** button — same visual class as category pickers.
-- [ ] Button navigates to `/preview/participants`.
-- [ ] Page shows a **grid of thumbnails**: one representative Video per distinct Participant (pick first Video or a designated thumbnail per person).
-- [ ] Grid is **built from scratch** — do not reuse the Mateo/legacy thumb grid UI.
+- [ ] **Participants** button in R3 (same class as **[About]**), navigates to `/preview/participants`.
+- [ ] Page shows a **grid of thumbnails**: one representative Video per distinct Participant. **Built from scratch** — do not reuse the Mateo/legacy thumb grid.
 - [ ] No hover overlay / metadata on thumbnails.
-- [ ] Whether to show Participant name under each thumbnail — see §5 Design tasks.
+- [ ] Participant name under each thumbnail vs image-only — see §5 (only open design item).
+- [ ] `/preview/participants` uses **← go back to player** (D11).
 
-**Interaction:**
+**Interaction (PRD D18):**
 
-- [ ] Clicking a thumbnail returns to home (`/preview/`) and loads a Playlist of **all Videos by that Participant** (typically one or two).
-- [ ] While that Playlist is active, the Participants button shows the **Participant name** instead of the generic label.
+- [ ] Clicking a thumbnail returns to `/preview/` and loads a Playlist of **all Videos by that Participant** (a page pick is a **RESET** — clears any active R2 facets).
+- [ ] While that Playlist is active, the **R3 Participants button shows the Participant name**; picking any R2 facet clears it back to facet mode.
+- [ ] When the Participant Playlist finishes, clear to a fresh ALL Playlist, paused (D19).
 
 **Acceptance criteria:**
 
-- Grid lists every visible Participant exactly once.
-- Selecting a Participant plays their Videos and labels the Participants control with their name.
+- Grid lists every visible Participant exactly once (note Edinho ×2, Fabio ×2 → one thumb, two-Video Playlist).
+- Selecting a Participant plays their Videos and labels the R3 control with their name.
 
 ---
 
 ## 3. About
 
-**Implemented (issue 09).** About lives at `/preview/about`; home is player-only.
-
-**Requirements:**
-
-- [x] Move About off the home page to `/preview/about` — home stays player-only.
-- [x] Reuse from legacy site:
-  - [x] Realtime clock (`realtime/index.html` iframe)
-  - [x] Gallery (`views/_gallery.php` + `data/gallery.json`)
-  - [x] About text (`views/about/todo.php`)
-  - [x] Credits / trio video / sponsor logos
-- [x] Apply Roboto + `rgb(0, 120, 0)` to About page.
-- [x] Back link: **← go back to player** (PRD D11) — text link, not button row.
-
-**Acceptance criteria:**
-
-- [x] Home has no About scroll region.
-- [x] About page matches legacy content scope (clock + gallery + text + credits), with updated typography and colour.
+**Implemented (issue 09).** About lives at `/preview/about`; home is player-only. Clock + gallery + about text + credits, Roboto + brand green, **← go back to player** back link (D11).
 
 ---
 
@@ -235,61 +224,45 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 ### 4.1 Tags page
 
-Playlist selection by Tag — same interaction model as Participants.
+Playlist selection by Tag — same **page-pick RESET** model as Participants (PRD D18–D19).
 
-- [ ] Route: `/preview/tags`
-- [ ] Display: tag **cloud** inspired by [blind.wiki tags](https://blind.wiki/tags/) — font size scales with usage frequency.
-- [ ] Clicking a tag returns to home with a Playlist of Videos carrying that Tag.
+- [ ] Route `/preview/tags`; tag **cloud** (font size scales with frequency, à la blind.wiki).
+- [ ] Clicking a tag returns to home with that Tag's Playlist; Tag name shows on the R3 Tags button while active.
 
 ### 4.2 Map page
 
-- [ ] Route: `/preview/map`
-- [ ] Interactive map of DEAF.city Edition locations (reuse/adapt legacy `leaflet/` map if available).
-- [ ] Selecting a location filters or loads the Edition Playlist.
+- [ ] Route `/preview/map`; interactive map of Edition locations (reuse/adapt legacy `leaflet/`).
+- [ ] Selecting a location loads the Edition Playlist.
 
 ---
 
-## Decisions
+## 5. Design tasks *(remaining)*
 
-| # | Decision | Detail |
-|---|----------|--------|
-| D1 | **Reset button** | Restarts the **current Video** from t=0 only. Restarting the entire Playlist from the first Video is out of scope for now. |
-| D2 | **Default Playlist** | All visible Videos, **random order on every visit**. Each Video has equal chance of appearing at any position. Fresh shuffle per page load. |
-| D9 | **Non-scrollable home** | `/preview/` never scrolls — see PRD |
-| D10 | **Home chrome nav** | Other routes only, below transport/filters; today **[About]** button |
-| D11 | **Secondary page nav** | Single **← go back to player** text link on scrollable pages |
+Most chrome/navigation design is now decided. **Only one item is still open.**
 
----
-
-## 5. Design tasks *(open — standalone sprint item)*
-
-Visual and layout decisions blocked on design work. Implementation tasks above reference this section where needed.
-
-- [x] **Home navigation** — **decided & shipped:** other routes only as buttons below transport/filters; no top nav; home non-scrollable (D9–D10). About page uses **← go back to player** text link (D11). Participants / Tags / Map join home chrome as routes ship.
-- [ ] **Subtitle language picker placement** — where it sits in the player chrome (transport row, filter row, near captions, etc.). Blocks §1.3 implementation.
-- [ ] **Participants grid labels** — show Participant name under each thumbnail, or image-only. Blocks §2.2 polish.
-
-Deliverable: mockups or annotated wireframes for the player chrome + navigation, sufficient to implement without further product questions.
+- [x] **Home navigation** — R3 buttons below transport/filters; non-scroll; **← go back to player** on secondary pages (D9–D11). *Shipped.*
+- [x] **Spoken Language picker placement** — **R2**, with the category pickers (D15–D16). *Resolved.*
+- [x] **Three-row chrome + mobile behaviour** — R1/R2/R3, everything-visible first, R2 collapse only on narrow viewports (D15, D20). *Resolved.*
+- [ ] **Participants grid labels** — name under each thumbnail vs image-only. Blocks §2.2 polish only.
 
 ---
 
 ## Dependencies & notes
 
-- **Catalog:** All Playlist logic reads visible entries from `data/catalog.json` (`invisible: true` excluded).
-- **Config labels:** Edition and Sign language display names come from `data/studio-config.json`.
+- **Catalog:** All Playlist logic reads visible entries from `data/catalog.json` — **all 24 now visible**.
+- **Config labels:** Edition, Sign language, and Typology display names come from `data/studio-config.json`. **Pickers list only values present in the visible Catalog** (D17).
 - **Player component:** Extend `vimeo_caption_player.php` / `.js` / `.css` — avoid forking playback logic.
-- **Legacy reference:** `views/index.php` (player, clock, gallery, map, navigation).
-- **Prototype cleanup:** ~~Remove variant switcher (A/B/C) and inline About blocks from `preview/index.php`~~ — **done** (issues 06, 09).
+- **Legacy reference:** `views/index.php`.
 
 ---
 
 ## Suggested implementation order
 
-1. ~~Design system (Roboto, green, caption layout)~~ — caption layout **done** (issue 02); About page **done** (issue 09)  
-2. ~~Playback model~~ — **done** (issue 01)  
-3. Category pickers + Playlist filtering  
-4. **Design tasks (§5)** — home nav **done**; subtitle picker + grid labels still open  
-5. ~~Home navigation + non-scroll layout~~ — **done** (issues 06, 09)  
-6. Participant catalog field + Participants page *(grid labels after §5)*  
-7. ~~About page~~ — **done** (issue 09)  
+1. ~~Design system (Roboto, green, caption layout)~~ — **done** (02); About **done** (09)
+2. ~~Playback model~~ — **done** (01), but **reopen** for server-side random poster = queue head (D12)
+3. Shuffle toggle UX (03) + category pickers & filtering (04)
+4. Spoken Language R2 styling (07)
+5. ~~Home navigation + non-scroll + three-row chrome~~ — home/About **done** (06, 09); filter/nav rows land with 04/08
+6. Participant catalog field + Participants page (08) *(grid labels after §5)*
+7. ~~About page~~ — **done** (09)
 8. *(Next sprint)* Tags page, Map page
