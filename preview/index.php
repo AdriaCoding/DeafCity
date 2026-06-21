@@ -54,6 +54,7 @@ $logos = [
     <?php endif; ?>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=17">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=1">
     <style>
         /* ── Shared reset ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -433,6 +434,11 @@ $logos = [
     </style>
 </head>
 <body>
+<?php
+$currentRoute = 'home';
+$navClass = 'preview-site-nav preview-site-nav--overlay';
+include __DIR__ . '/components/site_nav.php';
+?>
 
 <!-- ── Video player (unchanged) ── -->
 <div class="preview-block">

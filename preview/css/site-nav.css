@@ -1,0 +1,29 @@
+.preview-site-nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid rgba(0, 120, 0, 0.2);
+    font-family: Roboto, Arial, sans-serif;
+}
+
+.preview-site-nav__link {
+    text-decoration: none;
+    font-weight: 500;
+    color: #333;
+}
+
+.preview-site-nav__link.is-active,
+.preview-site-nav__link:hover {
+    color: rgb(0, 120, 0);
+}
+
+.preview-site-nav--overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9000;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.95);
+}
