@@ -324,6 +324,16 @@ $signLangOptionsList = isset($vpc['sign_language_filter']['options']) && is_arra
     : array();
 $useSignLanguageFilter = count($signLangOptionsList) > 0;
 
+// ── R2 Spoken Language track selector (D16) ────────────────────────────────────
+// NOT a filter — swaps the subtitle track of the current video only, does not
+// re-queue the playlist. Sits in R2 as the second picker (after Sign language,
+// before City/Edition) per tasks.md §1.3 order: Sign · Spoken · City · Typology.
+// Options are distinct caption track labels across all visible catalog videos.
+// Omitted entirely when no catalog video has caption tracks.
+$spokenLangOptionsList = isset($vpc['spoken_language_options']) && is_array($vpc['spoken_language_options'])
+    ? $vpc['spoken_language_options']
+    : array();
+$useSpokenLanguagePicker = count($spokenLangOptionsList) > 0;
 
 // ── R2 filter row: City/Edition custom picker (D15, D17) ───────────────────────
 $editionOptionsList = isset($vpc['edition_filter']['options']) && is_array($vpc['edition_filter']['options'])
@@ -337,17 +347,19 @@ $typologyOptionsList = isset($vpc['typology_filter']['options']) && is_array($vp
     : array();
 $useTypologyFilter = count($typologyOptionsList) > 0;
 
-// Legacy caption-picker support (spoken language select — issue #7, not yet styled as R2 picker).
 $captionPickerDynamic = false;
-$captionSelectId      = $idBase . '__caption-lang-select';
-$showCaptionFilter    = count($captionTracks) > 0;
 
-// R2 row shows when there is at least one filter picker.
-$showR2FilterRow = $useSignLanguageFilter || $useEditionFilter || $useTypologyFilter;
+// R2 row shows when there is at least one filter picker or the spoken language selector.
+$showR2FilterRow = $useSignLanguageFilter || $useSpokenLanguagePicker || $useEditionFilter || $useTypologyFilter;
 
 // Prepare sign-language picker config for JS (D18 composable filter state).
 $signLangFilterForConfig = $useSignLanguageFilter
     ? array('options' => $signLangOptionsList)
+    : null;
+
+// Prepare spoken language options for JS (D16 track selector — not filterState).
+$spokenLangForConfig = $useSpokenLanguagePicker
+    ? $spokenLangOptionsList
     : null;
 
 // playlist_index from $vpc lets the caller specify which item is the initial poster.
@@ -369,6 +381,10 @@ $config = array(
     // R2 filter pickers config (D17, D18). signLanguageFilter carries options (value+label)
     // populated only from values present in the visible catalog.
     'signLanguageFilter'   => $signLangFilterForConfig,
+    // R2 Spoken Language track selector options (D16). Array of {value, label} for all
+    // distinct caption track labels in the catalog. JS uses stickyCaptionLabel to switch
+    // tracks without touching filterState or the playlist queue.
+    'spokenLanguageOptions' => $spokenLangForConfig,
 );
 
 $configJson = json_encode($config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
@@ -449,14 +465,19 @@ $showPlaylistNav = count($playlistNormalized) > 1;
     <?php
     /*
      * R2 — Filter row (D15, D17, D18)
-     * Contains Sign language, City/Edition, and Typology custom pickers.
-     * (Future slot: Spoken Language track selector — issue #6.)
+     * Order (tasks.md §1.3): Sign language · Spoken Language · City/Edition · Typology
+     * Sign language, City/Edition, Typology: real playlist filters (AND composition, D18).
+     * Spoken Language: track selector only — does NOT re-queue the playlist (D16).
      * Custom dropdown, NOT a native <select>. Brand green accents on active state.
      * Built to hold 4 pickers side-by-side (flex row, wraps on mobile per D20).
      */
     $signLangPickerId    = $idBase . '__sign-lang-picker';
     $signLangDropdownId  = $idBase . '__sign-lang-dropdown';
     $signLangPickerBtnId = $idBase . '__sign-lang-btn';
+
+    $spokenLangPickerId    = $idBase . '__spoken-lang-picker';
+    $spokenLangDropdownId  = $idBase . '__spoken-lang-dropdown';
+    $spokenLangPickerBtnId = $idBase . '__spoken-lang-btn';
 
     $editionPickerId    = $idBase . '__edition-picker';
     $editionDropdownId  = $idBase . '__edition-dropdown';
@@ -496,6 +517,55 @@ $showPlaylistNav = count($playlistNormalized) > 1;
                     aria-selected="true"
                 >All sign languages</li>
                 <?php foreach ($signLangOptionsList as $opt): ?>
+                    <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
+                <li
+                    role="option"
+                    class="vpc-picker-option"
+                    data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-selected="false"
+                ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
+        <?php if ($useSpokenLanguagePicker): ?>
+        <?php
+        /*
+         * Spoken Language picker (D16).
+         * data-picker="spoken_language" — JS identifies this picker by attribute.
+         * Does NOT participate in filterState or applyFilterChange().
+         * JS wires a separate handler that calls setActiveCaptionTrack() directly,
+         * leaving the playlist queue untouched.
+         */
+        ?>
+        <div
+            class="vpc-picker"
+            id="<?php echo htmlspecialchars($spokenLangPickerId, ENT_QUOTES, 'UTF-8'); ?>"
+            data-picker="spoken_language"
+        >
+            <button
+                type="button"
+                id="<?php echo htmlspecialchars($spokenLangPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-btn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="<?php echo htmlspecialchars($spokenLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                data-generic-label="Spoken Language"
+            >Spoken Language</button>
+            <ul
+                role="listbox"
+                id="<?php echo htmlspecialchars($spokenLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-dropdown"
+                aria-label="Spoken Language"
+                hidden
+            >
+                <li
+                    role="option"
+                    class="vpc-picker-option vpc-picker-clear"
+                    data-value=""
+                    aria-selected="true"
+                >No subtitles</li>
+                <?php foreach ($spokenLangOptionsList as $opt): ?>
                     <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
                 <li
                     role="option"
