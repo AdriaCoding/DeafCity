@@ -151,7 +151,7 @@
     transition: border-color 0.1s, color 0.1s, background 0.1s;
 }
 .vpc-picker-btn::after {
-    content: '\25BE'; /* ▾ */
+    content: '\25B4'; /* ▴ — dropup opens above the button */
     font-size: 0.75em;
     opacity: 0.5;
     margin-left: 0.15em;
@@ -176,10 +176,10 @@
     color: rgb(0, 120, 0);
 }
 
-/* Custom dropdown (role="listbox") */
+/* Custom dropup (role="listbox") — opens above R2 buttons so menus stay on canvas */
 .vpc-picker-dropdown {
     position: absolute;
-    top: calc(100% + 4px);
+    bottom: calc(100% + 4px);
     left: 0;
     z-index: 200;
     list-style: none;
@@ -187,11 +187,12 @@
     padding: 0.25rem 0;
     min-width: 100%;
     max-width: 22rem;
+    max-height: min(40vh, 16rem);
+    overflow-y: auto;
     background: #fff;
     border: 1px solid rgb(0, 120, 0);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    overflow: hidden;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
 }
 .vpc-picker-dropdown[hidden] {
     display: none;
