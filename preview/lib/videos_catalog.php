@@ -332,6 +332,125 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
     }
 }
 
+if (!function_exists('vpc_participants_from_catalog')) {
+    /**
+     * Return one representative visible video per distinct participant name.
+     * Keyed by participant name; value is the first visible catalog entry for that participant.
+     * Entries where `participant` is empty are skipped.
+     *
+     * @param array<string, mixed> $catalog
+     * @return array<string, array<string, mixed>>
+     */
+    function vpc_participants_from_catalog(array $catalog) {
+        if (!isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            return array();
+        }
+        $result = array();
+        foreach ($catalog['videos'] as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            $name = isset($v['participant']) ? trim((string) $v['participant']) : '';
+            if ($name === '') {
+                continue;
+            }
+            if (!isset($result[$name])) {
+                $result[$name] = $v;
+            }
+        }
+        return $result;
+    }
+}
+
+if (!function_exists('vpc_participant_playlist_from_catalog')) {
+    /**
+     * Build a $vpc-compatible playlist from all visible catalog entries where
+     * participant === $participantName. Same entry shape as vpc_vimeo_playlist_all_from_catalog.
+     *
+     * @param array<string, mixed> $catalog
+     * @param string $participantName
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_participant_playlist_from_catalog(array $catalog, $participantName) {
+        $participantName = trim((string) $participantName);
+        if ($participantName === '') {
+            return array();
+        }
+        if (!isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            return array();
+        }
+        $playlist = array();
+        foreach ($catalog['videos'] as $v) {
+            if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
+                continue;
+            }
+            if (!vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            $vParticipant = isset($v['participant']) ? trim((string) $v['participant']) : '';
+            if ($vParticipant !== $participantName) {
+                continue;
+            }
+            $entry = array();
+
+            if (!empty($v['vimeo_id'])) {
+                $entry['video_id'] = preg_replace('/\D/', '', (string) $v['vimeo_id']);
+            }
+            if (!empty($v['embed_url']) && is_string($v['embed_url'])) {
+                $entry['embed_url'] = $v['embed_url'];
+            }
+
+            $tracks = array();
+            if (!empty($v['captions']) && is_array($v['captions'])) {
+                foreach ($v['captions'] as $c) {
+                    if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
+                        continue;
+                    }
+                    $fn = basename((string) $c['file']);
+                    $tracks[] = array(
+                        'file'  => $fn,
+                        'label' => (string) $c['label'],
+                    );
+                }
+            }
+            if (count($tracks) > 0) {
+                $entry['caption_tracks'] = $tracks;
+            }
+
+            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
+            if ($sl !== '') {
+                $entry['sign_language'] = $sl;
+            }
+            $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
+            if ($edition !== '') {
+                $entry['edition'] = $edition;
+            }
+            $typology = isset($v['typology']) ? trim((string) $v['typology']) : '';
+            if ($typology !== '') {
+                $entry['typology'] = $typology;
+            }
+            $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
+            if ($participant !== '') {
+                $entry['participant'] = $participant;
+            }
+
+            $eParams = isset($v['embed_params']) && is_array($v['embed_params'])
+                ? $v['embed_params']
+                : array();
+            if (count($eParams) > 0) {
+                $entry['embed_params'] = $eParams;
+            }
+
+            if (empty($entry['video_id']) && empty($entry['embed_url'])) {
+                continue;
+            }
+
+            $playlist[] = $entry;
+        }
+        return $playlist;
+    }
+}
+
 if (!function_exists('vpc_shuffle_playlist')) {
     /**
      * Fisher-Yates shuffle of a playlist array (returns new shuffled copy).

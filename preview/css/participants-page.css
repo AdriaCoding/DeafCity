@@ -1,0 +1,61 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #111;
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.preview-participants-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.25rem 3rem;
+}
+
+.participants-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1rem 0;
+    color: #111;
+}
+
+.participants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.participant-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #111;
+}
+
+.participant-card img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+}
+
+.participant-name {
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    text-align: center;
+    word-break: break-word;
+    color: #111;
+}
+
+.participant-card:hover .participant-name {
+    color: rgb(0, 120, 0);
+}
+
+.participant-card:hover {
+    text-decoration: none;
+}

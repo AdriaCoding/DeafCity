@@ -42,6 +42,18 @@ if (count($playlist) > 0) {
         $vpc['typology_filter'] = ['options' => $typologyOptions];
     }
 }
+
+// D18: Participant page-pick — RESET: load participant playlist, clear R2 filters.
+$participantName = isset($_GET['participant']) ? trim((string)$_GET['participant']) : '';
+if ($participantName !== '' && $vpc !== null && $catalog !== null) {
+    $participantPlaylist = vpc_participant_playlist_from_catalog($catalog, $participantName);
+    if (count($participantPlaylist) > 0) {
+        $vpc['playlist'] = $participantPlaylist;
+        $vpc['playlist_index'] = 0;
+        $vpc['participant_name'] = $participantName;
+        // Participant playlists are not server-shuffled (use client-side shuffle)
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -388,4 +388,8 @@ if ($spokenLangCfgOptions !== null) {
 // The picker aria-label should say "Spoken Language", not "Caption" or "Subtitle"
 assert_contains('aria-label="Spoken Language"', $html, 'Spoken Language listbox aria-label');
 
+// ── Issue #7: R3 Participants nav button ──────────────────────────────────────
+assert_contains('href="/preview/participants"', $html, 'Participants nav button in R3');
+assert_contains('>Participants<', $html, 'Participants button label text');
+
 echo "\nAll tests passed.\n";
