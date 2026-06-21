@@ -22,6 +22,8 @@ Implement the v3 spec as thin vertical slices: playback and Playlist behaviour f
 | D4 | Caption font size scales from **rendered iframe height** (~4.8%, clamped 14–38px) — not stack/viewport width |
 | D5 | Caption box reserves **two lines** fixed height; single-line cues align to the **bottom** row (closest to video) |
 | D6 | Caption box width matches **visible video width** (iframe width, capped at shell width), centered in the stack |
+| D7 | Sign language filter: **no default filter** on cold visit — Playlist includes all visible Videos until the visitor picks a language |
+| D8 | Click on the video area toggles play/pause (transparent hit-area overlay over the cross-origin iframe) |
 
 ## Out of Scope (this batch)
 
@@ -33,7 +35,7 @@ Implement the v3 spec as thin vertical slices: playback and Playlist behaviour f
 
 | # | Issue | Type |
 |---|-------|------|
-| 01 | Manual playback and default random Playlist | AFK |
+| 01 | Manual playback and default random Playlist | AFK — **done** |
 | 02 | Caption layout and brand typography | AFK — **done** |
 | 03 | Shuffle toggle UX and active Playlist label | AFK |
 | 04 | Category filter pickers | AFK |
@@ -42,3 +44,15 @@ Implement the v3 spec as thin vertical slices: playback and Playlist behaviour f
 | 07 | Custom Subtitle language picker | AFK |
 | 08 | Participant catalog, grid page, and Playlist handoff | AFK |
 | 09 | About page with legacy clock, gallery, and credits | AFK |
+
+## Issue 01 — implementation notes (2026-06-21)
+
+Playback slice shipped. Corrections to the written spec:
+
+| Topic | Original assumption | Shipped behaviour |
+|-------|---------------------|-------------------|
+| Full-catalog Playlist | All visible Videos on load | Sign language picker previously defaulted to the first language, filtering the Playlist; now **All sign languages** (D7) |
+| First Video on load | Shuffled order from first paint | PHP iframe still renders catalog-order video 0; JS may swap on SDK attach |
+| Broken Vimeo embeds | — | No player fallback; unembeddable Videos show Vimeo error — fix in catalog / Vimeo settings |
+| Video click | Play via transport only | Hit-area overlay toggles play/pause (D8) |
+| Shuffle UX | On by default | Toggle state set in markup/JS; label and obvious toggle UX deferred to issue 03 |
