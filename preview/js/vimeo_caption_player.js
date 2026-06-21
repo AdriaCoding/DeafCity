@@ -599,12 +599,62 @@
                 return m ? m[1] : '';
             }
 
+            /**
+             * Update the Spoken Language picker button face to reflect the currently
+             * active (or sticky-but-unavailable) track after a video change.
+             * Called from applyLoadedVideoUi() so it fires on every video transition.
+             */
+            function syncSpokenLanguagePickerUi() {
+                var pickerEl = /** @type {HTMLElement|null} */ (
+                    root.querySelector('.vpc-picker[data-picker="spoken_language"]')
+                );
+                if (!pickerEl) return;
+
+                var genericLabel = 'Spoken Language';
+                var btn = pickerEl.querySelector('.vpc-picker-btn');
+                if (btn) {
+                    genericLabel = btn.getAttribute('data-generic-label') || genericLabel;
+                }
+
+                var cueTracks = currentItemCueTracksRaw();
+                // Check if the sticky label is available in the current video's tracks.
+                var matchIdx = stickyCaptionLabel ? pickStickyTrackIndex(cueTracks, stickyCaptionLabel) : -1;
+                var trackAvailable = stickyCaptionLabel !== ''
+                    && cueTracks.length > 0
+                    && matchIdx > 0; // index 0 means fallback (label not found), so only >0 is a real match
+
+                // Edge: if only one track and it matches at index 0, treat as matched.
+                if (stickyCaptionLabel !== '' && cueTracks.length > 0 && matchIdx === 0
+                    && cueTracks[0] && cueTracks[0].label === stickyCaptionLabel) {
+                    trackAvailable = true;
+                }
+
+                var options = pickerEl.querySelectorAll('.vpc-picker-option');
+                options.forEach(function (o) { o.setAttribute('aria-selected', 'false'); });
+
+                if (trackAvailable) {
+                    // Mark the matching option selected in the dropdown.
+                    options.forEach(function (o) {
+                        if ((o.getAttribute('data-value') || '') === stickyCaptionLabel) {
+                            o.setAttribute('aria-selected', 'true');
+                        }
+                    });
+                    updatePickerUi(pickerEl, stickyCaptionLabel, genericLabel, stickyCaptionLabel);
+                } else {
+                    // Sticky track unavailable for this video — fall back to "no selection".
+                    var clearOpt = pickerEl.querySelector('.vpc-picker-clear');
+                    if (clearOpt) clearOpt.setAttribute('aria-selected', 'true');
+                    updatePickerUi(pickerEl, null, genericLabel, '');
+                }
+            }
+
             function applyLoadedVideoUi() {
                 if (captionPickerDynamic) rebuildDynamicCaptionSelect();
                 var cueTracks = currentItemCueTracksRaw();
                 var trackIx = pickStickyTrackIndex(cueTracks, stickyCaptionLabel);
                 setActiveCaptionTrack(trackIx);
                 updateCaptionPickerVisibility();
+                syncSpokenLanguagePickerUi();
             }
 
             function resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay) {
@@ -812,6 +862,29 @@
             }
 
             // ── R2 custom pickers (D15, D17, D18) ──────────────────────────────────
+
+            /**
+             * Apply a Spoken Language track change (D16).
+             * Switches the subtitle track of the CURRENT video only.
+             * Does NOT touch filterState, does NOT re-queue the playlist.
+             * The selected label is persisted as stickyCaptionLabel so it sticks
+             * across videos (falling back gracefully when the next video lacks it).
+             * @param {string} label  Track label (e.g. "English"), or '' to clear.
+             */
+            function applySpokenLanguageChange(label) {
+                var cueTracks = currentItemCueTracksRaw();
+                if (label === '' || !label) {
+                    // Clear: disable subtitles (track index 0 with empty stickyCaptionLabel)
+                    stickyCaptionLabel = '';
+                    activeCaptionTrackIndex = 0;
+                    syncCaptionBox(captionBoxId, [], 0);
+                    return;
+                }
+                stickyCaptionLabel = label;
+                var idx = pickStickyTrackIndex(cueTracks, label);
+                setActiveCaptionTrack(idx);
+            }
+
             /**
              * Apply a filter change: update filterState, recompute filtered list,
              * shuffle within the new filtered set, load video[0] of new set.
@@ -889,6 +962,9 @@
                 var facet = pickerEl.getAttribute('data-picker');
                 if (!facet) return;
 
+                /** True for the Spoken Language track selector (D16 — not a filter). */
+                var isSpokenLanguagePicker = facet === 'spoken_language';
+
                 var btn = /** @type {HTMLButtonElement|null} */ (pickerEl.querySelector('.vpc-picker-btn'));
                 var dropdown = /** @type {HTMLElement|null} */ (pickerEl.querySelector('.vpc-picker-dropdown'));
                 var options = /** @type {NodeListOf<HTMLElement>} */ (
@@ -924,7 +1000,14 @@
 
                         var label = isClear ? '' : opt.textContent.trim();
                         updatePickerUi(pickerEl, isClear ? null : value, genericLabel, label);
-                        applyFilterChange(facet, isClear ? null : value);
+
+                        if (isSpokenLanguagePicker) {
+                            // D16: track selector — swap subtitle track, do NOT re-queue.
+                            applySpokenLanguageChange(isClear ? '' : value);
+                        } else {
+                            // Real filter: update filterState and re-queue playlist (D18).
+                            applyFilterChange(facet, isClear ? null : value);
+                        }
                     });
                 });
 

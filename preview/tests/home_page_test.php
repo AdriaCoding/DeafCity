@@ -321,8 +321,10 @@ if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
 }
 echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
 
-// AC: Three pickers appear in the R2 row in order: sign_language, edition, typology
+// AC: Four pickers appear in the R2 row in order: sign_language, spoken_language, edition, typology
+// (tasks.md §1.3: Sign language · Spoken Language · City/Edition · Typology)
 $slPos  = strpos($html, 'data-picker="sign_language"');
+$spPos  = strpos($html, 'data-picker="spoken_language"');
 $edPos  = strpos($html, 'data-picker="edition"');
 $tyPos  = strpos($html, 'data-picker="typology"');
 if ($slPos === false || $edPos === false || $tyPos === false) {
@@ -334,5 +336,56 @@ if (!($slPos < $edPos && $edPos < $tyPos)) {
     exit(1);
 }
 echo "PASS: pickers appear in correct DOM order (sign_language → edition → typology)\n";
+
+// ── Issue #6: Spoken Language track selector ──────────────────────────────────
+
+// AC: Control is labelled "Spoken Language" everywhere — no "Captions" or "Subtitle" wording
+assert_not_contains('Captions', $html, 'no "Captions" wording anywhere in HTML');
+assert_not_contains('Subtitle language', $html, 'no "Subtitle language" wording');
+assert_not_contains('Caption language', $html, 'no "Caption language" wording');
+assert_not_contains('caption-lang-select', $html, 'no legacy caption-lang-select element');
+
+// AC: Spoken Language picker renders in R2 using custom picker style
+if ($spPos === false) {
+    fwrite(STDERR, "FAIL: Spoken Language picker (data-picker=\"spoken_language\") missing from HTML\n");
+    exit(1);
+}
+echo "PASS: Spoken Language picker renders in R2 (data-picker=spoken_language)\n";
+
+assert_contains('data-generic-label="Spoken Language"', $html, 'Spoken Language picker generic label');
+assert_contains('>Spoken Language<', $html, 'Spoken Language picker button face text');
+
+// AC: Spoken Language picker uses custom picker style (vpc-picker-btn, vpc-picker-dropdown)
+// (no native <select> — already checked above in the "no native <select>" assertion)
+
+// AC: Spoken Language picker is positioned SECOND in R2: after sign_language, before edition
+if (!($spPos === false || ($slPos < $spPos && $spPos < $edPos))) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should appear after sign_language and before edition in DOM\n");
+    exit(1);
+}
+if ($spPos !== false) {
+    echo "PASS: Spoken Language picker in correct R2 position (after sign_language, before edition)\n";
+}
+
+// AC: Spoken Language picker has a "No subtitles" clear option (not "All languages")
+assert_contains('No subtitles', $html, 'Spoken Language clear option says "No subtitles"');
+
+// AC: spokenLanguageOptions present in vpc-config JSON (JS uses it for track switching)
+$cfg3 = $cfg;
+$spokenLangCfgOptions = isset($cfg3['spokenLanguageOptions']) ? $cfg3['spokenLanguageOptions'] : null;
+if ($spokenLangCfgOptions !== null) {
+    if (!is_array($spokenLangCfgOptions) || count($spokenLangCfgOptions) === 0) {
+        fwrite(STDERR, "FAIL: spokenLanguageOptions in vpc-config is empty or not an array\n");
+        exit(1);
+    }
+    echo "PASS: spokenLanguageOptions present in vpc-config (" . count($spokenLangCfgOptions) . " options)\n";
+} else {
+    // spokenLanguageOptions may be null when no video has caption tracks — that's valid.
+    echo "SKIP: spokenLanguageOptions not in vpc-config (no caption tracks in current playlist)\n";
+}
+
+// AC: No wording that could cause confusion with the category filters in the picker
+// The picker aria-label should say "Spoken Language", not "Caption" or "Subtitle"
+assert_contains('aria-label="Spoken Language"', $html, 'Spoken Language listbox aria-label');
 
 echo "\nAll tests passed.\n";

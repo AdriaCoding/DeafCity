@@ -192,27 +192,46 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
     }
 }
 
-if (!function_exists('vpc_shuffle_playlist')) {
+if (!function_exists('vpc_spoken_language_options_from_catalog')) {
     /**
-     * Fisher-Yates shuffle of a playlist array (returns new shuffled copy).
-     * The item at index 0 after shuffling is both the paused poster and the queue
-     * head (D12: server-side random poster = shuffled queue head). Reload = new face.
+     * Derive Spoken Language options from distinct caption track labels across all
+     * visible catalog videos.  These labels are shown in the track selector picker
+     * (not a filter — does not re-queue the playlist, D16).
      *
-     * @param array<int, array<string, mixed>> $playlist
-     * @return array<int, array<string, mixed>>
+     * Returns an empty array when no catalog video has caption tracks; the caller
+     * should omit the Spoken Language picker in that case.
+     *
+     * @param array<string, mixed> $catalog
+     * @return array<int, array{value: string, label: string}>
      */
-    function vpc_shuffle_playlist(array $playlist) {
-        $n = count($playlist);
-        if ($n <= 1) {
-            return $playlist;
+    function vpc_spoken_language_options_from_catalog(array $catalog) {
+        $seen = array();
+        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            if (empty($v['captions']) || !is_array($v['captions'])) {
+                continue;
+            }
+            foreach ($v['captions'] as $c) {
+                if (!is_array($c) || empty($c['label'])) {
+                    continue;
+                }
+                $label = trim((string) $c['label']);
+                if ($label !== '' && !isset($seen[$label])) {
+                    $seen[$label] = true;
+                }
+            }
         }
-        for ($i = $n - 1; $i > 0; $i--) {
-            $j = mt_rand(0, $i);
-            $tmp         = $playlist[$i];
-            $playlist[$i] = $playlist[$j];
-            $playlist[$j] = $tmp;
+
+        $opts = array();
+        foreach (array_keys($seen) as $label) {
+            $opts[] = array(
+                'value' => $label,
+                'label' => $label,
+            );
         }
-        return array_values($playlist);
+        return $opts;
     }
 }
 

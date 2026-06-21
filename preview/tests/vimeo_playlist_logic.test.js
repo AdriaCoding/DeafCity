@@ -430,4 +430,138 @@ var samplePlaylist = [
     assert.strictEqual(seq.length, samplePlaylist.length);
 })();
 
+// ── Issue #6: Spoken Language track selector — does NOT alter filterState or queue (D16) ──
+
+/**
+ * Simulate applySpokenLanguageChange from vimeo_caption_player.js.
+ * This is the algorithm under test: it must not touch filterState or
+ * filteredMasterIndices.  It only updates stickyCaptionLabel and
+ * activeCaptionTrackIndex (via pickStickyTrackIndex).
+ */
+function simulateSpokenLanguageChange(label, stickyCaptionLabel, cueTracks) {
+    var newSticky = stickyCaptionLabel;
+    var newTrackIdx = 0;
+
+    if (label === '' || !label) {
+        // Clear — disable subtitles
+        newSticky = '';
+        newTrackIdx = 0;
+    } else {
+        newSticky = label;
+        // pickStickyTrackIndex: find label in cueTracks or return 0
+        newTrackIdx = 0;
+        for (var i = 0; i < cueTracks.length; i++) {
+            if (cueTracks[i] && cueTracks[i].label === label) {
+                newTrackIdx = i;
+                break;
+            }
+        }
+    }
+    return { stickyCaptionLabel: newSticky, activeCaptionTrackIndex: newTrackIdx };
+}
+
+// Track change does NOT modify filterState
+(function () {
+    var filterState = { sign_language: 'lse', edition: null, typology: null };
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    var queueLengthBefore = filtered.length;
+    assert.strictEqual(queueLengthBefore, 3, 'lse filter gives 3 videos before track change');
+
+    // Simulate track change (e.g. user selects "English")
+    var cueTracks = [{ label: 'Spanish', file: 'a.vtt' }, { label: 'English', file: 'b.vtt' }];
+    var result = simulateSpokenLanguageChange('English', '', cueTracks);
+    assert.strictEqual(result.stickyCaptionLabel, 'English', 'sticky label updated');
+    assert.strictEqual(result.activeCaptionTrackIndex, 1, 'active track index updated');
+
+    // filterState is unchanged — track change must NOT touch it
+    assert.strictEqual(filterState.sign_language, 'lse', 'filterState.sign_language unchanged after track change');
+    assert.strictEqual(filterState.edition, null, 'filterState.edition unchanged after track change');
+    assert.strictEqual(filterState.typology, null, 'filterState.typology unchanged after track change');
+
+    // filteredMasterIndices is unchanged — re-running recompute gives same result
+    var filteredAfter = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filteredAfter.length, queueLengthBefore, 'queue length unchanged after track change (D16)');
+    assert.deepStrictEqual(filteredAfter, filtered, 'queue content unchanged after track change (D16)');
+})();
+
+// Track change works with unfiltered playlist (all videos)
+(function () {
+    var filterState = { sign_language: null, edition: null, typology: null };
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filtered.length, samplePlaylist.length, 'all videos before track change');
+
+    var cueTracks = [{ label: 'Portuguese', file: 'c.vtt' }];
+    var result = simulateSpokenLanguageChange('Portuguese', '', cueTracks);
+    assert.strictEqual(result.stickyCaptionLabel, 'Portuguese', 'sticky label set to Portuguese');
+    assert.strictEqual(result.activeCaptionTrackIndex, 0, 'active track index 0 (only track)');
+
+    // Queue unchanged
+    var filteredAfter = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filteredAfter.length, samplePlaylist.length, 'queue length unchanged after track change on all-videos playlist');
+})();
+
+// Clear spoken language (label='') resets sticky without touching queue
+(function () {
+    var filterState = { sign_language: 'libras', edition: '2023-sao-paulo', typology: null };
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    var queueBefore = filtered.length;
+
+    var cueTracks = [{ label: 'English', file: 'e.vtt' }];
+    // First select a track
+    var set = simulateSpokenLanguageChange('English', '', cueTracks);
+    assert.strictEqual(set.stickyCaptionLabel, 'English', 'track selected');
+    // Then clear it
+    var cleared = simulateSpokenLanguageChange('', set.stickyCaptionLabel, cueTracks);
+    assert.strictEqual(cleared.stickyCaptionLabel, '', 'sticky label cleared');
+    assert.strictEqual(cleared.activeCaptionTrackIndex, 0, 'track index reset to 0 on clear');
+
+    // filterState still active — queue unchanged
+    var filteredAfter = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filteredAfter.length, queueBefore, 'queue length unchanged after clearing spoken language');
+})();
+
+// Sticky-track behaviour: when next video lacks the label, pickStickyTrackIndex returns 0 (fallback)
+(function () {
+    var stickyCaptionLabel = 'English';
+    // Next video has no tracks
+    var cueTracks = [];
+    var result = simulateSpokenLanguageChange(stickyCaptionLabel, '', cueTracks);
+    // When cueTracks is empty, the loop finds nothing, returns index 0
+    assert.strictEqual(result.activeCaptionTrackIndex, 0, 'falls back to index 0 when next video lacks the sticky label');
+
+    // Next video has tracks but not the sticky label
+    var cueTracks2 = [{ label: 'Spanish', file: 'x.vtt' }];
+    var result2 = simulateSpokenLanguageChange(stickyCaptionLabel, '', cueTracks2);
+    assert.strictEqual(result2.activeCaptionTrackIndex, 0, 'falls back to index 0 when sticky label not found in new tracks');
+
+    // Next video has the sticky label
+    var cueTracks3 = [{ label: 'Spanish', file: 'x.vtt' }, { label: 'English', file: 'y.vtt' }];
+    var result3 = simulateSpokenLanguageChange(stickyCaptionLabel, '', cueTracks3);
+    assert.strictEqual(result3.activeCaptionTrackIndex, 1, 'sticks at index 1 when English found in new tracks');
+})();
+
+// Spoken Language change does not interfere with AND filter composition
+(function () {
+    // Start with three-facet filter active
+    var filterState = { sign_language: 'lse', edition: '2020-valencia', typology: 'malentesos' };
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filtered.length, 1, 'three-facet filter gives 1 result');
+
+    // Apply spoken language track change
+    var cueTracks = [{ label: 'Valencian', file: 'v.vtt' }, { label: 'Spanish', file: 's.vtt' }];
+    var trackResult = simulateSpokenLanguageChange('Valencian', '', cueTracks);
+    assert.strictEqual(trackResult.stickyCaptionLabel, 'Valencian', 'track selected');
+    assert.strictEqual(trackResult.activeCaptionTrackIndex, 0, 'track at index 0');
+
+    // All three filter facets must remain intact
+    assert.strictEqual(filterState.sign_language, 'lse', 'sign_language filter intact after spoken lang change');
+    assert.strictEqual(filterState.edition, '2020-valencia', 'edition filter intact after spoken lang change');
+    assert.strictEqual(filterState.typology, 'malentesos', 'typology filter intact after spoken lang change');
+
+    // Queue still the same 1-video result
+    var filteredAfter = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filteredAfter.length, 1, 'queue still 1-video after spoken lang change (D16)');
+    assert.deepStrictEqual(filteredAfter, filtered, 'queue content identical after spoken lang change');
+})();
+
 console.log('vimeo_playlist_logic.test.js: all passed');

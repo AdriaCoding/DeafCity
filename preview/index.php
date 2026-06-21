@@ -12,9 +12,10 @@ $catalog  = vpc_load_videos_catalog($catalogJsonPath);
 // D2 + D12: shuffle server-side so item[0] is both the paused poster and the queue head.
 // Every reload yields a fresh random order; no sign-language pre-filter (D7).
 $playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog($catalog)) : [];
-$signLanguageOptions = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : [];
-$editionOptions      = $catalog ? vpc_edition_options_from_catalog($catalog, $studioConfigPath) : [];
-$typologyOptions     = $catalog ? vpc_typology_options_from_catalog($catalog, $studioConfigPath) : [];
+$signLanguageOptions  = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : [];
+$editionOptions       = $catalog ? vpc_edition_options_from_catalog($catalog, $studioConfigPath) : [];
+$typologyOptions      = $catalog ? vpc_typology_options_from_catalog($catalog, $studioConfigPath) : [];
+$spokenLangOptions    = $catalog ? vpc_spoken_language_options_from_catalog($catalog) : [];
 $vpc = null;
 if (count($playlist) > 0) {
     $vpc = [
@@ -27,6 +28,10 @@ if (count($playlist) > 0) {
     // R2 sign language picker: populated-from-present only (D17), no default (D7).
     if (count($signLanguageOptions) > 0) {
         $vpc['sign_language_filter'] = ['options' => $signLanguageOptions];
+    }
+    // R2 Spoken Language track selector (D16): omit when no video has caption tracks.
+    if (count($spokenLangOptions) > 0) {
+        $vpc['spoken_language_options'] = $spokenLangOptions;
     }
     // R2 City/Edition picker: populated-from-present only (D17).
     if (count($editionOptions) > 0) {
