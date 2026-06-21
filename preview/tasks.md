@@ -33,7 +33,7 @@ The home page is **non-scrollable**: only the player and site navigation. All ot
 | `/preview/tags` | Tag cloud → loads tag Playlist on home *(next sprint)* |
 | `/preview/map` | Interactive Edition map *(next sprint)* |
 
-Navigation sits **below the video controls** as text buttons (Player, About, …) — not a top nav bar. The home viewport does not scroll; see PRD D9–D10.
+Navigation sits **below the video controls** in the player chrome — not a top nav bar. On home, only **other routes** are shown (today: a single **[About]** button). Secondary pages use a text link **← go back to player**. Home viewport does not scroll (PRD D9–D11).
 
 ---
 
@@ -164,8 +164,11 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 ### 1.7 Home page layout
 
-- [ ] Home page has **no scrollable content** — player fills the viewport; site nav buttons sit below transport and filters (PRD D9–D10).
-- [ ] ~~Implement navigation pattern once designed~~ — home nav pattern locked (PRD D10); Participants button added when §2.2 ships.
+**Implemented (issues 06, 09).**
+
+- [x] Home page has **no scrollable content** — player fills the viewport; site nav below transport and filters (PRD D9–D10).
+- [x] Home shows only **[About]** in chrome nav — no redundant current-page button.
+- [ ] **Participants** button joins chrome nav when §2.2 ships (issue 08).
 
 ---
 
@@ -208,22 +211,23 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 ## 3. About
 
-**Current state:** Preview embeds About text inline on the home page (prototype variants A/B/C). Legacy home keeps About on a separate anchor (`#about`, `#clock`) with clock iframe, gallery, and credits.
+**Implemented (issue 09).** About lives at `/preview/about`; home is player-only.
 
 **Requirements:**
 
-- [ ] Move About off the home page to `/preview/about` — home stays player-only.
-- [ ] Reuse from legacy site:
-  - [ ] Realtime clock (`realtime/index.html` iframe)
-  - [ ] Gallery (`views/_gallery.php` or equivalent assets)
-  - [ ] About text (already partially copied in `preview/index.php`)
-  - [ ] Credits / trio video / sponsor logos
-- [ ] Apply Roboto + `rgb(0, 120, 0)` to About page.
+- [x] Move About off the home page to `/preview/about` — home stays player-only.
+- [x] Reuse from legacy site:
+  - [x] Realtime clock (`realtime/index.html` iframe)
+  - [x] Gallery (`views/_gallery.php` + `data/gallery.json`)
+  - [x] About text (`views/about/todo.php`)
+  - [x] Credits / trio video / sponsor logos
+- [x] Apply Roboto + `rgb(0, 120, 0)` to About page.
+- [x] Back link: **← go back to player** (PRD D11) — text link, not button row.
 
 **Acceptance criteria:**
 
-- Home has no About scroll region.
-- About page matches legacy content scope (clock + gallery + text + credits), with updated typography and colour.
+- [x] Home has no About scroll region.
+- [x] About page matches legacy content scope (clock + gallery + text + credits), with updated typography and colour.
 
 ---
 
@@ -251,6 +255,9 @@ Playlist selection by Tag — same interaction model as Participants.
 |---|----------|--------|
 | D1 | **Reset button** | Restarts the **current Video** from t=0 only. Restarting the entire Playlist from the first Video is out of scope for now. |
 | D2 | **Default Playlist** | All visible Videos, **random order on every visit**. Each Video has equal chance of appearing at any position. Fresh shuffle per page load. |
+| D9 | **Non-scrollable home** | `/preview/` never scrolls — see PRD |
+| D10 | **Home chrome nav** | Other routes only, below transport/filters; today **[About]** button |
+| D11 | **Secondary page nav** | Single **← go back to player** text link on scrollable pages |
 
 ---
 
@@ -258,7 +265,7 @@ Playlist selection by Tag — same interaction model as Participants.
 
 Visual and layout decisions blocked on design work. Implementation tasks above reference this section where needed.
 
-- [x] **Home navigation** — **decided:** text buttons below player transport + language filters; no top nav bar; home non-scrollable (PRD D9–D10). Participants / Tags / Map buttons join the same row as those routes ship.
+- [x] **Home navigation** — **decided & shipped:** other routes only as buttons below transport/filters; no top nav; home non-scrollable (D9–D10). About page uses **← go back to player** text link (D11). Participants / Tags / Map join home chrome as routes ship.
 - [ ] **Subtitle language picker placement** — where it sits in the player chrome (transport row, filter row, near captions, etc.). Blocks §1.3 implementation.
 - [ ] **Participants grid labels** — show Participant name under each thumbnail, or image-only. Blocks §2.2 polish.
 
@@ -272,17 +279,17 @@ Deliverable: mockups or annotated wireframes for the player chrome + navigation,
 - **Config labels:** Edition and Sign language display names come from `data/studio-config.json`.
 - **Player component:** Extend `vimeo_caption_player.php` / `.js` / `.css` — avoid forking playback logic.
 - **Legacy reference:** `views/index.php` (player, clock, gallery, map, navigation).
-- **Prototype cleanup:** Remove variant switcher (A/B/C) and inline About blocks from `preview/index.php` when implementing final IA.
+- **Prototype cleanup:** ~~Remove variant switcher (A/B/C) and inline About blocks from `preview/index.php`~~ — **done** (issues 06, 09).
 
 ---
 
 ## Suggested implementation order
 
-1. Design system (Roboto, green, caption layout) — **caption layout done (issue 02)**; Roboto/green apply to remaining pages  
-2. Playback model (no autoplay, remove mute badge, default random all-Videos Playlist, Playlist advance rules)  
+1. ~~Design system (Roboto, green, caption layout)~~ — caption layout **done** (issue 02); About page **done** (issue 09)  
+2. ~~Playback model~~ — **done** (issue 01)  
 3. Category pickers + Playlist filtering  
-4. **Design tasks (§5)** — can run in parallel with 1–3  
-5. Home navigation + non-scroll layout *(after §5)*  
+4. **Design tasks (§5)** — home nav **done**; subtitle picker + grid labels still open  
+5. ~~Home navigation + non-scroll layout~~ — **done** (issues 06, 09)  
 6. Participant catalog field + Participants page *(grid labels after §5)*  
-7. About page (separate route, legacy content)  
+7. ~~About page~~ — **done** (issue 09)  
 8. *(Next sprint)* Tags page, Map page
