@@ -134,19 +134,27 @@
                 ? cfg.captionsEndpoint
                 : '/preview/captions-static.php';
 
-        /** Master playlist (never reordered — sign-language filter chooses a subset). */
-        /** @type {Array<{ videoId: string, tracks?: Array<{ file: string, label?: string }>, signLanguage?: string}>} */
+        /**
+         * Master playlist (full catalog, never mutated).
+         * Each item: { videoId, tracks, signLanguage, edition, typology, participant }
+         * @type {Array<{ videoId: string, tracks: Array<{file:string,label?:string}>, signLanguage: string, edition: string, typology: string, participant: string }>}
+         */
         var fullPlaylistItems =
             Array.isArray(cfg.playlist) && cfg.playlist.length > 0 ? cfg.playlist : [];
 
-        var signLangFilter = cfg.signLanguageFilter;
-        /** @type {boolean} */
-        var captionPickerDynamic = !!cfg.captionPickerDynamic && !!signLangFilter;
+        /**
+         * D18 — Composable filter state. null = not active for that facet.
+         * All R2 filter pickers read/write this object. Filters compose with AND.
+         * @type {{ sign_language: string|null, edition: string|null, typology: string|null }}
+         */
+        var filterState = {
+            sign_language: null,
+            edition: null,
+            typology: null,
+        };
 
-        var selectedSignLang = '';
-        if (signLangFilter && signLangFilter.default) {
-            selectedSignLang = String(signLangFilter.default);
-        }
+        /** @type {boolean} */
+        var captionPickerDynamic = !!cfg.captionPickerDynamic;
 
         /** @type {number[]} */
         var filteredMasterIndices = [];
@@ -190,24 +198,29 @@
             root.querySelector('.vpc-caption-lang-select')
         );
 
+        /**
+         * Recompute which master-playlist indices are in scope given filterState (D17, D18).
+         * Filters compose with AND. null values are inactive (match all).
+         */
         function recomputeFilteredMasterIndices() {
-            if (
-                captionPickerDynamic &&
-                selectedSignLang !== '' &&
-                fullPlaylistItems.length > 0
-            ) {
-                filteredMasterIndices = fullPlaylistItems
-                    .map(function (item, ix) {
-                        return (item.signLanguage || '') === selectedSignLang ? ix : -1;
-                    })
-                    .filter(function (ix) {
-                        return ix >= 0;
-                    });
+            var hasFilter = filterState.sign_language !== null
+                || filterState.edition !== null
+                || filterState.typology !== null;
+            if (!hasFilter || fullPlaylistItems.length === 0) {
+                filteredMasterIndices = fullPlaylistItems.map(function (_, ix) { return ix; });
                 return;
             }
-            filteredMasterIndices = fullPlaylistItems.map(function (_, ix) {
-                return ix;
-            });
+            filteredMasterIndices = fullPlaylistItems
+                .map(function (item, ix) {
+                    if (filterState.sign_language !== null
+                        && (item.signLanguage || '') !== filterState.sign_language) return -1;
+                    if (filterState.edition !== null
+                        && (item.edition || '') !== filterState.edition) return -1;
+                    if (filterState.typology !== null
+                        && (item.typology || '') !== filterState.typology) return -1;
+                    return ix;
+                })
+                .filter(function (ix) { return ix >= 0; });
         }
 
         function filteredCount() {
@@ -798,29 +811,139 @@
                 });
             }
 
-            var signSel = /** @type {HTMLSelectElement | null} */ (root.querySelector(
-                '.vpc-sign-lang-select'
-            ));
-            if (signSel && captionPickerDynamic) {
-                signSel.value = selectedSignLang;
-                signSel.addEventListener('change', function () {
-                    selectedSignLang = signSel.value;
+            // ── R2 custom pickers (D15, D17, D18) ──────────────────────────────────
+            /**
+             * Apply a filter change: update filterState, recompute filtered list,
+             * shuffle within the new filtered set, load video[0] of new set.
+             * Clearing (value=null) re-shuffles the full catalog (D7, issue #1 behaviour).
+             * @param {string} facet  e.g. 'sign_language'
+             * @param {string|null} value
+             */
+            function applyFilterChange(facet, value) {
+                filterState[facet] = value || null;
+                recomputeFilteredMasterIndices();
+
+                var fc = filteredCount();
+                if (fc === 0) {
+                    // Edge case: empty result — clear this facet, restore all.
+                    filterState[facet] = null;
                     recomputeFilteredMasterIndices();
-                    filteredCursor = 0;
-                    shuffleMode = false;
-                    shuffledSequence = [];
-                    shuffleStep = 0;
-                    setShuffleToggleUi(false);
+                    fc = filteredCount();
+                }
 
-                    if (filteredCount() === 0) return;
+                // Shuffle within the new filtered set (or full catalog on clear).
+                shuffledSequence = L.buildShuffledSequence(fc);
+                shuffleStep = 0;
+                filteredCursor = shuffledSequence[0];
+                shuffleMode = true;
+                setShuffleToggleUi(true);
 
-                    playlistIndex = filteredMasterIndices[0];
+                var masterIx = filteredMasterIndices[filteredCursor];
+                if (masterIx === undefined) return;
+                playlistIndex = masterIx;
 
-                    loadVideoMaster(playlistIndex, true).then(function () {
-                        updatePlaylistNavButtons();
-                    });
+                loadVideoMaster(playlistIndex, false).then(function () {
+                    updatePlaylistNavButtons();
                 });
             }
+
+            /**
+             * Update a picker's button face and data-active attribute.
+             * @param {HTMLElement} pickerEl
+             * @param {string|null} value  null = cleared
+             * @param {string} genericLabel  Button face when no selection
+             * @param {string} selectedLabel  Button face after selection
+             */
+            function updatePickerUi(pickerEl, value, genericLabel, selectedLabel) {
+                var btn = pickerEl.querySelector('.vpc-picker-btn');
+                if (!btn) return;
+                if (value) {
+                    btn.textContent = selectedLabel;
+                    btn.setAttribute('data-generic-label', genericLabel);
+                    pickerEl.setAttribute('data-active', 'true');
+                } else {
+                    btn.textContent = genericLabel;
+                    pickerEl.setAttribute('data-active', 'false');
+                }
+                // Re-append the ::after pseudo-element is pure CSS; textContent replaces child nodes
+                // so we need to keep the label text only — ::after is CSS-only, fine.
+            }
+
+            /**
+             * Close all custom picker dropdowns in this player instance.
+             */
+            function closeAllPickers() {
+                root.querySelectorAll('.vpc-picker-dropdown').forEach(function (dd) {
+                    dd.hidden = true;
+                    var picker = dd.closest('.vpc-picker');
+                    var btn = picker && picker.querySelector('.vpc-picker-btn');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                });
+            }
+
+            /**
+             * Wire up a single custom picker element.
+             * @param {HTMLElement} pickerEl  .vpc-picker div
+             */
+            function initPicker(pickerEl) {
+                var facet = pickerEl.getAttribute('data-picker');
+                if (!facet) return;
+
+                var btn = /** @type {HTMLButtonElement|null} */ (pickerEl.querySelector('.vpc-picker-btn'));
+                var dropdown = /** @type {HTMLElement|null} */ (pickerEl.querySelector('.vpc-picker-dropdown'));
+                var options = /** @type {NodeListOf<HTMLElement>} */ (
+                    pickerEl.querySelectorAll('.vpc-picker-option')
+                );
+                if (!btn || !dropdown) return;
+
+                var genericLabel = btn.getAttribute('data-generic-label') || btn.textContent.trim();
+
+                // Toggle dropdown open/close
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    var isOpen = !dropdown.hidden;
+                    closeAllPickers();
+                    if (!isOpen) {
+                        dropdown.hidden = false;
+                        btn.setAttribute('aria-expanded', 'true');
+                    }
+                });
+
+                // Option click: select or clear
+                options.forEach(function (opt) {
+                    opt.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        var value = opt.getAttribute('data-value') || '';
+                        var isClear = value === '' || opt.classList.contains('vpc-picker-clear');
+
+                        // Update ARIA selected state
+                        options.forEach(function (o) { o.setAttribute('aria-selected', 'false'); });
+                        opt.setAttribute('aria-selected', 'true');
+
+                        closeAllPickers();
+
+                        var label = isClear ? '' : opt.textContent.trim();
+                        updatePickerUi(pickerEl, isClear ? null : value, genericLabel, label);
+                        applyFilterChange(facet, isClear ? null : value);
+                    });
+                });
+
+                // Keyboard: Escape closes
+                dropdown.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') {
+                        closeAllPickers();
+                        btn.focus();
+                    }
+                });
+            }
+
+            // Wire up all R2 pickers in this instance
+            root.querySelectorAll('.vpc-picker').forEach(initPicker);
+
+            // Close pickers when clicking outside
+            document.addEventListener('click', function () {
+                closeAllPickers();
+            });
 
             setShuffleToggleUi(shuffleMode);
 

@@ -11,7 +11,7 @@
 }
 .preview-vimeo-player-root .caption-box,
 .preview-vimeo-player-root .vpc-transport,
-.preview-vimeo-player-root .vpc-lang-filters,
+.preview-vimeo-player-root .vpc-r2-filters,
 .preview-vimeo-player-root .vpc-site-nav-wrap {
     flex-shrink: 0;
 }
@@ -109,50 +109,137 @@
     min-height: calc(2 * var(--vpc-caption-line-height) * 1em + 0.6em);
     max-height: calc(2 * var(--vpc-caption-line-height) * 1em + 0.6em);
 }
-.vpc-lang-filters {
+
+/* ── R2 filter row (D15) ─────────────────────────────────────────────────── */
+.vpc-r2-filters {
     max-width: min(100vw, 1280px);
-    margin: 0.35rem auto 0;
-    padding: 0.5rem 1rem;
+    margin: 0 auto;
+    padding: 0.3rem 1rem 0;
     box-sizing: border-box;
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
-}
-.vpc-lang-filter {
-    display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     gap: 0.5rem;
-    align-items: center;
     justify-content: center;
-    width: 100%;
+    align-items: center;
 }
-.vpc-lang-filter-label {
+
+/* ── Custom picker (button + dropdown) — not a native <select> ──────────── */
+.vpc-picker {
+    position: relative;
+    display: inline-block;
+}
+
+/* Picker button: restrained styling matching the R3 nav button weight.
+   Brand green ONLY on active state (D15). */
+.vpc-picker-btn {
     font-family: 'Roboto', sans-serif;
     font-size: 0.9375rem;
-    font-weight: 600;
-    color: #222;
-    white-space: nowrap;
-}
-.vpc-lang-select {
-    font-family: 'Roboto', sans-serif;
-    font-size: 0.9375rem;
-    min-width: min(100%, 11rem);
-    max-width: 14rem;
-    padding: 0.45em 2em 0.45em 0.75em;
-    border: 1px solid #999;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.45em 0.85em;
+    border: 1px solid #ccc;
     border-radius: 8px;
     background: #fafafa;
-    color: #222;
+    color: #444;
     cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: border-color 0.1s, color 0.1s, background 0.1s;
 }
-.vpc-lang-select:focus-visible {
-    outline: 2px solid #007800;
+.vpc-picker-btn::after {
+    content: '\25BE'; /* ▾ */
+    font-size: 0.75em;
+    opacity: 0.5;
+    margin-left: 0.15em;
+}
+.vpc-picker-btn:hover {
+    background: #efefef;
+    border-color: #bbb;
+}
+.vpc-picker-btn:focus-visible {
+    outline: 2px solid rgb(0, 120, 0);
     outline-offset: 2px;
 }
-.vpc-caption-lang-filter.vpc-caption-picker-hidden {
+/* Active filter state: brand green accent (restrained, D15) */
+.vpc-picker[data-active="true"] .vpc-picker-btn {
+    border-color: rgb(0, 120, 0);
+    color: rgb(0, 100, 0);
+    background: #e8f5e9;
+    font-weight: 500;
+}
+.vpc-picker[data-active="true"] .vpc-picker-btn::after {
+    opacity: 1;
+    color: rgb(0, 120, 0);
+}
+
+/* Custom dropdown (role="listbox") */
+.vpc-picker-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 200;
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+    min-width: 100%;
+    max-width: 22rem;
+    background: #fff;
+    border: 1px solid rgb(0, 120, 0);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+.vpc-picker-dropdown[hidden] {
     display: none;
+}
+.vpc-picker-option {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9375rem;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #333;
+    transition: background 0.08s, color 0.08s;
+}
+.vpc-picker-option:hover {
+    background: #e8f5e9;
+    color: rgb(0, 80, 0);
+}
+/* Selected item: brand green highlight */
+.vpc-picker-option[aria-selected="true"] {
+    background: rgb(0, 120, 0);
+    color: #fff;
+    font-weight: 500;
+}
+.vpc-picker-option[aria-selected="true"]:hover {
+    background: rgb(0, 100, 0);
+}
+/* "Clear / all" option: slightly muted */
+.vpc-picker-clear {
+    color: #666;
+    font-style: italic;
+}
+.vpc-picker-clear[aria-selected="true"] {
+    background: #f0f0f0;
+    color: #444;
+    font-style: normal;
+    font-weight: 400;
+}
+
+/* Mobile: R2 row wraps, picker buttons shrink slightly (D20). No scroll added. */
+@media screen and (max-width: 500px) {
+    .vpc-picker-btn {
+        font-size: 0.875rem;
+        padding: 0.4em 0.7em;
+    }
+    .vpc-picker-dropdown {
+        font-size: 0.875rem;
+        max-width: 90vw;
+    }
 }
 
 .vpc-transport {
@@ -264,4 +351,3 @@
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
-

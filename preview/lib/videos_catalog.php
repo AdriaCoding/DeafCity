@@ -218,7 +218,10 @@ if (!function_exists('vpc_shuffle_playlist')) {
 
 if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
     /**
-     * Build a full $vpc playlist from all videos.json entries in array order (order defines playback within a category).
+     * Build a full $vpc playlist from all catalog entries in array order.
+     * Each entry carries all filterable catalog fields (sign_language, edition,
+     * typology, participant) so the client-side composable filter (D18) can
+     * filter without a page reload.
      *
      * @param array<string, mixed> $catalog
      * @return array<int, array<string, mixed>>
@@ -261,9 +264,22 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
                 $entry['caption_tracks'] = $tracks;
             }
 
+            // Filterable catalog fields — all passed to JS for client-side filtering (D17, D18).
             $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
             if ($sl !== '') {
                 $entry['sign_language'] = $sl;
+            }
+            $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
+            if ($edition !== '') {
+                $entry['edition'] = $edition;
+            }
+            $typology = isset($v['typology']) ? trim((string) $v['typology']) : '';
+            if ($typology !== '') {
+                $entry['typology'] = $typology;
+            }
+            $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
+            if ($participant !== '') {
+                $entry['participant'] = $participant;
             }
 
             $eParams = isset($v['embed_params']) && is_array($v['embed_params'])

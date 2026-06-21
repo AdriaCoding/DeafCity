@@ -1,0 +1,148 @@
+{
+    "sign_languages": [
+        {
+            "id": "lse",
+            "label": "LSE Spanish Sign Language"
+        },
+        {
+            "id": "lsm",
+            "label": "LSM Mexican Sign Language"
+        },
+        {
+            "id": "libras",
+            "label": "LIBRAS Brazilian Sign Language"
+        },
+        {
+            "id": "lsf",
+            "label": "LSF French Sign Language"
+        },
+        {
+            "id": "lis",
+            "label": "LIS Italian Sign Language"
+        },
+        {
+            "id": "tunisian-sl",
+            "label": "LST Tunisian Sign Language"
+        },
+        {
+            "id": "algerian-sl",
+            "label": "LSA Algerian Sign Language"
+        },
+        {
+            "id": "lsc",
+            "label": "LSC Catalan Sign Language"
+        },
+        {
+            "id": "gss",
+            "label": "GSS Greek Sign Language"
+        }
+    ],
+    "editions": [
+        {
+            "id": "2020-valencia",
+            "label": "2020 València"
+        },
+        {
+            "id": "2021-mexico",
+            "label": "2021 Mexico City"
+        },
+        {
+            "id": "2023-bilbao",
+            "label": "2023 Bilbao"
+        },
+        {
+            "id": "2023-sao-paulo",
+            "label": "2023 São Paulo"
+        },
+        {
+            "id": "2026-marseille",
+            "label": "2026 Marseille"
+        },
+        {
+            "id": "2026-rome",
+            "label": "2026 Roma"
+        },
+        {
+            "id": "2026-tunis",
+            "label": "2026 Tunis"
+        },
+        {
+            "id": "2026-algiers",
+            "label": "2026 Algiers"
+        },
+        {
+            "id": "2026-barcelona",
+            "label": "2026 Barcelona"
+        },
+        {
+            "id": "2028-salamanca",
+            "label": "Salamanca 2028"
+        }
+    ],
+    "subtitle_languages": [
+        {
+            "id": "es",
+            "label": "Spanish",
+            "vimeo_code": "es"
+        },
+        {
+            "id": "en",
+            "label": "English",
+            "vimeo_code": "en"
+        },
+        {
+            "id": "it",
+            "label": "Italian",
+            "vimeo_code": "it"
+        },
+        {
+            "id": "fr",
+            "label": "French",
+            "vimeo_code": "fr"
+        },
+        {
+            "id": "ca",
+            "label": "Catalan",
+            "vimeo_code": "ca"
+        },
+        {
+            "id": "pt",
+            "label": "Portuguese",
+            "vimeo_code": "pt"
+        },
+        {
+            "id": "arq",
+            "label": "Algerian Darija",
+            "vimeo_code": "ar",
+            "translation_target": true
+        },
+        {
+            "id": "aeb",
+            "label": "Tunisian Arabic",
+            "vimeo_code": "mt",
+            "translation_target": true
+        }
+    ],
+    "typologies": [
+        {
+            "id": "acudits",
+            "label": "ACUDITS"
+        },
+        {
+            "id": "anecdotes",
+            "label": "ANÈCDOTES"
+        },
+        {
+            "id": "malentesos",
+            "label": "MALENTESOS"
+        },
+        {
+            "id": "endevinalles",
+            "label": "ENDEVINALLES"
+        },
+        {
+            "id": "memories",
+            "label": "MEMÒRIES"
+        }
+    ]
+}
