@@ -3,14 +3,18 @@ require __DIR__ . '/lib/videos_catalog.php';
 $catalogJsonPath  = dirname(__DIR__) . '/data/catalog.json';
 $studioConfigPath = dirname(__DIR__) . '/data/studio-config.json';
 $catalog  = vpc_load_videos_catalog($catalogJsonPath);
-$playlist = $catalog ? vpc_vimeo_playlist_all_from_catalog($catalog) : [];
+// D2 + D12: shuffle server-side so item[0] is both the paused poster and the queue head.
+// Every reload yields a fresh random order; no sign-language pre-filter (D7).
+$playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog($catalog)) : [];
 $signLanguageOptions = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : [];
 $vpc = null;
 if (count($playlist) > 0) {
     $vpc = [
-        'instance_id' => 'preview-playlist-demo',
-        'playlist' => $playlist,
+        'instance_id'    => 'preview-playlist-demo',
+        'playlist'       => $playlist,
         'site_nav_route' => 'home',
+        // Tell JS the server already placed the chosen poster at index 0.
+        'playlist_index' => 0,
     ];
     if (count($signLanguageOptions) > 0) {
         $vpc['sign_language_filter'] = ['options' => $signLanguageOptions, 'default' => ''];

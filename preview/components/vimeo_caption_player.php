@@ -316,13 +316,21 @@ $captionSelectId    = $idBase . '__caption-lang-select';
 $showCaptionFilter  = $useSignLanguageFilter || count($captionTracks) > 0;
 $showLangFiltersRow = $showCaptionFilter || $useSignLanguageFilter;
 
+// playlist_index from $vpc lets the caller specify which item is the initial poster.
+// When the server has already shuffled (D12), this is always 0.
+$initialPlaylistIndex = isset($vpc['playlist_index']) ? (int) $vpc['playlist_index'] : 0;
+$initialPlaylistIndex = max(0, min($initialPlaylistIndex, count($playlistNormalized) - 1));
+
 $config = array(
     'iframeId'             => $iframeId,
     'captionBoxId'         => $captionBoxId,
     'tracks'               => $captionTracks,
     'captionsEndpoint'     => $captionsBase,
     'playlist'             => $playlistForJson,
-    'playlistIndex'        => 0,
+    'playlistIndex'        => $initialPlaylistIndex,
+    // When true the server has pre-shuffled; JS must trust item[0] as the queue head
+    // without re-shuffling, so the paused poster matches what Play will continue (D12).
+    'serverShuffled'       => true,
     'captionPickerDynamic' => $captionPickerDynamic,
     'signLanguageFilter'   => $signLanguageFilterCfg,
 );
