@@ -341,23 +341,25 @@ $showPlaylistNav = count($playlistNormalized) > 1;
 <div class="<?php echo htmlspecialchars($wrapperClass, ENT_QUOTES, 'UTF-8'); ?>">
 <script type="application/json" class="vpc-config"><?php echo $configJson; ?></script>
 
-    <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box"></div>
     <div class="vpc-media-stage">
-        <div class="video-shell">
-            <iframe
-                id="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                src="<?php echo htmlspecialchars($embedSrc, ENT_QUOTES, 'UTF-8'); ?>"
-                title="<?php echo htmlspecialchars($iframeTitle, ENT_QUOTES, 'UTF-8'); ?>"
-                allow="autoplay; fullscreen; picture-in-picture"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-            <button
-                type="button"
-                class="vpc-video-hitarea"
-                tabindex="-1"
-                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="Play or pause video"
-            ></button>
+        <div class="video-stack">
+            <div class="video-shell">
+                <iframe
+                    id="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                    src="<?php echo htmlspecialchars($embedSrc, ENT_QUOTES, 'UTF-8'); ?>"
+                    title="<?php echo htmlspecialchars($iframeTitle, ENT_QUOTES, 'UTF-8'); ?>"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen></iframe>
+                <button
+                    type="button"
+                    class="vpc-video-hitarea"
+                    tabindex="-1"
+                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-label="Play or pause video"
+                ></button>
+            </div>
+            <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box"></div>
         </div>
     </div>
     <div

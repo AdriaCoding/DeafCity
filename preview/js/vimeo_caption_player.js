@@ -53,6 +53,20 @@
     }
 
     /**
+     * Caption font size (px) from video stack width — approximates Vimeo burned-in subtitles (~4.8%).
+     * @param {number} shellWidthPx
+     * @returns {number}
+     */
+    function captionFontSizePxFromShellWidth(shellWidthPx) {
+        var w = typeof shellWidthPx === 'number' ? shellWidthPx : parseFloat(shellWidthPx);
+        if (!w || w <= 0 || !isFinite(w)) return 18;
+        var size = w * 0.048;
+        if (size < 14) return 14;
+        if (size > 38) return 38;
+        return Math.round(size * 10) / 10;
+    }
+
+    /**
      * Pick caption track index matching previousLabel, or 0 when no match.
      * @param {Array<{ label?: string }>} tracks
      * @param {string} previousLabel
@@ -379,6 +393,29 @@
             /** Once true, end-of-video may advance within the Playlist. */
             var visitorStartedPlayback = false;
 
+            var videoShell = root.querySelector('.video-shell');
+            var videoStack = root.querySelector('.video-stack');
+
+            function syncCaptionTypography() {
+                var measureEl = videoStack || videoShell;
+                if (!measureEl) return;
+                var w = measureEl.getBoundingClientRect().width;
+                root.style.setProperty(
+                    '--vpc-caption-font-size',
+                    captionFontSizePxFromShellWidth(w) + 'px'
+                );
+            }
+
+            syncCaptionTypography();
+            if (typeof window.ResizeObserver === 'function' && videoStack) {
+                var captionResizeObserver = new window.ResizeObserver(function () {
+                    syncCaptionTypography();
+                });
+                captionResizeObserver.observe(videoStack);
+            } else {
+                window.addEventListener('resize', syncCaptionTypography);
+            }
+
             var playBtn = root.querySelector('.vpc-play-pause-btn');
 
             function setTransportPlaying(isPlaying) {
@@ -499,6 +536,7 @@
                         : Promise.resolve(0);
                 return Promise.all([wP, hP]).then(function (dims) {
                     iframe.style.aspectRatio = aspectRatioFrom(dims[0], dims[1]);
+                    syncCaptionTypography();
                 });
             }
 
