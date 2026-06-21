@@ -17,7 +17,7 @@ Requirements from Antoni for the `/preview/` site before it replaces the live ho
 | Body font | Roboto | All UI text, subtitles, About page |
 | Style | Minimalistic | Per project convention |
 
-Subtitles should match the **on-video subtitle size** from the source Video (not a separate arbitrary scale).
+Subtitles should match the **on-video subtitle scale** from the source Video — see §1.4 for the height-based sizing rule (not viewport width or stack width).
 
 ---
 
@@ -98,18 +98,31 @@ Three Playlist filters, each rendered as a **button of the same visual class** t
 
 ### 1.4 Captions layout & typography
 
-**Current state:** Caption box sits above the video with a visible gap on mobile. Two-line captions can push layout.
+**Implemented (issue 02).** Corrections applied during implementation — the draft spec below had several misalignments with the desired UX.
+
+**Spec corrections (was wrong in draft):**
+
+| Draft said | Actual requirement |
+|------------|-------------------|
+| Captions attached to the video **bottom** edge on narrow viewports | Captions sit **above** the video, flush against its **top** edge |
+| Size matched via viewport/`clamp()` or stack width | Font size scales from **rendered iframe height** (~4.8%, 14–38px) — stack width oversizes on wide screens where the mobile aspect-ratio crop (`1.2 / 1`) is not applied |
+| Single-line text centered in the reserved box | Single-line cues use the **bottom row** of the two-line reserve (`flex-end`) so text sits closest to the video |
 
 **Requirements:**
 
-- [ ] Caption box flush against the video — **zero gap**, especially on mobile.
-- [ ] Caption wrapper reserves space for **two lines** without shifting video or controls (fixed min-height or equivalent).
-- [ ] Caption text: Roboto, `rgb(0, 120, 0)`, size matched to on-video subtitle rendering.
+- [x] Caption box **above** the video, flush against the video top edge — zero gap, especially on mobile.
+- [x] Caption wrapper reserves space for **two lines** without shifting video or controls (fixed height).
+- [x] Single-line cues render on the **bottom line** of the reserved area.
+- [x] Caption text: Roboto (loaded on `/preview/`), `rgb(0, 120, 0)`.
+- [x] Font size from **iframe height** after layout; caption box width matches visible video width (iframe, capped at shell), centered in `.video-stack`.
 
 **Acceptance criteria:**
 
-- On a narrow viewport, captions appear attached to the video bottom edge.
-- A two-line cue does not cause the player chrome to jump.
+- [x] Captions appear directly above the video with no visible gap.
+- [x] A two-line cue does not cause the player chrome to jump.
+- [x] Wide-screen captions are not oversized relative to the visible video frame.
+
+**Implementation:** `preview/components/vimeo_caption_player.{php,css}`, `preview/js/vimeo_caption_player.js` (`syncCaptionTypography`, `--vpc-caption-font-size`, `--vpc-caption-width`).
 
 ---
 
@@ -265,7 +278,7 @@ Deliverable: mockups or annotated wireframes for the player chrome + navigation,
 
 ## Suggested implementation order
 
-1. Design system (Roboto, green, caption layout) — unblocks all UI work  
+1. Design system (Roboto, green, caption layout) — **caption layout done (issue 02)**; Roboto/green apply to remaining pages  
 2. Playback model (no autoplay, remove mute badge, default random all-Videos Playlist, Playlist advance rules)  
 3. Category pickers + Playlist filtering  
 4. **Design tasks (§5)** — can run in parallel with 1–3  

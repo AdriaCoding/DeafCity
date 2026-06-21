@@ -18,6 +18,10 @@ Implement the v3 spec as thin vertical slices: playback and Playlist behaviour f
 |---|----------|
 | D1 | Reset restarts the **current Video** from t=0 only |
 | D2 | Default Playlist: **all visible Videos**, **fresh random order on every visit**, equal probability per Video |
+| D3 | Captions sit **above** the video (not below), flush against the video top edge |
+| D4 | Caption font size scales from **rendered iframe height** (~4.8%, clamped 14–38px) — not stack/viewport width |
+| D5 | Caption box reserves **two lines** fixed height; single-line cues align to the **bottom** row (closest to video) |
+| D6 | Caption box width matches **visible video width** (iframe width, capped at shell width), centered in the stack |
 
 ## Out of Scope (this batch)
 
@@ -30,7 +34,7 @@ Implement the v3 spec as thin vertical slices: playback and Playlist behaviour f
 | # | Issue | Type |
 |---|-------|------|
 | 01 | Manual playback and default random Playlist | AFK |
-| 02 | Caption layout and brand typography | AFK |
+| 02 | Caption layout and brand typography | AFK — **done** |
 | 03 | Shuffle toggle UX and active Playlist label | AFK |
 | 04 | Category filter pickers | AFK |
 | 05 | Design player chrome and navigation | HITL |
