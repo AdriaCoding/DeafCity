@@ -45,6 +45,7 @@ $logos = [
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DEAF.city</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <?php if ($variant === 'A'): ?>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Mulish:wght@400;600&display=swap" rel="stylesheet">
     <?php elseif ($variant === 'B'): ?>
@@ -53,7 +54,7 @@ $logos = [
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Jost:wght@300;400&display=swap" rel="stylesheet">
     <?php endif; ?>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=17">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=18">
     <style>
         /* ── Shared reset ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -673,6 +674,6 @@ $logos = [
 }());
 </script>
 
-<script src="/preview/js/vimeo_caption_player.js?v=16" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=17" defer></script>
 </body>
 </html>
