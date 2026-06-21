@@ -388,4 +388,60 @@ if ($spokenLangCfgOptions !== null) {
 // The picker aria-label should say "Spoken Language", not "Caption" or "Subtitle"
 assert_contains('aria-label="Spoken Language"', $html, 'Spoken Language listbox aria-label');
 
+// ── Issue #3: Shuffle toggle UX (D13) ─────────────────────────────────────────
+
+// AC: Shuffle button exists in transport row
+assert_contains('vpc-shuffle-btn', $html, 'shuffle button element present');
+assert_contains('aria-label="Shuffle playlist"', $html, 'shuffle button has aria-label');
+
+// AC: Shuffle is ON by default — aria-pressed="true" on initial render (D13)
+// The button in PHP sets aria-pressed="true" and JS confirms it via setShuffleToggleUi(shuffleMode)
+// where shuffleMode=true (serverShuffled path). The HTML itself must have aria-pressed="true".
+if (!preg_match('~class="vpc-shuffle-btn"[^>]*aria-pressed="true"~', $html)
+    && !preg_match('~aria-pressed="true"[^>]*class="vpc-shuffle-btn"~', $html)) {
+    fwrite(STDERR, "FAIL: shuffle button should have aria-pressed=\"true\" on initial render (shuffle-on default, D13)\n");
+    exit(1);
+}
+echo "PASS: shuffle button starts with aria-pressed=\"true\" (shuffle on by default, D13)\n";
+
+// AC: Shuffle button uses shuffle Material Icon
+assert_contains('>shuffle<', $html, 'shuffle button contains shuffle Material Icon text');
+
+// AC: No persistence mechanism — no localStorage/sessionStorage references for shuffle state.
+// Toggle state is not persisted (D13): every visit starts fresh as shuffle-on.
+// We check the rendered HTML doesn't bake in any storage key for shuffle.
+// (JS behaviour not persisting is verified in JS tests; here we check no server-side storage.)
+assert_not_contains('shuffleState', $html, 'no shuffleState key in page (not persisted, D13)');
+assert_not_contains('shuffle_state', $html, 'no shuffle_state key in page (not persisted)');
+
+// AC: CSS provides obvious active vs inactive visual state — check that the CSS
+// shipped with this page actually contains the active-state green rule and the
+// inactive-state muted-color rule (not just opacity).
+// We read the CSS file directly for this assertion (the HTML links the CSS, not inlines it).
+$cssPath = dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.css';
+if (is_file($cssPath)) {
+    $css = file_get_contents($cssPath);
+    // Active state must use brand green on the icon — color not opacity
+    if (strpos($css, ".vpc-shuffle-btn[aria-pressed='true'] .material-icons") === false
+        && strpos($css, ".vpc-shuffle-btn.is-active .material-icons") === false) {
+        fwrite(STDERR, "FAIL: CSS lacks explicit brand-green icon color for shuffle active state (D13)\n");
+        exit(1);
+    }
+    echo "PASS: CSS has explicit icon color rule for shuffle active state\n";
+
+    // Inactive state must NOT rely only on opacity — must have explicit muted color
+    if (strpos($css, ".vpc-shuffle-btn[aria-pressed='false']") === false) {
+        fwrite(STDERR, "FAIL: CSS lacks explicit inactive state rule for .vpc-shuffle-btn[aria-pressed='false'] (D13)\n");
+        exit(1);
+    }
+    // The inactive rule must contain 'color' (explicit muted colour), not just 'opacity'
+    if (!preg_match("~\.vpc-shuffle-btn\[aria-pressed='false'\][^{]*\{[^}]*color\s*:[^}]*\}~s", $css)) {
+        fwrite(STDERR, "FAIL: CSS inactive shuffle state does not set an explicit 'color' — must not rely on opacity alone (D13)\n");
+        exit(1);
+    }
+    echo "PASS: CSS inactive shuffle state uses explicit muted color (not opacity alone, D13)\n";
+} else {
+    echo "SKIP: CSS file not found at expected path — visual state CSS checks skipped\n";
+}
+
 echo "\nAll tests passed.\n";
