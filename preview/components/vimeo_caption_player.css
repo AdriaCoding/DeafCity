@@ -299,22 +299,40 @@
     color: #222;
     cursor: pointer;
 }
-.vpc-shuffle-btn:hover,
 .vpc-prev-btn:hover:not(:disabled),
 .vpc-next-btn:hover:not(:disabled) {
     background: #efefef;
     border-color: #bbb;
 }
+/* Shuffle OFF — muted grey icon and border; no opacity trick (D13) */
+.vpc-shuffle-btn[aria-pressed='false'] {
+    color: #aaa;
+    border-color: #ddd;
+    background: #fafafa;
+}
 .vpc-shuffle-btn[aria-pressed='false'] .material-icons {
-    opacity: 0.45;
+    color: #bbb;
 }
-.vpc-shuffle-btn[aria-pressed='true'] {
+.vpc-shuffle-btn[aria-pressed='false']:hover {
+    color: #888;
+    border-color: #ccc;
+    background: #efefef;
+}
+/* Shuffle ON — brand green active state (D13) */
+.vpc-shuffle-btn[aria-pressed='true'],
+.vpc-shuffle-btn.is-active {
     background: #e8f5e9;
-    border-color: #007800;
-    color: #005c00;
+    border-color: rgb(0, 120, 0);
+    color: rgb(0, 92, 0);
 }
-.vpc-shuffle-btn[aria-pressed='true'] .material-icons {
-    opacity: 1;
+.vpc-shuffle-btn[aria-pressed='true'] .material-icons,
+.vpc-shuffle-btn.is-active .material-icons {
+    color: rgb(0, 120, 0);
+}
+.vpc-shuffle-btn[aria-pressed='true']:hover,
+.vpc-shuffle-btn.is-active:hover {
+    background: #d4edda;
+    border-color: rgb(0, 100, 0);
 }
 .vpc-prev-btn:disabled,
 .vpc-next-btn:disabled {

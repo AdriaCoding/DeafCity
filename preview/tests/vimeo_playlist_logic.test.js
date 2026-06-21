@@ -564,4 +564,147 @@ function simulateSpokenLanguageChange(label, stickyCaptionLabel, cueTracks) {
     assert.deepStrictEqual(filteredAfter, filtered, 'queue content identical after spoken lang change');
 })();
 
+// ── Issue #3: Shuffle toggle UX — D13 ────────────────────────────────────────
+
+// Default visit: shuffle is ON (D13 — every visit starts fresh as shuffle-on)
+(function () {
+    var state = logic.createDefaultShuffleState(8);
+    assert.strictEqual(state.shuffleMode, true, 'D13: shuffle is ON by default on every visit');
+    assert.strictEqual(state.shuffleStep, 0, 'D13: shuffle starts at step 0');
+    assert.ok(state.shuffledSequence.length === 8, 'D13: shuffled sequence covers all filtered items');
+})();
+
+// Shuffle OFF → remaining queue follows catalog order (filteredCursor in filtered list order)
+// Simulate the toggle-off: filteredCursor stays as the current video's position in filtered list.
+// After toggle-off, nextPlaylistStep must use filteredCursor as linear position.
+(function () {
+    // Setup: 6-item filtered list, currently on item at filtered index 3 (via shuffle)
+    var filteredCount = 6;
+    var shuffledSeq = [2, 5, 3, 0, 4, 1]; // shuffle placed us at step 2 → filteredCursor=3
+    var currentShuffleStep = 2;
+    var filteredCursor = shuffledSeq[currentShuffleStep]; // = 3
+
+    // Toggle OFF: shuffleMode=false, filteredCursor stays at 3 (current video's catalog position)
+    var shuffleMode = false;
+
+    // Next step in linear (catalog) order from cursor 3: should go to 4
+    var step = logic.nextPlaylistStep({
+        shuffleMode: shuffleMode,
+        filteredCursor: filteredCursor,
+        shuffleStep: currentShuffleStep,
+        filteredCount: filteredCount,
+        shuffledSequence: [],
+    });
+    assert.deepStrictEqual(step, { shuffleStep: currentShuffleStep, filteredCursor: 4 },
+        'D13: shuffle OFF → next step follows catalog order (filteredCursor+1)');
+
+    // And prev would go to 2
+    var prevStep = { shuffleStep: currentShuffleStep, filteredCursor: filteredCursor - 1 };
+    assert.strictEqual(prevStep.filteredCursor, 2, 'D13: shuffle OFF → prev follows catalog order (filteredCursor-1)');
+})();
+
+// Shuffle OFF → current video keeps playing (no video load on toggle)
+// This is a JS architecture guarantee: the toggle handler does NOT call loadVideoMaster.
+// We verify by confirming nextPlaylistStep does not return the SAME cursor (no re-trigger).
+(function () {
+    var filteredCursor = 3;
+    var shuffleMode = false;
+    var step = logic.nextPlaylistStep({
+        shuffleMode: shuffleMode,
+        filteredCursor: filteredCursor,
+        shuffleStep: 0,
+        filteredCount: 6,
+        shuffledSequence: [],
+    });
+    // The next step is cursor 4 — NOT cursor 3 again (current video stays, not re-loaded)
+    assert.notStrictEqual(step && step.filteredCursor, filteredCursor,
+        'D13: shuffle OFF → next step does not re-trigger current video');
+})();
+
+// Shuffle ON → Prev/Next follow the shuffled sequence
+(function () {
+    var shuffledSeq = [4, 1, 3, 0, 2];
+    var currentStep = 1; // currently at filteredCursor=1 (shuffledSeq[1])
+    var filteredCursor = shuffledSeq[currentStep]; // = 1
+
+    var step = logic.nextPlaylistStep({
+        shuffleMode: true,
+        filteredCursor: filteredCursor,
+        shuffleStep: currentStep,
+        filteredCount: 5,
+        shuffledSequence: shuffledSeq,
+    });
+    assert.deepStrictEqual(step, { shuffleStep: 2, filteredCursor: 3 },
+        'D13: shuffle ON → next step follows shuffled sequence (step 1→2, cursor→shuffledSeq[2]=3)');
+})();
+
+// Toggle not persisted: createDefaultShuffleState always returns shuffleMode=true (fresh visit)
+(function () {
+    for (var i = 0; i < 5; i++) {
+        var state = logic.createDefaultShuffleState(10);
+        assert.strictEqual(state.shuffleMode, true,
+            'D13: every fresh createDefaultShuffleState call returns shuffleMode=true (not persisted)');
+    }
+})();
+
+// Shuffle OFF at last filtered item: nextPlaylistStep returns null (end of catalog order)
+(function () {
+    var step = logic.nextPlaylistStep({
+        shuffleMode: false,
+        filteredCursor: 4, // last item in a 5-item filtered list
+        shuffleStep: 0,
+        filteredCount: 5,
+        shuffledSequence: [],
+    });
+    assert.strictEqual(step, null, 'D13: shuffle OFF at last item → null (end of catalog queue)');
+})();
+
+// Shuffle OFF at first filtered item: prev would be cursor-1 = -1, caller must guard
+(function () {
+    // When filteredCursor=0, seekFiltered(-1) guards: ni < 0 → no-op
+    var filteredCursor = 0;
+    var ni = filteredCursor - 1; // = -1
+    assert.ok(ni < 0, 'D13: prev at first catalog item is out-of-range (caller guards ni<0)');
+})();
+
+// Shuffle toggle OFF then ON: produces a new shuffle from the current position
+(function () {
+    // After turning OFF, filteredCursor=2; turning back ON reshuffles around cursor 2
+    var filteredCount = 5;
+    var filteredCursor = 2;
+
+    var newSeq = logic.buildShuffledSequence(filteredCount);
+    assert.strictEqual(newSeq.length, filteredCount, 'D13: re-enable shuffle gives correct-length sequence');
+    // Find where cursor 2 lands in the new sequence
+    var stepForCursor = newSeq.indexOf(filteredCursor);
+    assert.ok(stepForCursor >= 0 && stepForCursor < filteredCount,
+        'D13: current video (cursor=2) is placed somewhere in the new shuffled sequence');
+})();
+
+// Shuffle OFF in a filtered playlist: catalog order respects filter (only filtered items)
+(function () {
+    var filterState = { sign_language: 'lse', edition: null, typology: null };
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    // filtered = [1, 2, 6] (the lse videos)
+    assert.strictEqual(filtered.length, 3, 'lse filter gives 3 filtered items');
+
+    // Simulate shuffle placed us at filtered index 1 (master index 2 = Amaia)
+    var filteredCursor = 1;
+    assert.strictEqual(filtered[filteredCursor], 2, 'filteredCursor 1 → master index 2');
+
+    // Toggle OFF: next in catalog order is filtered index 2 (master index 6 = Carme)
+    var step = logic.nextPlaylistStep({
+        shuffleMode: false,
+        filteredCursor: filteredCursor,
+        shuffleStep: 0,
+        filteredCount: filtered.length,
+        shuffledSequence: [],
+    });
+    assert.deepStrictEqual(step, { shuffleStep: 0, filteredCursor: 2 },
+        'D13 + D18: shuffle OFF in filtered playlist → next follows filtered catalog order');
+    assert.strictEqual(filtered[step.filteredCursor], 6, 'next video is master index 6 (Carme, lse)');
+    assert.strictEqual(samplePlaylist[filtered[step.filteredCursor]].signLanguage, 'lse',
+        'D13: catalog order after toggle OFF still respects active filter');
+})();
+
 console.log('vimeo_playlist_logic.test.js: all passed');

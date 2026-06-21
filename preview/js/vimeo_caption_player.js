@@ -735,10 +735,16 @@
                 }
             }
 
+            /**
+             * Update shuffle button visual state (D13).
+             * aria-pressed drives the CSS; is-active class mirrors it for robustness.
+             * @param {boolean} on
+             */
             function setShuffleToggleUi(on) {
                 var btn = root.querySelector('.vpc-shuffle-btn');
                 if (!btn) return;
                 btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                btn.classList.toggle('is-active', !!on);
                 var icon = btn.querySelector('.material-icons');
                 if (icon) icon.textContent = 'shuffle';
             }
@@ -825,14 +831,27 @@
             if (shuffleBtn) {
                 shuffleBtn.addEventListener('click', function () {
                     if (shuffleMode) {
+                        // D13: Shuffle OFF — remaining queue follows catalog order from
+                        // the current video onward. Current video keeps playing.
+                        // Sync filteredCursor to current video's position in the
+                        // catalog-ordered filtered list (it was set by shuffle step,
+                        // which is already the filtered-list position, so this is a
+                        // no-op in most cases — but explicit for clarity).
+                        var currentMasterIx = filteredMasterIndices[filteredCursor];
+                        var catalogPos = filteredMasterIndices.indexOf(currentMasterIx);
+                        if (catalogPos >= 0) filteredCursor = catalogPos;
                         shuffleMode = false;
                         shuffledSequence = [];
                         setShuffleToggleUi(false);
                         updatePlaylistNavButtons();
                         return;
                     }
+                    // D13: Shuffle ON — re-shuffle remaining queue from current position.
+                    // Current video keeps playing; future queue is re-randomised.
                     shuffleMode = true;
                     shuffledSequence = L.buildShuffledSequence(filteredCount());
+                    // Place current video at step 0 of the new shuffle so Prev/Next
+                    // navigate coherently relative to what is playing now.
                     shuffleStep = 0;
                     var s;
                     for (s = 0; s < shuffledSequence.length; s++) {
