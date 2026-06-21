@@ -23,10 +23,16 @@
  *     // Omit to use single video_id / embed_url at the top level. Prev/Next appear when length > 1.
  *     // Canonical metadata: data/videos.json plus data/captions/*.vtt (videos_catalog.php).
  *     //
- *     // Optional: R2 filter row — sign language custom picker (D15, D17, D18).
+ *     // Optional: R2 filter row — sign language, city/edition, typology custom pickers (D15, D17, D18).
  *     // options: populated-from-present only (D17). Client composable filter state.
  *     'sign_language_filter' => array(
  *       'options' => array( array('value' => 'libras', 'label' => 'LIBRAS Brazilian Sign Language'), ),
+ *     ),
+ *     'edition_filter' => array(
+ *       'options' => array( array('value' => '2023-sao-paulo', 'label' => '2023 São Paulo'), ),
+ *     ),
+ *     'typology_filter' => array(
+ *       'options' => array( array('value' => 'acudits', 'label' => 'ACUDITS'), ),
  *     ),
  *     'playlist' => array(
  *       array(
@@ -318,13 +324,26 @@ $signLangOptionsList = isset($vpc['sign_language_filter']['options']) && is_arra
     : array();
 $useSignLanguageFilter = count($signLangOptionsList) > 0;
 
+
+// ── R2 filter row: City/Edition custom picker (D15, D17) ───────────────────────
+$editionOptionsList = isset($vpc['edition_filter']['options']) && is_array($vpc['edition_filter']['options'])
+    ? $vpc['edition_filter']['options']
+    : array();
+$useEditionFilter = count($editionOptionsList) > 0;
+
+// ── R2 filter row: Typology custom picker (D15, D17) ──────────────────────────
+$typologyOptionsList = isset($vpc['typology_filter']['options']) && is_array($vpc['typology_filter']['options'])
+    ? $vpc['typology_filter']['options']
+    : array();
+$useTypologyFilter = count($typologyOptionsList) > 0;
+
 // Legacy caption-picker support (spoken language select — issue #7, not yet styled as R2 picker).
 $captionPickerDynamic = false;
 $captionSelectId      = $idBase . '__caption-lang-select';
 $showCaptionFilter    = count($captionTracks) > 0;
 
 // R2 row shows when there is at least one filter picker.
-$showR2FilterRow = $useSignLanguageFilter;
+$showR2FilterRow = $useSignLanguageFilter || $useEditionFilter || $useTypologyFilter;
 
 // Prepare sign-language picker config for JS (D18 composable filter state).
 $signLangFilterForConfig = $useSignLanguageFilter
@@ -430,13 +449,22 @@ $showPlaylistNav = count($playlistNormalized) > 1;
     <?php
     /*
      * R2 — Filter row (D15, D17, D18)
-     * Contains the Sign language custom picker (and future: City/Edition, Typology, Spoken Language).
+     * Contains Sign language, City/Edition, and Typology custom pickers.
+     * (Future slot: Spoken Language track selector — issue #6.)
      * Custom dropdown, NOT a native <select>. Brand green accents on active state.
      * Built to hold 4 pickers side-by-side (flex row, wraps on mobile per D20).
      */
-    $signLangPickerId       = $idBase . '__sign-lang-picker';
-    $signLangDropdownId     = $idBase . '__sign-lang-dropdown';
-    $signLangPickerBtnId    = $idBase . '__sign-lang-btn';
+    $signLangPickerId    = $idBase . '__sign-lang-picker';
+    $signLangDropdownId  = $idBase . '__sign-lang-dropdown';
+    $signLangPickerBtnId = $idBase . '__sign-lang-btn';
+
+    $editionPickerId    = $idBase . '__edition-picker';
+    $editionDropdownId  = $idBase . '__edition-dropdown';
+    $editionPickerBtnId = $idBase . '__edition-btn';
+
+    $typologyPickerId    = $idBase . '__typology-picker';
+    $typologyDropdownId  = $idBase . '__typology-dropdown';
+    $typologyPickerBtnId = $idBase . '__typology-btn';
     ?>
     <div class="vpc-r2-filters" role="group" aria-label="Filters">
         <?php if ($useSignLanguageFilter): ?>
@@ -468,6 +496,86 @@ $showPlaylistNav = count($playlistNormalized) > 1;
                     aria-selected="true"
                 >All sign languages</li>
                 <?php foreach ($signLangOptionsList as $opt): ?>
+                    <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
+                <li
+                    role="option"
+                    class="vpc-picker-option"
+                    data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-selected="false"
+                ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
+        <?php if ($useEditionFilter): ?>
+        <div
+            class="vpc-picker"
+            id="<?php echo htmlspecialchars($editionPickerId, ENT_QUOTES, 'UTF-8'); ?>"
+            data-picker="edition"
+        >
+            <button
+                type="button"
+                id="<?php echo htmlspecialchars($editionPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-btn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="<?php echo htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                data-generic-label="City / Edition"
+            >City / Edition</button>
+            <ul
+                role="listbox"
+                id="<?php echo htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-dropdown"
+                aria-label="City / Edition"
+                hidden
+            >
+                <li
+                    role="option"
+                    class="vpc-picker-option vpc-picker-clear"
+                    data-value=""
+                    aria-selected="true"
+                >All cities</li>
+                <?php foreach ($editionOptionsList as $opt): ?>
+                    <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
+                <li
+                    role="option"
+                    class="vpc-picker-option"
+                    data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-selected="false"
+                ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
+        <?php if ($useTypologyFilter): ?>
+        <div
+            class="vpc-picker"
+            id="<?php echo htmlspecialchars($typologyPickerId, ENT_QUOTES, 'UTF-8'); ?>"
+            data-picker="typology"
+        >
+            <button
+                type="button"
+                id="<?php echo htmlspecialchars($typologyPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-btn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="<?php echo htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                data-generic-label="Typology"
+            >Typology</button>
+            <ul
+                role="listbox"
+                id="<?php echo htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
+                class="vpc-picker-dropdown"
+                aria-label="Typology"
+                hidden
+            >
+                <li
+                    role="option"
+                    class="vpc-picker-option vpc-picker-clear"
+                    data-value=""
+                    aria-selected="true"
+                >All typologies</li>
+                <?php foreach ($typologyOptionsList as $opt): ?>
                     <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
                 <li
                     role="option"

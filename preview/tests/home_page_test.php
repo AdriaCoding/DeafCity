@@ -179,7 +179,7 @@ if (is_file($catalogJsonPathForTest)) {
 // AC: R2 filter row renders in the player chrome (vpc-r2-filters)
 assert_contains('vpc-r2-filters', $html, 'R2 filter row renders');
 
-// AC: Sign language picker is a custom dropdown — NOT a native <select> for sign language
+// AC: All pickers use custom dropdown — NOT a native <select>
 assert_not_contains('<select', $html, 'no native <select> element (custom picker only)');
 assert_contains('vpc-picker', $html, 'custom picker element present');
 assert_contains('vpc-picker-btn', $html, 'custom picker button present');
@@ -263,4 +263,76 @@ echo "PASS: signLanguageFilter.options present in vpc-config (" . count($slOpts)
 // AC: Non-scrollable body preserved (D9)
 assert_contains('overflow: hidden', $html, 'non-scrollable body still present');
 
-echo "All tests passed.\n";
+// ── Issue #5: City/Edition + Typology pickers ─────────────────────────────────
+
+// AC: Edition picker renders with data-picker="edition"
+assert_contains('data-picker="edition"', $html, 'edition picker renders (data-picker=edition)');
+assert_contains('data-generic-label="City / Edition"', $html, 'edition picker generic label');
+assert_contains('>City / Edition<', $html, 'edition picker button face');
+
+// AC: Typology picker renders with data-picker="typology"
+assert_contains('data-picker="typology"', $html, 'typology picker renders (data-picker=typology)');
+assert_contains('data-generic-label="Typology"', $html, 'typology picker generic label');
+assert_contains('>Typology<', $html, 'typology picker button face');
+
+// AC: Clear options for edition and typology pickers
+assert_contains('All cities', $html, 'edition clear option says "All cities"');
+assert_contains('All typologies', $html, 'typology clear option says "All typologies"');
+
+// AC: Edition picker lists editions present in catalog
+assert_contains('2020 Val', $html, '2020 València option in edition picker');
+assert_contains('2021 Mexico City', $html, '2021 Mexico City option in edition picker');
+assert_contains('2023 Bilbao', $html, '2023 Bilbao option in edition picker');
+assert_contains('2023 S', $html, '2023 São Paulo option in edition picker');
+assert_contains('Salamanca 2028', $html, 'Salamanca 2028 option in edition picker');
+
+// AC: Empty editions absent (config has 2026-marseille, 2026-rome, etc. not in catalog)
+assert_not_contains('2026 Marseille', $html, 'empty edition (Marseille) absent from dropdown');
+assert_not_contains('2026 Roma', $html, 'empty edition (Rome) absent from dropdown');
+assert_not_contains('2026 Tunis', $html, 'empty edition (Tunis) absent from dropdown');
+
+// AC: Typology picker lists typologies present in catalog
+assert_contains('ACUDITS', $html, 'ACUDITS typology option present');
+assert_contains('MALENTESOS', $html, 'MALENTESOS typology option present');
+assert_contains('ENDEVINALLES', $html, 'ENDEVINALLES typology option present');
+assert_contains('data-value="anecdotes"', $html, 'anecdotes value present in typology picker');
+assert_contains('data-value="memories"', $html, 'memories value present in typology picker');
+
+// AC: Option count sanity — 5 editions and 5 typologies present in catalog
+$editionPickerSection = '';
+if (preg_match('~data-picker="edition"[^>]*>.*?</div>~s', $html, $epMatch)) {
+    $editionPickerSection = $epMatch[0];
+}
+$editionOptionCount = substr_count($editionPickerSection, 'role="option"');
+if ($editionOptionCount !== 6) { // 5 real + 1 clear option
+    fwrite(STDERR, "FAIL: edition picker should have 6 options (5 editions + 1 clear), got {$editionOptionCount}\n");
+    exit(1);
+}
+echo "PASS: edition picker has 6 options (5 editions + 1 clear)\n";
+
+$typologyPickerSection = '';
+if (preg_match('~data-picker="typology"[^>]*>.*?</div>~s', $html, $tpMatch)) {
+    $typologyPickerSection = $tpMatch[0];
+}
+$typologyOptionCount = substr_count($typologyPickerSection, 'role="option"');
+if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
+    fwrite(STDERR, "FAIL: typology picker should have 6 options (5 typologies + 1 clear), got {$typologyOptionCount}\n");
+    exit(1);
+}
+echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
+
+// AC: Three pickers appear in the R2 row in order: sign_language, edition, typology
+$slPos  = strpos($html, 'data-picker="sign_language"');
+$edPos  = strpos($html, 'data-picker="edition"');
+$tyPos  = strpos($html, 'data-picker="typology"');
+if ($slPos === false || $edPos === false || $tyPos === false) {
+    fwrite(STDERR, "FAIL: one or more pickers missing from HTML\n");
+    exit(1);
+}
+if (!($slPos < $edPos && $edPos < $tyPos)) {
+    fwrite(STDERR, "FAIL: picker order should be sign_language → edition → typology in DOM\n");
+    exit(1);
+}
+echo "PASS: pickers appear in correct DOM order (sign_language → edition → typology)\n";
+
+echo "\nAll tests passed.\n";

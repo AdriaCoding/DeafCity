@@ -282,6 +282,20 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
                 $entry['participant'] = $participant;
             }
 
+            // Filterable catalog fields — passed to JS for client-side composable filtering (D17, D18).
+            $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
+            if ($edition !== '') {
+                $entry['edition'] = $edition;
+            }
+            $typology = isset($v['typology']) ? trim((string) $v['typology']) : '';
+            if ($typology !== '') {
+                $entry['typology'] = $typology;
+            }
+            $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
+            if ($participant !== '') {
+                $entry['participant'] = $participant;
+            }
+
             $eParams = isset($v['embed_params']) && is_array($v['embed_params'])
                 ? $v['embed_params']
                 : array();
@@ -296,5 +310,133 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
             $playlist[] = $entry;
         }
         return $playlist;
+    }
+}
+
+if (!function_exists('vpc_shuffle_playlist')) {
+    /**
+     * Fisher-Yates shuffle of a playlist array (returns new shuffled copy).
+     * The item at index 0 after shuffling is both the paused poster and the queue
+     * head (D12: server-side random poster = shuffled queue head). Reload = new face.
+     *
+     * @param array<int, array<string, mixed>> $playlist
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_shuffle_playlist(array $playlist) {
+        $n = count($playlist);
+        if ($n <= 1) {
+            return $playlist;
+        }
+        for ($i = $n - 1; $i > 0; $i--) {
+            $j = mt_rand(0, $i);
+            $tmp         = $playlist[$i];
+            $playlist[$i] = $playlist[$j];
+            $playlist[$j] = $tmp;
+        }
+        return array_values($playlist);
+    }
+}
+
+if (!function_exists('vpc_edition_options_from_catalog')) {
+    /**
+     * Derive City/Edition filter options from distinct edition IDs in the catalog,
+     * resolved to labels via studio-config.json. Order follows config file order.
+     *
+     * @param array<string, mixed> $catalog
+     * @param string $studioConfigPath
+     * @return array<int, array{value: string, label: string}>
+     */
+    function vpc_edition_options_from_catalog(array $catalog, $studioConfigPath) {
+        $seen = array();
+        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            $ed = isset($v['edition']) ? trim((string) $v['edition']) : '';
+            if ($ed !== '' && !isset($seen[$ed])) {
+                $seen[$ed] = true;
+            }
+        }
+
+        $labelMap = array();
+        $orderMap = array();
+        if (is_readable($studioConfigPath)) {
+            $raw = file_get_contents($studioConfigPath);
+            $cfg = $raw !== false ? json_decode($raw, true) : null;
+            if (is_array($cfg)) {
+                $pos = 0;
+                foreach (isset($cfg['editions']) ? $cfg['editions'] : array() as $item) {
+                    if (!empty($item['id']) && !empty($item['label'])) {
+                        $labelMap[$item['id']] = $item['label'];
+                        $orderMap[$item['id']] = $pos++;
+                    }
+                }
+            }
+        }
+
+        $opts = array();
+        foreach (array_keys($seen) as $id) {
+            $opts[] = array(
+                'value'  => $id,
+                'label'  => isset($labelMap[$id]) ? $labelMap[$id] : $id,
+                '_order' => isset($orderMap[$id]) ? $orderMap[$id] : 999,
+            );
+        }
+        usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
+        return array_map(function ($o) {
+            return array('value' => $o['value'], 'label' => $o['label']);
+        }, $opts);
+    }
+}
+
+if (!function_exists('vpc_typology_options_from_catalog')) {
+    /**
+     * Derive Typology filter options from distinct typology IDs in the catalog,
+     * resolved to labels via studio-config.json. Order follows config file order.
+     *
+     * @param array<string, mixed> $catalog
+     * @param string $studioConfigPath
+     * @return array<int, array{value: string, label: string}>
+     */
+    function vpc_typology_options_from_catalog(array $catalog, $studioConfigPath) {
+        $seen = array();
+        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            $ty = isset($v['typology']) ? trim((string) $v['typology']) : '';
+            if ($ty !== '' && !isset($seen[$ty])) {
+                $seen[$ty] = true;
+            }
+        }
+
+        $labelMap = array();
+        $orderMap = array();
+        if (is_readable($studioConfigPath)) {
+            $raw = file_get_contents($studioConfigPath);
+            $cfg = $raw !== false ? json_decode($raw, true) : null;
+            if (is_array($cfg)) {
+                $pos = 0;
+                foreach (isset($cfg['typologies']) ? $cfg['typologies'] : array() as $item) {
+                    if (!empty($item['id']) && !empty($item['label'])) {
+                        $labelMap[$item['id']] = $item['label'];
+                        $orderMap[$item['id']] = $pos++;
+                    }
+                }
+            }
+        }
+
+        $opts = array();
+        foreach (array_keys($seen) as $id) {
+            $opts[] = array(
+                'value'  => $id,
+                'label'  => isset($labelMap[$id]) ? $labelMap[$id] : $id,
+                '_order' => isset($orderMap[$id]) ? $orderMap[$id] : 999,
+            );
+        }
+        usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
+        return array_map(function ($o) {
+            return array('value' => $o['value'], 'label' => $o['label']);
+        }, $opts);
     }
 }
