@@ -42,6 +42,7 @@ html, body {
     aspect-ratio: 16 / 9;
     object-fit: cover;
     display: block;
+    border-bottom: 1px solid #000;
 }
 
 .participant-name {
@@ -54,6 +55,10 @@ html, body {
 
 .participant-card:hover .participant-name {
     color: rgb(0, 120, 0);
+}
+
+.participant-card:hover img {
+    border-bottom-color: rgb(0, 120, 0);
 }
 
 .participant-card:hover {
