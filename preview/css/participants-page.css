@@ -13,20 +13,20 @@ html, body {
 .preview-participants-page {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem 1.25rem 3rem;
+    padding: 0.5rem 0.5rem 1.5rem;
 }
 
 .participants-title {
     font-size: 1.5rem;
     font-weight: 700;
-    margin: 1rem 0;
+    margin: 0.5rem 0;
     color: #111;
 }
 
 .participants-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
 }
 
 .participant-card {
