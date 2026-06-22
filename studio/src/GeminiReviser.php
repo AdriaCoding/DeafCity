@@ -53,10 +53,11 @@ Review the provided subtitle text and output a perfectly timed, semantically coh
 * **Proportional Splitting:** Divide the time duration proportionally based on the character count of each split relative to the total character count of the original cue.
 * **Overlap Correction:** Scan for, flag, and eliminate any chronological timestamp overlaps between consecutive cues.
 
-### 4. Text Integrity (CRITICAL)
-* Do NOT change any wording.
-* Do NOT paraphrase.
-* Do NOT add, omit, or remove any spoken words.
+### 4. Synthesis & Natural Phrasing (CRITICAL)
+* **Summarize and Synthesize:** The input is a literal voiceover interpretation of sign language, which is often wordy or repetitive. You MUST summarize and synthesize the text to be concise, punchy, and natural.
+* **Cut the Fluff:** Remove filler words, false starts, and unnecessary repetitions. Say the same thing with fewer words.
+* **Preserve Meaning & Humor:** While shortening the text, you must retain the exact narrative meaning, the tone, and the comedic punchlines.
+* **Fix Contextual Errors:** Correct any obvious speech-to-text homophone errors (e.g., "sort" instead of "sord") based on the context of the story.
 * Correct genuinely missing sentence-final punctuation only. Do NOT add punctuation to a cue that ends mid-sentence—adding a period to a fragment that continues in the next cue creates a false sentence boundary. Do NOT replace existing source punctuation with different punctuation: if the source has a comma at a position where you end a cue, that cue ends with the comma (or no punctuation), never with a period.
 * Capitalize the first word of a cue only if it begins a new sentence (i.e., the preceding cue ended a complete sentence with `.`, `?`, or `!`). If a cue continues a sentence from the previous one, its first word must be lowercase unless it is a proper noun.
 
