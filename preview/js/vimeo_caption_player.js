@@ -628,7 +628,7 @@
                 shuffleMode = plan.shuffleMode;
 
                 setShuffleToggleUi(shuffleMode);
-                syncParticipantButtonLabel();
+                syncCollectionNavButtons();
                 updateAllFilterPickerReadouts();
                 rebuildAllCascadingDropdowns();
 
@@ -1072,19 +1072,42 @@
             }
 
             /**
-             * Update the Participants nav button label to show the active participant name (D18).
-             * Reverts to 'Participants' text when participant mode is cleared.
+             * Active label for an R3 collection nav button (D21). Empty = neutral.
+             * @param {string} collectionKey  e.g. "participants", "tags"
+             * @returns {string}
              */
-            function syncParticipantButtonLabel() {
-                var participantsBtn = root.querySelector('.preview-site-nav__btn[href="/preview/participants"]');
-                if (!participantsBtn) return;
-                if (isParticipantMode && participantName) {
-                    participantsBtn.textContent = participantName;
-                    participantsBtn.classList.add('is-active');
-                } else {
-                    participantsBtn.textContent = 'Participants';
-                    participantsBtn.classList.remove('is-active');
+            function getActiveCollectionLabel(collectionKey) {
+                if (collectionKey === 'participants') {
+                    return isParticipantMode && participantName ? participantName : '';
                 }
+                if (collectionKey === 'tags') {
+                    return '';
+                }
+                return '';
+            }
+
+            /**
+             * Sync all R3 collection nav buttons: green + name when active, generic label otherwise (D21).
+             */
+            function syncCollectionNavButtons() {
+                root.querySelectorAll('.preview-site-nav__btn[data-collection]').forEach(function (btn) {
+                    var key = btn.getAttribute('data-collection') || '';
+                    var activeLabel = getActiveCollectionLabel(key);
+                    var genericLabel = btn.getAttribute('data-generic-label');
+                    if (!genericLabel) {
+                        genericLabel = btn.textContent.trim();
+                        btn.setAttribute('data-generic-label', genericLabel);
+                    }
+                    if (activeLabel) {
+                        btn.textContent = activeLabel;
+                        btn.classList.add('is-active');
+                        btn.setAttribute('aria-current', 'true');
+                    } else {
+                        btn.textContent = genericLabel;
+                        btn.classList.remove('is-active');
+                        btn.removeAttribute('aria-current');
+                    }
+                });
             }
 
             /**
@@ -1178,7 +1201,7 @@
                 if (L.shouldClearCollectionOnFilterFix(isParticipantMode, newValue)) {
                     isParticipantMode = false;
                     participantName = '';
-                    syncParticipantButtonLabel();
+                    syncCollectionNavButtons();
                 }
 
                 filterState[facet] = newValue;
@@ -1307,7 +1330,7 @@
             updateAllFilterPickerReadouts();
 
             // D18: Update Participants nav button label when in participant mode.
-            syncParticipantButtonLabel();
+            syncCollectionNavButtons();
 
             // Close pickers when clicking outside
             document.addEventListener('click', function () {

@@ -20,8 +20,11 @@ $items = array(
         'href' => '/preview/participants',
         'chrome_label' => 'Participants',
         'page_label' => 'Participants',
+        'collection' => 'participants',
     ),
+    // Tags page (next sprint): same data-collection + is-active pattern as participants.
 );
+$activeCollections = (isset($activeCollections) && is_array($activeCollections)) ? $activeCollections : array();
 $links = array();
 foreach ($items as $item) {
     if ($current !== $item['route']) {
@@ -41,6 +44,21 @@ $linkClass = $useLinkStyle ? 'preview-site-nav__link' : 'preview-site-nav__btn';
         ? $item['page_label']
         : $item['chrome_label'];
     ?>
-    <a href="<?= htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($linkClass, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($text, ENT_QUOTES, 'UTF-8') ?></a>
+    <?php
+    $collectionKey = isset($item['collection']) ? (string) $item['collection'] : '';
+    $collectionActive = ($collectionKey !== '' && !$useLinkStyle
+        && isset($activeCollections[$collectionKey])
+        && trim((string) $activeCollections[$collectionKey]) !== '');
+    $btnClass = $linkClass . ($collectionActive ? ' is-active' : '');
+    if ($collectionActive) {
+        $text = trim((string) $activeCollections[$collectionKey]);
+    }
+    $collectionAttr = ($collectionKey !== '' && !$useLinkStyle)
+        ? ' data-collection="' . htmlspecialchars($collectionKey, ENT_QUOTES, 'UTF-8') . '"'
+          . ' data-generic-label="' . htmlspecialchars($item['chrome_label'], ENT_QUOTES, 'UTF-8') . '"'
+        : '';
+    $ariaCurrent = $collectionActive ? ' aria-current="true"' : '';
+    ?>
+    <a href="<?= htmlspecialchars($item['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($btnClass, ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?>><?= htmlspecialchars($text, ENT_QUOTES, 'UTF-8') ?></a>
 <?php endforeach; ?>
 </nav>

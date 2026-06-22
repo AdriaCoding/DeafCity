@@ -35,11 +35,17 @@ a.preview-site-nav__btn:focus-visible {
     outline-offset: 2px;
 }
 
-/* D21: green when a participant/tag collection is active */
+/* D21: green when a participant/tag collection is active — matches fixed-filter picker */
 a.preview-site-nav__btn.is-active {
     border-color: rgb(0, 120, 0);
-    color: rgb(0, 120, 0);
-    background: #f0faf0;
+    color: rgb(0, 100, 0);
+    background: #e8f5e9;
+    font-weight: 500;
+}
+
+a.preview-site-nav__btn.is-active:hover {
+    background: #dff0e0;
+    border-color: rgb(0, 100, 0);
 }
 
 /* Inside player chrome — below transport and filters */

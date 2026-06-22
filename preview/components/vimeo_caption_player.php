@@ -734,6 +734,11 @@ $showPlaylistNav = count($playlistNormalized) > 1;
     if ($siteNavRoute !== ''):
         $currentRoute = $siteNavRoute;
         $navPlacement = 'chrome';
+        $activeCollections = array();
+        $participantNavName = isset($vpc['participant_name']) ? trim((string) $vpc['participant_name']) : '';
+        if ($participantNavName !== '') {
+            $activeCollections['participants'] = $participantNavName;
+        }
     ?>
     <div class="vpc-site-nav-wrap">
         <?php include dirname(__DIR__) . '/components/site_nav.php'; ?>
