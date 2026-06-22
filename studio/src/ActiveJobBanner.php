@@ -21,28 +21,14 @@ final class ActiveJobBanner
 
         $job = $c->jobManager->read();
 
-        if (($job['job_type'] ?? '') === 'transcription') {
-            return [
-                'title' => (string) ($job['original_filename'] ?? 'Transcripció'),
-                'resumeUrl' => '?action=resume-job',
-                'detail' => null,
-            ];
-        }
-
-        $step = (string) ($job['step'] ?? 'translation');
-        if ($step === 'subtitle-editor') {
-            $step = 'translation';
-        }
-
-        $resumeUrl = PipelineSteps::route($step);
-        if (($job['intake_mode'] ?? 'upload') === 'generate' && !$c->jobManager->hasDraftVtt()) {
-            $resumeUrl = '?action=resume-job';
+        if (($job['job_type'] ?? '') !== 'transcription') {
+            return null;
         }
 
         return [
-            'title' => (string) ($job['video_title'] ?? 'Feina en curs'),
-            'resumeUrl' => $resumeUrl,
-            'detail' => PipelineSteps::label($step),
+            'title' => (string) ($job['original_filename'] ?? 'Transcripció'),
+            'resumeUrl' => '?action=resume-job',
+            'detail' => null,
         ];
     }
 }

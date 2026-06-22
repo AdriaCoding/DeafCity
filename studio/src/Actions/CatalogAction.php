@@ -152,7 +152,7 @@ class CatalogAction
             [
                 'activeJobBanner' => ActiveJobBanner::resolve($c),
             ],
-            StudioHeader::vars($c, StudioHeader::NAV_CATALOG, null, $syncStatus, $isSyncing),
+            StudioHeader::vars($c, StudioHeader::NAV_CATALOG, $syncStatus, $isSyncing),
         );
     }
 

@@ -1,14 +1,21 @@
 # Studio
 
-Private web application where Producers process Videos (intake, subtitle editing, translation, tagging, publication). See `CONTEXT.md` for domain terms.
+Private web application where Producers manage the video catalog, caption tracks, and standalone audio transcription. See `CONTEXT.md` for domain terms.
 
-## Pipeline
+## Active workflows
 
-All six pipeline slices are **shipped** (see `docs/studio-pipeline-features.md`). PRDs under `.scratch/*/PRD.md`.
+Studio has two producer-facing workflows:
+
+1. **Continguts (Catàleg)** — the default home screen. Add videos to the catalog, upload and edit caption tracks, translate captions, and manage editions, sign languages, typologies, and subtitle languages. See [Continguts](#continguts) below and `docs/studio-pipeline-features.md`.
+2. **Standalone transcription (Nova transcripció)** — transcribe interpreter audio to downloadable VTT/SRT files without any Vimeo or catalog involvement. See [Standalone transcription](#standalone-transcription) below.
+
+The legacy **Nova feina** end-to-end pipeline (`?action=intake` → translation → tagging → publication) was **removed in June 2026**. Continguts replaced it as the primary caption workflow. Historical notes on the retired pipeline live in `docs/studio-pipeline-features.md`.
+
+## Catalog sync (push to Vimeo)
+
+Push title, tags, and caption files for every video in `catalog.json` to Vimeo using each Subtitle language's `vimeo_code`. The server catalog and `data/captions/` are never overwritten from Vimeo. Thumbnail URLs are pulled from Vimeo only when missing on a catalog entry.
 
 **Publication ops:** `data/catalog.json` and `data/captions/` must be writable by the web server user (`www-data`). Vimeo token needs `private`, `upload`, `edit` scopes — see `config/config.example.php`. Test with `php studio/scripts/test_vimeo_publish.php`.
-
-**Catalog sync (push to Vimeo):** Push title, tags, and caption files for every video in `catalog.json` to Vimeo using each Subtitle language's `vimeo_code`. The server catalog and `data/captions/` are never overwritten from Vimeo. Thumbnail URLs are pulled from Vimeo only when missing on a catalog entry.
 
 Can be triggered two ways:
 
@@ -17,42 +24,52 @@ Can be triggered two ways:
 php studio/scripts/sync_to_vimeo.php
 ```
 
-Or via the Studio idle screen (**Sincronitzar a Vimeo**), which launches the same script as a background process. Progress is written to `data/sync-status.json`; the shell polls `?action=sync-status` every few seconds and shows a progress indicator. A sync already in progress blocks a second launch.
+Or via the Studio header (**Sincronitzar a Vimeo**), which launches the same script as a background process. Progress is written to `data/sync-status.json`; the UI polls `?action=sync-status` every few seconds and shows a progress indicator. A sync already in progress blocks a second launch.
 
 **After deploying `vimeo_code` backfill:** run **Sincronitzar a Vimeo** once so existing Vimeo text tracks (especially `aeb`, previously uploaded under `ar`) are re-uploaded under the correct locale codes.
 
 ## Continguts
 
-The **Continguts** section (`?action=continguts`) lets Producers manage catalog metadata after publication without starting a pipeline Job. Accessible from the idle screen; blocked while a Job is active. PRD at `docs/prd-continguts.md`.
+The **Continguts** section is the Studio home screen (`/` or `?action=continguts`). Producers use it for all catalog and caption work after a video is on Vimeo ([ADR-0003](../docs/adr/0003-producer-uploads-video-to-vimeo-directly.md)).
 
-Three tabs (client-side, no page reload per tab):
+Nav tabs (client-side, no page reload per tab):
 
-- **Vídeos** — lists all published videos (thumbnail + title). Clicking a row expands an edit panel with a title input and a tag chip picker. **Save** writes the new title and tags to Vimeo first (best-effort), then to `catalog.json`. If the Vimeo write fails the catalog is still saved and a warning is shown; if the catalog write fails the operation returns an error.
-- **Ciutats** — lists editions with inline-editable labels. Delete is available only when no catalog video references the edition id.
-- **Llengues de signes** — same pattern as Ciutats but for sign languages.
+- **Vídeos** — browse and filter the catalog; open a video details page to edit title, tags, typology, visibility, and caption tracks (upload, replace, delete, inline-edit master, cue-level editor, translate to configured target languages).
+- **Ciutats** — inline-edit edition labels; add or delete editions when no catalog video references them.
+- **Llengues de signes** — same pattern for sign languages.
+- **Tipologies** — manage video typology labels.
+- **Llengues orals** — manage subtitle languages and **Objectiu de traducció** flags.
 
-Both Ciutats and Llengues de signes include the same add-panel component (city + year → edition; code + qualifier → sign language) that appears in the intake form, sharing the `setupConfigAddPanel` JavaScript from `studio/js/config-add-panel.js`.
+Adding a new catalog video uses the **Afegir vídeo** modal (`CatalogIntakeAddHandler`): Vimeo URL/ID, sign language, edition, typology, tags, optional caption uploads — writes directly to `catalog.json` and `data/captions/` without a pipeline Job.
 
-Key classes: `VideoEditHandler` (Vimeo-then-catalog orchestration), `CatalogEditor` (atomic read-modify-write on `catalog.json`), `CatalogAction` (routes all `continguts-*` actions and the `addEdition` / `addSignLanguage` endpoints).
+Key classes: `CatalogAction` (all `continguts-*` routes), `CatalogEditor`, `CatalogIntakeAddHandler`, `CaptionUploadHandler`, `VideoEditHandler`, `VideoVisibilityHandler`.
+
+PRDs: `docs/prd-continguts.md`, `docs/prd-caption-track-management.md`.
+
+Continguts is **not** blocked by an active transcription Job (only transcription and bulk-transcription flows use the one-job slot under `data/jobs/current/`).
 
 ## Standalone transcription
 
-The **Transcription** section (`?action=transcription-intake`) transcribes an interpreter audio file and delivers downloadable caption files without any Vimeo involvement. It is a separate entry point from the main pipeline, used for external transcription work.
+The **Nova transcripció** entry point (`?action=transcription-intake`) transcribes interpreter audio and delivers downloadable caption files. No Vimeo or catalog involvement.
 
 Flow:
-1. Producer uploads an audio file and selects the source language.
-2. `TranscriptionIntakeHandler` creates a Job with `job_type: transcription` and runs `TranscriptionOrchestrator` (same Groq-first / local-fallback logic as Slice 3).
-3. On success, translation to English is chained automatically via `scripts/run_transcription_pipeline.sh` (a shell script that runs `transcribe.py` then spawns `run_translate.sh` as a background process).
-4. The shell shows `views/transcription-loading.php`, which cycles through four states polled every 3 s:
-   - `transcribing` — waiting for `transcription.json` to reach `done`
-   - `translating` — waiting for `translation-status.json` English entry to reach `done`
-   - `translation_error` — English translation failed; offers retry or cancel
-   - `download_ready` — shows VTT and SRT download cards for both the source language and English
-5. Producer downloads the files and clicks **Finalitza**, which cancels the Job and returns the Studio to idle.
 
-Download endpoints (also available during any active pipeline Job):
-- `?action=download-vtt[&lang=XX]` — serves the draft VTT for the master or a translated language
-- `?action=download-srt[&lang=XX]` — converts VTT to SRT on the fly and serves it
+1. Producer uploads an audio file and selects the source language (or submits a bulk batch of 2+ files).
+2. `TranscriptionIntakeHandler` (or `BulkIntakeHandler` for multi-file) creates a Job with `job_type: transcription` and runs `TranscriptionOrchestrator` (Groq-first / local-faster-whisper fallback; see [ADR-0006](../docs/adr/0006-groq-primary-faster-whisper-fallback-transcription.md)).
+3. On success, translation to English is chained automatically via `scripts/run_transcription_pipeline.sh`.
+4. `views/transcription-loading.php` (`?action=resume-job`) cycles through four states polled every 3 s:
+   - `transcribing` — waiting for `transcription.json` to reach `done`
+   - `translating` — waiting for `translation.json` English entry to reach `done`
+   - `translation_error` — English translation failed; offers retry or cancel
+   - `download_ready` — VTT and SRT download cards for source language and English
+5. Producer downloads the files and clicks **Finalitza**, which cancels the Job and returns to Continguts.
+
+Download endpoints (during an active transcription Job only):
+
+- `?action=download-vtt[&lang=XX]` — serves `draft.vtt` or `draft_{lang}.vtt`
+- `?action=download-srt[&lang=XX]` — converts the same file to SubRip on the fly
+
+Translation progress for transcription Jobs uses `?action=translation-status` and `?action=translation-retry` (not to be confused with the removed pipeline translation hub).
 
 ## Developer scripts
 
@@ -61,7 +78,7 @@ Scripts under `studio/scripts/` that are not part of the runtime request path:
 | Script | Purpose | Usage |
 |---|---|---|
 | `sync_to_vimeo.php` | Push titles, tags, and captions to Vimeo; backfill missing `thumbnail_url` only | `php studio/scripts/sync_to_vimeo.php` |
-| `test_vimeo_publish.php` | Smoke-test the Vimeo publish flow (text track upload) | `php studio/scripts/test_vimeo_publish.php` |
+| `test_vimeo_publish.php` | Smoke-test the Vimeo text-track upload flow | `php studio/scripts/test_vimeo_publish.php` |
 | `test_groq_transcribe.php` | Smoke-test the Groq transcription API | `GROQ_SMOKE=1 php studio/scripts/test_groq_transcribe.php` |
 | `test-translate-integration.php` | Integration test for Gemini translation | `php studio/scripts/test-translate-integration.php` |
 | `e2e_test.php` | HTTP-level E2E tests hitting the live Studio | `php studio/scripts/e2e_test.php [password]` (default: `hola`) |
@@ -69,10 +86,10 @@ Scripts under `studio/scripts/` that are not part of the runtime request path:
 | `transcribe.py` | faster-whisper transcription worker | spawned by `run_transcribe.sh` / `run_transcription_pipeline.sh` |
 | `run_transcribe.sh` | Activates `.venv` and runs `transcribe.py` (nohup wrapper) | spawned by `BackgroundJobLauncher` |
 | `run_translate.sh` | Runs `translate.php`; writes a fallback error to the status file if the script exits non-zero before updating status | spawned by `BackgroundJobLauncher` / `run_transcription_pipeline.sh` |
-| `run_transcription_pipeline.sh` | Chains `transcribe.py` → `run_translate.sh` in one nohup background process (used by the standalone transcription path) | spawned by `BackgroundJobLauncher` |
-| `cue_chunker.py` | Python mirror of `src/CueChunker.php`; used by `transcribe.py` to post-process word-level timestamps into readable cues | imported by `transcribe.py` |
-| `studio_log.py` | Shared Python logging helper; sets up a `logging.Logger` writing to `data/logs/studio.log` | imported by `transcribe.py` and `bench_transcription.py` |
-| `bench_transcription.py` | One-off benchmark: local faster-whisper vs Groq models on sample audio; outputs timing table and side-by-side transcripts to `audio_samples/benchmark/` | run manually |
+| `run_transcription_pipeline.sh` | Chains transcribe → revise → translate (standalone transcription path) | spawned by `BackgroundJobLauncher` |
+| `cue_chunker.py` | Python mirror of `src/CueChunker.php`; used by `transcribe.py` | imported by `transcribe.py` |
+| `studio_log.py` | Shared Python logging helper writing to `data/logs/studio.log` | imported by `transcribe.py` and `bench_transcription.py` |
+| `bench_transcription.py` | Benchmark local faster-whisper vs Groq on sample audio | run manually |
 
 ## UI language
 
@@ -82,8 +99,7 @@ This includes:
 
 - View templates under `views/` (labels, buttons, headings, help text, confirm dialogs)
 - Client-side strings in `js/`
-- User-facing error and validation messages returned by PHP handlers (`IntakeHandler`, `CaptionFileIntegrityChecker`, `WebVttValidator`, `VimeoIdParser`, `VimeoClient`, etc.)
-- Pipeline step labels in `PipelineSteps.php`
+- User-facing error and validation messages returned by PHP handlers (`CaptionFileIntegrityChecker`, `WebVttValidator`, `VimeoIdParser`, `VimeoClient`, etc.)
 
 Set `lang="ca"` on HTML documents. Keep product and brand names as proper nouns where appropriate (e.g. **Studio**, **DEAF.city**, **Vimeo**, **WebVTT**).
 

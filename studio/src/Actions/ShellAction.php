@@ -2,10 +2,7 @@
 
 namespace Studio\Actions;
 
-use Studio\Actions\CatalogAction;
 use Studio\Container;
-use Studio\PipelineSteps;
-use Studio\StudioHeader;
 use Studio\TranscriptionPipelineStatus;
 
 class ShellAction
@@ -18,16 +15,6 @@ class ShellAction
 
         if ($action === 'resume-job') {
             $this->renderResumeJob();
-        }
-
-        if ($action !== null && $c->jobManager->exists()) {
-            $job = $c->jobManager->read();
-            if (($job['step'] ?? '') === $action) {
-                $stepLabel = PipelineSteps::label($action);
-                extract($c->headerContext(null, StudioHeader::pipelineStepFromAction($action)));
-                require $this->view('step-placeholder.php');
-                exit;
-            }
         }
 
         if ($action !== null) {
@@ -48,66 +35,28 @@ class ShellAction
         $c = $this->c;
         extract($c->headerContext());
 
-        $hasActiveJob = $c->jobManager->exists();
-        $isTranscriptionJob = $hasActiveJob && ($c->jobManager->read()['job_type'] ?? '') === 'transcription';
-
-        if ($isTranscriptionJob) {
-            $job = $c->jobManager->read();
-            $pipelineStatus = (new TranscriptionPipelineStatus($c->jobManager))->getState();
-            $originalFilename = $job['original_filename'] ?? 'transcripció';
-            $subtitleLanguageLabel = $job['subtitle_language'] ?? '';
-            foreach ($c->studioConfig->getSubtitleLanguages() as $lang) {
-                if (($lang['id'] ?? '') === ($job['subtitle_language'] ?? '')) {
-                    $subtitleLanguageLabel = $lang['label'] ?? $subtitleLanguageLabel;
-                    break;
-                }
-            }
-            $englishTranslationSkipped = ($job['subtitle_language'] ?? '') === 'en';
-            require $this->view('transcription-loading.php');
-            exit;
-        }
-
-        $job = [];
-        $editionLabel = '';
-        $stepLabel = '';
-        $resumeUrl = './';
-        $isTranscribing = false;
-        $transcriptionError = null;
-        $isLocalFallback = false;
-
-        if ($hasActiveJob) {
-            $job = $c->jobManager->read();
-            $step = $job['step'] ?? 'translation';
-            if ($step === 'subtitle-editor') {
-                $c->jobManager->update(['step' => 'translation']);
-                $step = 'translation';
-            }
-            $stepLabel = PipelineSteps::label($step);
-            $resumeUrl = PipelineSteps::route($step);
-            $editionLabel = $job['edition'];
-            foreach ($c->studioConfig->getEditions() as $edition) {
-                if ($edition['id'] === $job['edition']) {
-                    $editionLabel = $edition['label'];
-                    break;
-                }
-            }
-            if (($job['intake_mode'] ?? 'upload') === 'generate' && !$c->jobManager->hasDraftVtt()) {
-                $isTranscribing = true;
-                $isLocalFallback = str_starts_with($job['transcription_engine'] ?? '', 'local:');
-                $statusJson = $c->jobManager->readTranscriptionStatus();
-                if ($statusJson !== null) {
-                    $statusData = json_decode($statusJson, true);
-                    if (($statusData['status'] ?? '') === 'error') {
-                        $transcriptionError = $statusData['message'] ?? 'Error en la generació de subtítols';
-                    }
-                }
-            }
-        } else {
+        if (!$c->jobManager->exists()) {
             header('Location: ' . $c->baseUrl);
             exit;
         }
 
-        require $this->view('shell.php');
+        $job = $c->jobManager->read();
+        if (($job['job_type'] ?? '') !== 'transcription') {
+            header('Location: ' . $c->baseUrl);
+            exit;
+        }
+
+        $pipelineStatus = (new TranscriptionPipelineStatus($c->jobManager))->getState();
+        $originalFilename = $job['original_filename'] ?? 'transcripció';
+        $subtitleLanguageLabel = $job['subtitle_language'] ?? '';
+        foreach ($c->studioConfig->getSubtitleLanguages() as $lang) {
+            if (($lang['id'] ?? '') === ($job['subtitle_language'] ?? '')) {
+                $subtitleLanguageLabel = $lang['label'] ?? $subtitleLanguageLabel;
+                break;
+            }
+        }
+        $englishTranslationSkipped = ($job['subtitle_language'] ?? '') === 'en';
+        require $this->view('transcription-loading.php');
         exit;
     }
 

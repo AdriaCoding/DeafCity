@@ -5,7 +5,6 @@ namespace Studio;
 final class StudioHeader
 {
     public const NAV_CATALOG = 'catalog';
-    public const NAV_INTAKE = 'intake';
     public const NAV_TRANSCRIPTION_INTAKE = 'transcription-intake';
 
     /** @param array<string, mixed>|null $syncStatus */
@@ -36,24 +35,11 @@ final class StudioHeader
         if (str_starts_with($action, 'continguts')) {
             return self::NAV_CATALOG;
         }
-        if ($action === 'intake') {
-            return self::NAV_INTAKE;
-        }
         if ($action === 'transcription-intake') {
             return self::NAV_TRANSCRIPTION_INTAKE;
         }
 
         return null;
-    }
-
-    public static function pipelineStepFromAction(?string $action): ?string
-    {
-        return match ($action) {
-            'translation', 'translation-review', 'translation-loading', 'translation-status', 'translation-retry' => 'translation',
-            'tagging', 'skip-to-tagging', 'proceed-to-tagging' => 'tagging',
-            'publication' => 'publication',
-            default => null,
-        };
     }
 
     /** @param array<string, mixed>|null $syncStatus */
@@ -71,7 +57,6 @@ final class StudioHeader
     public static function vars(
         Container $c,
         ?string $activeNav = null,
-        ?string $pipelineStep = null,
         ?array $syncStatus = null,
         ?bool $isSyncing = null,
     ): array {
@@ -86,7 +71,6 @@ final class StudioHeader
             'syncStatus' => $syncStatus,
             'isSyncing' => $isSyncing,
             'activeNav' => $activeNav,
-            'pipelineStep' => $pipelineStep,
         ];
     }
 
@@ -96,10 +80,9 @@ final class StudioHeader
         ?array $syncStatus,
         bool $isSyncing,
         ?string $activeNav,
-        ?string $pipelineStep,
     ): string {
         ob_start();
-        self::includePartial(compact('baseUrl', 'syncStatus', 'isSyncing', 'activeNav', 'pipelineStep'));
+        self::includePartial(compact('baseUrl', 'syncStatus', 'isSyncing', 'activeNav'));
         return (string) ob_get_clean();
     }
 

@@ -11,12 +11,10 @@ if (!defined('STUDIO_LOCAL_TRANSCRIBE_MODEL')) { define('STUDIO_LOCAL_TRANSCRIBE
 
 use Studio\Actions\BulkAction;
 use Studio\Actions\CatalogAction;
-use Studio\Actions\EditorAction;
+use Studio\Actions\DownloadAction;
 use Studio\Actions\IntakeAction;
-use Studio\Actions\PublicationAction;
 use Studio\Actions\ShellAction;
 use Studio\Actions\SyncAction;
-use Studio\Actions\TranslationAction;
 use Studio\AuthGuard;
 use Studio\BackgroundJobLauncher;
 use Studio\Container;
@@ -64,12 +62,15 @@ $container = new Container(
 
 match ($action) {
     'cancel'                              => (new IntakeAction($container))->cancel(),
-    'intake'                              => (new IntakeAction($container))->handle(),
     'transcription-intake'                => (new IntakeAction($container))->handleTranscription(),
     'transcription-status'                => (new IntakeAction($container))->transcriptionStatus(),
+    'translation-status'                  => (new IntakeAction($container))->jobTranslationStatus(),
+    'translation-retry'                   => (new IntakeAction($container))->jobTranslationRetry(),
     'bulk-progress'                       => (new BulkAction($container))->progress(),
     'bulk-status'                         => (new BulkAction($container))->status(),
     'bulk-download'                       => (new BulkAction($container))->download(),
+    'download-vtt'                        => (new DownloadAction($container))->downloadVtt(),
+    'download-srt'                        => (new DownloadAction($container))->downloadSrt(),
     'add-sign-language'                   => (new CatalogAction($container))->addSignLanguage(),
     'add-edition'                         => (new CatalogAction($container))->addEdition(),
     'add-typology'                        => (new CatalogAction($container))->addTypology(),
@@ -97,17 +98,6 @@ match ($action) {
     'continguts-caption-translate-start',
     'continguts-caption-translate-status',
     'continguts-caption-translate-retry' => (new CatalogAction($container))->handle($action),
-    'subtitle-editor'                     => (new EditorAction($container))->handle(),
-    'translation-review'                  => (new EditorAction($container))->translationReview(),
-    'download-vtt'                        => (new EditorAction($container))->downloadVtt(),
-    'download-srt'                        => (new EditorAction($container))->downloadSrt(),
-    'translation'                         => (new TranslationAction($container))->hub(),
-    'translation-status'                  => (new TranslationAction($container))->status(),
-    'translation-retry'                   => (new TranslationAction($container))->retry(),
-    'tagging'                             => (new PublicationAction($container))->tagging(),
-    'skip-to-tagging',
-    'proceed-to-tagging'                  => (new PublicationAction($container))->advanceToTagging(),
-    'publication'                         => (new PublicationAction($container))->handle(),
     'sync'                                => (new SyncAction($container))->launch(),
     'sync-status'                         => (new SyncAction($container))->status(),
     'resume-job'                          => (new ShellAction($container))->handle('resume-job'),

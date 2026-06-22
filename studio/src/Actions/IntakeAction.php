@@ -4,12 +4,9 @@ namespace Studio\Actions;
 
 use Studio\BulkIntakeHandler;
 use Studio\Container;
-use Studio\IntakeHandler;
 use Studio\StudioHeader;
 use Studio\TranscriptionIntakeHandler;
 use Studio\TranslationJobState;
-use Studio\VimeoIdParser;
-use Studio\WebVttValidator;
 
 class IntakeAction
 {
@@ -19,56 +16,6 @@ class IntakeAction
     {
         $this->c->jobManager->cancel();
         header('Location: ' . $this->c->baseUrl);
-        exit;
-    }
-
-    public function handle(): never
-    {
-        $c = $this->c;
-        if ($c->jobManager->exists() && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . $c->baseUrl);
-            exit;
-        }
-
-        $handler = new IntakeHandler(
-            new VimeoIdParser(),
-            $c->vimeoClient(),
-            $c->studioConfig,
-            $c->jobManager,
-            new WebVttValidator(),
-        );
-
-        $errors = [];
-        $values = ['vimeo_input' => '', 'sign_language' => '', 'edition' => '', 'subtitle_language' => '', 'intake_mode' => 'upload'];
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $result = $handler->handlePost($_POST, $_FILES);
-            $errors = $result['errors'];
-            $values = $result['values'];
-            if (!empty($result['created'])) {
-                if (($values['intake_mode'] ?? 'upload') === 'generate') {
-                    $outcome = $c->transcriptionOrchestrator()->run();
-                    if ($outcome['result'] === 'editor') {
-                        header('Location: ?action=translation');
-                        exit;
-                    }
-                    if ($outcome['result'] === 'loading') {
-                        header('Location: ?action=resume-job');
-                        exit;
-                    }
-                    $errors['_form'] = $outcome['message'] ?? 'Error en la generació de subtítols';
-                } else {
-                    header('Location: ' . $c->baseUrl);
-                    exit;
-                }
-            }
-        }
-
-        $signLanguages = $c->studioConfig->getSignLanguages();
-        $editions = $c->studioConfig->getEditions();
-        $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
-        extract($c->headerContext(StudioHeader::NAV_INTAKE));
-        require $this->view('intake.php');
         exit;
     }
 
@@ -150,6 +97,49 @@ class IntakeAction
         ini_set('display_errors', '0');
         header('Content-Type: application/json');
         echo $this->c->jobManager->readTranscriptionStatus() ?? json_encode(['status' => 'pending']);
+        exit;
+    }
+
+    public function jobTranslationStatus(): never
+    {
+        ini_set('display_errors', '0');
+        header('Content-Type: application/json');
+        if (!$this->c->jobManager->exists()) {
+            echo json_encode(['status' => 'idle']);
+            exit;
+        }
+        echo json_encode((new TranslationJobState($this->c->jobManager))->read());
+        exit;
+    }
+
+    public function jobTranslationRetry(): never
+    {
+        $c = $this->c;
+        ini_set('display_errors', '0');
+        header('Content-Type: application/json');
+        if (!$c->jobManager->exists()) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'errors' => ['No hi ha cap feina activa.']]);
+            exit;
+        }
+        $lang = trim((string) ($_POST['lang'] ?? ''));
+        if ($lang === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'errors' => ['Idioma no vàlid.']]);
+            exit;
+        }
+        $job = $c->jobManager->read();
+        $masterLang = $job['subtitle_language'] ?? 'es';
+        $state = new TranslationJobState($c->jobManager);
+        $state->resetLanguage($lang);
+        $c->launcher->launchTranslation(
+            $c->jobManager->draftVttPath(),
+            $c->jobManager->translationStatePath(),
+            $masterLang,
+            dirname($c->jobManager->draftVttPath()),
+            [$lang],
+        );
+        echo json_encode(['ok' => true]);
         exit;
     }
 

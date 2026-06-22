@@ -6,7 +6,6 @@ class Container
 {
     private ?VimeoClient $vimeoClient = null;
     private ?CatalogEditor $catalogEditor = null;
-    private ?TranslationCoordinator $translationCoordinator = null;
 
     public function __construct(
         public readonly string $dataDir,
@@ -30,24 +29,15 @@ class Container
         return $this->catalogEditor ??= new CatalogEditor($this->dataDir . '/catalog.json');
     }
 
-    public function translationCoordinator(): TranslationCoordinator
-    {
-        return $this->translationCoordinator ??= new TranslationCoordinator(
-            $this->jobManager,
-            $this->studioConfig,
-            $this->launcher,
-        );
-    }
-
     public function bulkIntakeQueue(): BulkIntakeQueue
     {
         return new BulkIntakeQueue($this->dataDir . '/jobs');
     }
 
     /** @return array<string, mixed> */
-    public function headerContext(?string $activeNav = null, ?string $pipelineStep = null): array
+    public function headerContext(?string $activeNav = null): array
     {
-        return StudioHeader::vars($this, $activeNav, $pipelineStep);
+        return StudioHeader::vars($this, $activeNav);
     }
 
     public function transcriptionOrchestrator(string $pipelineTargetLang = ''): TranscriptionOrchestrator

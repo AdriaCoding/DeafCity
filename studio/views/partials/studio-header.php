@@ -5,7 +5,6 @@
  * @var array|null $syncStatus
  * @var bool $isSyncing
  * @var string|null $activeNav  StudioHeader::NAV_* constant
- * @var string|null $pipelineStep  translation|tagging|publication
  */
 
 use Studio\StudioHeader;
@@ -19,14 +18,6 @@ $syncStatusClass = match ($syncStatus['status'] ?? 'idle') {
 
 $cssPath = dirname(__DIR__, 2) . '/css/studio-header.css';
 $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
-
-$pipelineSteps = [
-    'translation' => ['label' => 'Traducció', 'url' => '?action=translation'],
-    'tagging' => ['label' => 'Etiquetatge', 'url' => '?action=tagging'],
-    'publication' => ['label' => 'Publicació', 'url' => '?action=publication'],
-];
-$pipelineOrder = ['translation', 'tagging', 'publication'];
-$currentStepIndex = $pipelineStep !== null ? array_search($pipelineStep, $pipelineOrder, true) : false;
 ?>
 <link rel="stylesheet" href="css/studio-header.css?v=<?= htmlspecialchars($cssVersion, ENT_QUOTES) ?>">
 <header class="studio-header">
@@ -36,9 +27,6 @@ $currentStepIndex = $pipelineStep !== null ? array_search($pipelineStep, $pipeli
             <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_CATALOG ? ' is-active' : '' ?>"
                href="<?= htmlspecialchars($baseUrl, ENT_QUOTES) ?>"
                <?= $activeNav === StudioHeader::NAV_CATALOG ? 'aria-current="page"' : '' ?>>Catàleg</a>
-            <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_INTAKE ? ' is-active' : '' ?>"
-               href="?action=intake"
-               <?= $activeNav === StudioHeader::NAV_INTAKE ? 'aria-current="page"' : '' ?>>Nova feina</a>
             <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_TRANSCRIPTION_INTAKE ? ' is-active' : '' ?>"
                href="?action=transcription-intake"
                <?= $activeNav === StudioHeader::NAV_TRANSCRIPTION_INTAKE ? 'aria-current="page"' : '' ?>>Nova transcripció</a>
@@ -64,27 +52,6 @@ $currentStepIndex = $pipelineStep !== null ? array_search($pipelineStep, $pipeli
             <a class="studio-logout" href="?action=logout">Tanca la sessió</a>
         </div>
     </div>
-    <?php if ($pipelineStep !== null && $currentStepIndex !== false): ?>
-        <nav class="studio-pipeline-steps" aria-label="Pas del pipeline">
-            <?php foreach ($pipelineOrder as $index => $stepId): ?>
-                <?php if ($index > 0): ?>
-                    <span class="studio-pipeline-sep" aria-hidden="true">→</span>
-                <?php endif; ?>
-                <?php
-                    $step = $pipelineSteps[$stepId];
-                    $classes = ['studio-pipeline-step'];
-                    if ($stepId === $pipelineStep) {
-                        $classes[] = 'is-current';
-                    } elseif ($index < $currentStepIndex) {
-                        $classes[] = 'is-done';
-                    }
-                ?>
-                <a class="<?= implode(' ', $classes) ?>"
-                   href="<?= htmlspecialchars($step['url'], ENT_QUOTES) ?>"
-                   <?= $stepId === $pipelineStep ? 'aria-current="step"' : '' ?>><?= htmlspecialchars($step['label']) ?></a>
-            <?php endforeach; ?>
-        </nav>
-    <?php endif; ?>
 </header>
 <?php if ($isSyncing): ?>
 <script>

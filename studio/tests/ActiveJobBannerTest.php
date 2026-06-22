@@ -9,7 +9,6 @@ use Studio\BulkIntakeQueue;
 use Studio\Container;
 use Studio\JobManager;
 use Studio\StudioConfig;
-use Studio\UploadedFile;
 
 class ActiveJobBannerTest extends TestCase
 {
@@ -68,24 +67,17 @@ class ActiveJobBannerTest extends TestCase
         $this->assertSame('?action=resume-job', $banner['resumeUrl']);
     }
 
-    public function test_pipeline_job_links_to_current_step(): void
+    public function test_legacy_pipeline_job_returns_null(): void
     {
-        $vttPath = $this->dataDir . '/draft.vtt';
-        file_put_contents($vttPath, "WEBVTT\n\n");
-        (new JobManager($this->dataDir . '/jobs'))->create(
-            [
-                'video_title' => 'El meu vídeo',
-                'edition' => '2020-valencia',
-                'step' => 'tagging',
-                'intake_mode' => 'upload',
-            ],
-            new UploadedFile($vttPath, 'draft.vtt'),
-        );
+        mkdir($this->dataDir . '/jobs/current', 0777, true);
+        file_put_contents($this->dataDir . '/jobs/current/job.json', json_encode([
+            'video_title' => 'El meu vídeo',
+            'edition' => '2020-valencia',
+            'step' => 'tagging',
+            'intake_mode' => 'upload',
+        ], JSON_THROW_ON_ERROR));
 
-        $banner = ActiveJobBanner::resolve($this->container());
-
-        $this->assertSame('El meu vídeo', $banner['title']);
-        $this->assertSame('?action=tagging', $banner['resumeUrl']);
+        $this->assertNull(ActiveJobBanner::resolve($this->container()));
     }
 
     private function container(): Container
