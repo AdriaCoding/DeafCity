@@ -1,6 +1,11 @@
 {
   "permissions": {
     "allow": [
+      "Edit",
+      "Write",
+      "Bash(git:*)",
+      "Bash(git -C *)",
+      "Bash(php preview/tests/*)",
       "Bash(vendor/bin/phpunit:*)",
       "Bash(php vendor/bin/phpunit:*)",
       "Bash(pytest:*)",
