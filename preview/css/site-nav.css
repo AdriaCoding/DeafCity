@@ -35,6 +35,13 @@ a.preview-site-nav__btn:focus-visible {
     outline-offset: 2px;
 }
 
+/* D21: green when a participant/tag collection is active */
+a.preview-site-nav__btn.is-active {
+    border-color: rgb(0, 120, 0);
+    color: rgb(0, 120, 0);
+    background: #f0faf0;
+}
+
 /* Inside player chrome — below transport and filters */
 .preview-site-nav--chrome {
     max-width: min(100vw, 1280px);

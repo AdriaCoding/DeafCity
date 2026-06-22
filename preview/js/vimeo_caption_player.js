@@ -477,6 +477,8 @@
             var sessionSoundOn = false;
             /** Once true, end-of-video may advance within the Playlist. */
             var visitorStartedPlayback = false;
+            /** While >0, suppress play events from forced-pause loads (D1′, D19). */
+            var forcedPauseLoads = 0;
 
             /**
              * Sticky activation for this page view (D12′). First gesture unlocks sound;
@@ -604,26 +606,51 @@
                 hitArea.addEventListener('click', togglePlayPause);
             }
 
-            function resetFromBeginning() {
+            /**
+             * Reset (D1′): clear all filters & collections, reshuffle unfiltered ALL,
+             * land paused on a fresh random poster. Sole post-gesture action that pauses.
+             */
+            function resetToNeutralAll() {
                 markGestureActivation();
-                p.setCurrentTime(0)
-                    .then(function () {
-                        return unmuteForPlayback().then(function () {
-                            return p.play();
-                        });
-                    })
-                    .then(function () {
-                        syncVimeoCaptionBoxes(0);
-                        refreshTransport();
-                    })
-                    .catch(function () {
-                        refreshTransport();
-                    });
+
+                var plan = L.planResetToNeutralAll({
+                    fullPlaylistItems: fullPlaylistItems,
+                });
+                if (!plan) return;
+
+                filterState = plan.filterState;
+                isParticipantMode = plan.isParticipantMode;
+                participantName = plan.participantName;
+                filteredMasterIndices = plan.filteredMasterIndices;
+                filteredCursor = plan.filteredCursor;
+                shuffleStep = plan.shuffleStep;
+                shuffledSequence = plan.shuffledSequence;
+                shuffleMode = plan.shuffleMode;
+
+                setShuffleToggleUi(shuffleMode);
+                syncParticipantButtonLabel();
+                updateAllFilterPickerReadouts();
+                rebuildAllCascadingDropdowns();
+
+                if (typeof history !== 'undefined' && history.replaceState) {
+                    try {
+                        var url = new URL(window.location.href);
+                        if (url.searchParams.has('participant')) {
+                            url.searchParams.delete('participant');
+                            history.replaceState(null, '', url.pathname + url.search + url.hash);
+                        }
+                    } catch (e) {}
+                }
+
+                playlistIndex = plan.loadMasterIndex;
+                loadVideoMaster(playlistIndex, plan.shouldAutoplay).then(function () {
+                    updatePlaylistNavButtons();
+                });
             }
 
             var resetBtn = root.querySelector('.vpc-reset-btn');
             if (resetBtn) {
-                resetBtn.addEventListener('click', resetFromBeginning);
+                resetBtn.addEventListener('click', resetToNeutralAll);
             }
 
             function tryAutoplayFallback() {
@@ -809,12 +836,32 @@
                 var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
 
                 resetVideoAspectPlaceholder();
+                if (!wantAutoplay) {
+                    forcedPauseLoads++;
+                }
 
                 return resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay)
                     .then(function () {
                         applyLoadedVideoUi();
                         /** @type {Promise<void>} */
-                        var autoplayP = wantAutoplay ? tryAutoplayFallback() : Promise.resolve();
+                        var autoplayP;
+                        if (wantAutoplay) {
+                            autoplayP = tryAutoplayFallback();
+                        } else {
+                            autoplayP = p.pause()
+                                .catch(function () {})
+                                .then(function () {
+                                    setTransportPlaying(false);
+                                })
+                                .then(function () {
+                                    return new Promise(function (resolve) {
+                                        window.setTimeout(function () {
+                                            forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
+                                            resolve();
+                                        }, 300);
+                                    });
+                                });
+                        }
                         return autoplayP;
                     })
                     .then(function () {
@@ -826,6 +873,9 @@
                         refreshTransport();
                     })
                     .catch(function (e) {
+                        if (!wantAutoplay) {
+                            forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
+                        }
                         console.warn('Vimeo playlist: loadVideo failed', e);
                         applyLoadedVideoUi();
                         refreshTransport();
@@ -1030,6 +1080,10 @@
                 if (!participantsBtn) return;
                 if (isParticipantMode && participantName) {
                     participantsBtn.textContent = participantName;
+                    participantsBtn.classList.add('is-active');
+                } else {
+                    participantsBtn.textContent = 'Participants';
+                    participantsBtn.classList.remove('is-active');
                 }
             }
 
@@ -1267,6 +1321,11 @@
                 .catch(function () {});
 
             p.on('play', function () {
+                if (forcedPauseLoads > 0) {
+                    p.pause().catch(function () {});
+                    setTransportPlaying(false);
+                    return;
+                }
                 markGestureActivation();
                 setTransportPlaying(true);
             });

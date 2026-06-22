@@ -795,3 +795,53 @@ assert.strictEqual(logic.shouldClearCollectionOnFilterFix(false, 'lse'), false);
 
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
 
+// ── Issue #13: Reset clears all filters & collections → paused ALL (D1′) ─────
+
+(function () {
+    var plan = logic.planResetToNeutralAll({
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan, 'reset plan produced');
+    assert.strictEqual(plan.filterState.sign_language, null, 'clears sign_language filter');
+    assert.strictEqual(plan.filterState.edition, null, 'clears edition filter');
+    assert.strictEqual(plan.filterState.typology, null, 'clears typology filter');
+    assert.strictEqual(plan.isParticipantMode, false, 'clears participant mode');
+    assert.strictEqual(plan.participantName, '', 'clears participant name');
+    assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'unfiltered ALL catalog');
+    assert.strictEqual(plan.shuffleMode, true, 'reset uses shuffle-on ALL');
+    assert.strictEqual(plan.shuffleStep, 0, 'reset starts at shuffle step 0');
+    assert.strictEqual(plan.shuffledSequence.length, samplePlaylist.length, 'full reshuffle');
+    assert.strictEqual(plan.shouldAutoplay, false, 'reset never auto-plays (D1′ exception)');
+    assert.strictEqual(
+        logic.shouldAutoplayWithSound(true, plan.shouldAutoplay),
+        false,
+        'reset stays paused even after gesture unlock'
+    );
+    assert.ok(plan.loadMasterIndex >= 0 && plan.loadMasterIndex < samplePlaylist.length, 'valid load index');
+    assert.strictEqual(plan.filteredCursor, plan.shuffledSequence[0], 'cursor follows shuffle head');
+    assert.strictEqual(plan.loadMasterIndex, plan.filteredMasterIndices[plan.filteredCursor], 'load index maps from shuffle head');
+})();
+
+// Reset from a narrowed filtered state still widens to full catalog
+(function () {
+    var plan = logic.planResetToNeutralAll({
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0.5; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'reset widens to ALL');
+})();
+
+// emptyFilterState helper matches cleared reset state
+(function () {
+    var empty = logic.emptyFilterState();
+    assert.strictEqual(empty.sign_language, null);
+    assert.strictEqual(empty.edition, null);
+    assert.strictEqual(empty.typology, null);
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, empty);
+    assert.strictEqual(filtered.length, samplePlaylist.length);
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including issue #13)');
+

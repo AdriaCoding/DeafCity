@@ -541,7 +541,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             type="button"
             class="vpc-reset-btn"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-            aria-label="Restart video from the beginning"
+            aria-label="Reset filters and playlist"
         ><span class="material-icons" aria-hidden="true">replay</span></button>
     </div>
     <?php if ($showR2FilterRow): ?>

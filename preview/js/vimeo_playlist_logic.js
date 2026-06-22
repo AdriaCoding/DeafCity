@@ -568,6 +568,65 @@
         return !!isParticipantMode && newFacetValue !== null && newFacetValue !== '';
     }
 
+    /**
+     * Empty R2 filter state (all facets unfixed).
+     * @returns {VpcFilterState}
+     */
+    function emptyFilterState() {
+        return {
+            sign_language: null,
+            edition: null,
+            typology: null,
+        };
+    }
+
+    /**
+     * Reset control (D1′): clear all filters and collections, reshuffle unfiltered ALL,
+     * land paused on a fresh random poster — never restart current video from t=0.
+     * @param {{
+     *   fullPlaylistItems: Array<{ signLanguage?: string, edition?: string, typology?: string }>,
+     *   randomFn?: () => number
+     * }} opts
+     * @returns {{
+     *   filterState: VpcFilterState,
+     *   isParticipantMode: boolean,
+     *   participantName: string,
+     *   filteredMasterIndices: number[],
+     *   filteredCursor: number,
+     *   shuffleStep: number,
+     *   shuffledSequence: number[],
+     *   shuffleMode: boolean,
+     *   loadMasterIndex: number,
+     *   shouldAutoplay: boolean
+     * } | null}
+     */
+    function planResetToNeutralAll(opts) {
+        var items = opts.fullPlaylistItems;
+        var randomFn = opts.randomFn || Math.random;
+        var filterState = emptyFilterState();
+
+        var filteredMasterIndices = recomputeFilteredMasterIndices(items, filterState);
+        var fc = filteredMasterIndices.length;
+        if (fc === 0) return null;
+
+        var shuffledSequence = buildShuffledSequence(fc, randomFn);
+        var filteredCursor = shuffledSequence[0];
+        var loadMasterIndex = filteredMasterIndices[filteredCursor];
+
+        return {
+            filterState: filterState,
+            isParticipantMode: false,
+            participantName: '',
+            filteredMasterIndices: filteredMasterIndices,
+            filteredCursor: filteredCursor,
+            shuffleStep: 0,
+            shuffledSequence: shuffledSequence,
+            shuffleMode: true,
+            loadMasterIndex: loadMasterIndex,
+            shouldAutoplay: false,
+        };
+    }
+
     return {
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
@@ -595,5 +654,7 @@
         buildShuffledSequenceWithHead: buildShuffledSequenceWithHead,
         planFilterPlaylistRebuild: planFilterPlaylistRebuild,
         shouldClearCollectionOnFilterFix: shouldClearCollectionOnFilterFix,
+        emptyFilterState: emptyFilterState,
+        planResetToNeutralAll: planResetToNeutralAll,
     };
 }));

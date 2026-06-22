@@ -68,7 +68,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=28">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=3">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -92,7 +92,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=6"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=28" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=7"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=31" defer></script>
 </body>
 </html>
