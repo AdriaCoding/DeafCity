@@ -135,6 +135,129 @@
         return storageValue === '1';
     }
 
+    /**
+     * Normalize BCP-47-ish lang tag for comparison.
+     * @param {string} lang
+     * @returns {string}
+     */
+    function normalizeSpokenLangTag(lang) {
+        return String(lang || '').trim().toLowerCase().replace(/_/g, '-');
+    }
+
+    /**
+     * Map a caption track lang to studio-config subtitle_languages id (D16′).
+     * @param {string} trackLang
+     * @param {Array<{ id?: string, label?: string, vimeo_code?: string }>} subtitleLanguages
+     * @returns {string}
+     */
+    function resolveSpokenLangId(trackLang, subtitleLanguages) {
+        var norm = normalizeSpokenLangTag(trackLang);
+        if (!norm) return '';
+        var list = Array.isArray(subtitleLanguages) ? subtitleLanguages : [];
+        var i;
+        for (i = 0; i < list.length; i++) {
+            var entry = list[i];
+            if (entry && entry.id && normalizeSpokenLangTag(entry.id) === norm) {
+                return entry.id;
+            }
+        }
+        for (i = 0; i < list.length; i++) {
+            var e = list[i];
+            if (e && e.vimeo_code && normalizeSpokenLangTag(e.vimeo_code) === norm) {
+                return e.id || '';
+            }
+        }
+        var base = norm.split('-')[0];
+        if (!base) return '';
+        for (i = 0; i < list.length; i++) {
+            var item = list[i];
+            if (!item || !item.id) continue;
+            if (normalizeSpokenLangTag(item.id) === base) return item.id;
+            if (item.vimeo_code && normalizeSpokenLangTag(item.vimeo_code) === base) {
+                return item.id;
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Studio label for a subtitle language id.
+     * @param {string} spokenLangId
+     * @param {Array<{ id?: string, label?: string }>} subtitleLanguages
+     * @returns {string}
+     */
+    function spokenLangLabel(spokenLangId, subtitleLanguages) {
+        var list = Array.isArray(subtitleLanguages) ? subtitleLanguages : [];
+        for (var i = 0; i < list.length; i++) {
+            if (list[i] && list[i].id === spokenLangId) {
+                return list[i].label || spokenLangId;
+            }
+        }
+        return spokenLangId;
+    }
+
+    /**
+     * Spoken-language options for the current video's caption tracks (region variants collapsed).
+     * @param {Array<{ lang?: string }>} cueTracks
+     * @param {Array<{ id?: string, label?: string, vimeo_code?: string }>} subtitleLanguages
+     * @returns {Array<{ spokenLangId: string, label: string, trackIndex: number }>}
+     */
+    function buildSpokenOptionsForTracks(cueTracks, subtitleLanguages) {
+        var options = [];
+        var seen = {};
+        var tracks = Array.isArray(cueTracks) ? cueTracks : [];
+        for (var i = 0; i < tracks.length; i++) {
+            var t = tracks[i];
+            if (!t) continue;
+            var spokenId = resolveSpokenLangId(t.lang || '', subtitleLanguages);
+            if (!spokenId || seen[spokenId]) continue;
+            seen[spokenId] = true;
+            options.push({
+                spokenLangId: spokenId,
+                label: spokenLangLabel(spokenId, subtitleLanguages),
+                trackIndex: i,
+            });
+        }
+        return options;
+    }
+
+    /**
+     * First track index matching sticky spoken language, or -1.
+     * @param {Array<{ lang?: string }>} cueTracks
+     * @param {string} spokenLangId
+     * @param {Array<{ id?: string, label?: string, vimeo_code?: string }>} subtitleLanguages
+     * @returns {number}
+     */
+    function pickTrackIndexForSpokenLang(cueTracks, spokenLangId, subtitleLanguages) {
+        if (!spokenLangId) return -1;
+        var tracks = Array.isArray(cueTracks) ? cueTracks : [];
+        for (var i = 0; i < tracks.length; i++) {
+            var t = tracks[i];
+            if (!t) continue;
+            if (resolveSpokenLangId(t.lang || '', subtitleLanguages) === spokenLangId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Active caption track: sticky spoken language when available, else first track (D16′).
+     * @param {Array<{ lang?: string }>} cueTracks
+     * @param {string} stickySpokenLangId
+     * @param {Array<{ id?: string, label?: string, vimeo_code?: string }>} subtitleLanguages
+     * @returns {number}
+     */
+    function resolveActiveCaptionTrackIndex(cueTracks, stickySpokenLangId, subtitleLanguages) {
+        var tracks = Array.isArray(cueTracks) ? cueTracks : [];
+        if (tracks.length === 0) return 0;
+        if (stickySpokenLangId) {
+            var stickyIdx = pickTrackIndexForSpokenLang(tracks, stickySpokenLangId, subtitleLanguages);
+            if (stickyIdx >= 0) return stickyIdx;
+        }
+        return 0;
+    }
+
     return {
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
@@ -145,5 +268,11 @@
         isSessionSoundAllowed: isSessionSoundAllowed,
         shouldAutoplayWithSound: shouldAutoplayWithSound,
         resolveParticipantGestureCarry: resolveParticipantGestureCarry,
+        normalizeSpokenLangTag: normalizeSpokenLangTag,
+        resolveSpokenLangId: resolveSpokenLangId,
+        spokenLangLabel: spokenLangLabel,
+        buildSpokenOptionsForTracks: buildSpokenOptionsForTracks,
+        pickTrackIndexForSpokenLang: pickTrackIndexForSpokenLang,
+        resolveActiveCaptionTrackIndex: resolveActiveCaptionTrackIndex,
     };
 }));

@@ -231,6 +231,29 @@
     font-weight: 400;
 }
 
+/* Track selector (Spoken Language): never green — not a user-pinned filter (D16′, D21). */
+.vpc-picker--track-selector .vpc-picker-btn,
+.vpc-picker--track-selector[data-active="true"] .vpc-picker-btn {
+    border-color: #ccc;
+    color: #444;
+    background: #fafafa;
+    font-weight: 400;
+}
+.vpc-picker--track-selector[data-active="true"] .vpc-picker-btn::after {
+    opacity: 0.5;
+    color: inherit;
+}
+.vpc-picker--track-selector[data-disabled="true"] .vpc-picker-btn {
+    opacity: 0.55;
+    cursor: not-allowed;
+    color: #666;
+    background: #f5f5f5;
+    border-color: #ddd;
+}
+.vpc-picker--track-selector[data-disabled="true"] .vpc-picker-btn::after {
+    opacity: 0.35;
+}
+
 /* Mobile: R2 row wraps, picker buttons shrink slightly (D20). No scroll added. */
 @media screen and (max-width: 500px) {
     .vpc-picker-btn {

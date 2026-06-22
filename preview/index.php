@@ -15,7 +15,7 @@ $playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog(
 $signLanguageOptions  = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : [];
 $editionOptions       = $catalog ? vpc_edition_options_from_catalog($catalog, $studioConfigPath) : [];
 $typologyOptions      = $catalog ? vpc_typology_options_from_catalog($catalog, $studioConfigPath) : [];
-$spokenLangOptions    = $catalog ? vpc_spoken_language_options_from_catalog($catalog) : [];
+$subtitleLanguages    = vpc_subtitle_languages_from_studio_config($studioConfigPath);
 $vpc = null;
 if (count($playlist) > 0) {
     $vpc = [
@@ -29,9 +29,9 @@ if (count($playlist) > 0) {
     if (count($signLanguageOptions) > 0) {
         $vpc['sign_language_filter'] = ['options' => $signLanguageOptions];
     }
-    // R2 Spoken Language track selector (D16): omit when no video has caption tracks.
-    if (count($spokenLangOptions) > 0) {
-        $vpc['spoken_language_options'] = $spokenLangOptions;
+    // R2 Spoken Language track selector (D16′): always present; JS fills per-video options.
+    if (count($subtitleLanguages) > 0) {
+        $vpc['subtitle_languages'] = $subtitleLanguages;
     }
     // R2 City/Edition picker: populated-from-present only (D17).
     if (count($editionOptions) > 0) {
@@ -64,7 +64,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=26">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=27">
     <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,7 +89,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=4"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=26" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=5"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=27" defer></script>
 </body>
 </html>

@@ -67,22 +67,6 @@
         return Math.round(size * 10) / 10;
     }
 
-    /**
-     * Pick caption track index matching previousLabel, or 0 when no match.
-     * @param {Array<{ label?: string }>} tracks
-     * @param {string} previousLabel
-     * @returns {number}
-     */
-    function pickStickyTrackIndex(tracks, previousLabel) {
-        if (!Array.isArray(tracks) || tracks.length === 0) return 0;
-        if (previousLabel) {
-            for (var i = 0; i < tracks.length; i++) {
-                if (tracks[i] && tracks[i].label === previousLabel) return i;
-            }
-        }
-        return 0;
-    }
-
     function findCaption(events, timeMs) {
         var lo = 0, hi = events.length - 1, result = -1;
         while (lo <= hi) {
@@ -134,10 +118,13 @@
                 ? cfg.captionsEndpoint
                 : '/preview/captions-static.php';
 
+        /** @type {Array<{ id?: string, label?: string, vimeo_code?: string }>} */
+        var subtitleLanguages = Array.isArray(cfg.subtitleLanguages) ? cfg.subtitleLanguages : [];
+
         /**
          * Master playlist (full catalog, never mutated).
          * Each item: { videoId, tracks, signLanguage, edition, typology, participant }
-         * @type {Array<{ videoId: string, tracks: Array<{file:string,label?:string}>, signLanguage: string, edition: string, typology: string, participant: string }>}
+         * @type {Array<{ videoId: string, tracks: Array<{file:string,label?:string,lang?:string}>, signLanguage: string, edition: string, typology: string, participant: string }>}
          */
         var fullPlaylistItems =
             Array.isArray(cfg.playlist) && cfg.playlist.length > 0 ? cfg.playlist : [];
@@ -191,8 +178,8 @@
         var uiTracks = Array.isArray(cfg.tracks) ? cfg.tracks : [];
 
         var activeCaptionTrackIndex = 0;
-        /** Label of the viewer's chosen caption track; persists across Videos. */
-        var stickyCaptionLabel = '';
+        /** Spoken language id (studio-config) the viewer chose; persists across videos (D16′). */
+        var stickySpokenLangId = '';
 
         /** @type {unknown} */
         var vimeoPlayer = null;
@@ -345,7 +332,7 @@
             captionLangSelect.value = String(safeIndex);
         }
 
-        function setActiveCaptionTrack(index) {
+        function setActiveCaptionTrack(index, updateSticky) {
             var cueTracks = currentItemCueTracksRaw();
             if (cueTracks.length === 0) {
                 activeCaptionTrackIndex = 0;
@@ -354,8 +341,11 @@
             }
             if (index < 0 || index >= cueTracks.length) return;
             activeCaptionTrackIndex = index;
-            if (cueTracks[index] && cueTracks[index].label) {
-                stickyCaptionLabel = cueTracks[index].label;
+            if (updateSticky !== false && cueTracks[index]) {
+                stickySpokenLangId = L.resolveSpokenLangId(
+                    cueTracks[index].lang || '',
+                    subtitleLanguages
+                );
             }
 
             syncCaptionSelectValue(index);
@@ -630,61 +620,88 @@
             }
 
             /**
-             * Update the Spoken Language picker button face to reflect the currently
-             * active (or sticky-but-unavailable) track after a video change.
-             * Called from applyLoadedVideoUi() so it fires on every video transition.
+             * Rebuild Spoken Language dropup from the current video's caption tracks (D16′).
              */
-            function syncSpokenLanguagePickerUi() {
+            function rebuildSpokenLanguagePickerOptions() {
                 var pickerEl = /** @type {HTMLElement|null} */ (
                     root.querySelector('.vpc-picker[data-picker="spoken_language"]')
                 );
                 if (!pickerEl) return;
 
-                var genericLabel = 'Spoken Language';
-                var btn = pickerEl.querySelector('.vpc-picker-btn');
-                if (btn) {
-                    genericLabel = btn.getAttribute('data-generic-label') || genericLabel;
-                }
+                var dropdown = pickerEl.querySelector('.vpc-picker-dropdown');
+                if (!dropdown) return;
 
                 var cueTracks = currentItemCueTracksRaw();
-                // Check if the sticky label is available in the current video's tracks.
-                var matchIdx = stickyCaptionLabel ? pickStickyTrackIndex(cueTracks, stickyCaptionLabel) : -1;
-                var trackAvailable = stickyCaptionLabel !== ''
-                    && cueTracks.length > 0
-                    && matchIdx > 0; // index 0 means fallback (label not found), so only >0 is a real match
-
-                // Edge: if only one track and it matches at index 0, treat as matched.
-                if (stickyCaptionLabel !== '' && cueTracks.length > 0 && matchIdx === 0
-                    && cueTracks[0] && cueTracks[0].label === stickyCaptionLabel) {
-                    trackAvailable = true;
+                var options = L.buildSpokenOptionsForTracks(cueTracks, subtitleLanguages);
+                var activeSpokenId = '';
+                if (cueTracks.length > 0 && cueTracks[activeCaptionTrackIndex]) {
+                    activeSpokenId = L.resolveSpokenLangId(
+                        cueTracks[activeCaptionTrackIndex].lang || '',
+                        subtitleLanguages
+                    );
                 }
 
-                var options = pickerEl.querySelectorAll('.vpc-picker-option');
-                options.forEach(function (o) { o.setAttribute('aria-selected', 'false'); });
+                dropdown.innerHTML = '';
+                options.forEach(function (opt) {
+                    var li = document.createElement('li');
+                    li.setAttribute('role', 'option');
+                    li.className = 'vpc-picker-option';
+                    li.setAttribute('data-value', opt.spokenLangId);
+                    li.setAttribute('data-track-index', String(opt.trackIndex));
+                    li.setAttribute(
+                        'aria-selected',
+                        opt.spokenLangId === activeSpokenId ? 'true' : 'false'
+                    );
+                    li.textContent = opt.label;
+                    dropdown.appendChild(li);
+                });
+            }
 
-                if (trackAvailable) {
-                    // Mark the matching option selected in the dropdown.
-                    options.forEach(function (o) {
-                        if ((o.getAttribute('data-value') || '') === stickyCaptionLabel) {
-                            o.setAttribute('aria-selected', 'true');
-                        }
-                    });
-                    updatePickerUi(pickerEl, stickyCaptionLabel, genericLabel, stickyCaptionLabel);
-                } else {
-                    // Sticky track unavailable for this video — fall back to "no selection".
-                    var clearOpt = pickerEl.querySelector('.vpc-picker-clear');
-                    if (clearOpt) clearOpt.setAttribute('aria-selected', 'true');
-                    updatePickerUi(pickerEl, null, genericLabel, '');
+            /**
+             * Update Spoken Language picker button — neutral readout, never green (D16′, D21).
+             */
+            function updateSpokenLanguagePickerUi() {
+                var pickerEl = /** @type {HTMLElement|null} */ (
+                    root.querySelector('.vpc-picker[data-picker="spoken_language"]')
+                );
+                if (!pickerEl) return;
+
+                var btn = /** @type {HTMLButtonElement|null} */ (pickerEl.querySelector('.vpc-picker-btn'));
+                if (!btn) return;
+
+                var genericLabel = btn.getAttribute('data-generic-label') || 'Spoken Language';
+                var cueTracks = currentItemCueTracksRaw();
+                var hasTracks = cueTracks.length > 0
+                    && L.buildSpokenOptionsForTracks(cueTracks, subtitleLanguages).length > 0;
+
+                pickerEl.setAttribute('data-active', 'false');
+                pickerEl.setAttribute('data-disabled', hasTracks ? 'false' : 'true');
+                btn.disabled = !hasTracks;
+
+                if (!hasTracks) {
+                    btn.textContent = 'No subtitles';
+                    return;
                 }
+
+                var activeTrack = cueTracks[activeCaptionTrackIndex] || cueTracks[0];
+                var activeId = L.resolveSpokenLangId(activeTrack.lang || '', subtitleLanguages);
+                btn.textContent = activeId
+                    ? L.spokenLangLabel(activeId, subtitleLanguages)
+                    : genericLabel;
             }
 
             function applyLoadedVideoUi() {
                 if (captionPickerDynamic) rebuildDynamicCaptionSelect();
                 var cueTracks = currentItemCueTracksRaw();
-                var trackIx = pickStickyTrackIndex(cueTracks, stickyCaptionLabel);
-                setActiveCaptionTrack(trackIx);
+                var trackIx = L.resolveActiveCaptionTrackIndex(
+                    cueTracks,
+                    stickySpokenLangId,
+                    subtitleLanguages
+                );
+                setActiveCaptionTrack(trackIx, false);
+                rebuildSpokenLanguagePickerOptions();
+                updateSpokenLanguagePickerUi();
                 updateCaptionPickerVisibility();
-                syncSpokenLanguagePickerUi();
             }
 
             function resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay) {
@@ -724,6 +741,8 @@
                 playlistIndex = target;
 
                 var item = fullPlaylistItems[playlistIndex];
+                applyLoadedVideoUi();
+
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
                 var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
@@ -747,6 +766,7 @@
                     })
                     .catch(function (e) {
                         console.warn('Vimeo playlist: loadVideo failed', e);
+                        applyLoadedVideoUi();
                         refreshTransport();
                     });
             }
@@ -920,25 +940,24 @@
             // ── R2 custom pickers (D15, D17, D18) ──────────────────────────────────
 
             /**
-             * Apply a Spoken Language track change (D16).
+             * Apply a Spoken Language track change (D16′).
              * Switches the subtitle track of the CURRENT video only.
-             * Does NOT touch filterState, does NOT re-queue the playlist.
-             * The selected label is persisted as stickyCaptionLabel so it sticks
-             * across videos (falling back gracefully when the next video lacks it).
-             * @param {string} label  Track label (e.g. "English"), or '' to clear.
+             * @param {string} spokenLangId  studio-config subtitle language id
              */
-            function applySpokenLanguageChange(label) {
+            function applySpokenLanguageChange(spokenLangId) {
                 var cueTracks = currentItemCueTracksRaw();
-                if (label === '' || !label) {
-                    // Clear: disable subtitles (track index 0 with empty stickyCaptionLabel)
-                    stickyCaptionLabel = '';
-                    activeCaptionTrackIndex = 0;
-                    syncCaptionBox(captionBoxId, [], 0);
-                    return;
+                if (!spokenLangId) return;
+                stickySpokenLangId = spokenLangId;
+                var idx = L.pickTrackIndexForSpokenLang(
+                    cueTracks,
+                    spokenLangId,
+                    subtitleLanguages
+                );
+                if (idx >= 0) {
+                    setActiveCaptionTrack(idx, false);
+                    rebuildSpokenLanguagePickerOptions();
+                    updateSpokenLanguagePickerUi();
                 }
-                stickyCaptionLabel = label;
-                var idx = pickStickyTrackIndex(cueTracks, label);
-                setActiveCaptionTrack(idx);
             }
 
             /**
@@ -1050,6 +1069,9 @@
                 // Toggle dropdown open/close
                 btn.addEventListener('click', function (e) {
                     e.stopPropagation();
+                    if (isSpokenLanguagePicker && pickerEl.getAttribute('data-disabled') === 'true') {
+                        return;
+                    }
                     var isOpen = !dropdown.hidden;
                     closeAllPickers();
                     if (!isOpen) {
@@ -1062,6 +1084,9 @@
                 options.forEach(function (opt) {
                     opt.addEventListener('click', function (e) {
                         e.stopPropagation();
+                        if (isSpokenLanguagePicker && pickerEl.getAttribute('data-disabled') === 'true') {
+                            return;
+                        }
                         var value = opt.getAttribute('data-value') || '';
                         var isClear = value === '' || opt.classList.contains('vpc-picker-clear');
 
@@ -1071,13 +1096,11 @@
 
                         closeAllPickers();
 
-                        var label = isClear ? '' : opt.textContent.trim();
-                        updatePickerUi(pickerEl, isClear ? null : value, genericLabel, label);
-
                         if (isSpokenLanguagePicker) {
-                            // D16: track selector — swap subtitle track, do NOT re-queue.
-                            applySpokenLanguageChange(isClear ? '' : value);
+                            applySpokenLanguageChange(value);
                         } else {
+                            var label = isClear ? '' : opt.textContent.trim();
+                            updatePickerUi(pickerEl, isClear ? null : value, genericLabel, label);
                             // Real filter: update filterState and re-queue playlist (D18).
                             markGestureActivation();
                             applyFilterChange(facet, isClear ? null : value);
@@ -1096,6 +1119,28 @@
 
             // Wire up all R2 pickers in this instance
             root.querySelectorAll('.vpc-picker').forEach(initPicker);
+
+            // Spoken Language options are dynamic — wire option clicks after each rebuild.
+            var spokenPickerEl = root.querySelector('.vpc-picker[data-picker="spoken_language"]');
+            if (spokenPickerEl) {
+                var spokenDropdown = spokenPickerEl.querySelector('.vpc-picker-dropdown');
+                if (spokenDropdown) {
+                    spokenDropdown.addEventListener('click', function (e) {
+                        var target = /** @type {HTMLElement|null} */ (e.target);
+                        if (!target || !target.classList.contains('vpc-picker-option')) return;
+                        e.stopPropagation();
+                        if (spokenPickerEl.getAttribute('data-disabled') === 'true') return;
+                        var spokenId = target.getAttribute('data-value') || '';
+                        if (!spokenId) return;
+                        spokenDropdown.querySelectorAll('.vpc-picker-option').forEach(function (o) {
+                            o.setAttribute('aria-selected', 'false');
+                        });
+                        target.setAttribute('aria-selected', 'true');
+                        closeAllPickers();
+                        applySpokenLanguageChange(spokenId);
+                    });
+                }
+            }
 
             // D18: Update Participants nav button label when in participant mode.
             syncParticipantButtonLabel();

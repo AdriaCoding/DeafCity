@@ -113,21 +113,11 @@ if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
                 $entry['embed_url'] = $v['embed_url'];
             }
 
-            $tracks = array();
             if (!empty($v['captions']) && is_array($v['captions'])) {
-                foreach ($v['captions'] as $c) {
-                    if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
-                        continue;
-                    }
-                    $fn = basename((string) $c['file']);
-                    $tracks[] = array(
-                        'file'  => $fn,
-                        'label' => (string) $c['label'],
-                    );
+                $tracks = vpc_caption_tracks_from_catalog_captions($v['captions']);
+                if (count($tracks) > 0) {
+                    $entry['caption_tracks'] = $tracks;
                 }
-            }
-            if (count($tracks) > 0) {
-                $entry['caption_tracks'] = $tracks;
             }
 
             $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
@@ -192,46 +182,134 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
     }
 }
 
-if (!function_exists('vpc_spoken_language_options_from_catalog')) {
+if (!function_exists('vpc_caption_tracks_from_catalog_captions')) {
     /**
-     * Derive Spoken Language options from distinct caption track labels across all
-     * visible catalog videos.  These labels are shown in the track selector picker
-     * (not a filter — does not re-queue the playlist, D16).
+     * Build vpc caption_tracks from catalog captions[], preserving lang when present.
      *
-     * Returns an empty array when no catalog video has caption tracks; the caller
-     * should omit the Spoken Language picker in that case.
-     *
-     * @param array<string, mixed> $catalog
-     * @return array<int, array{value: string, label: string}>
+     * @param array<int, array<string, mixed>> $captions
+     * @return array<int, array{file: string, label: string, lang?: string}>
      */
-    function vpc_spoken_language_options_from_catalog(array $catalog) {
-        $seen = array();
-        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
-            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+    function vpc_caption_tracks_from_catalog_captions(array $captions) {
+        $tracks = array();
+        foreach ($captions as $c) {
+            if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
                 continue;
             }
-            if (empty($v['captions']) || !is_array($v['captions'])) {
+            $track = array(
+                'file'  => basename((string) $c['file']),
+                'label' => (string) $c['label'],
+            );
+            if (!empty($c['lang']) && is_string($c['lang'])) {
+                $lang = trim($c['lang']);
+                if ($lang !== '') {
+                    $track['lang'] = $lang;
+                }
+            }
+            $tracks[] = $track;
+        }
+        return $tracks;
+    }
+}
+
+if (!function_exists('vpc_subtitle_languages_from_studio_config')) {
+    /**
+     * Load subtitle_languages from studio-config.json for spoken-language track mapping (D16′).
+     *
+     * @param string $studioConfigPath
+     * @return array<int, array{id: string, label: string, vimeo_code?: string}>
+     */
+    function vpc_subtitle_languages_from_studio_config($studioConfigPath) {
+        if (!is_string($studioConfigPath) || $studioConfigPath === '' || !is_readable($studioConfigPath)) {
+            return array();
+        }
+        $raw = file_get_contents($studioConfigPath);
+        if ($raw === false) {
+            return array();
+        }
+        $cfg = json_decode($raw, true);
+        if (!is_array($cfg) || empty($cfg['subtitle_languages']) || !is_array($cfg['subtitle_languages'])) {
+            return array();
+        }
+        $out = array();
+        foreach ($cfg['subtitle_languages'] as $item) {
+            if (!is_array($item) || empty($item['id']) || empty($item['label'])) {
                 continue;
             }
-            foreach ($v['captions'] as $c) {
-                if (!is_array($c) || empty($c['label'])) {
-                    continue;
-                }
-                $label = trim((string) $c['label']);
-                if ($label !== '' && !isset($seen[$label])) {
-                    $seen[$label] = true;
-                }
+            $entry = array(
+                'id'    => (string) $item['id'],
+                'label' => (string) $item['label'],
+            );
+            if (!empty($item['vimeo_code']) && is_string($item['vimeo_code'])) {
+                $entry['vimeo_code'] = (string) $item['vimeo_code'];
+            }
+            $out[] = $entry;
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('vpc_normalize_spoken_lang_tag')) {
+    /**
+     * @param string $lang
+     * @return string
+     */
+    function vpc_normalize_spoken_lang_tag($lang) {
+        $norm = strtolower(trim((string) $lang));
+        return str_replace('_', '-', $norm);
+    }
+}
+
+if (!function_exists('vpc_resolve_track_lang_to_subtitle_id')) {
+    /**
+     * Map a caption track lang tag to studio-config subtitle_languages id (D16′).
+     * Collapses region variants (es-MX, es-ES → es).
+     *
+     * @param string $trackLang
+     * @param array<int, array{id: string, label: string, vimeo_code?: string}> $subtitleLanguages
+     * @return string  subtitle language id, or '' when unmapped
+     */
+    function vpc_resolve_track_lang_to_subtitle_id($trackLang, array $subtitleLanguages) {
+        $norm = vpc_normalize_spoken_lang_tag($trackLang);
+        if ($norm === '') {
+            return '';
+        }
+
+        foreach ($subtitleLanguages as $item) {
+            if (!is_array($item) || empty($item['id'])) {
+                continue;
+            }
+            if (vpc_normalize_spoken_lang_tag($item['id']) === $norm) {
+                return (string) $item['id'];
+            }
+        }
+        foreach ($subtitleLanguages as $item) {
+            if (!is_array($item) || empty($item['id'])) {
+                continue;
+            }
+            if (!empty($item['vimeo_code'])
+                && vpc_normalize_spoken_lang_tag($item['vimeo_code']) === $norm) {
+                return (string) $item['id'];
             }
         }
 
-        $opts = array();
-        foreach (array_keys($seen) as $label) {
-            $opts[] = array(
-                'value' => $label,
-                'label' => $label,
-            );
+        $parts = explode('-', $norm);
+        $base = isset($parts[0]) ? $parts[0] : '';
+        if ($base === '') {
+            return '';
         }
-        return $opts;
+        foreach ($subtitleLanguages as $item) {
+            if (!is_array($item) || empty($item['id'])) {
+                continue;
+            }
+            if (vpc_normalize_spoken_lang_tag($item['id']) === $base) {
+                return (string) $item['id'];
+            }
+            if (!empty($item['vimeo_code'])
+                && vpc_normalize_spoken_lang_tag($item['vimeo_code']) === $base) {
+                return (string) $item['id'];
+            }
+        }
+        return '';
     }
 }
 
@@ -266,21 +344,11 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
                 $entry['embed_url'] = $v['embed_url'];
             }
 
-            $tracks = array();
             if (!empty($v['captions']) && is_array($v['captions'])) {
-                foreach ($v['captions'] as $c) {
-                    if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
-                        continue;
-                    }
-                    $fn = basename((string) $c['file']);
-                    $tracks[] = array(
-                        'file'  => $fn,
-                        'label' => (string) $c['label'],
-                    );
+                $tracks = vpc_caption_tracks_from_catalog_captions($v['captions']);
+                if (count($tracks) > 0) {
+                    $entry['caption_tracks'] = $tracks;
                 }
-            }
-            if (count($tracks) > 0) {
-                $entry['caption_tracks'] = $tracks;
             }
 
             // Filterable catalog fields — all passed to JS for client-side filtering (D17, D18).
@@ -443,21 +511,11 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
                 $entry['embed_url'] = $v['embed_url'];
             }
 
-            $tracks = array();
             if (!empty($v['captions']) && is_array($v['captions'])) {
-                foreach ($v['captions'] as $c) {
-                    if (!is_array($c) || empty($c['file']) || empty($c['label'])) {
-                        continue;
-                    }
-                    $fn = basename((string) $c['file']);
-                    $tracks[] = array(
-                        'file'  => $fn,
-                        'label' => (string) $c['label'],
-                    );
+                $tracks = vpc_caption_tracks_from_catalog_captions($v['captions']);
+                if (count($tracks) > 0) {
+                    $entry['caption_tracks'] = $tracks;
                 }
-            }
-            if (count($tracks) > 0) {
-                $entry['caption_tracks'] = $tracks;
             }
 
             $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';

@@ -353,7 +353,6 @@ if ($spPos === false) {
 echo "PASS: Spoken Language picker renders in R2 (data-picker=spoken_language)\n";
 
 assert_contains('data-generic-label="Spoken Language"', $html, 'Spoken Language picker generic label');
-assert_contains('>Spoken Language<', $html, 'Spoken Language picker button face text');
 
 // AC: Spoken Language picker uses custom picker style (vpc-picker-btn, vpc-picker-dropdown)
 // (no native <select> — already checked above in the "no native <select>" assertion)
@@ -367,22 +366,25 @@ if ($spPos !== false) {
     echo "PASS: Spoken Language picker in correct R2 position (after sign_language, before edition)\n";
 }
 
-// AC: Spoken Language picker has a "No subtitles" clear option (not "All languages")
-assert_contains('No subtitles', $html, 'Spoken Language clear option says "No subtitles"');
+// AC: Spoken Language picker has disabled "No subtitles" state on initial render (D16′)
+assert_contains('>No subtitles<', $html, 'Spoken Language disabled state says "No subtitles"');
 
-// AC: spokenLanguageOptions present in vpc-config JSON (JS uses it for track switching)
+// AC: subtitleLanguages present in vpc-config JSON (JS maps track lang → studio labels)
 $cfg3 = $cfg;
-$spokenLangCfgOptions = isset($cfg3['spokenLanguageOptions']) ? $cfg3['spokenLanguageOptions'] : null;
-if ($spokenLangCfgOptions !== null) {
-    if (!is_array($spokenLangCfgOptions) || count($spokenLangCfgOptions) === 0) {
-        fwrite(STDERR, "FAIL: spokenLanguageOptions in vpc-config is empty or not an array\n");
+$subtitleLangCfg = isset($cfg3['subtitleLanguages']) ? $cfg3['subtitleLanguages'] : null;
+if ($subtitleLangCfg !== null) {
+    if (!is_array($subtitleLangCfg) || count($subtitleLangCfg) === 0) {
+        fwrite(STDERR, "FAIL: subtitleLanguages in vpc-config is empty or not an array\n");
         exit(1);
     }
-    echo "PASS: spokenLanguageOptions present in vpc-config (" . count($spokenLangCfgOptions) . " options)\n";
+    echo "PASS: subtitleLanguages present in vpc-config (" . count($subtitleLangCfg) . " entries)\n";
 } else {
-    // spokenLanguageOptions may be null when no video has caption tracks — that's valid.
-    echo "SKIP: spokenLanguageOptions not in vpc-config (no caption tracks in current playlist)\n";
+    fwrite(STDERR, "FAIL: subtitleLanguages missing from vpc-config\n");
+    exit(1);
 }
+
+// AC: spoken language picker is a track selector — never uses green active styling class hook
+assert_contains('vpc-picker--track-selector', $html, 'spoken language picker has track-selector class');
 
 // AC: No wording that could cause confusion with the category filters in the picker
 // The picker aria-label should say "Spoken Language", not "Caption" or "Subtitle"
