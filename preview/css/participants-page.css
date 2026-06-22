@@ -55,6 +55,7 @@ html, body {
 
 .participant-card:hover .participant-name {
     color: rgb(0, 120, 0);
+    font-weight: 700;
 }
 
 .participant-card:hover img {

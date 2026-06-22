@@ -26,7 +26,7 @@ $currentRoute = 'participants';
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
     <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
-    <link rel="stylesheet" href="/preview/css/participants-page.css?v=3">
+    <link rel="stylesheet" href="/preview/css/participants-page.css?v=4">
 </head>
 <body>
 <div class="preview-participants-page">
