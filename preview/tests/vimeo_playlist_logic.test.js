@@ -708,3 +708,21 @@ function simulateSpokenLanguageChange(label, stickyCaptionLabel, cueTracks) {
 })();
 
 console.log('vimeo_playlist_logic.test.js: all passed');
+
+// ── Issue #10: gesture-gated audio (D12′, D23) ───────────────────────────────
+
+assert.strictEqual(logic.GESTURE_STORAGE_KEY, 'vpc-gesture-activated');
+
+assert.strictEqual(logic.isSessionSoundAllowed(false), false);
+assert.strictEqual(logic.isSessionSoundAllowed(true), true);
+
+assert.strictEqual(logic.shouldAutoplayWithSound(false, true), false, 'no autoplay before gesture');
+assert.strictEqual(logic.shouldAutoplayWithSound(true, true), true, 'autoplay after gesture');
+assert.strictEqual(logic.shouldAutoplayWithSound(true, false), false, 'caller can force pause');
+assert.strictEqual(logic.shouldAutoplayWithSound(false, false), false, 'paused when not activated');
+
+assert.strictEqual(logic.resolveParticipantGestureCarry(false, '1'), false, 'carry ignored when not participant mode');
+assert.strictEqual(logic.resolveParticipantGestureCarry(true, '1'), true, 'carry when participant + storage flag');
+assert.strictEqual(logic.resolveParticipantGestureCarry(true, null), false, 'no carry without storage flag');
+assert.strictEqual(logic.resolveParticipantGestureCarry(true, ''), false, 'no carry with empty storage');
+

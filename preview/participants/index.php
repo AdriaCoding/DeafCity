@@ -56,5 +56,19 @@ $currentRoute = 'participants';
         <?php endforeach; ?>
     </div>
 </div>
+<script>
+(function () {
+    'use strict';
+    var KEY = 'vpc-gesture-activated';
+    var cards = document.querySelectorAll('.participant-card');
+    for (var i = 0; i < cards.length; i++) {
+        cards[i].addEventListener('click', function () {
+            try {
+                sessionStorage.setItem(KEY, '1');
+            } catch (e) {}
+        });
+    }
+}());
+</script>
 </body>
 </html>

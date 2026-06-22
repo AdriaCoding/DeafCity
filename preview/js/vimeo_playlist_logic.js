@@ -101,11 +101,49 @@
         return !!visitorStartedPlayback;
     }
 
+    /** sessionStorage key set when a participant card is clicked (D23). */
+    var GESTURE_STORAGE_KEY = 'vpc-gesture-activated';
+
+    /**
+     * Whether programmatic autoplay with sound is allowed (D12′).
+     * @param {boolean} sessionActivated
+     * @returns {boolean}
+     */
+    function isSessionSoundAllowed(sessionActivated) {
+        return !!sessionActivated;
+    }
+
+    /**
+     * Resolve whether a load/advance should autoplay (never before first gesture).
+     * @param {boolean} sessionActivated
+     * @param {boolean|undefined} autoPlayPreferred  false = caller forces pause
+     * @returns {boolean}
+     */
+    function shouldAutoplayWithSound(sessionActivated, autoPlayPreferred) {
+        if (autoPlayPreferred === false) return false;
+        return isSessionSoundAllowed(sessionActivated);
+    }
+
+    /**
+     * Participant→home carry: click on /preview/participants counts as a gesture (D23).
+     * @param {boolean} isParticipantMode
+     * @param {string|null|undefined} storageValue  sessionStorage value for GESTURE_STORAGE_KEY
+     * @returns {boolean}
+     */
+    function resolveParticipantGestureCarry(isParticipantMode, storageValue) {
+        if (!isParticipantMode) return false;
+        return storageValue === '1';
+    }
+
     return {
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
         createDefaultShuffleState: createDefaultShuffleState,
         nextPlaylistStep: nextPlaylistStep,
         shouldAdvanceOnEnded: shouldAdvanceOnEnded,
+        GESTURE_STORAGE_KEY: GESTURE_STORAGE_KEY,
+        isSessionSoundAllowed: isSessionSoundAllowed,
+        shouldAutoplayWithSound: shouldAutoplayWithSound,
+        resolveParticipantGestureCarry: resolveParticipantGestureCarry,
     };
 }));

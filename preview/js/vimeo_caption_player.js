@@ -429,6 +429,38 @@
             /** Once true, end-of-video may advance within the Playlist. */
             var visitorStartedPlayback = false;
 
+            /**
+             * Sticky activation for this page view (D12′). First gesture unlocks sound;
+             * thereafter playlist advances and rebuilds auto-play with sound.
+             */
+            function markGestureActivation() {
+                visitorStartedPlayback = true;
+                sessionSoundOn = true;
+            }
+
+            /** @deprecated alias — use markGestureActivation */
+            function markPlaybackStarted() {
+                markGestureActivation();
+            }
+
+            /** D23: participant card click on /preview/participants counts as a gesture. */
+            var participantGestureCarried = false;
+            if (typeof sessionStorage !== 'undefined' && L.resolveParticipantGestureCarry) {
+                try {
+                    var storedGesture = sessionStorage.getItem(L.GESTURE_STORAGE_KEY);
+                    participantGestureCarried = L.resolveParticipantGestureCarry(
+                        isParticipantMode,
+                        storedGesture
+                    );
+                    if (participantGestureCarried) {
+                        sessionStorage.removeItem(L.GESTURE_STORAGE_KEY);
+                    }
+                } catch (e) {}
+            }
+            if (participantGestureCarried) {
+                markGestureActivation();
+            }
+
             var videoShell = root.querySelector('.video-shell');
             var videoStack = root.querySelector('.video-stack');
 
@@ -490,11 +522,6 @@
                     .catch(function () {});
             }
 
-            function markPlaybackStarted() {
-                visitorStartedPlayback = true;
-                sessionSoundOn = true;
-            }
-
             function unmuteForPlayback() {
                 if (typeof p.setMuted !== 'function') return Promise.resolve();
                 return p.setMuted(false);
@@ -504,7 +531,7 @@
                 p.getPaused()
                     .then(function (paused) {
                         if (paused) {
-                            markPlaybackStarted();
+                            markGestureActivation();
                             return unmuteForPlayback().then(function () {
                                 return p.play();
                             });
@@ -529,7 +556,7 @@
             }
 
             function resetFromBeginning() {
-                markPlaybackStarted();
+                markGestureActivation();
                 p.setCurrentTime(0)
                     .then(function () {
                         return unmuteForPlayback().then(function () {
@@ -551,15 +578,14 @@
             }
 
             function tryAutoplayFallback() {
+                if (!L.shouldAutoplayWithSound(sessionSoundOn, true)) {
+                    return Promise.resolve();
+                }
                 var readyPromise =
                     typeof p.ready === 'function' ? p.ready() : Promise.resolve();
                 return readyPromise
                     .then(function () {
-                        var mutedP =
-                            typeof p.setMuted === 'function'
-                                ? p.setMuted(!sessionSoundOn)
-                                : Promise.resolve();
-                        return mutedP.then(function () {
+                        return unmuteForPlayback().then(function () {
                             return p.getPaused().then(function (paused) {
                                 if (paused) return p.play();
                             });
@@ -700,7 +726,7 @@
                 var item = fullPlaylistItems[playlistIndex];
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
-                var wantAutoplay = autoPlayPreferred !== false;
+                var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
 
                 resetVideoAspectPlaceholder();
 
@@ -877,6 +903,7 @@
             var prevTransport = root.querySelector('.vpc-prev-btn');
             if (prevTransport) {
                 prevTransport.addEventListener('click', function () {
+                    markGestureActivation();
                     if (shuffleMode) seekShuffle(-1, true);
                     else seekFiltered(-1, true);
                 });
@@ -884,6 +911,7 @@
             var nextTransport = root.querySelector('.vpc-next-btn');
             if (nextTransport) {
                 nextTransport.addEventListener('click', function () {
+                    markGestureActivation();
                     if (shuffleMode) seekShuffle(1, true);
                     else seekFiltered(1, true);
                 });
@@ -960,7 +988,7 @@
                 if (masterIx === undefined) return;
                 playlistIndex = masterIx;
 
-                loadVideoMaster(playlistIndex, false).then(function () {
+                loadVideoMaster(playlistIndex, true).then(function () {
                     updatePlaylistNavButtons();
                 });
             }
@@ -1051,6 +1079,7 @@
                             applySpokenLanguageChange(isClear ? '' : value);
                         } else {
                             // Real filter: update filterState and re-queue playlist (D18).
+                            markGestureActivation();
                             applyFilterChange(facet, isClear ? null : value);
                         }
                     });
@@ -1078,12 +1107,12 @@
 
             setShuffleToggleUi(shuffleMode);
 
-            loadVideoMaster(playlistIndex, false)
+            loadVideoMaster(playlistIndex, participantGestureCarried)
                 .then(function () {})
                 .catch(function () {});
 
             p.on('play', function () {
-                markPlaybackStarted();
+                markGestureActivation();
                 setTransportPlaying(true);
             });
             p.on('pause', function () {

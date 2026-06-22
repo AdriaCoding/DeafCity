@@ -89,7 +89,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=3"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=25" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=4"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=26" defer></script>
 </body>
 </html>
