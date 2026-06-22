@@ -186,9 +186,14 @@ assert_contains('vpc-picker-btn', $html, 'custom picker button present');
 assert_contains('vpc-picker-dropdown', $html, 'custom picker dropdown present');
 assert_contains('data-picker="sign_language"', $html, 'sign_language picker attribute');
 
-// AC: Picker button shows generic label before selection (D7)
+// AC: Picker button shows live readout from first video (D14′) — generic label in data-generic-label only
 assert_contains('data-generic-label="Sign language"', $html, 'picker button has generic label attr');
-assert_contains('>Sign language<', $html, 'picker button face shows generic label before selection');
+assert_not_contains('data-picker="sign_language" data-active="true"', $html, 'sign language picker not green on load');
+if (preg_match('~data-picker="sign_language"[^>]*data-active="false"~', $html) !== 1) {
+    fwrite(STDERR, "FAIL: sign language picker should have data-active=\"false\" on cold load\n");
+    exit(1);
+}
+echo "PASS: sign language picker shows passive readout on load (not green)\n";
 
 // AC: Dropdown uses role=listbox (not native select)
 assert_contains('role="listbox"', $html, 'dropdown has role=listbox');
@@ -260,6 +265,17 @@ if (!is_array($slOpts) || count($slOpts) === 0) {
 }
 echo "PASS: signLanguageFilter.options present in vpc-config (" . count($slOpts) . " options)\n";
 
+// AC: editionFilter + typologyFilter in vpc-config for JS cascading (D17′, issue #12)
+if (!isset($cfg2['editionFilter']) || !is_array($cfg2['editionFilter']['options'] ?? null)) {
+    fwrite(STDERR, "FAIL: editionFilter.options missing from vpc-config JSON\n");
+    exit(1);
+}
+if (!isset($cfg2['typologyFilter']) || !is_array($cfg2['typologyFilter']['options'] ?? null)) {
+    fwrite(STDERR, "FAIL: typologyFilter.options missing from vpc-config JSON\n");
+    exit(1);
+}
+echo "PASS: editionFilter and typologyFilter present in vpc-config\n";
+
 // AC: Non-scrollable body preserved (D9)
 assert_contains('overflow: hidden', $html, 'non-scrollable body still present');
 
@@ -268,12 +284,20 @@ assert_contains('overflow: hidden', $html, 'non-scrollable body still present');
 // AC: Edition picker renders with data-picker="edition"
 assert_contains('data-picker="edition"', $html, 'edition picker renders (data-picker=edition)');
 assert_contains('data-generic-label="City / Edition"', $html, 'edition picker generic label');
-assert_contains('>City / Edition<', $html, 'edition picker button face');
+if (preg_match('~data-picker="edition"[^>]*data-active="false"~', $html) !== 1) {
+    fwrite(STDERR, "FAIL: edition picker should have data-active=\"false\" on cold load\n");
+    exit(1);
+}
+echo "PASS: edition picker passive readout on load\n";
 
 // AC: Typology picker renders with data-picker="typology"
 assert_contains('data-picker="typology"', $html, 'typology picker renders (data-picker=typology)');
 assert_contains('data-generic-label="Typology"', $html, 'typology picker generic label');
-assert_contains('>Typology<', $html, 'typology picker button face');
+if (preg_match('~data-picker="typology"[^>]*data-active="false"~', $html) !== 1) {
+    fwrite(STDERR, "FAIL: typology picker should have data-active=\"false\" on cold load\n");
+    exit(1);
+}
+echo "PASS: typology picker passive readout on load\n";
 
 // AC: Clear options for edition and typology pickers
 assert_contains('All cities', $html, 'edition clear option says "All cities"');

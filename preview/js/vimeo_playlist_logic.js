@@ -258,6 +258,316 @@
         return 0;
     }
 
+    /** @typedef {{ sign_language: string|null, edition: string|null, typology: string|null }} VpcFilterState */
+
+    /**
+     * Playlist item field for an R2 facet key.
+     * @param {string} facet
+     * @returns {string}
+     */
+    function facetItemField(facet) {
+        if (facet === 'sign_language') return 'signLanguage';
+        if (facet === 'edition') return 'edition';
+        if (facet === 'typology') return 'typology';
+        return facet;
+    }
+
+    /**
+     * @param {{ signLanguage?: string, edition?: string, typology?: string }} item
+     * @param {string} facet
+     * @returns {string}
+     */
+    function itemFacetValue(item, facet) {
+        if (!item) return '';
+        var field = facetItemField(facet);
+        return typeof item[field] === 'string' ? item[field] : '';
+    }
+
+    /**
+     * Recompute master-playlist indices matching filterState (AND composition).
+     * @param {Array<{ signLanguage?: string, edition?: string, typology?: string }>} fullPlaylistItems
+     * @param {VpcFilterState} filterState
+     * @returns {number[]}
+     */
+    function recomputeFilteredMasterIndices(fullPlaylistItems, filterState) {
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var hasFilter = filterState.sign_language !== null
+            || filterState.edition !== null
+            || filterState.typology !== null;
+        if (!hasFilter || items.length === 0) {
+            return items.map(function (_, ix) { return ix; });
+        }
+        return items
+            .map(function (item, ix) {
+                if (filterState.sign_language !== null
+                    && itemFacetValue(item, 'sign_language') !== filterState.sign_language) {
+                    return -1;
+                }
+                if (filterState.edition !== null
+                    && itemFacetValue(item, 'edition') !== filterState.edition) {
+                    return -1;
+                }
+                if (filterState.typology !== null
+                    && itemFacetValue(item, 'typology') !== filterState.typology) {
+                    return -1;
+                }
+                return ix;
+            })
+            .filter(function (ix) { return ix >= 0; });
+    }
+
+    /**
+     * Whether a video satisfies every fixed facet in filterState.
+     * @param {{ signLanguage?: string, edition?: string, typology?: string }} item
+     * @param {VpcFilterState} filterState
+     * @returns {boolean}
+     */
+    function videoMatchesFilterState(item, filterState) {
+        if (filterState.sign_language !== null
+            && itemFacetValue(item, 'sign_language') !== filterState.sign_language) {
+            return false;
+        }
+        if (filterState.edition !== null
+            && itemFacetValue(item, 'edition') !== filterState.edition) {
+            return false;
+        }
+        if (filterState.typology !== null
+            && itemFacetValue(item, 'typology') !== filterState.typology) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Studio label for a facet value from the full option catalog.
+     * @param {string} facet
+     * @param {string} value
+     * @param {Array<{ value?: string, label?: string }>} options
+     * @returns {string}
+     */
+    function labelForFacetValue(facet, value, options) {
+        var list = Array.isArray(options) ? options : [];
+        var i;
+        for (i = 0; i < list.length; i++) {
+            if (list[i] && list[i].value === value) {
+                return list[i].label || value;
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Picker button face: fixed filter label when pinned, else live readout (D14′).
+     * @param {{ signLanguage?: string, edition?: string, typology?: string }} item
+     * @param {string} facet
+     * @param {VpcFilterState} filterState
+     * @param {Array<{ value?: string, label?: string }>} options
+     * @param {string} genericLabel
+     * @returns {{ label: string, fixed: boolean }}
+     */
+    function resolveFilterPickerReadout(item, facet, filterState, options, genericLabel) {
+        var fixedValue = filterState[facet];
+        if (fixedValue !== null && fixedValue !== undefined && fixedValue !== '') {
+            return {
+                label: labelForFacetValue(facet, fixedValue, options),
+                fixed: true,
+            };
+        }
+        var liveValue = itemFacetValue(item, facet);
+        if (liveValue !== '') {
+            return {
+                label: labelForFacetValue(facet, liveValue, options),
+                fixed: false,
+            };
+        }
+        return { label: genericLabel, fixed: false };
+    }
+
+    /**
+     * Distinct facet values present in a subset of the master playlist.
+     * @param {Array<{ signLanguage?: string, edition?: string, typology?: string }>} fullPlaylistItems
+     * @param {number[]} masterIndices
+     * @param {string} facet
+     * @returns {string[]}
+     */
+    function distinctFacetValuesInSubset(fullPlaylistItems, masterIndices, facet) {
+        var seen = {};
+        var out = [];
+        var i;
+        for (i = 0; i < masterIndices.length; i++) {
+            var ix = masterIndices[i];
+            var item = fullPlaylistItems[ix];
+            var val = itemFacetValue(item, facet);
+            if (val !== '' && !seen[val]) {
+                seen[val] = true;
+                out.push(val);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Cascading dropup options (D17′): each facet lists only values in the
+     * playlist filtered by the other fixed facets.
+     * @param {Array<{ signLanguage?: string, edition?: string, typology?: string }>} fullPlaylistItems
+     * @param {VpcFilterState} filterState
+     * @param {{ sign_language?: Array<{ value?: string, label?: string }>, edition?: Array<{ value?: string, label?: string }>, typology?: Array<{ value?: string, label?: string }> }} allOptionsByFacet
+     * @returns {{ sign_language: Array<{ value: string, label: string }>, edition: Array<{ value: string, label: string }>, typology: Array<{ value: string, label: string }> }}
+     */
+    function buildCascadingFilterOptions(fullPlaylistItems, filterState, allOptionsByFacet) {
+        var facets = ['sign_language', 'edition', 'typology'];
+        var result = {
+            sign_language: [],
+            edition: [],
+            typology: [],
+        };
+        var f;
+        for (f = 0; f < facets.length; f++) {
+            var facet = facets[f];
+            var relaxed = {
+                sign_language: filterState.sign_language,
+                edition: filterState.edition,
+                typology: filterState.typology,
+            };
+            relaxed[facet] = null;
+            var subset = recomputeFilteredMasterIndices(fullPlaylistItems, relaxed);
+            var presentValues = distinctFacetValuesInSubset(fullPlaylistItems, subset, facet);
+            var catalog = allOptionsByFacet && allOptionsByFacet[facet]
+                ? allOptionsByFacet[facet]
+                : [];
+            var opts = [];
+            var i;
+            for (i = 0; i < presentValues.length; i++) {
+                var val = presentValues[i];
+                opts.push({
+                    value: val,
+                    label: labelForFacetValue(facet, val, catalog),
+                });
+            }
+            opts.sort(function (a, b) {
+                return String(a.label).localeCompare(String(b.label), undefined, { sensitivity: 'base' });
+            });
+            result[facet] = opts;
+        }
+        return result;
+    }
+
+    /**
+     * Shuffle indices 0..count-1 excluding one fixed index (placed at step 0).
+     * @param {number} count
+     * @param {number} fixedIndex
+     * @param {() => number} [randomFn]
+     * @returns {number[]}
+     */
+    function buildShuffledSequenceWithHead(count, fixedIndex, randomFn) {
+        if (count <= 0) return [];
+        if (fixedIndex < 0 || fixedIndex >= count) {
+            return buildShuffledSequence(count, randomFn);
+        }
+        var rest = [];
+        var i;
+        for (i = 0; i < count; i++) {
+            if (i !== fixedIndex) rest.push(i);
+        }
+        var shuffledRest = buildShuffledSequence(rest.length, randomFn);
+        var seq = [fixedIndex];
+        for (i = 0; i < shuffledRest.length; i++) {
+            seq.push(rest[shuffledRest[i]]);
+        }
+        return seq;
+    }
+
+    /**
+     * Rebuild filtered playlist after fixing/clearing a filter (D22 keep-if-matches).
+     * @param {{
+     *   fullPlaylistItems: Array<{ signLanguage?: string, edition?: string, typology?: string }>,
+     *   filterState: VpcFilterState,
+     *   currentMasterIndex: number,
+     *   shuffleMode: boolean,
+     *   randomFn?: () => number
+     * }} opts
+     * @returns {{
+     *   filteredMasterIndices: number[],
+     *   filteredCursor: number,
+     *   shuffleStep: number,
+     *   shuffledSequence: number[],
+     *   shuffleMode: boolean,
+     *   loadMasterIndex: number,
+     *   keepCurrentVideo: boolean
+     * } | null}
+     */
+    function planFilterPlaylistRebuild(opts) {
+        var items = opts.fullPlaylistItems;
+        var filterState = opts.filterState;
+        var currentIx = typeof opts.currentMasterIndex === 'number' ? opts.currentMasterIndex : 0;
+        var shuffleMode = !!opts.shuffleMode;
+        var randomFn = opts.randomFn || Math.random;
+
+        var filteredMasterIndices = recomputeFilteredMasterIndices(items, filterState);
+        var fc = filteredMasterIndices.length;
+        if (fc === 0) return null;
+
+        var currentItem = items[currentIx];
+        var matches = videoMatchesFilterState(currentItem, filterState)
+            && filteredMasterIndices.indexOf(currentIx) >= 0;
+
+        if (matches) {
+            var posInFiltered = filteredMasterIndices.indexOf(currentIx);
+            if (shuffleMode) {
+                return {
+                    filteredMasterIndices: filteredMasterIndices,
+                    filteredCursor: posInFiltered,
+                    shuffleStep: 0,
+                    shuffledSequence: buildShuffledSequenceWithHead(fc, posInFiltered, randomFn),
+                    shuffleMode: true,
+                    loadMasterIndex: currentIx,
+                    keepCurrentVideo: true,
+                };
+            }
+            return {
+                filteredMasterIndices: filteredMasterIndices,
+                filteredCursor: posInFiltered,
+                shuffleStep: 0,
+                shuffledSequence: [],
+                shuffleMode: false,
+                loadMasterIndex: currentIx,
+                keepCurrentVideo: true,
+            };
+        }
+
+        if (shuffleMode) {
+            var seq = buildShuffledSequence(fc, randomFn);
+            return {
+                filteredMasterIndices: filteredMasterIndices,
+                filteredCursor: seq[0],
+                shuffleStep: 0,
+                shuffledSequence: seq,
+                shuffleMode: true,
+                loadMasterIndex: filteredMasterIndices[seq[0]],
+                keepCurrentVideo: false,
+            };
+        }
+        return {
+            filteredMasterIndices: filteredMasterIndices,
+            filteredCursor: 0,
+            shuffleStep: 0,
+            shuffledSequence: [],
+            shuffleMode: false,
+            loadMasterIndex: filteredMasterIndices[0],
+            keepCurrentVideo: false,
+        };
+    }
+
+    /**
+     * Whether fixing an R2 filter should clear participant/tag collection (D18′).
+     * @param {boolean} isParticipantMode
+     * @param {string|null} newFacetValue  null when clearing via "All"
+     * @returns {boolean}
+     */
+    function shouldClearCollectionOnFilterFix(isParticipantMode, newFacetValue) {
+        return !!isParticipantMode && newFacetValue !== null && newFacetValue !== '';
+    }
+
     return {
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
@@ -274,5 +584,16 @@
         buildSpokenOptionsForTracks: buildSpokenOptionsForTracks,
         pickTrackIndexForSpokenLang: pickTrackIndexForSpokenLang,
         resolveActiveCaptionTrackIndex: resolveActiveCaptionTrackIndex,
+        facetItemField: facetItemField,
+        itemFacetValue: itemFacetValue,
+        recomputeFilteredMasterIndices: recomputeFilteredMasterIndices,
+        videoMatchesFilterState: videoMatchesFilterState,
+        labelForFacetValue: labelForFacetValue,
+        resolveFilterPickerReadout: resolveFilterPickerReadout,
+        distinctFacetValuesInSubset: distinctFacetValuesInSubset,
+        buildCascadingFilterOptions: buildCascadingFilterOptions,
+        buildShuffledSequenceWithHead: buildShuffledSequenceWithHead,
+        planFilterPlaylistRebuild: planFilterPlaylistRebuild,
+        shouldClearCollectionOnFilterFix: shouldClearCollectionOnFilterFix,
     };
 }));

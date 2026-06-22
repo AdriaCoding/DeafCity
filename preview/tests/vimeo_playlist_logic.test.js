@@ -141,32 +141,8 @@ assert.strictEqual(
 
 // ── Issue #4 + #5: composable filter state and client-side filtering ──────────
 
-// Simulate the composable filter logic from vimeo_caption_player.js.
-// The actual filter runs in the browser; here we test the algorithm in isolation.
-
-/**
- * Recompute filtered master indices from fullPlaylistItems + filterState.
- * Mirrors the recomputeFilteredMasterIndices() function in vimeo_caption_player.js.
- */
-function recomputeFilteredMasterIndices(fullPlaylistItems, filterState) {
-    var hasFilter = filterState.sign_language !== null
-        || filterState.edition !== null
-        || filterState.typology !== null;
-    if (!hasFilter || fullPlaylistItems.length === 0) {
-        return fullPlaylistItems.map(function (_, ix) { return ix; });
-    }
-    return fullPlaylistItems
-        .map(function (item, ix) {
-            if (filterState.sign_language !== null
-                && (item.signLanguage || '') !== filterState.sign_language) return -1;
-            if (filterState.edition !== null
-                && (item.edition || '') !== filterState.edition) return -1;
-            if (filterState.typology !== null
-                && (item.typology || '') !== filterState.typology) return -1;
-            return ix;
-        })
-        .filter(function (ix) { return ix >= 0; });
-}
+// Uses exported recomputeFilteredMasterIndices from vimeo_playlist_logic.js
+var recomputeFilteredMasterIndices = logic.recomputeFilteredMasterIndices;
 
 // Sample playlist mirroring the shape produced by vimeo_caption_player.php
 // Uses real catalog field values (edition slugs, typology slugs, sign_language slugs)
@@ -687,4 +663,135 @@ assert.strictEqual(logic.resolveParticipantGestureCarry(false, '1'), false, 'car
 assert.strictEqual(logic.resolveParticipantGestureCarry(true, '1'), true, 'carry when participant + storage flag');
 assert.strictEqual(logic.resolveParticipantGestureCarry(true, null), false, 'no carry without storage flag');
 assert.strictEqual(logic.resolveParticipantGestureCarry(true, ''), false, 'no carry with empty storage');
+
+// ── Issue #12: filter pickers — live readout, cascade, keep-if-matches (D14′, D17′, D18′, D22) ──
+
+var allOptionsByFacet = {
+    sign_language: [
+        { value: 'libras', label: 'LIBRAS Brazilian Sign Language' },
+        { value: 'lse', label: 'LSE Spanish Sign Language' },
+        { value: 'lsm', label: 'LSM Mexican Sign Language' },
+        { value: 'gss', label: 'GSS Greek Sign Language' },
+    ],
+    edition: [
+        { value: '2023-sao-paulo', label: '2023 São Paulo' },
+        { value: '2020-valencia', label: '2020 València' },
+        { value: '2023-bilbao', label: '2023 Bilbao' },
+        { value: '2021-mexico', label: '2021 Mexico City' },
+        { value: '2028-salamanca', label: 'Salamanca 2028' },
+    ],
+    typology: [
+        { value: 'acudits', label: 'ACUDITS' },
+        { value: 'malentesos', label: 'MALENTESOS' },
+        { value: 'anecdotes', label: 'ANECDOTES' },
+        { value: 'memories', label: 'MEMORIES' },
+        { value: 'endevinalles', label: 'ENDEVINALLES' },
+    ],
+};
+
+// D14′: live readout is neutral; green only when fixed
+(function () {
+    var item = samplePlaylist[0];
+    var readout = logic.resolveFilterPickerReadout(
+        item,
+        'sign_language',
+        { sign_language: null, edition: null, typology: null },
+        allOptionsByFacet.sign_language,
+        'Sign language'
+    );
+    assert.strictEqual(readout.fixed, false, 'passive readout is not fixed');
+    assert.strictEqual(readout.label, 'LIBRAS Brazilian Sign Language', 'live readout shows current video label');
+
+    var fixed = logic.resolveFilterPickerReadout(
+        item,
+        'sign_language',
+        { sign_language: 'libras', edition: null, typology: null },
+        allOptionsByFacet.sign_language,
+        'Sign language'
+    );
+    assert.strictEqual(fixed.fixed, true, 'fixed filter is pinned');
+    assert.strictEqual(fixed.label, 'LIBRAS Brazilian Sign Language', 'fixed shows pinned label');
+})();
+
+// D17′: cascading options — fixing edition narrows sign_language dropup
+(function () {
+    var cascade = logic.buildCascadingFilterOptions(
+        samplePlaylist,
+        { sign_language: null, edition: '2020-valencia', typology: null },
+        allOptionsByFacet
+    );
+    assert.strictEqual(cascade.sign_language.length, 1, 'only lse in 2020-valencia');
+    assert.strictEqual(cascade.sign_language[0].value, 'lse');
+    assert.strictEqual(cascade.edition.length, 5, 'edition dropup shows all editions in catalog subset');
+    assert.ok(cascade.typology.length >= 2, 'typology options present for valencia videos');
+})();
+
+// D17′: AND composition never empty when UI only offers cascading values
+(function () {
+    var cascade = logic.buildCascadingFilterOptions(
+        samplePlaylist,
+        { sign_language: 'lse', edition: '2020-valencia', typology: null },
+        allOptionsByFacet
+    );
+    cascade.typology.forEach(function (opt) {
+        var filterState = {
+            sign_language: 'lse',
+            edition: '2020-valencia',
+            typology: opt.value,
+        };
+        var result = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+        assert.ok(result.length > 0, 'cascading option ' + opt.value + ' never composes to empty');
+    });
+})();
+
+// D22: keep-if-matches — current video stays when it matches new filter
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: samplePlaylist,
+        filterState: { sign_language: 'libras', edition: null, typology: null },
+        currentMasterIndex: 0,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan, 'plan produced');
+    assert.strictEqual(plan.keepCurrentVideo, true, 'libras video 0 kept when fixing libras');
+    assert.strictEqual(plan.loadMasterIndex, 0, 'still on master index 0');
+    assert.strictEqual(plan.shuffleStep, 0, 'current video is queue head');
+    assert.strictEqual(plan.shuffledSequence[0], plan.filteredCursor, 'head of shuffle is current position');
+})();
+
+// D22: jump when current video does not match
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: samplePlaylist,
+        filterState: { sign_language: 'gss', edition: null, typology: null },
+        currentMasterIndex: 0,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.keepCurrentVideo, false, 'non-matching video triggers jump');
+    assert.strictEqual(plan.loadMasterIndex, 4, 'jumps to gss video (index 4)');
+})();
+
+// D22: clearing via All widens and keeps current when still in set
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: samplePlaylist,
+        filterState: { sign_language: null, edition: null, typology: null },
+        currentMasterIndex: 2,
+        shuffleMode: false,
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.keepCurrentVideo, true, 'clearing filters keeps current video');
+    assert.strictEqual(plan.loadMasterIndex, 2, 'still on same master index');
+    assert.strictEqual(plan.filteredCursor, 2, 'cursor follows catalog position');
+})();
+
+// D18′: fixing R2 filter clears participant collection
+assert.strictEqual(logic.shouldClearCollectionOnFilterFix(true, 'lse'), true);
+assert.strictEqual(logic.shouldClearCollectionOnFilterFix(true, null), false, 'clearing filter value does not imply collection clear hook');
+assert.strictEqual(logic.shouldClearCollectionOnFilterFix(false, 'lse'), false);
+
+console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
 

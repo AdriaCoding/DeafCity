@@ -121,13 +121,36 @@
         /** @type {Array<{ id?: string, label?: string, vimeo_code?: string }>} */
         var subtitleLanguages = Array.isArray(cfg.subtitleLanguages) ? cfg.subtitleLanguages : [];
 
+        /** @type {Array<{ videoId: string, tracks: Array, signLanguage: string, edition: string, typology: string, participant: string }>} */
+        var serverPlaylist =
+            Array.isArray(cfg.playlist) && cfg.playlist.length > 0 ? cfg.playlist : [];
+
         /**
-         * Master playlist (full catalog, never mutated).
-         * Each item: { videoId, tracks, signLanguage, edition, typology, participant }
-         * @type {Array<{ videoId: string, tracks: Array<{file:string,label?:string,lang?:string}>, signLanguage: string, edition: string, typology: string, participant: string }>}
+         * Master playlist — full catalog for filtering (D18′). Server playlist carries
+         * visit/poster order; catalogPlaylist is the stable master when provided.
          */
         var fullPlaylistItems =
-            Array.isArray(cfg.playlist) && cfg.playlist.length > 0 ? cfg.playlist : [];
+            Array.isArray(cfg.catalogPlaylist) && cfg.catalogPlaylist.length > 0
+                ? cfg.catalogPlaylist
+                : serverPlaylist;
+
+        /**
+         * @param {string} videoId
+         * @returns {number}
+         */
+        function masterIndexForVideoId(videoId) {
+            var id = String(videoId || '');
+            if (id === '') return 0;
+            for (var i = 0; i < fullPlaylistItems.length; i++) {
+                if (String(fullPlaylistItems[i].videoId) === id) return i;
+            }
+            return 0;
+        }
+
+        var posterItem =
+            serverPlaylist[
+                typeof cfg.playlistIndex === 'number' ? cfg.playlistIndex : 0
+            ] || serverPlaylist[0];
 
         /**
          * D18 — Composable filter state. null = not active for that facet.
@@ -138,6 +161,29 @@
             sign_language: null,
             edition: null,
             typology: null,
+        };
+
+        /** Full option catalogs from server (studio-config labels). */
+        var filterOptionCatalog = {
+            sign_language:
+                cfg.signLanguageFilter && Array.isArray(cfg.signLanguageFilter.options)
+                    ? cfg.signLanguageFilter.options
+                    : [],
+            edition:
+                cfg.editionFilter && Array.isArray(cfg.editionFilter.options)
+                    ? cfg.editionFilter.options
+                    : [],
+            typology:
+                cfg.typologyFilter && Array.isArray(cfg.typologyFilter.options)
+                    ? cfg.typologyFilter.options
+                    : [],
+        };
+
+        /** "All [category]" labels per facet (D17′). */
+        var filterClearLabels = {
+            sign_language: 'All sign languages',
+            edition: 'All cities',
+            typology: 'All typologies',
         };
 
         /** Participant name when a participant playlist is active (D18). '' = not in participant mode. */
@@ -154,8 +200,11 @@
         var filteredCursor = 0;
 
         /** Absolute index into fullPlaylistItems (master). */
-        var playlistIndex =
-            typeof cfg.playlistIndex === 'number' ? cfg.playlistIndex : 0;
+        var playlistIndex = posterItem
+            ? masterIndexForVideoId(posterItem.videoId)
+            : typeof cfg.playlistIndex === 'number'
+              ? cfg.playlistIndex
+              : 0;
 
         /**
          * When true the server has already shuffled the playlist and placed the chosen
@@ -191,27 +240,9 @@
 
         /**
          * Recompute which master-playlist indices are in scope given filterState (D17, D18).
-         * Filters compose with AND. null values are inactive (match all).
          */
         function recomputeFilteredMasterIndices() {
-            var hasFilter = filterState.sign_language !== null
-                || filterState.edition !== null
-                || filterState.typology !== null;
-            if (!hasFilter || fullPlaylistItems.length === 0) {
-                filteredMasterIndices = fullPlaylistItems.map(function (_, ix) { return ix; });
-                return;
-            }
-            filteredMasterIndices = fullPlaylistItems
-                .map(function (item, ix) {
-                    if (filterState.sign_language !== null
-                        && (item.signLanguage || '') !== filterState.sign_language) return -1;
-                    if (filterState.edition !== null
-                        && (item.edition || '') !== filterState.edition) return -1;
-                    if (filterState.typology !== null
-                        && (item.typology || '') !== filterState.typology) return -1;
-                    return ix;
-                })
-                .filter(function (ix) { return ix >= 0; });
+            filteredMasterIndices = L.recomputeFilteredMasterIndices(fullPlaylistItems, filterState);
         }
 
         function filteredCount() {
@@ -385,16 +416,44 @@
         var shuffleStep = 0;
 
         recomputeFilteredMasterIndices();
-        if (serverShuffled && filteredCount() > 0) {
-            // Server pre-shuffled (D12): the playlist order IS the shuffle order.
-            // Build the identity sequence [0, 1, 2, ... n-1] — item 0 is the poster
-            // and the queue head; pressing Play continues that exact video, no swap.
+
+        if (isParticipantMode) {
+            filteredMasterIndices = fullPlaylistItems
+                .map(function (item, ix) {
+                    return (item.participant || '') === participantName ? ix : -1;
+                })
+                .filter(function (ix) { return ix >= 0; });
+        }
+
+        if (serverShuffled && filteredCount() > 0 && !isParticipantMode) {
             shuffleMode = true;
             shuffledSequence = [];
-            for (var _si = 0; _si < filteredCount(); _si++) { shuffledSequence.push(_si); }
+            serverPlaylist.forEach(function (entry) {
+                var mix = masterIndexForVideoId(entry.videoId);
+                var fpos = filteredMasterIndices.indexOf(mix);
+                if (fpos >= 0 && shuffledSequence.indexOf(fpos) < 0) {
+                    shuffledSequence.push(fpos);
+                }
+            });
+            filteredMasterIndices.forEach(function (_, fpos) {
+                if (shuffledSequence.indexOf(fpos) < 0) {
+                    shuffledSequence.push(fpos);
+                }
+            });
+            var startFpos = filteredMasterIndices.indexOf(playlistIndex);
+            shuffleStep = startFpos >= 0 ? shuffledSequence.indexOf(startFpos) : 0;
+            if (shuffleStep < 0) shuffleStep = 0;
+            filteredCursor = shuffledSequence[shuffleStep];
+        } else if (serverShuffled && filteredCount() > 0 && isParticipantMode) {
+            shuffleMode = true;
+            shuffledSequence = [];
+            for (var _psi = 0; _psi < filteredCount(); _psi++) {
+                shuffledSequence.push(_psi);
+            }
             shuffleStep = 0;
-            filteredCursor = 0;
-            playlistIndex = filteredMasterIndices[0];
+            filteredCursor = Math.max(0, filteredMasterIndices.indexOf(playlistIndex));
+            if (filteredCursor < 0) filteredCursor = 0;
+            playlistIndex = filteredMasterIndices[filteredCursor];
         } else {
             var defaultShuffle = L.createDefaultShuffleState(filteredCount());
             shuffleMode = defaultShuffle.shuffleMode;
@@ -702,6 +761,8 @@
                 rebuildSpokenLanguagePickerOptions();
                 updateSpokenLanguagePickerUi();
                 updateCaptionPickerVisibility();
+                updateAllFilterPickerReadouts();
+                rebuildAllCascadingDropdowns();
             }
 
             function resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay) {
@@ -973,65 +1034,136 @@
             }
 
             /**
-             * Apply a filter change: update filterState, recompute filtered list,
-             * shuffle within the new filtered set, load video[0] of new set.
-             * Clearing (value=null) re-shuffles the full catalog (D7, issue #1 behaviour).
-             * @param {string} facet  e.g. 'sign_language'
+             * Update one R2 filter picker: live readout (neutral) or green when fixed (D14′, D21).
+             * @param {string} facet
+             */
+            function updateFilterPickerReadout(facet) {
+                var pickerEl = root.querySelector('.vpc-picker[data-picker="' + facet + '"]');
+                if (!pickerEl) return;
+
+                var btn = pickerEl.querySelector('.vpc-picker-btn');
+                if (!btn) return;
+
+                var genericLabel = btn.getAttribute('data-generic-label') || facet;
+                var item = fullPlaylistItems[playlistIndex];
+                var readout = L.resolveFilterPickerReadout(
+                    item,
+                    facet,
+                    filterState,
+                    filterOptionCatalog[facet] || [],
+                    genericLabel
+                );
+
+                btn.textContent = readout.label;
+                pickerEl.setAttribute('data-active', readout.fixed ? 'true' : 'false');
+            }
+
+            function updateAllFilterPickerReadouts() {
+                ['sign_language', 'edition', 'typology'].forEach(updateFilterPickerReadout);
+            }
+
+            /**
+             * Repopulate one dropup from cascading options (D17′).
+             * @param {string} facet
+             */
+            function rebuildCascadingDropdown(facet) {
+                var pickerEl = root.querySelector('.vpc-picker[data-picker="' + facet + '"]');
+                if (!pickerEl) return;
+
+                var dropdown = pickerEl.querySelector('.vpc-picker-dropdown');
+                if (!dropdown) return;
+
+                var cascade = L.buildCascadingFilterOptions(
+                    fullPlaylistItems,
+                    filterState,
+                    filterOptionCatalog
+                );
+                var options = cascade[facet] || [];
+                var fixedValue = filterState[facet];
+                var clearLabel = filterClearLabels[facet] || 'All';
+
+                dropdown.innerHTML = '';
+
+                var clearLi = document.createElement('li');
+                clearLi.setAttribute('role', 'option');
+                clearLi.className = 'vpc-picker-option vpc-picker-clear';
+                clearLi.setAttribute('data-value', '');
+                clearLi.setAttribute(
+                    'aria-selected',
+                    fixedValue === null || fixedValue === undefined ? 'true' : 'false'
+                );
+                clearLi.textContent = clearLabel;
+                dropdown.appendChild(clearLi);
+
+                options.forEach(function (opt) {
+                    var li = document.createElement('li');
+                    li.setAttribute('role', 'option');
+                    li.className = 'vpc-picker-option';
+                    li.setAttribute('data-value', opt.value);
+                    li.setAttribute(
+                        'aria-selected',
+                        fixedValue === opt.value ? 'true' : 'false'
+                    );
+                    li.textContent = opt.label;
+                    dropdown.appendChild(li);
+                });
+            }
+
+            function rebuildAllCascadingDropdowns() {
+                ['sign_language', 'edition', 'typology'].forEach(rebuildCascadingDropdown);
+            }
+
+            /**
+             * Apply a filter change with keep-if-matches playback (D22) and cascade (D17′).
+             * @param {string} facet
              * @param {string|null} value
              */
             function applyFilterChange(facet, value) {
-                if (isParticipantMode) {
+                var newValue = value || null;
+
+                if (L.shouldClearCollectionOnFilterFix(isParticipantMode, newValue)) {
                     isParticipantMode = false;
                     participantName = '';
                     syncParticipantButtonLabel();
                 }
-                filterState[facet] = value || null;
-                recomputeFilteredMasterIndices();
 
-                var fc = filteredCount();
-                if (fc === 0) {
-                    // Edge case: empty result — clear this facet, restore all.
+                filterState[facet] = newValue;
+
+                var plan = L.planFilterPlaylistRebuild({
+                    fullPlaylistItems: fullPlaylistItems,
+                    filterState: filterState,
+                    currentMasterIndex: playlistIndex,
+                    shuffleMode: shuffleMode,
+                });
+
+                if (!plan) {
                     filterState[facet] = null;
                     recomputeFilteredMasterIndices();
-                    fc = filteredCount();
+                    updateAllFilterPickerReadouts();
+                    rebuildAllCascadingDropdowns();
+                    return;
                 }
 
-                // Shuffle within the new filtered set (or full catalog on clear).
-                shuffledSequence = L.buildShuffledSequence(fc);
-                shuffleStep = 0;
-                filteredCursor = shuffledSequence[0];
-                shuffleMode = true;
-                setShuffleToggleUi(true);
+                filteredMasterIndices = plan.filteredMasterIndices;
+                filteredCursor = plan.filteredCursor;
+                shuffleStep = plan.shuffleStep;
+                shuffledSequence = plan.shuffledSequence;
+                shuffleMode = plan.shuffleMode;
+                setShuffleToggleUi(shuffleMode);
 
-                var masterIx = filteredMasterIndices[filteredCursor];
-                if (masterIx === undefined) return;
-                playlistIndex = masterIx;
+                updateAllFilterPickerReadouts();
+                rebuildAllCascadingDropdowns();
 
+                if (plan.keepCurrentVideo) {
+                    updatePlaylistNavButtons();
+                    tryAutoplayFallback();
+                    return;
+                }
+
+                playlistIndex = plan.loadMasterIndex;
                 loadVideoMaster(playlistIndex, true).then(function () {
                     updatePlaylistNavButtons();
                 });
-            }
-
-            /**
-             * Update a picker's button face and data-active attribute.
-             * @param {HTMLElement} pickerEl
-             * @param {string|null} value  null = cleared
-             * @param {string} genericLabel  Button face when no selection
-             * @param {string} selectedLabel  Button face after selection
-             */
-            function updatePickerUi(pickerEl, value, genericLabel, selectedLabel) {
-                var btn = pickerEl.querySelector('.vpc-picker-btn');
-                if (!btn) return;
-                if (value) {
-                    btn.textContent = selectedLabel;
-                    btn.setAttribute('data-generic-label', genericLabel);
-                    pickerEl.setAttribute('data-active', 'true');
-                } else {
-                    btn.textContent = genericLabel;
-                    pickerEl.setAttribute('data-active', 'false');
-                }
-                // Re-append the ::after pseudo-element is pure CSS; textContent replaces child nodes
-                // so we need to keep the label text only — ::after is CSS-only, fine.
             }
 
             /**
@@ -1059,18 +1191,16 @@
 
                 var btn = /** @type {HTMLButtonElement|null} */ (pickerEl.querySelector('.vpc-picker-btn'));
                 var dropdown = /** @type {HTMLElement|null} */ (pickerEl.querySelector('.vpc-picker-dropdown'));
-                var options = /** @type {NodeListOf<HTMLElement>} */ (
-                    pickerEl.querySelectorAll('.vpc-picker-option')
-                );
                 if (!btn || !dropdown) return;
-
-                var genericLabel = btn.getAttribute('data-generic-label') || btn.textContent.trim();
 
                 // Toggle dropdown open/close
                 btn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     if (isSpokenLanguagePicker && pickerEl.getAttribute('data-disabled') === 'true') {
                         return;
+                    }
+                    if (!isSpokenLanguagePicker) {
+                        rebuildCascadingDropdown(facet);
                     }
                     var isOpen = !dropdown.hidden;
                     closeAllPickers();
@@ -1080,32 +1210,31 @@
                     }
                 });
 
-                // Option click: select or clear
-                options.forEach(function (opt) {
-                    opt.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        if (isSpokenLanguagePicker && pickerEl.getAttribute('data-disabled') === 'true') {
-                            return;
-                        }
-                        var value = opt.getAttribute('data-value') || '';
-                        var isClear = value === '' || opt.classList.contains('vpc-picker-clear');
+                // Option click — delegation for dynamically rebuilt filter dropups
+                dropdown.addEventListener('click', function (e) {
+                    var target = /** @type {HTMLElement|null} */ (e.target);
+                    if (!target || !target.classList.contains('vpc-picker-option')) return;
+                    e.stopPropagation();
+                    if (isSpokenLanguagePicker && pickerEl.getAttribute('data-disabled') === 'true') {
+                        return;
+                    }
 
-                        // Update ARIA selected state
-                        options.forEach(function (o) { o.setAttribute('aria-selected', 'false'); });
-                        opt.setAttribute('aria-selected', 'true');
+                    var value = target.getAttribute('data-value') || '';
+                    var isClear = value === '' || target.classList.contains('vpc-picker-clear');
 
-                        closeAllPickers();
-
-                        if (isSpokenLanguagePicker) {
-                            applySpokenLanguageChange(value);
-                        } else {
-                            var label = isClear ? '' : opt.textContent.trim();
-                            updatePickerUi(pickerEl, isClear ? null : value, genericLabel, label);
-                            // Real filter: update filterState and re-queue playlist (D18).
-                            markGestureActivation();
-                            applyFilterChange(facet, isClear ? null : value);
-                        }
+                    dropdown.querySelectorAll('.vpc-picker-option').forEach(function (o) {
+                        o.setAttribute('aria-selected', 'false');
                     });
+                    target.setAttribute('aria-selected', 'true');
+                    closeAllPickers();
+
+                    if (isSpokenLanguagePicker) {
+                        applySpokenLanguageChange(value);
+                        return;
+                    }
+
+                    markGestureActivation();
+                    applyFilterChange(facet, isClear ? null : value);
                 });
 
                 // Keyboard: Escape closes
@@ -1120,27 +1249,8 @@
             // Wire up all R2 pickers in this instance
             root.querySelectorAll('.vpc-picker').forEach(initPicker);
 
-            // Spoken Language options are dynamic — wire option clicks after each rebuild.
-            var spokenPickerEl = root.querySelector('.vpc-picker[data-picker="spoken_language"]');
-            if (spokenPickerEl) {
-                var spokenDropdown = spokenPickerEl.querySelector('.vpc-picker-dropdown');
-                if (spokenDropdown) {
-                    spokenDropdown.addEventListener('click', function (e) {
-                        var target = /** @type {HTMLElement|null} */ (e.target);
-                        if (!target || !target.classList.contains('vpc-picker-option')) return;
-                        e.stopPropagation();
-                        if (spokenPickerEl.getAttribute('data-disabled') === 'true') return;
-                        var spokenId = target.getAttribute('data-value') || '';
-                        if (!spokenId) return;
-                        spokenDropdown.querySelectorAll('.vpc-picker-option').forEach(function (o) {
-                            o.setAttribute('aria-selected', 'false');
-                        });
-                        target.setAttribute('aria-selected', 'true');
-                        closeAllPickers();
-                        applySpokenLanguageChange(spokenId);
-                    });
-                }
-            }
+            rebuildAllCascadingDropdowns();
+            updateAllFilterPickerReadouts();
 
             // D18: Update Participants nav button label when in participant mode.
             syncParticipantButtonLabel();

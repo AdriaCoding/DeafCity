@@ -244,6 +244,32 @@ if (!function_exists('vpc_merge_vimeo_embed_query')) {
     }
 }
 
+if (!function_exists('vpc_label_for_filter_option')) {
+    /**
+     * Resolve a studio-config label for a filter option value.
+     *
+     * @param array<int, array{value?: string, label?: string}> $optionsList
+     * @param string $value
+     * @param string $fallback
+     * @return string
+     */
+    function vpc_label_for_filter_option(array $optionsList, $value, $fallback = '') {
+        $value = (string) $value;
+        foreach ($optionsList as $opt) {
+            if (!is_array($opt) || !isset($opt['value'])) {
+                continue;
+            }
+            if ((string) $opt['value'] === $value) {
+                return isset($opt['label']) ? (string) $opt['label'] : $value;
+            }
+        }
+        if ($value !== '') {
+            return $value;
+        }
+        return $fallback;
+    }
+}
+
 if (!isset($vpc) || !is_array($vpc)) {
     trigger_error('$vpc array is required before including vimeo_caption_player.php', E_USER_WARNING);
     return;
@@ -325,6 +351,29 @@ foreach ($playlistNormalized as $pe) {
     );
 }
 
+$catalogForJson = null;
+if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && count($vpc['catalog_playlist']) > 0) {
+    $catalogFirstTracks = array();
+    $catalogNormalized = vpc_normalize_vimeo_caption_player_playlist(
+        array('playlist' => $vpc['catalog_playlist']),
+        $catalogFirstTracks
+    );
+    if (count($catalogNormalized) > 0) {
+        $catalogForJson = array();
+        foreach ($catalogNormalized as $pe) {
+            $plTracks = isset($pe['caption_tracks']) && is_array($pe['caption_tracks']) ? $pe['caption_tracks'] : array();
+            $catalogForJson[] = array(
+                'videoId'      => $pe['videoId'],
+                'tracks'       => $plTracks,
+                'signLanguage' => isset($pe['sign_language']) ? $pe['sign_language'] : '',
+                'edition'      => isset($pe['edition']) ? $pe['edition'] : '',
+                'typology'     => isset($pe['typology']) ? $pe['typology'] : '',
+                'participant'  => isset($pe['participant']) ? $pe['participant'] : '',
+            );
+        }
+    }
+}
+
 // ── R2 filter row: Sign language custom picker (D15, D17) ──────────────────────
 // Options come from vpc['sign_language_filter']['options'] (populated-from-present, D17).
 $signLangOptionsList = isset($vpc['sign_language_filter']['options']) && is_array($vpc['sign_language_filter']['options'])
@@ -363,6 +412,14 @@ $signLangFilterForConfig = $useSignLanguageFilter
     ? array('options' => $signLangOptionsList)
     : null;
 
+$editionFilterForConfig = $useEditionFilter
+    ? array('options' => $editionOptionsList)
+    : null;
+
+$typologyFilterForConfig = $useTypologyFilter
+    ? array('options' => $typologyOptionsList)
+    : null;
+
 // Prepare subtitle language labels for JS (D16′ spoken-language mapping).
 $subtitleLanguagesForConfig = count($subtitleLanguagesList) > 0
     ? $subtitleLanguagesList
@@ -373,12 +430,30 @@ $subtitleLanguagesForConfig = count($subtitleLanguagesList) > 0
 $initialPlaylistIndex = isset($vpc['playlist_index']) ? (int) $vpc['playlist_index'] : 0;
 $initialPlaylistIndex = max(0, min($initialPlaylistIndex, count($playlistNormalized) - 1));
 
+$initialEntry = $playlistNormalized[$initialPlaylistIndex];
+$initialSignLangReadout = vpc_label_for_filter_option(
+    $signLangOptionsList,
+    isset($initialEntry['sign_language']) ? $initialEntry['sign_language'] : '',
+    'Sign language'
+);
+$initialEditionReadout = vpc_label_for_filter_option(
+    $editionOptionsList,
+    isset($initialEntry['edition']) ? $initialEntry['edition'] : '',
+    'City / Edition'
+);
+$initialTypologyReadout = vpc_label_for_filter_option(
+    $typologyOptionsList,
+    isset($initialEntry['typology']) ? $initialEntry['typology'] : '',
+    'Typology'
+);
+
 $config = array(
     'iframeId'             => $iframeId,
     'captionBoxId'         => $captionBoxId,
     'tracks'               => $captionTracks,
     'captionsEndpoint'     => $captionsBase,
     'playlist'             => $playlistForJson,
+    'catalogPlaylist'      => $catalogForJson,
     'playlistIndex'        => $initialPlaylistIndex,
     // When true the server has pre-shuffled; JS must trust item[0] as the queue head
     // without re-shuffling, so the paused poster matches what Play will continue (D12).
@@ -387,6 +462,8 @@ $config = array(
     // R2 filter pickers config (D17, D18). signLanguageFilter carries options (value+label)
     // populated only from values present in the visible catalog.
     'signLanguageFilter'   => $signLangFilterForConfig,
+    'editionFilter'        => $editionFilterForConfig,
+    'typologyFilter'       => $typologyFilterForConfig,
     // D16′: studio-config subtitle_languages for track lang → label mapping.
     'subtitleLanguages'    => $subtitleLanguagesForConfig,
     // D18: Participant mode — non-empty when a participant playlist is active.
@@ -499,6 +576,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             class="vpc-picker"
             id="<?php echo htmlspecialchars($signLangPickerId, ENT_QUOTES, 'UTF-8'); ?>"
             data-picker="sign_language"
+            data-active="false"
         >
             <button
                 type="button"
@@ -508,7 +586,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
                 aria-expanded="false"
                 aria-controls="<?php echo htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
                 data-generic-label="Sign language"
-            >Sign language</button>
+            ><?php echo htmlspecialchars($initialSignLangReadout, ENT_QUOTES, 'UTF-8'); ?></button>
             <ul
                 role="listbox"
                 id="<?php echo htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
@@ -572,6 +650,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             class="vpc-picker"
             id="<?php echo htmlspecialchars($editionPickerId, ENT_QUOTES, 'UTF-8'); ?>"
             data-picker="edition"
+            data-active="false"
         >
             <button
                 type="button"
@@ -581,7 +660,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
                 aria-expanded="false"
                 aria-controls="<?php echo htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
                 data-generic-label="City / Edition"
-            >City / Edition</button>
+            ><?php echo htmlspecialchars($initialEditionReadout, ENT_QUOTES, 'UTF-8'); ?></button>
             <ul
                 role="listbox"
                 id="<?php echo htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
@@ -612,6 +691,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
             class="vpc-picker"
             id="<?php echo htmlspecialchars($typologyPickerId, ENT_QUOTES, 'UTF-8'); ?>"
             data-picker="typology"
+            data-active="false"
         >
             <button
                 type="button"
@@ -621,7 +701,7 @@ $showPlaylistNav = count($playlistNormalized) > 1;
                 aria-expanded="false"
                 aria-controls="<?php echo htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
                 data-generic-label="Typology"
-            >Typology</button>
+            ><?php echo htmlspecialchars($initialTypologyReadout, ENT_QUOTES, 'UTF-8'); ?></button>
             <ul
                 role="listbox"
                 id="<?php echo htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
