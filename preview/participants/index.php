@@ -26,7 +26,7 @@ $currentRoute = 'participants';
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
     <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
-    <link rel="stylesheet" href="/preview/css/participants-page.css?v=6">
+    <link rel="stylesheet" href="/preview/css/participants-page.css?v=7">
 </head>
 <body>
 <div class="preview-participants-page">
@@ -49,7 +49,9 @@ $currentRoute = 'participants';
             ?>
             <a href="<?= htmlspecialchars($safeHref, ENT_QUOTES, 'UTF-8') ?>" class="participant-card">
                 <?php if ($thumbnailUrl !== ''): ?>
-                    <img src="<?= htmlspecialchars($thumbnailUrl, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>">
+                    <span class="participant-thumb">
+                        <img src="<?= htmlspecialchars($thumbnailUrl, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>">
+                    </span>
                 <?php endif; ?>
                 <span class="participant-name"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></span>
             </a>

@@ -37,11 +37,22 @@ html, body {
     color: #111;
 }
 
-.participant-card img {
+.participant-thumb {
     width: 100%;
     aspect-ratio: 16 / 9;
-    object-fit: cover;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* Crop horizontal margins: thumbs are 16:9 with the signer centered in whitespace. */
+.participant-thumb img {
     display: block;
+    width: 140%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    margin-left: -20%;
 }
 
 .participant-name {
