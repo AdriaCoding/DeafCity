@@ -37,9 +37,13 @@ assert_contains('id="trio"', $html, 'trio video');
 assert_contains('id="credits"', $html, 'credits section');
 assert_contains('ministerio.png', $html, 'sponsor logos');
 assert_contains('Roboto', $html, 'Roboto font');
-assert_contains('go back to player', $html, 'back link label');
-assert_contains('preview-site-nav__link', $html, 'text link style on about page');
-assert_not_contains('preview-site-nav__btn', $html, 'no button style on about page');
-assert_not_contains('>About</a>', $html, 'no about link on about page');
+assert_not_contains('go back to player', $html, 'no back link on about page');
+assert_contains('preview-site-nav--navbar', $html, 'sticky bottom navbar on about page');
+assert_contains('preview-site-nav__btn', $html, 'navbar uses button style');
+assert_contains('href="/preview/"', $html, 'navbar includes Player route');
+assert_contains('href="/preview/about"', $html, 'navbar includes About route');
+assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');
+assert_contains('aria-current="page"', $html, 'navbar marks current page');
+assert_contains('>About</a>', $html, 'About label in navbar');
 
 echo "All tests passed.\n";

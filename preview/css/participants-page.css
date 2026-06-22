@@ -12,7 +12,7 @@ html, body {
 
 .preview-participants-page {
     max-width: none;
-    padding: 0.5rem 1rem 1.5rem;
+    padding: 0.5rem 1rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 .participants-title {

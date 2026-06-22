@@ -27,10 +27,13 @@ include $participantsPage;
 $html = ob_get_clean();
 
 pp_assert_contains('participants-grid', $html, 'participants grid present');
-pp_assert_contains('go back to player', $html, 'back-to-player link present');
-pp_assert_contains('/preview/participants', $html, 'self-referential URL not present... wait');
-// The nav should NOT show Participants when on participants page
-pp_assert_not_contains('href="/preview/participants"', $html, 'no Participants nav button on participants page');
+pp_assert_not_contains('go back to player', $html, 'no back-to-player link on participants page');
+pp_assert_contains('preview-site-nav--navbar', $html, 'sticky bottom navbar on participants page');
+pp_assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');
+pp_assert_contains('aria-current="page"', $html, 'navbar marks current page');
+pp_assert_contains('>Participants</a>', $html, 'Participants label in navbar');
+pp_assert_contains('href="/preview/"', $html, 'navbar includes Player route');
+pp_assert_contains('href="/preview/about"', $html, 'navbar includes About route');
 
 // Count distinct participant cards
 preg_match_all('~/preview/\?participant=~', $html, $cardMatches);

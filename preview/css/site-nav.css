@@ -7,6 +7,39 @@
     font-family: Roboto, Arial, sans-serif;
 }
 
+/* Shared button face for chrome and navbar placements */
+a.preview-site-nav__btn {
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.45em 0.85em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #444;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: border-color 0.1s, color 0.1s, background 0.1s;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+a.preview-site-nav__btn:hover {
+    background: #efefef;
+    border-color: #bbb;
+}
+
+a.preview-site-nav__btn:focus-visible {
+    outline: 2px solid rgb(0, 120, 0);
+    outline-offset: 2px;
+}
+
 /* D21: green when a participant/tag collection is active — matches fixed-filter picker */
 a.preview-site-nav__btn.is-active {
     border-color: rgb(0, 120, 0);
@@ -27,38 +60,30 @@ a.preview-site-nav__btn.is-active:hover {
     max-width: none;
 }
 
-/* Scrollable pages (About, Participants, …) */
-.preview-site-nav--page {
-    justify-content: flex-start;
-    margin-bottom: 1.25rem;
-    padding: 0;
+/* Sticky bottom navbar on secondary pages (D26) */
+.preview-site-nav--navbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    margin: 0;
+    padding: 0.65rem 1rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.97);
+    border-top: 1px solid #ccc;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.preview-site-nav__link {
-    font-family: Roboto, Arial, sans-serif;
-    font-size: 0.875rem;
-    font-weight: 400;
-    letter-spacing: 0.01em;
-    color: rgb(0, 120, 0);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+a.preview-site-nav__btn.is-current,
+.preview-site-nav--navbar a[aria-current="page"] {
+    border-color: rgb(0, 120, 0);
+    color: rgb(0, 100, 0);
+    background: #e8f5e9;
+    font-weight: 500;
 }
 
-.preview-site-nav__link::before {
-    content: '\2190';
-    font-size: 0.95em;
-    line-height: 1;
-    opacity: 0.75;
-}
-
-a.preview-site-nav__link:hover {
-    text-decoration: underline;
-}
-
-a.preview-site-nav__link:focus-visible {
-    outline: 2px solid rgb(0, 120, 0);
-    outline-offset: 2px;
-    border-radius: 2px;
+a.preview-site-nav__btn.is-current:hover,
+.preview-site-nav--navbar a[aria-current="page"]:hover {
+    background: #dff0e0;
+    border-color: rgb(0, 100, 0);
 }

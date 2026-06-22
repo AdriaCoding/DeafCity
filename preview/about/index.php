@@ -15,17 +15,11 @@ $currentRoute = 'about';
     <title>About — DEAF.city</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
-    <link rel="stylesheet" href="/preview/css/about-page.css?v=1">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=3">
+    <link rel="stylesheet" href="/preview/css/about-page.css?v=2">
 </head>
 <body>
 <div class="preview-about-page">
-    <?php
-    $currentRoute = 'about';
-    $navPlacement = 'page';
-    include __DIR__ . '/../components/site_nav.php';
-    ?>
-
     <div id="clock">
         <div id="clock-proper" class="clock">
             <iframe src="/realtime/index.html" title="DEAF.city clock"></iframe>
@@ -51,6 +45,12 @@ $currentRoute = 'about';
         </div>
     </div>
 </div>
+
+<?php
+$currentRoute = 'about';
+$navPlacement = 'navbar';
+include __DIR__ . '/../components/site_nav.php';
+?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/leaflet/js/gallery.js"></script>

@@ -25,17 +25,11 @@ $currentRoute = 'participants';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=2">
-    <link rel="stylesheet" href="/preview/css/participants-page.css?v=8">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=3">
+    <link rel="stylesheet" href="/preview/css/participants-page.css?v=9">
 </head>
 <body>
 <div class="preview-participants-page">
-    <?php
-    $currentRoute = 'participants';
-    $navPlacement = 'page';
-    include __DIR__ . '/../components/site_nav.php';
-    ?>
-
     <h1 class="participants-title">Participants</h1>
 
     <div class="participants-grid">
@@ -58,6 +52,13 @@ $currentRoute = 'participants';
         <?php endforeach; ?>
     </div>
 </div>
+
+<?php
+$currentRoute = 'participants';
+$navPlacement = 'navbar';
+include __DIR__ . '/../components/site_nav.php';
+?>
+
 <script>
 (function () {
     'use strict';

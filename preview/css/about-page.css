@@ -17,7 +17,7 @@ a {
 .preview-about-page {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem 1.25rem 3rem;
+    padding: 1rem 1.25rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
 }
 
 #clock {
