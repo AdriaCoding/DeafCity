@@ -41,7 +41,9 @@ $currentRoute = 'participants';
     <div class="participants-grid">
         <?php foreach ($participants as $name => $video): ?>
             <?php
-            $thumbnailUrl = isset($video['thumbnail_url']) ? (string) $video['thumbnail_url'] : '';
+            $thumbnailUrl = vpc_participant_thumbnail_display_url(
+                isset($video['thumbnail_url']) ? (string) $video['thumbnail_url'] : ''
+            );
             $encodedName = rawurlencode($name);
             $safeHref = '/preview/?participant=' . $encodedName;
             ?>

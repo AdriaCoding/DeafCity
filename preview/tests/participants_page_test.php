@@ -46,6 +46,28 @@ pp_assert_contains('participant=Hamida', $html, 'Hamida card present');
 pp_assert_contains('participant=Edinho', $html, 'Edinho card present');
 pp_assert_contains('Hamida', $html, 'Hamida name label');
 
+pp_assert_not_contains('r=pad', $html, 'no r=pad in participant thumbnail URLs');
+pp_assert_contains('region=us', $html, 'other Vimeo query params preserved');
+
+require dirname(dirname(__FILE__)) . '/lib/videos_catalog.php';
+
+$padUrl = 'https://i.vimeocdn.com/video/1285032917-abc_200x150?&r=pad&region=us';
+$displayUrl = vpc_participant_thumbnail_display_url($padUrl);
+if ($displayUrl !== 'https://i.vimeocdn.com/video/1285032917-abc_200x150?region=us') {
+    fwrite(STDERR, "FAIL: unexpected display URL: {$displayUrl}\n");
+    exit(1);
+}
+if (vpc_participant_thumbnail_display_url('https://example.com/thumb.jpg?r=pad') !== 'https://example.com/thumb.jpg?r=pad') {
+    fwrite(STDERR, "FAIL: non-Vimeo URL should pass through unchanged\n");
+    exit(1);
+}
+if (vpc_participant_thumbnail_display_url('https://i.vimeocdn.com/video/x_640x360?&r=crop&region=us')
+    !== 'https://i.vimeocdn.com/video/x_640x360?&r=crop&region=us') {
+    fwrite(STDERR, "FAIL: r=crop URL should pass through unchanged\n");
+    exit(1);
+}
+echo "PASS: vpc_participant_thumbnail_display_url strips r=pad only\n";
+
 // ── Home page with ?participant=Hamida ────────────────────────────────────────
 $_GET['participant'] = 'Hamida';
 $homePage = dirname(dirname(__FILE__)) . '/index.php';

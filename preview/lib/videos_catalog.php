@@ -332,6 +332,49 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
     }
 }
 
+if (!function_exists('vpc_participant_thumbnail_display_url')) {
+    /**
+     * Strip Vimeo r=pad from a catalog thumbnail URL for grid display.
+     * r=pad letterboxes the JPEG with black bars; without it the frame fills naturally.
+     *
+     * @param string $url thumbnail_url from catalog.json
+     * @return string
+     */
+    function vpc_participant_thumbnail_display_url($url) {
+        $url = trim((string) $url);
+        if ($url === '' || strpos($url, 'vimeocdn.com') === false) {
+            return $url;
+        }
+
+        $parts = parse_url($url);
+        if ($parts === false || empty($parts['host'])) {
+            return $url;
+        }
+
+        $query = array();
+        if (!empty($parts['query'])) {
+            parse_str(ltrim($parts['query'], '&?'), $query);
+        }
+
+        if (!isset($query['r']) || (string) $query['r'] !== 'pad') {
+            return $url;
+        }
+
+        unset($query['r']);
+
+        $scheme = isset($parts['scheme']) ? $parts['scheme'] : 'https';
+        $rebuilt = $scheme . '://' . $parts['host'];
+        if (!empty($parts['path'])) {
+            $rebuilt .= $parts['path'];
+        }
+        if (count($query) > 0) {
+            $rebuilt .= '?' . http_build_query($query);
+        }
+
+        return $rebuilt;
+    }
+}
+
 if (!function_exists('vpc_participants_from_catalog')) {
     /**
      * Return one representative visible video per distinct participant name.
