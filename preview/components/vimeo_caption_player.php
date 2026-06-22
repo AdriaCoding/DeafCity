@@ -611,17 +611,18 @@ $navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
         id="<?php echo htmlspecialchars($transportId, ENT_QUOTES, 'UTF-8'); ?>"
         class="vpc-control-row"
     >
-        <div class="vpc-control-wing vpc-control-wing--left">
-            <?php if ($siteNavHtml !== ''): ?>
-            <div class="vpc-site-nav-wrap vpc-control-zone vpc-control-zone--nav">
-                <?php echo $siteNavHtml; ?>
-            </div>
-            <?php endif; ?>
-            <div class="vpc-transport-l vpc-control-zone vpc-control-zone--transport-l" role="group" aria-label="Playback left">
+        <div class="vpc-control-secondary">
+            <?php if ($siteNavHtml !== '' || $useSpokenLanguagePicker): ?>
+            <div class="vpc-control-secondary-l">
+                <?php if ($siteNavHtml !== ''): ?>
+                <div class="vpc-site-nav-wrap vpc-control-zone vpc-control-zone--nav">
+                    <?php echo $siteNavHtml; ?>
+                </div>
+                <?php endif; ?>
                 <?php if ($useSpokenLanguagePicker): ?>
                 <?php
                 /*
-                 * Spoken Language picker (D16′, D25) — in transport-L, not filters.
+                 * Spoken Language picker (D16′, D25) — left of transport cluster, not filters.
                  * data-picker="spoken_language" — JS identifies this picker by attribute.
                  */
                 ?>
@@ -650,45 +651,10 @@ $navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
                     ></ul>
                 </div>
                 <?php endif; ?>
-                <button
-                    type="button"
-                    class="vpc-shuffle-btn<?php echo $navHiddenClass; ?>"
-                    aria-pressed="true"
-                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                    aria-label="Shuffle playlist"
-                ><span class="material-icons" aria-hidden="true">shuffle</span></button>
-                <button
-                    type="button"
-                    class="vpc-prev-btn<?php echo $navHiddenClass; ?>"
-                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                    aria-label="Previous video in playlist"
-                ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
             </div>
-        </div>
-        <div class="vpc-control-center">
-            <button
-                type="button"
-                class="vpc-play-pause-btn"
-                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="Play video"
-            ><span class="material-icons" aria-hidden="true">play_arrow</span></button>
-        </div>
-        <div class="vpc-control-wing vpc-control-wing--right">
-            <div class="vpc-transport-r vpc-control-zone vpc-control-zone--transport-r" role="group" aria-label="Playback right">
-                <button
-                    type="button"
-                    class="vpc-next-btn<?php echo $navHiddenClass; ?>"
-                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                    aria-label="Next video in playlist"
-                ><span class="material-icons" aria-hidden="true">skip_next</span></button>
-                <button
-                    type="button"
-                    class="vpc-reset-btn"
-                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                    aria-label="Reset filters and playlist"
-                ><span class="material-icons" aria-hidden="true">replay</span></button>
-            </div>
+            <?php endif; ?>
             <?php if ($showR2FilterRow): ?>
+            <div class="vpc-control-secondary-r">
             <div class="vpc-r2-filters vpc-control-zone vpc-control-zone--filters" role="group" aria-label="Filters">
                 <?php if ($useSignLanguageFilter): ?>
                 <div
@@ -814,7 +780,47 @@ $navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
                 </div>
                 <?php endif; ?>
             </div>
+            </div>
             <?php endif; ?>
+        </div>
+        <div
+            class="vpc-control-transport-cluster"
+            role="group"
+            aria-label="Playback"
+        >
+            <button
+                type="button"
+                class="vpc-shuffle-btn<?php echo $navHiddenClass; ?>"
+                aria-pressed="true"
+                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                aria-label="Shuffle playlist"
+            ><span class="material-icons" aria-hidden="true">shuffle</span></button>
+            <button
+                type="button"
+                class="vpc-prev-btn<?php echo $navHiddenClass; ?>"
+                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                aria-label="Previous video in playlist"
+            ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
+            <div class="vpc-control-center">
+                <button
+                    type="button"
+                    class="vpc-play-pause-btn"
+                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                    aria-label="Play video"
+                ><span class="material-icons" aria-hidden="true">play_arrow</span></button>
+            </div>
+            <button
+                type="button"
+                class="vpc-next-btn<?php echo $navHiddenClass; ?>"
+                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                aria-label="Next video in playlist"
+            ><span class="material-icons" aria-hidden="true">skip_next</span></button>
+            <button
+                type="button"
+                class="vpc-reset-btn"
+                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
+                aria-label="Reset filters and playlist"
+            ><span class="material-icons" aria-hidden="true">replay</span></button>
         </div>
     </div>
 </div>

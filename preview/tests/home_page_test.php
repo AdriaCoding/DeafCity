@@ -63,6 +63,7 @@ assert_contains('href="/preview/about"', $html, 'about nav link');
 assert_contains('preview-site-nav--chrome', $html, 'nav in player chrome');
 assert_contains('vpc-site-nav-wrap', $html, 'nav in control row');
 assert_contains('vpc-control-row', $html, 'single control row wrapper');
+assert_contains('vpc-control-transport-cluster', $html, 'transport cluster group');
 assert_contains('vpc-control-center', $html, 'play in center cell');
 assert_not_contains('preview-site-nav--overlay', $html, 'no top overlay nav');
 assert_not_contains('proto-bar', $html, 'no prototype switcher');
@@ -73,19 +74,19 @@ assert_not_contains('vC-about', $html, 'no variant C about block');
 assert_not_contains('trio-wrap', $html, 'no inline trio video');
 assert_contains('overflow: hidden', $html, 'non-scrollable body');
 
-// Issue #17 (D24/D25): play in center cell; groups ordered nav → transport-L → play → transport-R → filters
+// Issue #17 (D24/D25): play in center cell inside transport cluster; groups ordered secondary-L → transport → secondary-R
+$clusterPos = strpos($html, 'vpc-control-transport-cluster');
 $centerPos = strpos($html, 'vpc-control-center');
 $playPos = strpos($html, 'vpc-play-pause-btn');
-if ($centerPos === false || $playPos === false || $playPos < $centerPos) {
+if ($clusterPos === false || $centerPos === false || $playPos === false || $playPos < $centerPos) {
     fwrite(STDERR, "FAIL: play button should live inside vpc-control-center\n");
     exit(1);
 }
-if (strpos($html, 'vpc-control-center') !== false
-    && !preg_match('~<div class="vpc-control-center"[^>]*>\s*<button[^>]*class="[^"]*vpc-play-pause-btn~s', $html)) {
-    fwrite(STDERR, "FAIL: vpc-play-pause-btn should be direct child of vpc-control-center\n");
+if (!preg_match('~<div[^>]*vpc-control-transport-cluster[^>]*>.*?vpc-play-pause-btn~s', $html)) {
+    fwrite(STDERR, "FAIL: vpc-play-pause-btn should be inside vpc-control-transport-cluster\n");
     exit(1);
 }
-echo "PASS: play button in center cell\n";
+echo "PASS: play button in transport cluster center cell\n";
 
 $navPos = strpos($html, 'vpc-site-nav-wrap');
 $spokenPos = strpos($html, 'data-picker="spoken_language"');
@@ -100,23 +101,23 @@ if ($navPos === false || $spokenPos === false || $shufflePos === false || $prevP
     fwrite(STDERR, "FAIL: missing control-row group markers for order check\n");
     exit(1);
 }
-if (!($navPos < $spokenPos && $spokenPos < $shufflePos && $shufflePos < $prevPos
-    && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos
-    && $resetPos < $filtersPos && $filtersPos < $signPos)) {
-    fwrite(STDERR, "FAIL: control groups should appear nav → spoken → transport-L → play → transport-R → filters\n");
+if (!($navPos < $spokenPos && $spokenPos < $filtersPos && $filtersPos < $signPos
+    && $signPos < $clusterPos && $clusterPos < $shufflePos && $shufflePos < $prevPos
+    && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
+    fwrite(STDERR, "FAIL: control groups should appear nav → spoken → filters → transport cluster\n");
     exit(1);
 }
-echo "PASS: control groups in nav → transport-L → play → transport-R → filters order\n";
+echo "PASS: control groups in nav → spoken → filters → transport cluster order\n";
 
 if (preg_match('~<div class="vpc-r2-filters"[^>]*>.*?data-picker="spoken_language"~s', $html)) {
     fwrite(STDERR, "FAIL: Spoken Language picker must not remain inside vpc-r2-filters (D25)\n");
     exit(1);
 }
-if (!preg_match('~class="[^"]*vpc-transport-l[^"]*"[^>]*>.*?data-picker="spoken_language"~s', $html)) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should be inside vpc-transport-l (D25)\n");
+if (!preg_match('~<div[^>]*vpc-control-secondary-l[^>]*>.*?data-picker="spoken_language"~s', $html)) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should be inside vpc-control-secondary-l (D25)\n");
     exit(1);
 }
-echo "PASS: Spoken Language in transport-L, not in filters\n";
+echo "PASS: Spoken Language in secondary-L, not in filters\n";
 
 // ── Issue #1: paused random poster & no-autoplay ──────────────────────────────
 
@@ -410,17 +411,17 @@ assert_contains('data-generic-label="Spoken Language"', $html, 'Spoken Language 
 // AC: Spoken Language picker uses custom picker style (vpc-picker-btn, vpc-picker-dropdown)
 // (no native <select> — already checked above in the "no native <select>" assertion)
 
-// Issue #17 (D25): Spoken Language in transport-L — before shuffle/prev, not among filter pickers
-$transportLPos = strpos($html, 'vpc-transport-l');
-if ($spPos === false || $transportLPos === false || $spPos < $transportLPos) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should appear inside vpc-transport-l\n");
+// Issue #17 (D25): Spoken Language in secondary-L — before transport cluster, not among filter pickers
+$secondaryLPos = strpos($html, 'vpc-control-secondary-l');
+if ($spPos === false || $secondaryLPos === false || $spPos < $secondaryLPos) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should appear inside vpc-control-secondary-l\n");
     exit(1);
 }
-if ($spPos > $shufflePos) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should appear before shuffle in transport-L\n");
+if ($spPos > $clusterPos) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should appear before transport cluster\n");
     exit(1);
 }
-echo "PASS: Spoken Language picker in transport-L before shuffle/prev\n";
+echo "PASS: Spoken Language picker in secondary-L before transport cluster\n";
 
 // AC: Spoken Language picker has disabled "No subtitles" state on initial render (D16′)
 assert_contains('>No subtitles<', $html, 'Spoken Language disabled state says "No subtitles"');
