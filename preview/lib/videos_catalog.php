@@ -156,6 +156,7 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
         }
 
         $labelMap = array();
+        $shortLabelMap = array();
         if (is_readable($studioConfigPath)) {
             $raw = file_get_contents($studioConfigPath);
             $cfg = $raw !== false ? json_decode($raw, true) : null;
@@ -163,6 +164,9 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
                 foreach (isset($cfg['sign_languages']) ? $cfg['sign_languages'] : array() as $item) {
                     if (!empty($item['id']) && !empty($item['label'])) {
                         $labelMap[$item['id']] = $item['label'];
+                        if (!empty($item['short_label']) && is_string($item['short_label'])) {
+                            $shortLabelMap[$item['id']] = $item['short_label'];
+                        }
                     }
                 }
             }
@@ -170,10 +174,14 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
 
         $opts = array();
         foreach (array_keys($seen) as $id) {
-            $opts[] = array(
+            $opt = array(
                 'value' => $id,
                 'label' => isset($labelMap[$id]) ? $labelMap[$id] : $id,
             );
+            if (isset($shortLabelMap[$id])) {
+                $opt['short_label'] = $shortLabelMap[$id];
+            }
+            $opts[] = $opt;
         }
         usort($opts, function ($a, $b) {
             return strcasecmp($a['label'], $b['label']);
@@ -598,6 +606,7 @@ if (!function_exists('vpc_edition_options_from_catalog')) {
         }
 
         $labelMap = array();
+        $shortLabelMap = array();
         $orderMap = array();
         if (is_readable($studioConfigPath)) {
             $raw = file_get_contents($studioConfigPath);
@@ -607,6 +616,9 @@ if (!function_exists('vpc_edition_options_from_catalog')) {
                 foreach (isset($cfg['editions']) ? $cfg['editions'] : array() as $item) {
                     if (!empty($item['id']) && !empty($item['label'])) {
                         $labelMap[$item['id']] = $item['label'];
+                        if (!empty($item['short_label']) && is_string($item['short_label'])) {
+                            $shortLabelMap[$item['id']] = $item['short_label'];
+                        }
                         $orderMap[$item['id']] = $pos++;
                     }
                 }
@@ -615,15 +627,23 @@ if (!function_exists('vpc_edition_options_from_catalog')) {
 
         $opts = array();
         foreach (array_keys($seen) as $id) {
-            $opts[] = array(
+            $opt = array(
                 'value'  => $id,
                 'label'  => isset($labelMap[$id]) ? $labelMap[$id] : $id,
                 '_order' => isset($orderMap[$id]) ? $orderMap[$id] : 999,
             );
+            if (isset($shortLabelMap[$id])) {
+                $opt['short_label'] = $shortLabelMap[$id];
+            }
+            $opts[] = $opt;
         }
         usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
         return array_map(function ($o) {
-            return array('value' => $o['value'], 'label' => $o['label']);
+            $out = array('value' => $o['value'], 'label' => $o['label']);
+            if (isset($o['short_label'])) {
+                $out['short_label'] = $o['short_label'];
+            }
+            return $out;
         }, $opts);
     }
 }
@@ -650,6 +670,7 @@ if (!function_exists('vpc_typology_options_from_catalog')) {
         }
 
         $labelMap = array();
+        $shortLabelMap = array();
         $orderMap = array();
         if (is_readable($studioConfigPath)) {
             $raw = file_get_contents($studioConfigPath);
@@ -659,6 +680,9 @@ if (!function_exists('vpc_typology_options_from_catalog')) {
                 foreach (isset($cfg['typologies']) ? $cfg['typologies'] : array() as $item) {
                     if (!empty($item['id']) && !empty($item['label'])) {
                         $labelMap[$item['id']] = $item['label'];
+                        if (!empty($item['short_label']) && is_string($item['short_label'])) {
+                            $shortLabelMap[$item['id']] = $item['short_label'];
+                        }
                         $orderMap[$item['id']] = $pos++;
                     }
                 }
@@ -667,15 +691,23 @@ if (!function_exists('vpc_typology_options_from_catalog')) {
 
         $opts = array();
         foreach (array_keys($seen) as $id) {
-            $opts[] = array(
+            $opt = array(
                 'value'  => $id,
                 'label'  => isset($labelMap[$id]) ? $labelMap[$id] : $id,
                 '_order' => isset($orderMap[$id]) ? $orderMap[$id] : 999,
             );
+            if (isset($shortLabelMap[$id])) {
+                $opt['short_label'] = $shortLabelMap[$id];
+            }
+            $opts[] = $opt;
         }
         usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
         return array_map(function ($o) {
-            return array('value' => $o['value'], 'label' => $o['label']);
+            $out = array('value' => $o['value'], 'label' => $o['label']);
+            if (isset($o['short_label'])) {
+                $out['short_label'] = $o['short_label'];
+            }
+            return $out;
         }, $opts);
     }
 }

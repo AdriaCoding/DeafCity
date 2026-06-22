@@ -357,11 +357,62 @@
     }
 
     /**
+     * Title-case a label for compact typology faces (D14″).
+     * @param {string} label
+     * @returns {string}
+     */
+    function titleCaseFacetLabel(label) {
+        var s = String(label || '');
+        if (s === '') {
+            return '';
+        }
+        return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+    }
+
+    /**
+     * Compact face label for a facet value (D14″).
+     * Uses short_label when present; otherwise facet-specific fallback.
+     * @param {string} facet
+     * @param {string} value
+     * @param {Array<{ value?: string, label?: string, short_label?: string }>} options
+     * @returns {string}
+     */
+    function compactFacetLabel(facet, value, options) {
+        if (value === null || value === undefined || value === '') {
+            return '';
+        }
+        var list = Array.isArray(options) ? options : [];
+        var fullLabel = labelForFacetValue(facet, value, options);
+        var i;
+        for (i = 0; i < list.length; i++) {
+            if (list[i] && list[i].value === value) {
+                if (list[i].short_label) {
+                    return list[i].short_label;
+                }
+                break;
+            }
+        }
+        if (facet === 'sign_language') {
+            var firstToken = fullLabel.split(/\s+/)[0];
+            return firstToken || value;
+        }
+        if (facet === 'edition') {
+            var stripped = fullLabel.replace(/^\d{4}\s+/, '').replace(/\s+\d{4}$/, '');
+            return stripped || value;
+        }
+        if (facet === 'typology') {
+            return titleCaseFacetLabel(fullLabel) || titleCaseFacetLabel(value) || value;
+        }
+        return fullLabel || value;
+    }
+
+    /**
      * Picker button face: fixed filter label when pinned, else live readout (D14′).
+     * Face text uses compact labels (D14″); dropup options keep full studio labels.
      * @param {{ signLanguage?: string, edition?: string, typology?: string }} item
      * @param {string} facet
      * @param {VpcFilterState} filterState
-     * @param {Array<{ value?: string, label?: string }>} options
+     * @param {Array<{ value?: string, label?: string, short_label?: string }>} options
      * @param {string} genericLabel
      * @returns {{ label: string, fixed: boolean }}
      */
@@ -369,14 +420,14 @@
         var fixedValue = filterState[facet];
         if (fixedValue !== null && fixedValue !== undefined && fixedValue !== '') {
             return {
-                label: labelForFacetValue(facet, fixedValue, options),
+                label: compactFacetLabel(facet, fixedValue, options),
                 fixed: true,
             };
         }
         var liveValue = itemFacetValue(item, facet);
         if (liveValue !== '') {
             return {
-                label: labelForFacetValue(facet, liveValue, options),
+                label: compactFacetLabel(facet, liveValue, options),
                 fixed: false,
             };
         }
@@ -648,6 +699,7 @@
         recomputeFilteredMasterIndices: recomputeFilteredMasterIndices,
         videoMatchesFilterState: videoMatchesFilterState,
         labelForFacetValue: labelForFacetValue,
+        compactFacetLabel: compactFacetLabel,
         resolveFilterPickerReadout: resolveFilterPickerReadout,
         distinctFacetValuesInSubset: distinctFacetValuesInSubset,
         buildCascadingFilterOptions: buildCascadingFilterOptions,

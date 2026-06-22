@@ -270,6 +270,72 @@ if (!function_exists('vpc_label_for_filter_option')) {
     }
 }
 
+if (!function_exists('vpc_title_case_facet_label')) {
+    /**
+     * Title-case a label for compact typology faces (D14″).
+     *
+     * @param string $label
+     * @return string
+     */
+    function vpc_title_case_facet_label($label) {
+        $s = (string) $label;
+        if ($s === '') {
+            return '';
+        }
+        return mb_strtoupper(mb_substr($s, 0, 1, 'UTF-8'), 'UTF-8')
+            . mb_strtolower(mb_substr($s, 1, null, 'UTF-8'), 'UTF-8');
+    }
+}
+
+if (!function_exists('vpc_compact_label_for_filter_option')) {
+    /**
+     * Compact face label for a filter option value (D14″).
+     *
+     * @param string $facet sign_language|edition|typology
+     * @param array<int, array{value?: string, label?: string, short_label?: string}> $optionsList
+     * @param string $value
+     * @param string $fallback
+     * @return string
+     */
+    function vpc_compact_label_for_filter_option($facet, array $optionsList, $value, $fallback = '') {
+        $value = (string) $value;
+        if ($value === '') {
+            return $fallback;
+        }
+        $fullLabel = vpc_label_for_filter_option($optionsList, $value, $value);
+        foreach ($optionsList as $opt) {
+            if (!is_array($opt) || !isset($opt['value'])) {
+                continue;
+            }
+            if ((string) $opt['value'] === $value) {
+                if (!empty($opt['short_label']) && is_string($opt['short_label'])) {
+                    return (string) $opt['short_label'];
+                }
+                break;
+            }
+        }
+        if ($facet === 'sign_language') {
+            $parts = preg_split('/\s+/', $fullLabel, 2);
+            $firstToken = isset($parts[0]) ? $parts[0] : '';
+            return $firstToken !== '' ? $firstToken : $value;
+        }
+        if ($facet === 'edition') {
+            $stripped = preg_replace('/^\d{4}\s+/', '', $fullLabel);
+            $stripped = preg_replace('/\s+\d{4}$/', '', $stripped);
+            return $stripped !== '' ? $stripped : $value;
+        }
+        if ($facet === 'typology') {
+            $tc = vpc_title_case_facet_label($fullLabel);
+            if ($tc !== '') {
+                return $tc;
+            }
+            $tcValue = vpc_title_case_facet_label($value);
+            return $tcValue !== '' ? $tcValue : $value;
+        }
+        return $fullLabel !== '' ? $fullLabel : $value;
+    }
+}
+
 if (!isset($vpc) || !is_array($vpc)) {
     trigger_error('$vpc array is required before including vimeo_caption_player.php', E_USER_WARNING);
     return;
@@ -431,17 +497,20 @@ $initialPlaylistIndex = isset($vpc['playlist_index']) ? (int) $vpc['playlist_ind
 $initialPlaylistIndex = max(0, min($initialPlaylistIndex, count($playlistNormalized) - 1));
 
 $initialEntry = $playlistNormalized[$initialPlaylistIndex];
-$initialSignLangReadout = vpc_label_for_filter_option(
+$initialSignLangReadout = vpc_compact_label_for_filter_option(
+    'sign_language',
     $signLangOptionsList,
     isset($initialEntry['sign_language']) ? $initialEntry['sign_language'] : '',
     'Sign language'
 );
-$initialEditionReadout = vpc_label_for_filter_option(
+$initialEditionReadout = vpc_compact_label_for_filter_option(
+    'edition',
     $editionOptionsList,
     isset($initialEntry['edition']) ? $initialEntry['edition'] : '',
     'City / Edition'
 );
-$initialTypologyReadout = vpc_label_for_filter_option(
+$initialTypologyReadout = vpc_compact_label_for_filter_option(
+    'typology',
     $typologyOptionsList,
     isset($initialEntry['typology']) ? $initialEntry['typology'] : '',
     'Typology'

@@ -700,7 +700,7 @@ var allOptionsByFacet = {
         'Sign language'
     );
     assert.strictEqual(readout.fixed, false, 'passive readout is not fixed');
-    assert.strictEqual(readout.label, 'LIBRAS Brazilian Sign Language', 'live readout shows current video label');
+    assert.strictEqual(readout.label, 'LIBRAS', 'live readout shows compact face label');
 
     var fixed = logic.resolveFilterPickerReadout(
         item,
@@ -710,7 +710,77 @@ var allOptionsByFacet = {
         'Sign language'
     );
     assert.strictEqual(fixed.fixed, true, 'fixed filter is pinned');
-    assert.strictEqual(fixed.label, 'LIBRAS Brazilian Sign Language', 'fixed shows pinned label');
+    assert.strictEqual(fixed.label, 'LIBRAS', 'fixed shows compact face label');
+})();
+
+// Issue #16: compactFacetLabel — explicit short_label wins (D14″)
+(function () {
+    var opts = [
+        { value: 'libras', label: 'LIBRAS Brazilian Sign Language', short_label: 'LIBRAS' },
+    ];
+    assert.strictEqual(
+        logic.compactFacetLabel('sign_language', 'libras', opts),
+        'LIBRAS',
+        'explicit short_label wins'
+    );
+})();
+
+// Issue #16: sign_language fallback — first token of full label
+(function () {
+    var opts = [{ value: 'lse', label: 'LSE Spanish Sign Language' }];
+    assert.strictEqual(
+        logic.compactFacetLabel('sign_language', 'lse', opts),
+        'LSE',
+        'sign language falls back to first token'
+    );
+})();
+
+// Issue #16: edition fallback — strip leading/trailing 4-digit year
+(function () {
+    var opts = [
+        { value: '2023-sao-paulo', label: '2023 São Paulo' },
+        { value: '2028-salamanca', label: 'Salamanca 2028' },
+    ];
+    assert.strictEqual(
+        logic.compactFacetLabel('edition', '2023-sao-paulo', opts),
+        'São Paulo',
+        'edition strips leading year'
+    );
+    assert.strictEqual(
+        logic.compactFacetLabel('edition', '2028-salamanca', opts),
+        'Salamanca',
+        'edition strips trailing year'
+    );
+})();
+
+// Issue #16: typology fallback — title-case of label
+(function () {
+    var opts = [{ value: 'anecdotes', label: 'ANÈCDOTES' }];
+    assert.strictEqual(
+        logic.compactFacetLabel('typology', 'anecdotes', opts),
+        'Anècdotes',
+        'typology falls back to title-case'
+    );
+})();
+
+// Issue #16: unknown value degrades gracefully (no blank face)
+(function () {
+    var opts = [{ value: 'libras', label: 'LIBRAS Brazilian Sign Language' }];
+    assert.strictEqual(
+        logic.compactFacetLabel('sign_language', 'unknown-sl', opts),
+        'unknown-sl',
+        'unknown sign language returns value id'
+    );
+    assert.strictEqual(
+        logic.compactFacetLabel('edition', 'unknown-ed', opts),
+        'unknown-ed',
+        'unknown edition returns value id'
+    );
+    assert.strictEqual(
+        logic.compactFacetLabel('typology', 'unknown-ty', opts),
+        'Unknown-ty',
+        'unknown typology title-cases value id'
+    );
 })();
 
 // D17′: cascading options — fixing edition narrows sign_language dropup

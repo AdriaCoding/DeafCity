@@ -2,81 +2,100 @@
     "sign_languages": [
         {
             "id": "lse",
-            "label": "LSE Spanish Sign Language"
+            "label": "LSE Spanish Sign Language",
+            "short_label": "LSE"
         },
         {
             "id": "lsm",
-            "label": "LSM Mexican Sign Language"
+            "label": "LSM Mexican Sign Language",
+            "short_label": "LSM"
         },
         {
             "id": "libras",
-            "label": "LIBRAS Brazilian Sign Language"
+            "label": "LIBRAS Brazilian Sign Language",
+            "short_label": "LIBRAS"
         },
         {
             "id": "lsf",
-            "label": "LSF French Sign Language"
+            "label": "LSF French Sign Language",
+            "short_label": "LSF"
         },
         {
             "id": "lis",
-            "label": "LIS Italian Sign Language"
+            "label": "LIS Italian Sign Language",
+            "short_label": "LIS"
         },
         {
             "id": "tunisian-sl",
-            "label": "LST Tunisian Sign Language"
+            "label": "LST Tunisian Sign Language",
+            "short_label": "LST"
         },
         {
             "id": "algerian-sl",
-            "label": "LSA Algerian Sign Language"
+            "label": "LSA Algerian Sign Language",
+            "short_label": "LSA"
         },
         {
             "id": "lsc",
-            "label": "LSC Catalan Sign Language"
+            "label": "LSC Catalan Sign Language",
+            "short_label": "LSC"
         },
         {
             "id": "gss",
-            "label": "GSS Greek Sign Language"
+            "label": "GSS Greek Sign Language",
+            "short_label": "GSS"
         }
     ],
     "editions": [
         {
             "id": "2020-valencia",
-            "label": "2020 València"
+            "label": "2020 València",
+            "short_label": "València"
         },
         {
             "id": "2021-mexico",
-            "label": "2021 Mexico City"
+            "label": "2021 Mexico City",
+            "short_label": "Mexico City"
         },
         {
             "id": "2023-bilbao",
-            "label": "2023 Bilbao"
+            "label": "2023 Bilbao",
+            "short_label": "Bilbao"
         },
         {
             "id": "2023-sao-paulo",
-            "label": "2023 São Paulo"
+            "label": "2023 São Paulo",
+            "short_label": "São Paulo"
         },
         {
             "id": "2026-marseille",
-            "label": "2026 Marseille"
+            "label": "2026 Marseille",
+            "short_label": "Marseille"
         },
         {
             "id": "2026-rome",
-            "label": "2026 Roma"
+            "label": "2026 Roma",
+            "short_label": "Roma"
         },
         {
             "id": "2026-tunis",
-            "label": "2026 Tunis"
+            "label": "2026 Tunis",
+            "short_label": "Tunis"
         },
         {
             "id": "2026-algiers",
-            "label": "2026 Algiers"
+            "label": "2026 Algiers",
+            "short_label": "Algiers"
         },
         {
             "id": "2026-barcelona",
-            "label": "2026 Barcelona"
+            "label": "2026 Barcelona",
+            "short_label": "Barcelona"
         },
         {
             "id": "2028-salamanca",
-            "label": "Salamanca 2028"
+            "label": "Salamanca 2028",
+            "short_label": "Salamanca"
         }
     ],
     "subtitle_languages": [
@@ -126,23 +145,28 @@
     "typologies": [
         {
             "id": "acudits",
-            "label": "ACUDITS"
+            "label": "ACUDITS",
+            "short_label": "Acudits"
         },
         {
             "id": "anecdotes",
-            "label": "ANÈCDOTES"
+            "label": "ANÈCDOTES",
+            "short_label": "Anècdotes"
         },
         {
             "id": "malentesos",
-            "label": "MALENTESOS"
+            "label": "MALENTESOS",
+            "short_label": "Malentesos"
         },
         {
             "id": "endevinalles",
-            "label": "ENDEVINALLES"
+            "label": "ENDEVINALLES",
+            "short_label": "Endevinalles"
         },
         {
             "id": "memories",
-            "label": "MEMÒRIES"
+            "label": "MEMÒRIES",
+            "short_label": "Memòries"
         }
     ]
 }

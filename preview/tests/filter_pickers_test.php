@@ -67,6 +67,60 @@ foreach (array('signLanguageFilter', 'editionFilter', 'typologyFilter') as $key)
     );
 }
 
+// Issue #16: short_label passed through in filter option catalogs (D14″)
+$hasShortLabel = false;
+foreach (array('signLanguageFilter', 'editionFilter', 'typologyFilter') as $key) {
+    foreach ($cfg[$key]['options'] as $opt) {
+        if (is_array($opt) && !empty($opt['short_label'])) {
+            $hasShortLabel = true;
+            break 2;
+        }
+    }
+}
+assert_true($hasShortLabel, 'filter options carry short_label from studio-config');
+
+// Issue #16: SSR picker faces show compact labels; dropup options keep full labels
+require_once dirname(dirname(__FILE__)) . '/lib/videos_catalog.php';
+$dataDir = dirname(dirname(dirname(__FILE__))) . '/data';
+if (!is_readable($dataDir . '/catalog.json')) {
+    $dataDir = '/srv/www/deaf.city/public_html/data';
+}
+$studioConfigPath = $dataDir . '/studio-config.json';
+$catalog = vpc_load_videos_catalog($dataDir . '/catalog.json');
+$signOpts = vpc_sign_language_options_from_catalog($catalog, $studioConfigPath);
+$editionOpts = vpc_edition_options_from_catalog($catalog, $studioConfigPath);
+$typologyOpts = vpc_typology_options_from_catalog($catalog, $studioConfigPath);
+
+foreach (array(
+    'sign_language' => array('field' => 'signLanguage', 'generic' => 'Sign language', 'opts' => $signOpts),
+    'edition'       => array('field' => 'edition', 'generic' => 'City / Edition', 'opts' => $editionOpts),
+    'typology'      => array('field' => 'typology', 'generic' => 'Typology', 'opts' => $typologyOpts),
+) as $facet => $meta) {
+    $value = isset($head[$meta['field']]) ? (string) $head[$meta['field']] : '';
+    if ($value === '') {
+        continue;
+    }
+    $compact = vpc_compact_label_for_filter_option($facet, $meta['opts'], $value, $meta['generic']);
+    $full = vpc_label_for_filter_option($meta['opts'], $value, $meta['generic']);
+    $compactEsc = htmlspecialchars($compact, ENT_QUOTES, 'UTF-8');
+    $fullEsc = htmlspecialchars($full, ENT_QUOTES, 'UTF-8');
+
+    if (!preg_match(
+        '~data-picker="' . preg_quote($facet, '~') . '"[^>]*>.*?class="vpc-picker-btn"[^>]*>'
+        . preg_quote($compactEsc, '~') . '</button>~s',
+        $html
+    )) {
+        fwrite(STDERR, "FAIL: {$facet} picker face should show compact label \"{$compact}\"\n");
+        exit(1);
+    }
+    echo "PASS: {$facet} picker face shows compact label ({$compact})\n";
+
+    if ($full !== $compact) {
+        assert_true(strpos($html, $fullEsc) !== false, "{$facet} dropup still shows full label");
+        echo "PASS: {$facet} dropup keeps full label ({$full})\n";
+    }
+}
+
 // Spoken Language never green on load
 assert_true(strpos($html, 'vpc-picker--track-selector') !== false, 'spoken language track selector class');
 if (preg_match('~data-picker="spoken_language"[^>]*data-active="true"~', $html)) {
