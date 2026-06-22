@@ -109,15 +109,27 @@ class VimeoClient
             return null;
         }
         $sizes = $response['body']['pictures']['sizes'] ?? [];
-        // Pick the smallest size >= 640px wide, or fall back to the last one
-        $chosen = null;
+        // One step above 640px wide (typically 960x540); fall back to largest <= 640.
+        $above640 = null;
+        $above640Width = PHP_INT_MAX;
+        $atOrBelow640 = null;
+        $atOrBelow640Width = 0;
         foreach ($sizes as $size) {
             $w = (int) ($size['width'] ?? 0);
-            if ($w >= 640) {
-                $chosen = $size['link'] ?? null;
-                break;
+            $link = $size['link'] ?? null;
+            if (!is_string($link) || $link === '' || $w <= 0) {
+                continue;
+            }
+            if ($w > 640 && $w < $above640Width) {
+                $above640Width = $w;
+                $above640 = $link;
+            }
+            if ($w <= 640 && $w >= $atOrBelow640Width) {
+                $atOrBelow640Width = $w;
+                $atOrBelow640 = $link;
             }
         }
+        $chosen = $above640 ?? $atOrBelow640;
         if ($chosen === null && !empty($sizes)) {
             $chosen = end($sizes)['link'] ?? null;
         }
