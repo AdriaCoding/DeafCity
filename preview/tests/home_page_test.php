@@ -61,7 +61,9 @@ assert_not_contains('>Player</span>', $html, 'no redundant player button on home
 assert_not_contains('is-active', $html, 'no active nav button on home');
 assert_contains('href="/preview/about"', $html, 'about nav link');
 assert_contains('preview-site-nav--chrome', $html, 'nav in player chrome');
-assert_contains('vpc-site-nav-wrap', $html, 'nav below player controls');
+assert_contains('vpc-site-nav-wrap', $html, 'nav in control row');
+assert_contains('vpc-control-row', $html, 'single control row wrapper');
+assert_contains('vpc-control-center', $html, 'play in center cell');
 assert_not_contains('preview-site-nav--overlay', $html, 'no top overlay nav');
 assert_not_contains('proto-bar', $html, 'no prototype switcher');
 assert_not_contains('variant=', $html, 'no variant query param logic');
@@ -71,13 +73,50 @@ assert_not_contains('vC-about', $html, 'no variant C about block');
 assert_not_contains('trio-wrap', $html, 'no inline trio video');
 assert_contains('overflow: hidden', $html, 'non-scrollable body');
 
-$transportPos = strpos($html, 'vpc-transport');
-$navPos = strpos($html, 'vpc-site-nav-wrap');
-if ($transportPos === false || $navPos === false || $navPos < $transportPos) {
-    fwrite(STDERR, "FAIL: site nav should appear after transport controls\n");
+// Issue #17 (D24/D25): play in center cell; groups ordered nav → transport-L → play → transport-R → filters
+$centerPos = strpos($html, 'vpc-control-center');
+$playPos = strpos($html, 'vpc-play-pause-btn');
+if ($centerPos === false || $playPos === false || $playPos < $centerPos) {
+    fwrite(STDERR, "FAIL: play button should live inside vpc-control-center\n");
     exit(1);
 }
-echo "PASS: nav below transport\n";
+if (strpos($html, 'vpc-control-center') !== false
+    && !preg_match('~<div class="vpc-control-center"[^>]*>\s*<button[^>]*class="[^"]*vpc-play-pause-btn~s', $html)) {
+    fwrite(STDERR, "FAIL: vpc-play-pause-btn should be direct child of vpc-control-center\n");
+    exit(1);
+}
+echo "PASS: play button in center cell\n";
+
+$navPos = strpos($html, 'vpc-site-nav-wrap');
+$spokenPos = strpos($html, 'data-picker="spoken_language"');
+$shufflePos = strpos($html, 'vpc-shuffle-btn');
+$prevPos = strpos($html, 'vpc-prev-btn');
+$nextPos = strpos($html, 'vpc-next-btn');
+$resetPos = strpos($html, 'vpc-reset-btn');
+$filtersPos = strpos($html, 'vpc-r2-filters');
+$signPos = strpos($html, 'data-picker="sign_language"');
+if ($navPos === false || $spokenPos === false || $shufflePos === false || $prevPos === false
+    || $nextPos === false || $resetPos === false || $filtersPos === false || $signPos === false) {
+    fwrite(STDERR, "FAIL: missing control-row group markers for order check\n");
+    exit(1);
+}
+if (!($navPos < $spokenPos && $spokenPos < $shufflePos && $shufflePos < $prevPos
+    && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos
+    && $resetPos < $filtersPos && $filtersPos < $signPos)) {
+    fwrite(STDERR, "FAIL: control groups should appear nav → spoken → transport-L → play → transport-R → filters\n");
+    exit(1);
+}
+echo "PASS: control groups in nav → transport-L → play → transport-R → filters order\n";
+
+if (preg_match('~<div class="vpc-r2-filters"[^>]*>.*?data-picker="spoken_language"~s', $html)) {
+    fwrite(STDERR, "FAIL: Spoken Language picker must not remain inside vpc-r2-filters (D25)\n");
+    exit(1);
+}
+if (!preg_match('~class="[^"]*vpc-transport-l[^"]*"[^>]*>.*?data-picker="spoken_language"~s', $html)) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should be inside vpc-transport-l (D25)\n");
+    exit(1);
+}
+echo "PASS: Spoken Language in transport-L, not in filters\n";
 
 // ── Issue #1: paused random poster & no-autoplay ──────────────────────────────
 
@@ -215,23 +254,14 @@ assert_contains('GSS Greek Sign Language', $html, 'GSS option in picker');
 assert_not_contains('LSF French Sign Language', $html, 'empty facet (LSF) absent from dropdown');
 assert_not_contains('LIS Italian Sign Language', $html, 'empty facet (LIS) absent from dropdown');
 
-// AC: R2 row appears below transport (vpc-transport) and before R3 nav (vpc-site-nav-wrap)
+// Issue #17: filters live in the single control row (right wing), not a separate stacked row
+$controlRowPos = strpos($html, 'vpc-control-row');
 $r2Pos = strpos($html, 'vpc-r2-filters');
-$transportPos2 = strpos($html, 'vpc-transport');
-$navPos2 = strpos($html, 'vpc-site-nav-wrap');
-if ($r2Pos === false) {
-    fwrite(STDERR, "FAIL: vpc-r2-filters not found in HTML\n");
+if ($r2Pos === false || $controlRowPos === false || $r2Pos < $controlRowPos) {
+    fwrite(STDERR, "FAIL: vpc-r2-filters should appear inside vpc-control-row\n");
     exit(1);
 }
-if ($transportPos2 === false || $r2Pos < $transportPos2) {
-    fwrite(STDERR, "FAIL: R2 filter row should appear after R1 transport row\n");
-    exit(1);
-}
-if ($navPos2 !== false && $r2Pos > $navPos2) {
-    fwrite(STDERR, "FAIL: R2 filter row should appear before R3 nav row\n");
-    exit(1);
-}
-echo "PASS: R2 row positioned between R1 transport and R3 nav\n";
+echo "PASS: filters inside single control row\n";
 
 // AC: Each playlist item has catalog fields (sign_language, edition, typology, participant)
 $cfg2 = $cfg; // already parsed above
@@ -345,8 +375,7 @@ if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
 }
 echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
 
-// AC: Four pickers appear in the R2 row in order: sign_language, spoken_language, edition, typology
-// (tasks.md §1.3: Sign language · Spoken Language · City/Edition · Typology)
+// Issue #17 (D25): filter pickers in right wing — sign_language → edition → typology
 $slPos  = strpos($html, 'data-picker="sign_language"');
 $spPos  = strpos($html, 'data-picker="spoken_language"');
 $edPos  = strpos($html, 'data-picker="edition"');
@@ -356,10 +385,10 @@ if ($slPos === false || $edPos === false || $tyPos === false) {
     exit(1);
 }
 if (!($slPos < $edPos && $edPos < $tyPos)) {
-    fwrite(STDERR, "FAIL: picker order should be sign_language → edition → typology in DOM\n");
+    fwrite(STDERR, "FAIL: filter picker order should be sign_language → edition → typology in DOM\n");
     exit(1);
 }
-echo "PASS: pickers appear in correct DOM order (sign_language → edition → typology)\n";
+echo "PASS: filter pickers in correct DOM order (sign_language → edition → typology)\n";
 
 // ── Issue #6: Spoken Language track selector ──────────────────────────────────
 
@@ -381,14 +410,17 @@ assert_contains('data-generic-label="Spoken Language"', $html, 'Spoken Language 
 // AC: Spoken Language picker uses custom picker style (vpc-picker-btn, vpc-picker-dropdown)
 // (no native <select> — already checked above in the "no native <select>" assertion)
 
-// AC: Spoken Language picker is positioned SECOND in R2: after sign_language, before edition
-if (!($spPos === false || ($slPos < $spPos && $spPos < $edPos))) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should appear after sign_language and before edition in DOM\n");
+// Issue #17 (D25): Spoken Language in transport-L — before shuffle/prev, not among filter pickers
+$transportLPos = strpos($html, 'vpc-transport-l');
+if ($spPos === false || $transportLPos === false || $spPos < $transportLPos) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should appear inside vpc-transport-l\n");
     exit(1);
 }
-if ($spPos !== false) {
-    echo "PASS: Spoken Language picker in correct R2 position (after sign_language, before edition)\n";
+if ($spPos > $shufflePos) {
+    fwrite(STDERR, "FAIL: Spoken Language picker should appear before shuffle in transport-L\n");
+    exit(1);
 }
+echo "PASS: Spoken Language picker in transport-L before shuffle/prev\n";
 
 // AC: Spoken Language picker has disabled "No subtitles" state on initial render (D16′)
 assert_contains('>No subtitles<', $html, 'Spoken Language disabled state says "No subtitles"');

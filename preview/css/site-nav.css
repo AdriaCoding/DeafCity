@@ -7,34 +7,6 @@
     font-family: Roboto, Arial, sans-serif;
 }
 
-.preview-site-nav__btn {
-    font-family: Roboto, Arial, sans-serif;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2.75rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: #fafafa;
-    color: #222;
-    text-decoration: none;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-a.preview-site-nav__btn:hover {
-    background: #efefef;
-    border-color: #bbb;
-}
-
-a.preview-site-nav__btn:focus-visible {
-    outline: 2px solid rgb(0, 120, 0);
-    outline-offset: 2px;
-}
-
 /* D21: green when a participant/tag collection is active — matches fixed-filter picker */
 a.preview-site-nav__btn.is-active {
     border-color: rgb(0, 120, 0);
@@ -48,12 +20,11 @@ a.preview-site-nav__btn.is-active:hover {
     border-color: rgb(0, 100, 0);
 }
 
-/* Inside player chrome — below transport and filters */
+/* Inside player control row — layout handled by vpc-control-row */
 .preview-site-nav--chrome {
-    max-width: min(100vw, 1280px);
-    margin: 0.35rem auto 0;
-    padding: 0.5rem 1rem 0.75rem;
-    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    max-width: none;
 }
 
 /* Scrollable pages (About, Participants, …) */
