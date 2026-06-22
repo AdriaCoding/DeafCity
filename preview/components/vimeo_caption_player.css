@@ -363,6 +363,13 @@
     opacity: 0.45;
     cursor: not-allowed;
 }
+/* Single-video Playlist: playlist nav is hidden, not just dimmed. JS toggles this
+   from the current playlist count so Reset / filter changes restore the controls. */
+.vpc-shuffle-btn.vpc-nav-hidden,
+.vpc-prev-btn.vpc-nav-hidden,
+.vpc-next-btn.vpc-nav-hidden {
+    display: none;
+}
 .vpc-shuffle-btn:focus-visible,
 .vpc-prev-btn:focus-visible,
 .vpc-next-btn:focus-visible {

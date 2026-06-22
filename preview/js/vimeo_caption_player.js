@@ -885,8 +885,16 @@
             function updatePlaylistNavButtons() {
                 var prevBtn = root.querySelector('.vpc-prev-btn');
                 var nextBtn = root.querySelector('.vpc-next-btn');
+                var shuffleBtn = root.querySelector('.vpc-shuffle-btn');
                 if (!prevBtn || !nextBtn) return;
                 var fc = filteredCount();
+                // Hide playlist nav entirely for a single-video Playlist; show + enable
+                // at-ends logic when the Playlist has more than one video. Driven by the
+                // current count so Reset / filter changes restore it (not server-fixed).
+                var single = fc <= 1;
+                prevBtn.classList.toggle('vpc-nav-hidden', single);
+                nextBtn.classList.toggle('vpc-nav-hidden', single);
+                if (shuffleBtn) shuffleBtn.classList.toggle('vpc-nav-hidden', single);
                 if (shuffleMode) {
                     prevBtn.disabled = fc <= 1 || shuffleStep <= 0;
                     nextBtn.disabled = fc <= 1 || shuffleStep >= fc - 1;

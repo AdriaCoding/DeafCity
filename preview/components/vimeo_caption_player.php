@@ -476,7 +476,11 @@ if ($configJson === false) {
     return;
 }
 
+// Playlist nav (shuffle/prev/next) is always rendered; JS toggles visibility from the
+// *current* (dynamic) playlist count so Reset / filter changes can restore it. The
+// initial hidden class only avoids a flash when the first playlist has a single video.
 $showPlaylistNav = count($playlistNormalized) > 1;
+$navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
 ?>
 <div class="<?php echo htmlspecialchars($wrapperClass, ENT_QUOTES, 'UTF-8'); ?>">
 <script type="application/json" class="vpc-config"><?php echo $configJson; ?></script>
@@ -508,35 +512,31 @@ $showPlaylistNav = count($playlistNormalized) > 1;
         role="group"
         aria-label="Playback"
     >
-        <?php if ($showPlaylistNav): ?>
         <button
             type="button"
-            class="vpc-shuffle-btn"
+            class="vpc-shuffle-btn<?php echo $navHiddenClass; ?>"
             aria-pressed="true"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Shuffle playlist"
         ><span class="material-icons" aria-hidden="true">shuffle</span></button>
         <button
             type="button"
-            class="vpc-prev-btn"
+            class="vpc-prev-btn<?php echo $navHiddenClass; ?>"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Previous video in playlist"
         ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
-        <?php endif; ?>
         <button
             type="button"
             class="vpc-play-pause-btn"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Play video"
         ><span class="material-icons" aria-hidden="true">play_arrow</span></button>
-        <?php if ($showPlaylistNav): ?>
         <button
             type="button"
-            class="vpc-next-btn"
+            class="vpc-next-btn<?php echo $navHiddenClass; ?>"
             aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
             aria-label="Next video in playlist"
         ><span class="material-icons" aria-hidden="true">skip_next</span></button>
-        <?php endif; ?>
         <button
             type="button"
             class="vpc-reset-btn"
