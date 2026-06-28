@@ -84,17 +84,22 @@
         return null;
     }
 
-    function syncCaptionBox(boxId, events, timeMs) {
-        var box = document.getElementById(boxId);
-        if (!box) return;
-        var caption = findCaption(events, timeMs);
-        var newText = caption ? caption.text : '';
-        // #region agent log
-        if (newText !== box.textContent && newText.length > 0) {
-            fetch('http://localhost:14610/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b56716'},body:JSON.stringify({sessionId:'b56716',location:'vimeo_caption_player.js:syncCaptionBox',message:'caption text update',data:{textLen:newText.length,boxW:box.getBoundingClientRect().width,timeMs:timeMs},timestamp:Date.now(),hypothesisId:'D',runId:'pre-fix'})}).catch(function(){});
+    var captionMeasureCanvas = null;
+
+    /**
+     * @param {string} text
+     * @param {number} fontSizePx
+     * @returns {number}
+     */
+    function measureCaptionTextWidth(text, fontSizePx) {
+        if (!text) return 0;
+        if (!captionMeasureCanvas) {
+            captionMeasureCanvas = document.createElement('canvas');
         }
-        // #endregion
-        box.textContent = newText;
+        var ctx = captionMeasureCanvas.getContext('2d');
+        if (!ctx) return 0;
+        ctx.font = '400 ' + fontSizePx + 'px Roboto, sans-serif';
+        return ctx.measureText(text).width;
     }
 
     /**
@@ -373,7 +378,7 @@
             var cueTracks = currentItemCueTracksRaw();
             if (cueTracks.length === 0) {
                 activeCaptionTrackIndex = 0;
-                syncCaptionBox(captionBoxId, [], 0);
+                syncCaptionBox([], 0);
                 return;
             }
             if (index < 0 || index >= cueTracks.length) return;
@@ -399,7 +404,7 @@
         function syncVimeoCaptionBoxes(seconds) {
             var ms = seconds * 1000;
             var events = /** @type {unknown[]} */ (eventsForSync());
-            syncCaptionBox(captionBoxId, events, ms);
+            syncCaptionBox(events, ms);
         }
 
         function syncAllCaptions() {
@@ -521,12 +526,48 @@
             var videoShell = root.querySelector('.video-shell');
             var videoStack = root.querySelector('.video-stack');
 
-            /* Two caption lines at max font (38px): 2×1.45 + 0.6 ≈ 3.5× — fixed so layout never feeds back into font sizing. */
-            root.style.setProperty('--vpc-caption-block-height', '133px');
+            /* One caption line at max font (38px): 1×1.28 + 0.15 ≈ 1.43× — fixed so layout never feeds back into font sizing. */
+            root.style.setProperty('--vpc-caption-block-height', '55px');
 
-            var _dbgTypographyCalls = 0;
-            var _dbgPrevTypography = { h: 0, w: 0, fontSize: 0, shellW: 0 };
             var _appliedTypography = { fontSize: 0, w: 0 };
+            var captionTypography = { baseFontSize: 18, boxWidth: 0 };
+
+            function captionTextAvailableWidth(box) {
+                if (!box) return captionTypography.boxWidth;
+                var style = window.getComputedStyle(box);
+                var padL = parseFloat(style.paddingLeft) || 0;
+                var padR = parseFloat(style.paddingRight) || 0;
+                var available = box.clientWidth - padL - padR;
+                if (available > 0) return available;
+                return Math.max(0, captionTypography.boxWidth - padL - padR);
+            }
+
+            function refitCaptionBox() {
+                var box = document.getElementById(captionBoxId);
+                if (!box) return;
+                var text = box.textContent || '';
+                if (text === '') {
+                    box.style.fontSize = '';
+                    return;
+                }
+                var available = captionTextAvailableWidth(box);
+                var textWidth = measureCaptionTextWidth(text, captionTypography.baseFontSize);
+                var fit = L.captionFitFontSizeFromWidths(
+                    textWidth,
+                    captionTypography.baseFontSize,
+                    available
+                );
+                box.style.fontSize = fit + 'px';
+            }
+
+            function syncCaptionBox(events, timeMs) {
+                var box = document.getElementById(captionBoxId);
+                if (!box) return;
+                var caption = findCaption(events, timeMs);
+                var newText = caption ? L.normalizeCaptionText(caption.text) : '';
+                box.textContent = newText;
+                refitCaptionBox();
+            }
 
             function syncCaptionTypography(trigger) {
                 if (!videoShell) return;
@@ -543,9 +584,10 @@
                 if (w <= 0 && videoStack) {
                     w = videoStack.getBoundingClientRect().width;
                 }
-                var shellW = shellRect.width;
                 var fontChanged = Math.abs(fontSize - _appliedTypography.fontSize) >= 0.5;
                 var widthChanged = Math.abs(w - _appliedTypography.w) >= 1;
+                captionTypography.baseFontSize = fontSize;
+                captionTypography.boxWidth = w;
                 if (fontChanged) {
                     root.style.setProperty('--vpc-caption-font-size', fontSize + 'px');
                     _appliedTypography.fontSize = fontSize;
@@ -554,20 +596,9 @@
                     root.style.setProperty('--vpc-caption-width', w + 'px');
                     _appliedTypography.w = w;
                 }
-                // #region agent log
-                _dbgTypographyCalls++;
-                var captionBox = document.getElementById(captionBoxId);
-                var captionBoxW = captionBox ? captionBox.getBoundingClientRect().width : 0;
-                var captionBoxH = captionBox ? captionBox.getBoundingClientRect().height : 0;
-                var shellH = shellRect.height;
-                var hChanged = Math.abs(h - _dbgPrevTypography.h) > 0.05;
-                var wChanged = Math.abs(w - _dbgPrevTypography.w) > 0.05;
-                var fsChanged = fontSize !== _dbgPrevTypography.fontSize;
-                if (_dbgTypographyCalls <= 3 || hChanged || wChanged || fsChanged || _dbgTypographyCalls % 20 === 0) {
-                    fetch('http://localhost:14610/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b56716'},body:JSON.stringify({sessionId:'b56716',location:'vimeo_caption_player.js:syncCaptionTypography',message:'caption typography sync',data:{trigger:trigger||'init',call:_dbgTypographyCalls,measureEl:'video-shell',h,hChanged,w,wChanged,shellW,shellH,fontSize,fsChanged,fontChanged,widthChanged,captionBoxW,captionBoxH,prevH:_dbgPrevTypography.h,prevW:_dbgPrevTypography.w,prevFs:_dbgPrevTypography.fontSize},timestamp:Date.now(),hypothesisId:'A-B-C-E',runId:'post-fix'})}).catch(function(){});
+                if (fontChanged || widthChanged) {
+                    refitCaptionBox();
                 }
-                _dbgPrevTypography = { h: h, w: w, fontSize: fontSize, shellW: shellW };
-                // #endregion
             }
 
             syncCaptionTypography('init');
@@ -899,7 +930,7 @@
                     })
                     .then(function () {
                         updatePlaylistNavButtons();
-                        syncCaptionBox(captionBoxId, eventsForSync(), 0);
+                        syncCaptionBox(eventsForSync(), 0);
                         refreshTransport();
                     })
                     .catch(function (e) {

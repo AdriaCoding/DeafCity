@@ -678,7 +678,54 @@
         };
     }
 
+    /** Editorial target for one-line cues; preview still renders longer tracks smaller. */
+    var CAPTION_TARGET_MAX_CHARS = 60;
+    var CAPTION_MAX_CHARS_TOLERANCE = 5;
+    var CAPTION_MIN_FONT_SIZE_PX = 6;
+
+    /**
+     * Preferred display length before shrink-to-fit (target + tolerance).
+     * @returns {number}
+     */
+    function captionDisplayMaxLength() {
+        return CAPTION_TARGET_MAX_CHARS + CAPTION_MAX_CHARS_TOLERANCE;
+    }
+
+    /**
+     * Collapse cue text to a single line (no truncation).
+     * @param {unknown} text
+     * @returns {string}
+     */
+    function normalizeCaptionText(text) {
+        if (text == null || text === '') return '';
+        return String(text).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
+    /**
+     * Scale base font down so measured text width fits the caption box.
+     * @param {number} textWidthPx
+     * @param {number} baseFontSizePx
+     * @param {number} boxWidthPx
+     * @returns {number}
+     */
+    function captionFitFontSizeFromWidths(textWidthPx, baseFontSizePx, boxWidthPx) {
+        if (!textWidthPx || textWidthPx <= 0 || !boxWidthPx || boxWidthPx <= 0) {
+            return baseFontSizePx;
+        }
+        if (textWidthPx <= boxWidthPx) {
+            return baseFontSizePx;
+        }
+        var fitted = baseFontSizePx * (boxWidthPx / textWidthPx);
+        return Math.round(fitted * 10) / 10;
+    }
+
     return {
+        CAPTION_TARGET_MAX_CHARS: CAPTION_TARGET_MAX_CHARS,
+        CAPTION_MAX_CHARS_TOLERANCE: CAPTION_MAX_CHARS_TOLERANCE,
+        CAPTION_MIN_FONT_SIZE_PX: CAPTION_MIN_FONT_SIZE_PX,
+        captionDisplayMaxLength: captionDisplayMaxLength,
+        normalizeCaptionText: normalizeCaptionText,
+        captionFitFontSizeFromWidths: captionFitFontSizeFromWidths,
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
         createDefaultShuffleState: createDefaultShuffleState,

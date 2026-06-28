@@ -5,6 +5,8 @@
  *
  * Caption files live under /data/captions/ (project data). ?f= is basename only.
  */
+require __DIR__ . '/lib/caption_cues.php';
+
 header('Content-Type: application/json; charset=utf-8');
 
 $basename = isset($_GET['f']) ? basename((string) $_GET['f']) : '';
@@ -70,7 +72,7 @@ function parseVttStatic($vtt) {
 
         $text = strip_tags(implode(' ', $txtLines));
         $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-        $text = trim(preg_replace('/\s+/', ' ', $text));
+        $text = vpc_normalize_caption_display_text($text);
 
         if ($text === '') {
             continue;

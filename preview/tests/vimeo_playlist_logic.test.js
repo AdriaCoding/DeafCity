@@ -913,5 +913,24 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(filtered.length, samplePlaylist.length);
 })();
 
+// Single-line caption normalization and shrink-to-fit sizing
+(function () {
+    assert.strictEqual(logic.CAPTION_TARGET_MAX_CHARS, 60);
+    assert.strictEqual(logic.CAPTION_MAX_CHARS_TOLERANCE, 5);
+    assert.strictEqual(logic.CAPTION_MIN_FONT_SIZE_PX, 6);
+    assert.strictEqual(logic.captionDisplayMaxLength(), 65);
+    assert.strictEqual(logic.normalizeCaptionText(''), '');
+    assert.strictEqual(logic.normalizeCaptionText(null), '');
+    assert.strictEqual(logic.normalizeCaptionText('Hello\nworld'), 'Hello world');
+    assert.strictEqual(logic.normalizeCaptionText('  spaced   out  '), 'spaced out');
+    assert.strictEqual(logic.normalizeCaptionText('c'.repeat(120)), 'c'.repeat(120));
+
+    assert.strictEqual(logic.captionFitFontSizeFromWidths(0, 38, 800), 38, 'zero width keeps base');
+    assert.strictEqual(logic.captionFitFontSizeFromWidths(400, 38, 800), 38, 'fits at base size');
+    assert.strictEqual(logic.captionFitFontSizeFromWidths(800, 38, 400), 19, 'scales down to fit');
+    assert.strictEqual(logic.captionFitFontSizeFromWidths(1600, 38, 400), 9.5, 'scales long cues smaller');
+    assert.strictEqual(logic.captionFitFontSizeFromWidths(4000, 38, 400), 3.8, 'scales very long cues to fit');
+})();
+
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #13)');
 
