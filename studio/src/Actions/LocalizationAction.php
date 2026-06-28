@@ -84,10 +84,20 @@ class LocalizationAction
             exit;
         }
 
-        $apiKey = defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '';
-        $translator = new GeminiTranslator($apiKey);
-        $seed = new SeedTranslator($this->store(), $translator);
-        $result = $seed->seed($lang, $sectionArg);
+        try {
+            $apiKey = defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '';
+            $translator = new GeminiTranslator($apiKey);
+            $seed = new SeedTranslator($this->store(), $translator);
+            $result = $seed->seed($lang, $sectionArg);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode([
+                'ok' => false,
+                'filled' => 0,
+                'errors' => [$e->getMessage()],
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
 
         if (!$result['ok']) {
             http_response_code(422);

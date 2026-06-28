@@ -22,14 +22,16 @@
         .btn-seed-all:disabled { opacity: 0.5; cursor: progress; }
         .seed-progress { color: #888; font-size: 0.8rem; }
         .loc-table-wrap { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
-        table.loc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 48rem; }
+        table.loc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 48rem; height: 1px; }
         .loc-table th, .loc-table td { border-bottom: 1px solid #222; padding: 0.5rem 0.65rem; vertical-align: top; text-align: left; }
+        .loc-table td:has(.cell-fill) { height: 100%; padding: 0; }
         .loc-table th { background: #111; color: #aaa; font-weight: 500; position: sticky; top: 0; }
         .loc-table tr:last-child td { border-bottom: none; }
         .key-cell { font-family: ui-monospace, monospace; font-size: 0.75rem; color: #888; white-space: nowrap; }
         .context-cell { color: #666; font-size: 0.75rem; max-width: 12rem; }
         .en-cell { color: #ccc; background: #0d0d0d; }
-        .cell-input { width: 100%; min-width: 8rem; min-height: 2.2rem; background: #141414; border: 1px solid #333; border-radius: 4px; color: #e0e0e0; font: inherit; padding: 0.35rem 0.5rem; resize: vertical; }
+        .cell-fill { display: flex; flex-direction: column; min-height: 100%; height: 100%; padding: 0.35rem 0.5rem; box-sizing: border-box; }
+        .cell-input { flex: 1 1 auto; width: 100%; min-width: 8rem; min-height: 2.2rem; background: #141414; border: 1px solid #333; border-radius: 4px; color: #e0e0e0; font: inherit; padding: 0.35rem 0.5rem; resize: vertical; box-sizing: border-box; }
         .cell-input:focus { outline: none; border-color: #555; }
         .cell-input.is-seeded { border-color: #6b4f1d; background: #1a1508; }
         .cell-input.is-saving { opacity: 0.6; }
@@ -99,12 +101,14 @@
                                     $seeded = !empty($row['seeded'][$langId]);
                                     ?>
                                     <td>
-                                        <textarea
-                                            class="cell-input<?= $seeded ? ' is-seeded' : '' ?>"
-                                            data-key="<?= htmlspecialchars($row['key'], ENT_QUOTES) ?>"
-                                            data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"
-                                            rows="2"
-                                        ><?= htmlspecialchars($val, ENT_QUOTES) ?></textarea>
+                                        <div class="cell-fill">
+                                            <textarea
+                                                class="cell-input<?= $seeded ? ' is-seeded' : '' ?>"
+                                                data-key="<?= htmlspecialchars($row['key'], ENT_QUOTES) ?>"
+                                                data-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>"
+                                                rows="1"
+                                            ><?= htmlspecialchars($val, ENT_QUOTES) ?></textarea>
+                                        </div>
                                     </td>
                                 <?php endforeach; ?>
                             </tr>
@@ -118,6 +122,28 @@
 <script>
 (function () {
     'use strict';
+
+    function syncTextareaHeights() {
+        document.querySelectorAll('.loc-table tbody tr').forEach(function (row) {
+            var rowHeight = row.offsetHeight;
+            row.querySelectorAll('.cell-fill').forEach(function (wrap) {
+                wrap.style.minHeight = rowHeight + 'px';
+            });
+        });
+    }
+
+    function scheduleSyncTextareaHeights() {
+        requestAnimationFrame(function () {
+            requestAnimationFrame(syncTextareaHeights);
+        });
+    }
+
+    scheduleSyncTextareaHeights();
+    window.addEventListener('load', scheduleSyncTextareaHeights);
+    window.addEventListener('resize', scheduleSyncTextareaHeights);
+    if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(scheduleSyncTextareaHeights);
+    }
 
     function saveCell(textarea) {
         var key = textarea.getAttribute('data-key');
@@ -183,12 +209,15 @@
                 var body = new FormData();
                 body.append('lang', lang);
                 fetch('?action=localitzacions-seed', { method: 'POST', body: body })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (data.ok) { totalFilled += (data.filled || 0); }
-                        else { errors.push(lang); }
+                    .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+                    .then(function (res) {
+                        if (res.data.ok) { totalFilled += (res.data.filled || 0); }
+                        else {
+                            var msg = (res.data.errors && res.data.errors[0]) ? res.data.errors[0] : lang;
+                            errors.push(lang + ': ' + msg);
+                        }
                     })
-                    .catch(function () { errors.push(lang); })
+                    .catch(function () { errors.push(lang + ': resposta invàlida'); })
                     .then(function () { i++; next(); });
             }
 

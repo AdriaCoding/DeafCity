@@ -213,4 +213,8 @@ if (is_array($cfg)) {
 
 ksort($store);
 file_put_contents($outPath, json_encode($store, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+if (function_exists('posix_geteuid') && posix_geteuid() === 0) {
+    @chown($outPath, 'www-data');
+    @chgrp($outPath, 'www-data');
+}
 echo "Wrote " . count($store) . " keys to $outPath\n";

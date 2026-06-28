@@ -73,7 +73,8 @@ Thumbs.db
 
 develop/cache
 realtime*
-data/
+data/*
+!data/ui-localizations.json
 **/__pycache__/**
 # Studio transcription venv & model cache
 /studio/.venv/

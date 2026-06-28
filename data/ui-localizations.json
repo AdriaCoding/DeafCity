@@ -1,0 +1,1142 @@
+{
+    "about.block.breaking_silence.p1": {
+        "section": "about",
+        "context": "About paragraph",
+        "translations": {
+            "en": "DEAF.city uses visual-gestural humor to challenge hearing indifference, to celebrate Deaf culture and connect communities. Participants share stories and jokes, turning everyday misunderstandings into moments of laughter and reflection. Humor becomes a bridge between Deaf and hearing audiences, empowering storytellers to reclaim visibility and promote inclusion.",
+            "fr": "DEAF.city utilise l'humour visuel-gestuel pour défier l'indifférence des entendants, célébrer la culture sourde et connecter les communautés. Les participants partagent histoires et blagues, transformant les malentendus quotidiens en moments de rire et de réflexion. L'humour devient un pont entre publics sourds et entendants, permettant aux conteurs de retrouver leur visibilité et de promouvoir l'inclusion.",
+            "ca": "DEAF.city utilitza l'humor visual-gestual per desafiar la indiferència auditiva, celebrar la cultura Sorda i connectar comunitats. Els participants comparteixen històries i acudits, convertint els malentesos quotidians en moments de riure i reflexió. L'humor esdevé un pont entre el públic Sord i oient, empoderant els narradors per recuperar la visibilitat i promoure la inclusió.",
+            "es": "DEAF.city utiliza el humor visual-gestual para desafiar la indiferencia oyente, celebrar la cultura Sorda y conectar comunidades. Los participantes comparten historias y chistes, transformando los malentendidos cotidianos en momentos de risa y reflexión. El humor se convierte en un puente entre el público Sordo y oyente, empoderando a los narradores para recuperar la visibilidad y promover la inclusión."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.breaking_silence.title": {
+        "section": "about",
+        "context": "About section heading",
+        "translations": {
+            "en": "Breaking Silence",
+            "fr": "Briser le silence",
+            "ca": "Trencar el Silenci",
+            "es": "Rompiendo el silencio"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.deaf_city.p1": {
+        "section": "about",
+        "context": "About intro paragraph",
+        "translations": {
+            "en": "The Deaf community lives in a world that often overlooks its natural way of communicating: sign language. While many Deaf people rely on lip-reading, most hearing individuals don't understand sign languages, resulting in isolation and invisibility. For many, the rare appearance of a sign-language interpreter on television is the only acknowledgment of Deaf existence.",
+            "fr": "La communauté sourde vit dans un monde qui ignore souvent son mode de communication naturel : la langue des signes. Alors que de nombreux Sourds se fient à la lecture labiale, la plupart des entendants ne comprennent pas les langues des signes, ce qui entraîne isolement et invisibilité. Pour beaucoup, la rare apparition d'un interprète en langue des signes à la télévision est la seule reconnaissance de l'existence sourde.",
+            "ca": "La comunitat Sorda viu en un món que sovint ignora la seva forma natural de comunicar-se: la llengua de signes. Mentre moltes persones Sordes depenen de la lectura de llavis, la majoria d'oients no entenen les llengües de signes, cosa que provoca aïllament i invisibilitat. Per a molts, la rara aparició d'un intèrpret de llengua de signes a la televisió és l'únic reconeixement de l'existència Sorda.",
+            "es": "La comunidad Sorda vive en un mundo que a menudo ignora su forma natural de comunicación: la lengua de signos. Aunque muchas personas Sordas dependen de la lectura de labios, la mayoría de los oyentes no entienden las lenguas de signos, lo que resulta en aislamiento e invisibilidad. Para muchos, la rara aparición de un intérprete de lengua de signos en televisión es el único reconocimiento de la existencia Sorda."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.deaf_city.title": {
+        "section": "about",
+        "context": "About section heading",
+        "translations": {
+            "en": "DEAF.city",
+            "fr": "DEAF.city",
+            "ca": "DEAF.city",
+            "es": "DEAF.city"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.dissemination.p1": {
+        "section": "about",
+        "context": "About paragraph",
+        "translations": {
+            "en": "The project spreads across an open-access video repository with multi-screen installations in museums, art centers and public spaces, using TVs, LED panels, or projections. The videos—paired with participant-generated sounds such as vocalizations, claps, and finger snaps—create a rich, engaging soundscape.",
+            "fr": "Le projet s'étend sur un référentiel vidéo en libre accès avec des installations multi-écrans dans les musées, centres d'art et espaces publics, utilisant des télévisions, des panneaux LED ou des projections. Les vidéos — associées à des sons générés par les participants tels que des vocalisations, des applaudissements et des claquements de doigts — créent un paysage sonore riche et captivant.",
+            "ca": "El projecte s'estén a través d'un repositori de vídeo d'accés obert amb instal·lacions multipantalla en museus, centres d'art i espais públics, utilitzant televisors, panells LED o projeccions. Els vídeos —acompanyats de sons generats pels participants com vocalitzacions, aplaudiments i clics de dits— creen un paisatge sonor ric i atractiu.",
+            "es": "El proyecto se extiende a través de un repositorio de videos de acceso abierto con instalaciones multipantalla en museos, centros de arte y espacios públicos, utilizando televisores, paneles LED o proyecciones. Los videos —emparejados con sonidos generados por los participantes, como vocalizaciones, aplausos y chasquidos de dedos— crean un paisaje sonoro rico y cautivador."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.dissemination.title": {
+        "section": "about",
+        "context": "About section heading",
+        "translations": {
+            "en": "Dissemination",
+            "fr": "Diffusion",
+            "ca": "Difusió",
+            "es": "Difusión"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.silent_eloquence.p1": {
+        "section": "about",
+        "context": "About paragraph",
+        "translations": {
+            "en": "By blending humor, art, and activism, DEAF.city makes Deaf culture visible, fosters understanding, and builds bridges between Deaf and hearing communities worldwide.",
+            "fr": "En mêlant humour, art et activisme, DEAF.city rend la culture sourde visible, favorise la compréhension et tisse des liens entre les communautés sourdes et entendantes du monde entier.",
+            "ca": "Barrejant humor, art i activisme, DEAF.city fa visible la cultura Sorda, fomenta la comprensió i construeix ponts entre les comunitats Sordes i oients d'arreu del món.",
+            "es": "Al combinar humor, arte y activismo, DEAF.city visibiliza la cultura Sorda, fomenta la comprensión y construye puentes entre las comunidades Sordas y oyentes de todo el mundo."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.silent_eloquence.title": {
+        "section": "about",
+        "context": "About section heading",
+        "translations": {
+            "en": "Silent Eloquence",
+            "fr": "Éloquence Silencieuse",
+            "ca": "Eloqüència Silenciosa",
+            "es": "Elocuencia silenciosa"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.timeline.p1": {
+        "section": "about",
+        "context": "About paragraph",
+        "translations": {
+            "en": "Since its launch in Valencia in 2020, DEAF.city has expanded to Mexico City in 2021, and in 2023 to Bilbao and São Paulo. Twenty-six participants have shared humorous monologues in Spanish, Mexican, and Brazilian Sign Languages. In 2026, the project will grow to Marseille, Rome, Athens, Istanbul, Tunis, Algiers, and Barcelona, incorporating French, Italian, Greek, Turkish, Tunisian, Algerian, and Catalan sign languages.",
+            "fr": "Depuis son lancement à Valence en 2020, DEAF.city s'est étendu à Mexico en 2021, et en 2023 à Bilbao et São Paulo. Vingt-six participants ont partagé des monologues humoristiques en langues des signes espagnole, mexicaine et brésilienne. En 2026, le projet s'étendra à Marseille, Rome, Athènes, Istanbul, Tunis, Alger et Barcelone, intégrant les langues des signes française, italienne, grecque, turque, tunisienne, algérienne et catalane.",
+            "ca": "Des del seu llançament a València el 2020, DEAF.city s'ha expandit a la Ciutat de Mèxic el 2021 i el 2023 a Bilbao i São Paulo. Vint-i-sis participants han compartit monòlegs humorístics en llengües de signes espanyola, mexicana i brasilera. El 2026, el projecte s'estendrà a Marsella, Roma, Atenes, Istanbul, Tunis, Alger i Barcelona, incorporant les llengües de signes francesa, italiana, grega, turca, tunisiana, algeriana i catalana.",
+            "es": "Desde su lanzamiento en Valencia en 2020, DEAF.city se ha expandido a Ciudad de México en 2021, y en 2023 a Bilbao y São Paulo. Veintiséis participantes han compartido monólogos humorísticos en Lengua de Signos Española, Mexicana y Brasileña. En 2026, el proyecto crecerá a Marsella, Roma, Atenas, Estambul, Túnez, Argel y Barcelona, incorporando las lenguas de signos francesa, italiana, griega, turca, tunecina, argelina y catalana."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.block.timeline.title": {
+        "section": "about",
+        "context": "About section heading",
+        "translations": {
+            "en": "Timeline",
+            "fr": "Chronologie",
+            "ca": "Cronologia",
+            "es": "Cronología"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p01": {
+        "section": "about",
+        "context": "Credits paragraph 1",
+        "translations": {
+            "en": "<b>2026 Marseille, Roma, Tunis, Algiers and Barcelona _SUPPORTED BY <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a><\/b>\r\n\r\n<p><b>2026 Alger <a href=\"https:\/\/en.wikipedia.org\/wiki\/Algerian_Sign_Language\" target=\"_blank\">*LSA Algerian Sign Language<\/a><\/b>\r\n  _SUPPORTED BY <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Atifa Kaizra, Hamida Taleb, Hassen Djouad, Mahieddine Charrad, Mhamed Lamine Said, Mustapha Iskeur\r\n  _INTERPRETER Hamid Fadhel _COORDINATION Shahinez Guir\r\n  _COLLABORATION <a href=\"https:\/\/jiser.org\/\" target=\"_blank\">Jiser Reflexions Mediterrànies<\/a>\r\n  _THANKS TO Association Les Signes d'Or de la Wilaya d'Alger, Xavier de Luca, Walid Aïdoud, Box 24.",
+            "fr": "<b>2026 Marseille, Rome, Tunis, Alger et Barcelone _SOUTENU PAR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a><\/b>\r\n\r\n<p><b>2026 Alger <a href=\"https:\/\/en.wikipedia.org\/wiki\/Algerian_Sign_Language\" target=\"_blank\">*LSA Langue des Signes Algérienne<\/a><\/b>\r\n  _SOUTENU PAR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Atifa Kaizra, Hamida Taleb, Hassen Djouad, Mahieddine Charrad, Mhamed Lamine Said, Mustapha Iskeur\r\n  _INTERPRÈTE Hamid Fadhel _COORDINATION Shahinez Guir\r\n  _COLLABORATION <a href=\"https:\/\/jiser.org\/\" target=\"_blank\">Jiser Reflexions Mediterrànies<\/a>\r\n  _REMERCIEMENTS À Association Les Signes d'Or de la Wilaya d'Alger, Xavier de Luca, Walid Aïdoud, Box 24.",
+            "ca": "<b>2026 Marsella, Roma, Tunis, Alger i Barcelona _AMB EL SUPORT DE <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a><\/b>\r\n\r\n<p><b>2026 Alger <a href=\"https:\/\/en.wikipedia.org\/wiki\/Algerian_Sign_Language\" target=\"_blank\">*LSA Llengua de Signes Algeriana<\/a><\/b>\r\n  _AMB EL SUPORT DE <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Atifa Kaizra, Hamida Taleb, Hassen Djouad, Mahieddine Charrad, Mhamed Lamine Said, Mustapha Iskeur\r\n  _INTÈRPRET Hamid Fadhel _COORDINACIÓ Shahinez Guir\r\n  _COL·LABORACIÓ <a href=\"https:\/\/jiser.org\/\" target=\"_blank\">Jiser Reflexions Mediterrànies<\/a>\r\n  _AGRAÏMENTS A Association Les Signes d'Or de la Wilaya d'Alger, Xavier de Luca, Walid Aïdoud, Box 24.",
+            "es": "<b>2026 Marsella, Roma, Túnez, Argel y Barcelona _APOYADO POR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a><\/b>\r\n\r\n<p><b>2026 Argel <a href=\"https:\/\/en.wikipedia.org\/wiki\/Algerian_Sign_Language\" target=\"_blank\">*LSA Lengua de Signos Argelina<\/a><\/b>\r\n  _APOYADO POR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTES Atifa Kaizra, Hamida Taleb, Hassen Djouad, Mahieddine Charrad, Mhamed Lamine Said, Mustapha Iskeur\r\n  _INTÉRPRETE Hamid Fadhel _COORDINACIÓN Shahinez Guir\r\n  _COLABORACIÓN <a href=\"https:\/\/jiser.org\/\" target=\"_blank\">Jiser Reflexions Mediterrànies<\/a>\r\n  _AGRADECIMIENTOS A Association Les Signes d'Or de la Wilaya d'Alger, Xavier de Luca, Walid Aïdoud, Box 24."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p02": {
+        "section": "about",
+        "context": "Credits paragraph 2",
+        "translations": {
+            "en": "<b>2026 Roma <a href=\"https:\/\/en.wikipedia.org\/wiki\/Italian_Sign_Language\" target=\"_blank\">*LIS Lingua dei Segni Italiana<\/a><\/b>\r\n  _SUPPORTED BY <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Carolina Ambrosio, Lorenzo Laudo, Massimo Paletta, Olivier Fidalgo, Paula Severi, Serena Rosaria Conte\r\n  _INTERPRETER Giada Santini _COORDINATION Lorenzo Laudo\r\n  _COLLABORATION <a href=\"https:\/\/www.accademiaspagna.org\/\" target=\"_blank\">Academia de España en Roma<\/a>\r\n  _THANKS TO Valeria Bottalico, Yann Leto.",
+            "fr": "<b>2026 Rome <a href=\"https:\/\/en.wikipedia.org\/wiki\/Italian_Sign_Language\" target=\"_blank\">*LIS Lingua dei Segni Italiana<\/a><\/b>\r\n  _SOUTENU PAR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Carolina Ambrosio, Lorenzo Laudo, Massimo Paletta, Olivier Fidalgo, Paula Severi, Serena Rosaria Conte\r\n  _INTERPRÈTE Giada Santini _COORDINATION Lorenzo Laudo\r\n  _COLLABORATION <a href=\"https:\/\/www.accademiaspagna.org\/\" target=\"_blank\">Academia de España en Rome<\/a>\r\n  _REMERCIEMENTS À Valeria Bottalico, Yann Leto.",
+            "ca": "<b>2026 Roma <a href=\"https:\/\/en.wikipedia.org\/wiki\/Italian_Sign_Language\" target=\"_blank\">*LIS Llengua de Signes Italiana<\/a><\/b>\r\n  _AMB EL SUPORT DE <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Carolina Ambrosio, Lorenzo Laudo, Massimo Paletta, Olivier Fidalgo, Paula Severi, Serena Rosaria Conte\r\n  _INTÈRPRET Giada Santini _COORDINACIÓ Lorenzo Laudo\r\n  _COL·LABORACIÓ <a href=\"https:\/\/www.accademiaspagna.org\/\" target=\"_blank\">Academia de España en Roma<\/a>\r\n  _AGRAÏMENTS A Valeria Bottalico, Yann Leto.",
+            "es": "<b>2026 Roma <a href=\"https:\/\/en.wikipedia.org\/wiki\/Italian_Sign_Language\" target=\"_blank\">*LIS Lingua dei Segni Italiana<\/a><\/b>\r\n  _APOYADO POR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTES Carolina Ambrosio, Lorenzo Laudo, Massimo Paletta, Olivier Fidalgo, Paula Severi, Serena Rosaria Conte\r\n  _INTÉRPRETE Giada Santini _COORDINACIÓN Lorenzo Laudo\r\n  _COLABORACIÓN <a href=\"https:\/\/www.accademiaspagna.org\/\" target=\"_blank\">Academia de España en Roma<\/a>\r\n  _AGRADECIMIENTOS A Valeria Bottalico, Yann Leto."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p03": {
+        "section": "about",
+        "context": "Credits paragraph 3",
+        "translations": {
+            "en": "<b>2026 Marseille <a href=\"https:\/\/en.wikipedia.org\/wiki\/French_Sign_Language\" target=\"_blank\">*LSF Langue des Signes Française<\/a><\/b>\r\n  _SUPPORTED BY <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Alysone Fecil, Hugo GATHIER, Lola Colin\r\n  _INTERPRETER Julie Klène _COORDINATION Franca Trovato\r\n  _COLLABORATION <a href=\"https:\/\/www.beauxartsdemarseille.fr\/lecole-ses-engagements\/nous-connaitre\/pisourde\/\" target=\"_blank\">Program Pisourd-e\/Beaus-Arts Marseille<\/a>\r\n  _THANKS TO Diane Guyot, Frederic Pradeau, Yann Leto, Antoni Muntadas, Sylvia Amar.",
+            "fr": "<b>2026 Marseille <a href=\"https:\/\/en.wikipedia.org\/wiki\/French_Sign_Language\" target=\"_blank\">*LSF Langue des Signes Française<\/a><\/b>\r\n  _SOUTENU PAR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Alysone Fecil, Hugo GATHIER, Lola Colin\r\n  _INTERPRÈTE Julie Klène _COORDINATION Franca Trovato\r\n  _COLLABORATION <a href=\"https:\/\/www.beauxartsdemarseille.fr\/lecole-ses-engagements\/nous-connaitre\/pisourde\/\" target=\"_blank\">Programme Pisourd-e\/Beaux-Arts Marseille<\/a>\r\n  _REMERCIEMENTS À Diane Guyot, Frederic Pradeau, Yann Leto, Antoni Muntadas, Sylvia Amar.",
+            "ca": "<b>2026 Marsella <a href=\"https:\/\/en.wikipedia.org\/wiki\/French_Sign_Language\" target=\"_blank\">*LSF Llengua de Signes Francesa<\/a><\/b>\r\n  _AMB EL SUPORT DE <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTS Alysone Fecil, Hugo GATHIER, Lola Colin\r\n  _INTÈRPRET Julie Klène _COORDINACIÓ Franca Trovato\r\n  _COL·LABORACIÓ <a href=\"https:\/\/www.beauxartsdemarseille.fr\/lecole-ses-engagements\/nous-connaitre\/pisourde\/\" target=\"_blank\">Program Pisourd-e\/Beaus-Arts Marseille<\/a>\r\n  _AGRAÏMENTS A Diane Guyot, Frederic Pradeau, Yann Leto, Antoni Muntadas, Sylvia Amar.",
+            "es": "<b>2026 Marsella <a href=\"https:\/\/en.wikipedia.org\/wiki\/French_Sign_Language\" target=\"_blank\">*LSF Langue des Signes Française<\/a><\/b>\r\n  _APOYADO POR <a href=\"https:\/\/www.cultura.gob.es\/cultura\/mc\/bellasartes\/portada.html\" target=\"_blank\">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes<\/a>\r\n  _PARTICIPANTES Alysone Fecil, Hugo GATHIER, Lola Colin\r\n  _INTÉRPRETE Julie Klène _COORDINACIÓN Franca Trovato\r\n  _COLABORACIÓN <a href=\"https:\/\/www.beauxartsdemarseille.fr\/lecole-ses-engagements\/nous-connaitre\/pisourde\/\" target=\"_blank\">Programa Pisourd-e\/Beaus-Arts Marseille<\/a>\r\n  _AGRADECIMIENTOS A Diane Guyot, Frederic Pradeau, Yann Leto, Antoni Muntadas, Sylvia Amar."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p04": {
+        "section": "about",
+        "context": "Credits paragraph 4",
+        "translations": {
+            "en": "<b>2023 São Paulo <a href=\"https:\/\/en.wikipedia.org\/wiki\/Brazilian_Sign_Language\" target=\"_blank\">*LIBRAS Língua Brasileira de Sinais<\/a><\/b>\r\n  _SUPPORTED BY <a href=\"https:\/\/www.eca.usp.br\/institucional\" target=\"_blank\">ECA-USP Escola de Comunicações e Artes\/Universidade de São Paulo<\/a>\r\n  _PARTICIPANTS Ana Laura Rocha Vendrame, Edvaldo Carmo dos Santos, Fabio de Sa e Silva, Fernanda Oliveira Santos, Idenilson Batista Souza, Vitória Lopes Porto Justa\r\n  _INTERPRETER Karina Regina da Silva Oliveira _COORDENAÇÃO Isart Santos\r\n  _THANKS TO Martin Grossmann, Rubens Rewald, Sandro Costa, Marcelo Godoy, Paulo Hartmann, André Fratti Costa.",
+            "fr": "<b>2023 São Paulo <a href=\"https:\/\/en.wikipedia.org\/wiki\/Brazilian_Sign_Language\" target=\"_blank\">*LIBRAS Língua Brasileira de Sinais<\/a><\/b>\r\n  _SOUTENU PAR <a href=\"https:\/\/www.eca.usp.br\/institucional\" target=\"_blank\">ECA-USP Escola de Comunicações e Artes\/Universidade de São Paulo<\/a>\r\n  _PARTICIPANTS Ana Laura Rocha Vendrame, Edvaldo Carmo dos Santos, Fabio de Sa e Silva, Fernanda Oliveira Santos, Idenilson Batista Souza, Vitória Lopes Porto Justa\r\n  _INTERPRÈTE Karina Regina da Silva Oliveira _COORDINATION Isart Santos\r\n  _REMERCIEMENTS À Martin Grossmann, Rubens Rewald, Sandro Costa, Marcelo Godoy, Paulo Hartmann, André Fratti Costa.",
+            "ca": "<b>2023 São Paulo <a href=\"https:\/\/en.wikipedia.org\/wiki\/Brazilian_Sign_Language\" target=\"_blank\">*LIBRAS Llengua de Signes Brasilera<\/a><\/b>\r\n  _AMB EL SUPORT DE <a href=\"https:\/\/www.eca.usp.br\/institucional\" target=\"_blank\">ECA-USP Escola de Comunicações e Artes\/Universidade de São Paulo<\/a>\r\n  _PARTICIPANTS Ana Laura Rocha Vendrame, Edvaldo Carmo dos Santos, Fabio de Sa e Silva, Fernanda Oliveira Santos, Idenilson Batista Souza, Vitória Lopes Porto Justa\r\n  _INTÈRPRET Karina Regina da Silva Oliveira _COORDINACIÓ Isart Santos\r\n  _AGRAÏMENTS A Martin Grossmann, Rubens Rewald, Sandro Costa, Marcelo Godoy, Paulo Hartmann, André Fratti Costa.",
+            "es": "<b>2023 São Paulo <a href=\"https:\/\/en.wikipedia.org\/wiki\/Brazilian_Sign_Language\" target=\"_blank\">*LIBRAS Língua Brasileira de Sinais<\/a><\/b>\r\n  _APOYADO POR <a href=\"https:\/\/www.eca.usp.br\/institucional\" target=\"_blank\">ECA-USP Escola de Comunicações e Artes\/Universidade de São Paulo<\/a>\r\n  _PARTICIPANTES Ana Laura Rocha Vendrame, Edvaldo Carmo dos Santos, Fabio de Sa e Silva, Fernanda Oliveira Santos, Idenilson Batista Souza, Vitória Lopes Porto Justa\r\n  _INTÉRPRETE Karina Regina da Silva Oliveira _COORDINACIÓN Isart Santos\r\n  _AGRADECIMIENTOS A Martin Grossmann, Rubens Rewald, Sandro Costa, Marcelo Godoy, Paulo Hartmann, André Fratti Costa."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p05": {
+        "section": "about",
+        "context": "Credits paragraph 5",
+        "translations": {
+            "en": "<b>2023 Bilbao <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Lengua de Signos Española<\/a><\/b>\r\n  _SUPPORTED BY <a href=\"https:\/\/bilbaomuseoa.eus\/en\/exhibitions\/multiverso-3\/\" target=\"_blank\">Museo de Bellas Artes de Bilbao<\/a>\r\n  _PARTICIPANTS Amaia Mejía, Aitor Bedialauneta, Eduardo Amorós, Iñaki Montero\r\n  _INTERPRETER Janire Martín\r\n  _COLLABORATION <a href=\"https:\/\/euskal-gorrak.org\/\" target=\"_blank\">Euskal Gorrak<\/a>, <a href=\"https:\/\/bilbaoarte.org\/\" target=\"_blank\">BilboArte Fundazioa<\/a>\r\n  _THANKS TO Javier Riaño, Miriam Isasi, Aitor Arakistain, Txuspo Poyo.",
+            "fr": "<b>2023 Bilbao <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Lengua de Signos Española<\/a><\/b>\r\n  _SOUTENU PAR <a href=\"https:\/\/bilbaomuseoa.eus\/en\/exhibitions\/multiverso-3\/\" target=\"_blank\">Museo de Bellas Artes de Bilbao<\/a>\r\n  _PARTICIPANTS Amaia Mejía, Aitor Bedialauneta, Eduardo Amorós, Iñaki Montero\r\n  _INTERPRÈTE Janire Martín\r\n  _COLLABORATION <a href=\"https:\/\/euskal-gorrak.org\/\" target=\"_blank\">Euskal Gorrak<\/a>, <a href=\"https:\/\/bilbaoarte.org\/\" target=\"_blank\">BilboArte Fundazioa<\/a>\r\n  _REMERCIEMENTS À Javier Riaño, Miriam Isasi, Aitor Arakistain, Txuspo Poyo.",
+            "ca": "<b>2023 Bilbao <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Llengua de Signes Espanyola<\/a><\/b>\r\n  _AMB EL SUPORT DE <a href=\"https:\/\/bilbaomuseoa.eus\/en\/exhibitions\/multiverso-3\/\" target=\"_blank\">Museo de Bellas Artes de Bilbao<\/a>\r\n  _PARTICIPANTS Amaia Mejía, Aitor Bedialauneta, Eduardo Amorós, Iñaki Montero\r\n  _INTÈRPRET Janire Martín\r\n  _COL·LABORACIÓ <a href=\"https:\/\/euskal-gorrak.org\/\" target=\"_blank\">Euskal Gorrak<\/a>, <a href=\"https:\/\/bilbaoarte.org\/\" target=\"_blank\">BilboArte Fundazioa<\/a>\r\n  _AGRAÏMENTS A Javier Riaño, Miriam Isasi, Aitor Arakistain, Txuspo Poyo.",
+            "es": "<b>2023 Bilbao <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Lengua de Signos Española<\/a><\/b>\r\n  _APOYADO POR <a href=\"https:\/\/bilbaomuseoa.eus\/en\/exhibitions\/multiverso-3\/\" target=\"_blank\">Museo de Bellas Artes de Bilbao<\/a>\r\n  _PARTICIPANTES Amaia Mejía, Aitor Bedialauneta, Eduardo Amorós, Iñaki Montero\r\n  _INTÉRPRETE Janire Martín\r\n  _COLABORACIÓN <a href=\"https:\/\/euskal-gorrak.org\/\" target=\"_blank\">Euskal Gorrak<\/a>, <a href=\"https:\/\/bilbaoarte.org\/\" target=\"_blank\">BilboArte Fundazioa<\/a>\r\n  _AGRADECIMIENTOS A Javier Riaño, Miriam Isasi, Aitor Arakistain, Txuspo Poyo."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p06": {
+        "section": "about",
+        "context": "Credits paragraph 6",
+        "translations": {
+            "en": "<b>2021 Mexico City <a href=\"https:\/\/en.wikipedia.org\/wiki\/Mexican_Sign_Language\" target=\"_blank\">*LSM Lengua de Señas Mexicana<\/a><\/b>\r\n  _SUPPORTED BY Unidades <a href=\"http:\/\/www.ler.uam.mx\" target=\"_blank\">Lerma<\/a> y <a href=\"http:\/\/www.cua.uam.mx\" target=\"_blank\">Cuajimalpa<\/a> de la Universidad Autónoma Metropolitana\r\n  _PARTICIPANTS Gustavo Méndez, Indira López Cardona, Ixchel Solís García, Luis Alberto Valencia Beltrán, Luis Eduardo Méndez, Martha Cristina de Díaz, Mauricio Iván Álvarez García, Miguel Díaz, Verónica Álvarez\r\n  _INTERPRETERS Ixchel Solís García, Daniela Vite\r\n  _THANKS TO Octavio Mercado, Mónica Benítez, Hugo Solís, Angélica Martínez de la Peña, Andrea Barojas, Carolina Belén González, Gabriela Villa, Isabel García Hidalgo, César Martínez, Luis Eudardo Vaquera.",
+            "fr": "<b>2021 Mexico City <a href=\"https:\/\/en.wikipedia.org\/wiki\/Mexican_Sign_Language\" target=\"_blank\">*LSM Lengua de Señas Mexicana<\/a><\/b>\r\n  _SOUTENU PAR Unidades <a href=\"http:\/\/www.ler.uam.mx\" target=\"_blank\">Lerma<\/a> y <a href=\"http:\/\/www.cua.uam.mx\" target=\"_blank\">Cuajimalpa<\/a> de la Universidad Autónoma Metropolitana\r\n  _PARTICIPANTS Gustavo Méndez, Indira López Cardona, Ixchel Solís García, Luis Alberto Valencia Beltrán, Luis Eduardo Méndez, Martha Cristina de Díaz, Mauricio Iván Álvarez García, Miguel Díaz, Verónica Álvarez\r\n  _INTERPRÈTES Ixchel Solís García, Daniela Vite\r\n  _REMERCIEMENTS À Octavio Mercado, Mónica Benítez, Hugo Solís, Angélica Martínez de la Peña, Andrea Barojas, Carolina Belén González, Gabriela Villa, Isabel García Hidalgo, César Martínez, Luis Eudardo Vaquera.",
+            "ca": "<b>2021 Ciutat de Mèxic <a href=\"https:\/\/en.wikipedia.org\/wiki\/Mexican_Sign_Language\" target=\"_blank\">*LSM Llengua de Signes Mexicana<\/a><\/b>\r\n  _AMB EL SUPORT DE Unidades <a href=\"http:\/\/www.ler.uam.mx\" target=\"_blank\">Lerma<\/a> y <a href=\"http:\/\/www.cua.uam.mx\" target=\"_blank\">Cuajimalpa<\/a> de la Universidad Autónoma Metropolitana\r\n  _PARTICIPANTS Gustavo Méndez, Indira López Cardona, Ixchel Solís García, Luis Alberto Valencia Beltrán, Luis Eduardo Méndez, Martha Cristina de Díaz, Mauricio Iván Álvarez García, Miguel Díaz, Verónica Álvarez\r\n  _INTÈRPRETS Ixchel Solís García, Daniela Vite\r\n  _AGRAÏMENTS A Octavio Mercado, Mónica Benítez, Hugo Solís, Angélica Martínez de la Peña, Andrea Barojas, Carolina Belén González, Gabriela Villa, Isabel García Hidalgo, César Martínez, Luis Eudardo Vaquera.",
+            "es": "<b>2021 Ciudad de México <a href=\"https:\/\/en.wikipedia.org\/wiki\/Mexican_Sign_Language\" target=\"_blank\">*LSM Lengua de Señas Mexicana<\/a><\/b>\r\n  _APOYADO POR Unidades <a href=\"http:\/\/www.ler.uam.mx\" target=\"_blank\">Lerma<\/a> y <a href=\"http:\/\/www.cua.uam.mx\" target=\"_blank\">Cuajimalpa<\/a> de la Universidad Autónoma Metropolitana\r\n  _PARTICIPANTES Gustavo Méndez, Indira López Cardona, Ixchel Solís García, Luis Alberto Valencia Beltrán, Luis Eduardo Méndez, Martha Cristina de Díaz, Mauricio Iván Álvarez García, Miguel Díaz, Verónica Álvarez\r\n  _INTÉRPRETES Ixchel Solís García, Daniela Vite\r\n  _AGRADECIMIENTOS A Octavio Mercado, Mónica Benítez, Hugo Solís, Angélica Martínez de la Peña, Andrea Barojas, Carolina Belén González, Gabriela Villa, Isabel García Hidalgo, César Martínez, Luis Eudardo Vaquera."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p07": {
+        "section": "about",
+        "context": "Credits paragraph 7",
+        "translations": {
+            "en": "<b>2020 Valencia <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Lengua de Signos Española<\/a><\/b>\r\n  _SUPPORTED BY <a href=\"https:\/\/www.consorcimuseus.gva.es\/centro-del-carmen\/exposicion\/apertura-antoni-abad-deaf-city\/?lang=es\" target=\"_blank\">Centre del Carme Cultura Contemporània<\/a>\r\n  _COLLABORATION <a href=\"https:\/\/www.fesord.org\/val\/inicio\/\" target=\"_blank\">Federació De Persones Sordes CV<\/a>, <a href=\"https:\/\/www.lasnaves.com\/?lang=es\" target=\"_blank\">Las Naves<\/a>\r\n  _PARTICIPANTS Aurora López, David Riutort, Daniel Bautista, Josep Antoni Gimeno, Mónica Díez, Pepa Burgal, Sonia Piqueras\r\n  _INTERPRETER Carmen Tos\r\n  _THANKS TO Matteo Sisti Sette, Roc Parés, Daniel Julià, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.",
+            "fr": "<b>2020 Valence <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Lengua de Signos Española<\/a><\/b>\r\n  _SOUTENU PAR <a href=\"https:\/\/www.consorcimuseus.gva.es\/centro-del-carmen\/exposicion\/apertura-antoni-abad-deaf-city\/?lang=es\" target=\"_blank\">Centre del Carme Cultura Contemporània<\/a>\r\n  _COLLABORATION <a href=\"https:\/\/www.fesord.org\/val\/inicio\/\" target=\"_blank\">Federació De Persones Sordes CV<\/a>, <a href=\"https:\/\/www.lasnaves.com\/?lang=es\" target=\"_blank\">Las Naves<\/a>\r\n  _PARTICIPANTS Aurora López, David Riutort, Daniel Bautista, Josep Antoni Gimeno, Mónica Díez, Pepa Burgal, Sonia Piqueras\r\n  _INTERPRÈTE Carmen Tos\r\n  _REMERCIEMENTS À Matteo Sisti Sette, Roc Parés, Daniel Julià, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.",
+            "ca": "<b>2020 València <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Llengua de Signes Espanyola<\/a><\/b>\r\n  _AMB EL SUPORT DE <a href=\"https:\/\/www.consorcimuseus.gva.es\/centro-del-carmen\/exposicion\/apertura-antoni-abad-deaf-city\/?lang=es\" target=\"_blank\">Centre del Carme Cultura Contemporània<\/a>\r\n  _COL·LABORACIÓ <a href=\"https:\/\/www.fesord.org\/val\/inicio\/\" target=\"_blank\">Federació De Persones Sordes CV<\/a>, <a href=\"https:\/\/www.lasnaves.com\/?lang=es\" target=\"_blank\">Las Naves<\/a>\r\n  _PARTICIPANTS Aurora López, David Riutort, Daniel Bautista, Josep Antoni Gimeno, Mónica Díez, Pepa Burgal, Sonia Piqueras\r\n  _INTÈRPRET Carmen Tos\r\n  _AGRAÏMENTS A Matteo Sisti Sette, Roc Parés, Daniel Julià, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.",
+            "es": "<b>2020 Valencia <a href=\"https:\/\/en.wikipedia.org\/wiki\/Spanish_Sign_Language\" target=\"_blank\">*LSE Lengua de Signos Española<\/a><\/b>\r\n  _APOYADO POR <a href=\"https:\/\/www.consorcimuseus.gva.es\/centro-del-carmen\/exposicion\/apertura-antoni-abad-deaf-city\/?lang=es\" target=\"_blank\">Centre del Carme Cultura Contemporània<\/a>\r\n  _COLABORACIÓN <a href=\"https:\/\/www.fesord.org\/val\/inicio\/\" target=\"_blank\">Federació De Persones Sordes CV<\/a>, <a href=\"https:\/\/www.lasnaves.com\/?lang=es\" target=\"_blank\">Las Naves<\/a>\r\n  _PARTICIPANTES Aurora López, David Riutort, Daniel Bautista, Josep Antoni Gimeno, Mónica Díez, Pepa Burgal, Sonia Piqueras\r\n  _INTÉRPRETE Carmen Tos\r\n  _AGRADECIMIENTOS A Matteo Sisti Sette, Roc Parés, Daniel Julià, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p08": {
+        "section": "about",
+        "context": "Credits paragraph 8",
+        "translations": {
+            "en": "<b>DEAF.city is a project by <a href=\"https:\/\/www.antoniabad.info\" target=\"_blank\">Antoni Abad<\/a> &nbsp; <a href=\"https:\/\/www.instagram.com\/antoni__abad\/\" target=\"_blank\">Contact<\/a><\/b>",
+            "fr": "<b>DEAF.city est un projet d' <a href=\"https:\/\/www.antoniabad.info\" target=\"_blank\">Antoni Abad<\/a> &nbsp; <a href=\"https:\/\/www.instagram.com\/antoni__abad\/\" target=\"_blank\">Contact<\/a><\/b>",
+            "ca": "<b>DEAF.city és un projecte d'<a href=\"https:\/\/www.antoniabad.info\" target=\"_blank\">Antoni Abad<\/a> &nbsp; <a href=\"https:\/\/www.instagram.com\/antoni__abad\/\" target=\"_blank\">Contacte<\/a><\/b>",
+            "es": "<b>DEAF.city es un proyecto de <a href=\"https:\/\/www.antoniabad.info\" target=\"_blank\">Antoni Abad<\/a> &nbsp; <a href=\"https:\/\/www.instagram.com\/antoni__abad\/\" target=\"_blank\">Contacto<\/a><\/b>"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.credits.p09": {
+        "section": "about",
+        "context": "Credits paragraph 9",
+        "translations": {
+            "en": "<img class=\"logos\" src=\"\/img\/ministerio.png\" width=\"367\" height=\"80\"\/> &nbsp; &nbsp; <img src=\"\/img\/ecausp2.png\" width=\"150\" height=\"45\"\/> &nbsp; &nbsp;\r\n  <img src=\"\/img\/bilbaomuseoa2.png\" width=\"154\" height=\"30\"\/> &nbsp; &nbsp; <img src=\"\/img\/uam2.png\" width=\"100\" height=\"100\"\/> &nbsp; &nbsp; <img src=\"\/img\/cccc.png\" width=\"100\" height=\"63\"\/>",
+            "fr": "<img class=\"logos\" src=\"\/img\/ministerio.png\" width=\"367\" height=\"80\"\/> &nbsp; &nbsp; <img src=\"\/img\/ecausp2.png\" width=\"150\" height=\"45\"\/> &nbsp; &nbsp;\r\n  <img src=\"\/img\/bilbaomuseoa2.png\" width=\"154\" height=\"30\"\/> &nbsp; &nbsp; <img src=\"\/img\/uam2.png\" width=\"100\" height=\"100\"\/> &nbsp; &nbsp; <img src=\"\/img\/cccc.png\" width=\"100\" height=\"63\"\/>",
+            "ca": "<img class=\"logos\" src=\"\/img\/ministerio.png\" width=\"367\" height=\"80\"\/> &nbsp; &nbsp; <img src=\"\/img\/ecausp2.png\" width=\"150\" height=\"45\"\/> &nbsp; &nbsp;\r\n  <img src=\"\/img\/bilbaomuseoa2.png\" width=\"154\" height=\"30\"\/> &nbsp; &nbsp; <img src=\"\/img\/uam2.png\" width=\"100\" height=\"100\"\/> &nbsp; &nbsp; <img src=\"\/img\/cccc.png\" width=\"100\" height=\"63\"\/>",
+            "es": "<img class=\"logos\" src=\"\/img\/ministerio.png\" width=\"367\" height=\"80\"\/> &nbsp; &nbsp; <img src=\"\/img\/ecausp2.png\" width=\"150\" height=\"45\"\/> &nbsp; &nbsp;\r\n  <img src=\"\/img\/bilbaomuseoa2.png\" width=\"154\" height=\"30\"\/> &nbsp; &nbsp; <img src=\"\/img\/uam2.png\" width=\"100\" height=\"100\"\/> &nbsp; &nbsp; <img src=\"\/img\/cccc.png\" width=\"100\" height=\"63\"\/>"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "about.page_title": {
+        "section": "about",
+        "context": "About page <title>",
+        "translations": {
+            "en": "About — DEAF.city",
+            "fr": "À propos — DEAF.city",
+            "ca": "Sobre — DEAF.city",
+            "es": "Acerca de — DEAF.city"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2020-valencia": {
+        "section": "content",
+        "context": "Edition city (2020-valencia)",
+        "translations": {
+            "en": "València",
+            "fr": "Valence",
+            "ca": "València",
+            "es": "Valencia"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2021-mexico": {
+        "section": "content",
+        "context": "Edition city (2021-mexico)",
+        "translations": {
+            "en": "Mexico City",
+            "fr": "Mexico",
+            "ca": "Ciutat de Mèxic",
+            "es": "Ciudad de México"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2023-bilbao": {
+        "section": "content",
+        "context": "Edition city (2023-bilbao)",
+        "translations": {
+            "en": "Bilbao",
+            "fr": "Bilbao",
+            "ca": "Bilbao",
+            "es": "Bilbao"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2023-sao-paulo": {
+        "section": "content",
+        "context": "Edition city (2023-sao-paulo)",
+        "translations": {
+            "en": "São Paulo",
+            "fr": "São Paulo",
+            "ca": "São Paulo",
+            "es": "São Paulo"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2026-algiers": {
+        "section": "content",
+        "context": "Edition city (2026-algiers)",
+        "translations": {
+            "en": "Algiers",
+            "fr": "Alger",
+            "ca": "Alger",
+            "es": "Argel"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2026-barcelona": {
+        "section": "content",
+        "context": "Edition city (2026-barcelona)",
+        "translations": {
+            "en": "Barcelona",
+            "fr": "Barcelone",
+            "ca": "Barcelona",
+            "es": "Barcelona"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2026-marseille": {
+        "section": "content",
+        "context": "Edition city (2026-marseille)",
+        "translations": {
+            "en": "Marseille",
+            "fr": "Marseille",
+            "ca": "Marsella",
+            "es": "Marsella"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2026-rome": {
+        "section": "content",
+        "context": "Edition city (2026-rome)",
+        "translations": {
+            "en": "Roma",
+            "fr": "Rome",
+            "ca": "Roma",
+            "es": "Roma"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2026-tunis": {
+        "section": "content",
+        "context": "Edition city (2026-tunis)",
+        "translations": {
+            "en": "Tunis",
+            "fr": "Tunis",
+            "ca": "Tunis",
+            "es": "Túnez"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.edition.2028-salamanca": {
+        "section": "content",
+        "context": "Edition city (2028-salamanca)",
+        "translations": {
+            "en": "Salamanca",
+            "fr": "Salamanque",
+            "ca": "Salamanca",
+            "es": "Salamanca"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.algerian-sl.label": {
+        "section": "content",
+        "context": "Sign language label (algerian-sl)",
+        "translations": {
+            "en": "LSA Algerian Sign Language",
+            "fr": "LSA Langue des Signes Algérienne",
+            "ca": "LSA Llengua de Signes Algeriana",
+            "es": "LSA Lengua de Signos Argelina"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.algerian-sl.short_label": {
+        "section": "content",
+        "context": "Sign language short label (algerian-sl)",
+        "translations": {
+            "en": "LSA",
+            "fr": "LSA",
+            "ca": "LSA",
+            "es": "LSA"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.gss.label": {
+        "section": "content",
+        "context": "Sign language label (gss)",
+        "translations": {
+            "en": "GSS Greek Sign Language",
+            "fr": "GSS Langue des Signes Grecque",
+            "ca": "GSS Llengua de Signes Grega",
+            "es": "GSS Lengua de Signos Griega"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.gss.short_label": {
+        "section": "content",
+        "context": "Sign language short label (gss)",
+        "translations": {
+            "en": "GSS",
+            "fr": "GSS",
+            "ca": "GSS",
+            "es": "GSS"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.libras.label": {
+        "section": "content",
+        "context": "Sign language label (libras)",
+        "translations": {
+            "en": "LIBRAS Brazilian Sign Language",
+            "fr": "LIBRAS Langue des Signes Brésilienne",
+            "ca": "LIBRAS Llengua de Signes Brasilera",
+            "es": "LIBRAS Lengua de Signos Brasileña"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.libras.short_label": {
+        "section": "content",
+        "context": "Sign language short label (libras)",
+        "translations": {
+            "en": "LIBRAS",
+            "fr": "LIBRAS",
+            "ca": "LIBRAS",
+            "es": "LIBRAS"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lis.label": {
+        "section": "content",
+        "context": "Sign language label (lis)",
+        "translations": {
+            "en": "LIS Italian Sign Language",
+            "fr": "LIS Langue des Signes Italienne",
+            "ca": "LIS Llengua de Signes Italiana",
+            "es": "LIS Lengua de Signos Italiana"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lis.short_label": {
+        "section": "content",
+        "context": "Sign language short label (lis)",
+        "translations": {
+            "en": "LIS",
+            "fr": "LIS",
+            "ca": "LIS",
+            "es": "LIS"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lsc.label": {
+        "section": "content",
+        "context": "Sign language label (lsc)",
+        "translations": {
+            "en": "LSC Catalan Sign Language",
+            "fr": "LSC Langue des Signes Catalane",
+            "ca": "LSC Llengua de Signes Catalana",
+            "es": "LSC Lengua de Signos Catalana"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lsc.short_label": {
+        "section": "content",
+        "context": "Sign language short label (lsc)",
+        "translations": {
+            "en": "LSC",
+            "fr": "LSC",
+            "ca": "LSC",
+            "es": "LSC"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lse.label": {
+        "section": "content",
+        "context": "Sign language label (lse)",
+        "translations": {
+            "en": "LSE Spanish Sign Language",
+            "fr": "LSE Langue des Signes Espagnole",
+            "ca": "LSE Llengua de Signes Espanyola",
+            "es": "LSE Lengua de Signos Española"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lse.short_label": {
+        "section": "content",
+        "context": "Sign language short label (lse)",
+        "translations": {
+            "en": "LSE",
+            "fr": "LSE",
+            "ca": "LSE",
+            "es": "LSE"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lsf.label": {
+        "section": "content",
+        "context": "Sign language label (lsf)",
+        "translations": {
+            "en": "LSF French Sign Language",
+            "fr": "LSF Langue des Signes Française",
+            "ca": "LSF Llengua de Signes Francesa",
+            "es": "LSF Lengua de Signos Francesa"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lsf.short_label": {
+        "section": "content",
+        "context": "Sign language short label (lsf)",
+        "translations": {
+            "en": "LSF",
+            "fr": "LSF",
+            "ca": "LSF",
+            "es": "LSF"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lsm.label": {
+        "section": "content",
+        "context": "Sign language label (lsm)",
+        "translations": {
+            "en": "LSM Mexican Sign Language",
+            "fr": "LSM Langue des Signes Mexicaine",
+            "ca": "LSM Llengua de Signes Mexicana",
+            "es": "LSM Lengua de Señas Mexicana"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.lsm.short_label": {
+        "section": "content",
+        "context": "Sign language short label (lsm)",
+        "translations": {
+            "en": "LSM",
+            "fr": "LSM",
+            "ca": "LSM",
+            "es": "LSM"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.tunisian-sl.label": {
+        "section": "content",
+        "context": "Sign language label (tunisian-sl)",
+        "translations": {
+            "en": "LST Tunisian Sign Language",
+            "fr": "LST Langue des Signes Tunisienne",
+            "ca": "LST Llengua de Signes Tunisiana",
+            "es": "LST Lengua de Signos Tunecina"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.sign_language.tunisian-sl.short_label": {
+        "section": "content",
+        "context": "Sign language short label (tunisian-sl)",
+        "translations": {
+            "en": "LST",
+            "fr": "LST",
+            "ca": "LST",
+            "es": "LST"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.typology.acudits": {
+        "section": "content",
+        "context": "Typology (acudits)",
+        "translations": {
+            "en": "Acudits",
+            "fr": "Blagues",
+            "ca": "Acudits",
+            "es": "Chistes"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.typology.anecdotes": {
+        "section": "content",
+        "context": "Typology (anecdotes)",
+        "translations": {
+            "en": "Anècdotes",
+            "fr": "Anecdotes",
+            "ca": "Anècdotes",
+            "es": "Anécdotas"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.typology.endevinalles": {
+        "section": "content",
+        "context": "Typology (endevinalles)",
+        "translations": {
+            "en": "Endevinalles",
+            "fr": "Énigmes",
+            "ca": "Endevinalles",
+            "es": "Adivinanzas"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.typology.malentesos": {
+        "section": "content",
+        "context": "Typology (malentesos)",
+        "translations": {
+            "en": "Malentesos",
+            "fr": "Malentendus",
+            "ca": "Malentesos",
+            "es": "Malentendidos"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "content.typology.memories": {
+        "section": "content",
+        "context": "Typology (memories)",
+        "translations": {
+            "en": "Memòries",
+            "fr": "Souvenirs",
+            "ca": "Memòries",
+            "es": "Memorias"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "participants.heading": {
+        "section": "participants",
+        "context": "Participants page h1",
+        "translations": {
+            "en": "Participants",
+            "fr": "Participants",
+            "ca": "Participants",
+            "es": "Participantes"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "participants.page_title": {
+        "section": "participants",
+        "context": "Participants page <title>",
+        "translations": {
+            "en": "Participants — DEAF.city",
+            "fr": "Participants — DEAF.city",
+            "ca": "Participants — DEAF.city",
+            "es": "Participantes — DEAF.city"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.aria.filters": {
+        "section": "player",
+        "context": "Filters group aria-label",
+        "translations": {
+            "en": "Filters",
+            "fr": "Filtres",
+            "ca": "Filtres",
+            "es": "Filtros"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.aria.playback": {
+        "section": "player",
+        "context": "Playback group aria-label",
+        "translations": {
+            "en": "Playback",
+            "fr": "Lecture",
+            "ca": "Reproducció",
+            "es": "Reproducción"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.error.no_playlist": {
+        "section": "player",
+        "context": "Empty catalog message",
+        "translations": {
+            "en": "No playlist loaded. Check that data\/catalog.json exists.",
+            "fr": "Aucune playlist chargée. Vérifiez que data\/catalog.json existe.",
+            "ca": "No s'ha carregat cap llista de reproducció. Comprova que data\/catalog.json existeix.",
+            "es": "No se ha cargado ninguna lista de reproducción. Compruebe que data\/catalog.json existe."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.filter.all_cities": {
+        "section": "player",
+        "context": "Default option in City\/Edition dropdown",
+        "translations": {
+            "en": "All cities",
+            "fr": "Toutes les villes",
+            "ca": "Totes les ciutats",
+            "es": "Todas las ciudades"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.filter.all_sign_languages": {
+        "section": "player",
+        "context": "Default option in Sign language dropdown",
+        "translations": {
+            "en": "All sign languages",
+            "fr": "Toutes les langues des signes",
+            "ca": "Totes les llengües de signes",
+            "es": "Todas las lenguas de signos"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.filter.all_typologies": {
+        "section": "player",
+        "context": "Default option in Typology dropdown",
+        "translations": {
+            "en": "All typologies",
+            "fr": "Toutes les typologies",
+            "ca": "Totes les tipologies",
+            "es": "Todas las tipologías"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.filter.city_edition": {
+        "section": "player",
+        "context": "City\/Edition filter generic label",
+        "translations": {
+            "en": "City \/ Edition",
+            "fr": "Ville \/ Édition",
+            "ca": "Ciutat \/ Edició",
+            "es": "Ciudad \/ Edición"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.filter.sign_language": {
+        "section": "player",
+        "context": "Sign language filter generic label",
+        "translations": {
+            "en": "Sign language",
+            "fr": "Langue des signes",
+            "ca": "Llengua de signes",
+            "es": "Lengua de signos"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.filter.typology": {
+        "section": "player",
+        "context": "Typology filter generic label",
+        "translations": {
+            "en": "Typology",
+            "fr": "Typologie",
+            "ca": "Tipologia",
+            "es": "Tipología"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.nav.about": {
+        "section": "player",
+        "context": "Site nav link to About page",
+        "translations": {
+            "en": "About",
+            "fr": "À propos",
+            "ca": "Sobre",
+            "es": "Acerca de"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.nav.participants": {
+        "section": "player",
+        "context": "Site nav link to Participants page",
+        "translations": {
+            "en": "Participants",
+            "fr": "Participants",
+            "ca": "Participants",
+            "es": "Participantes"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.nav.player": {
+        "section": "player",
+        "context": "Site nav link to home player",
+        "translations": {
+            "en": "Player",
+            "fr": "Lecteur",
+            "ca": "Reproductor",
+            "es": "Reproductor"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.spoken_language.label": {
+        "section": "player",
+        "context": "Spoken Language picker label",
+        "translations": {
+            "en": "Spoken Language",
+            "fr": "Langue parlée",
+            "ca": "Idioma parlat",
+            "es": "Idioma hablado"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.spoken_language.no_subtitles": {
+        "section": "player",
+        "context": "Spoken Language disabled state",
+        "translations": {
+            "en": "No subtitles",
+            "fr": "Pas de sous-titres",
+            "ca": "Sense subtítols",
+            "es": "Sin subtítulos"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.next": {
+        "section": "player",
+        "context": "Next button aria-label",
+        "translations": {
+            "en": "Next video in playlist",
+            "fr": "Vidéo suivante dans la playlist",
+            "ca": "Següent vídeo de la llista",
+            "es": "Siguiente video en la lista de reproducción"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.pause": {
+        "section": "player",
+        "context": "Pause button aria-label",
+        "translations": {
+            "en": "Pause video",
+            "fr": "Mettre la vidéo en pause",
+            "ca": "Pausar vídeo",
+            "es": "Pausar video"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.play": {
+        "section": "player",
+        "context": "Play button aria-label",
+        "translations": {
+            "en": "Play video",
+            "fr": "Lire la vidéo",
+            "ca": "Reproduir vídeo",
+            "es": "Reproducir video"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.play_or_pause": {
+        "section": "player",
+        "context": "Video hitarea aria-label",
+        "translations": {
+            "en": "Play or pause video",
+            "fr": "Lire ou mettre en pause la vidéo",
+            "ca": "Reproduir o pausar vídeo",
+            "es": "Reproducir o pausar video"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.prev": {
+        "section": "player",
+        "context": "Previous button aria-label",
+        "translations": {
+            "en": "Previous video in playlist",
+            "fr": "Vidéo précédente dans la playlist",
+            "ca": "Vídeo anterior de la llista",
+            "es": "Video anterior en la lista de reproducción"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.reset": {
+        "section": "player",
+        "context": "Reset button aria-label",
+        "translations": {
+            "en": "Reset filters and playlist",
+            "fr": "Réinitialiser les filtres et la playlist",
+            "ca": "Reiniciar filtres i llista de reproducció",
+            "es": "Restablecer filtros y lista de reproducción"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    },
+    "player.transport.shuffle": {
+        "section": "player",
+        "context": "Shuffle button aria-label",
+        "translations": {
+            "en": "Shuffle playlist",
+            "fr": "Lecture aléatoire de la playlist",
+            "ca": "Reproducció aleatòria de la llista",
+            "es": "Mezclar lista de reproducción"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true
+        }
+    }
+}
