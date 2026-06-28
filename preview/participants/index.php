@@ -1,12 +1,14 @@
 <?php
 $rootDir = dirname(dirname(dirname(__FILE__)));
 require __DIR__ . '/../lib/videos_catalog.php';
+require __DIR__ . '/../lib/preview_locale.php';
 
-// Resolve data paths
-$_dataDir = $rootDir . '/data';
-if (!is_readable($_dataDir . '/catalog.json')) {
-    $_dataDir = '/srv/www/deaf.city/public_html/data';
-}
+$locale = preview_bootstrap_locale();
+$preview_i18n = $locale['i18n'];
+$preview_lang = $locale['lang'];
+$preview_dir = $locale['dir'];
+
+$_dataDir = preview_resolve_data_dir();
 $catalogJsonPath = $_dataDir . '/catalog.json';
 $catalog = vpc_load_videos_catalog($catalogJsonPath);
 $participants = $catalog ? vpc_participants_from_catalog($catalog) : array();
@@ -17,20 +19,24 @@ ksort($participants);
 $currentRoute = 'participants';
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= htmlspecialchars($preview_lang, ENT_QUOTES, 'UTF-8') ?>" dir="<?= htmlspecialchars($preview_dir, ENT_QUOTES, 'UTF-8') ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Participants — DEAF.city</title>
+    <title><?= htmlspecialchars(preview_t('participants.page_title'), ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=3">
-    <link rel="stylesheet" href="/preview/css/participants-page.css?v=9">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=4">
+    <link rel="stylesheet" href="/preview/css/participants-page.css?v=10">
+    <style>
+        html[dir="rtl"] .preview-participants-page { direction: rtl; }
+        html[dir="rtl"] .preview-site-nav { direction: rtl; }
+    </style>
 </head>
 <body>
 <div class="preview-participants-page">
-    <h1 class="participants-title">Participants</h1>
+    <h1 class="participants-title"><?= htmlspecialchars(preview_t('participants.heading'), ENT_QUOTES, 'UTF-8') ?></h1>
 
     <div class="participants-grid">
         <?php foreach ($participants as $name => $video): ?>
@@ -40,6 +46,9 @@ $currentRoute = 'participants';
             );
             $encodedName = rawurlencode($name);
             $safeHref = '/preview/?participant=' . $encodedName;
+            if ($preview_lang !== 'en') {
+                $safeHref .= '&lang=' . rawurlencode($preview_lang);
+            }
             ?>
             <a href="<?= htmlspecialchars($safeHref, ENT_QUOTES, 'UTF-8') ?>" class="participant-card">
                 <?php if ($thumbnailUrl !== ''): ?>

@@ -2,6 +2,10 @@
 // Run: php preview/tests/site_nav_test.php
 
 require dirname(dirname(__FILE__)) . '/lib/site_nav_builder.php';
+require dirname(dirname(__FILE__)) . '/lib/preview_locale.php';
+
+$locale = preview_bootstrap_locale();
+$preview_i18n = $locale['i18n'];
 
 function sn_assert($condition, $label)
 {

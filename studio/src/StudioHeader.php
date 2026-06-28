@@ -6,6 +6,7 @@ final class StudioHeader
 {
     public const NAV_CATALOG = 'catalog';
     public const NAV_TRANSCRIPTION_INTAKE = 'transcription-intake';
+    public const NAV_LOCALIZATIONS = 'localizations';
 
     /** @param array<string, mixed>|null $syncStatus */
     public static function syncStatusMessage(?array $syncStatus): string
@@ -37,6 +38,9 @@ final class StudioHeader
         }
         if ($action === 'transcription-intake') {
             return self::NAV_TRANSCRIPTION_INTAKE;
+        }
+        if ($action === 'localitzacions' || str_starts_with($action, 'localitzacions-')) {
+            return self::NAV_LOCALIZATIONS;
         }
 
         return null;

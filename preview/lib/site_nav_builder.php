@@ -11,17 +11,17 @@ function preview_site_nav_route_catalog()
         array(
             'route' => 'home',
             'href' => '/preview/',
-            'chrome_label' => 'Player',
+            'label_key' => 'player.nav.player',
         ),
         array(
             'route' => 'about',
             'href' => '/preview/about',
-            'chrome_label' => 'About',
+            'label_key' => 'player.nav.about',
         ),
         array(
             'route' => 'participants',
             'href' => '/preview/participants',
-            'chrome_label' => 'Participants',
+            'label_key' => 'player.nav.participants',
             'collection' => 'participants',
         ),
     );
@@ -37,6 +37,10 @@ function preview_site_nav_route_catalog()
  */
 function preview_build_site_nav_links($currentRoute, $placement, $activeCollections = array())
 {
+    if (!function_exists('preview_t')) {
+        require_once __DIR__ . '/preview_locale.php';
+    }
+
     $items = preview_site_nav_route_catalog();
     $links = array();
 
@@ -46,7 +50,8 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
             continue;
         }
 
-        $label = $item['chrome_label'];
+        $defaultLabel = isset($item['label_key']) ? preview_t($item['label_key']) : '';
+        $label = $defaultLabel;
         $class = 'preview-site-nav__btn';
         $ariaCurrent = '';
         $collectionKey = isset($item['collection']) ? (string) $item['collection'] : '';
@@ -66,7 +71,7 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
 
         if ($placement === 'chrome' && $collectionKey !== '') {
             $dataCollection = $collectionKey;
-            $dataGenericLabel = $item['chrome_label'];
+            $dataGenericLabel = $defaultLabel;
         }
 
         $links[] = array(
