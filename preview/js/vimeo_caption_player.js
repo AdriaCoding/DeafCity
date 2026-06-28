@@ -193,11 +193,18 @@
                     : [],
         };
 
+        /** Localized chrome strings from vpc-config (player.* keys). */
+        var strings = cfg.strings && typeof cfg.strings === 'object' ? cfg.strings : {};
+        function vpcString(key, fallback) {
+            if (strings[key]) return strings[key];
+            return fallback !== undefined ? fallback : key;
+        }
+
         /** "All [category]" labels per facet (D17′). */
         var filterClearLabels = {
-            sign_language: 'All sign languages',
-            edition: 'All cities',
-            typology: 'All typologies',
+            sign_language: vpcString('player.filter.all_sign_languages', 'All sign languages'),
+            edition: vpcString('player.filter.all_cities', 'All cities'),
+            typology: vpcString('player.filter.all_typologies', 'All typologies'),
         };
 
         /** Participant name when a participant playlist is active (D18). '' = not in participant mode. */
@@ -622,10 +629,10 @@
                 var icon = playBtn.querySelector('.material-icons');
                 if (isPlaying) {
                     if (icon) icon.textContent = 'pause';
-                    playBtn.setAttribute('aria-label', 'Pause video');
+                    playBtn.setAttribute('aria-label', vpcString('player.transport.pause', 'Pause video'));
                 } else {
                     if (icon) icon.textContent = 'play_arrow';
-                    playBtn.setAttribute('aria-label', 'Play video');
+                    playBtn.setAttribute('aria-label', vpcString('player.transport.play', 'Play video'));
                 }
             }
 
@@ -819,7 +826,7 @@
                 var btn = /** @type {HTMLButtonElement|null} */ (pickerEl.querySelector('.vpc-picker-btn'));
                 if (!btn) return;
 
-                var genericLabel = btn.getAttribute('data-generic-label') || 'Spoken Language';
+                var genericLabel = btn.getAttribute('data-generic-label') || vpcString('player.spoken_language.label', 'Spoken Language');
                 var cueTracks = currentItemCueTracksRaw();
                 var hasTracks = cueTracks.length > 0
                     && L.buildSpokenOptionsForTracks(cueTracks, subtitleLanguages).length > 0;
@@ -829,7 +836,7 @@
                 btn.disabled = !hasTracks;
 
                 if (!hasTracks) {
-                    btn.textContent = 'No subtitles';
+                    btn.textContent = vpcString('player.spoken_language.no_subtitles', 'No subtitles');
                     return;
                 }
 

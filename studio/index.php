@@ -13,6 +13,7 @@ use Studio\Actions\BulkAction;
 use Studio\Actions\CatalogAction;
 use Studio\Actions\DownloadAction;
 use Studio\Actions\IntakeAction;
+use Studio\Actions\LocalizationAction;
 use Studio\Actions\ShellAction;
 use Studio\Actions\SyncAction;
 use Studio\AuthGuard;
@@ -98,6 +99,9 @@ match ($action) {
     'continguts-caption-translate-start',
     'continguts-caption-translate-status',
     'continguts-caption-translate-retry' => (new CatalogAction($container))->handle($action),
+    'localitzacions',
+    'localitzacions-save',
+    'localitzacions-seed'               => (new LocalizationAction($container))->handle($action),
     'sync'                                => (new SyncAction($container))->launch(),
     'sync-status'                         => (new SyncAction($container))->status(),
     'resume-job'                          => (new ShellAction($container))->handle('resume-job'),
