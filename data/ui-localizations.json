@@ -723,7 +723,7 @@
         "section": "content",
         "context": "Typology (acudits)",
         "translations": {
-            "en": "Acudits",
+            "en": "Jokes",
             "fr": "Blagues",
             "ca": "Acudits",
             "es": "Chistes"
@@ -738,7 +738,7 @@
         "section": "content",
         "context": "Typology (anecdotes)",
         "translations": {
-            "en": "Anècdotes",
+            "en": "Anecdotes",
             "fr": "Anecdotes",
             "ca": "Anècdotes",
             "es": "Anécdotas"
@@ -753,7 +753,7 @@
         "section": "content",
         "context": "Typology (endevinalles)",
         "translations": {
-            "en": "Endevinalles",
+            "en": "Riddles",
             "fr": "Énigmes",
             "ca": "Endevinalles",
             "es": "Adivinanzas"
@@ -768,7 +768,7 @@
         "section": "content",
         "context": "Typology (malentesos)",
         "translations": {
-            "en": "Malentesos",
+            "en": "Misunderstandings",
             "fr": "Malentendus",
             "ca": "Malentesos",
             "es": "Malentendidos"
@@ -783,7 +783,7 @@
         "section": "content",
         "context": "Typology (memories)",
         "translations": {
-            "en": "Memòries",
+            "en": "Memories",
             "fr": "Souvenirs",
             "ca": "Memòries",
             "es": "Memorias"
