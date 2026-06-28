@@ -93,6 +93,6 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 </div>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=9"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=35" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=36" defer></script>
 </body>
 </html>

@@ -91,9 +91,11 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 if (!empty($entry['video_id'])) {
                     $digits = preg_replace('/\\D/', '', (string) $entry['video_id']);
                 }
-                if ($digits === '' && !empty($entry['embed_url'])) {
+                if (!empty($entry['embed_url']) && is_string($entry['embed_url'])) {
                     $entryEmbed = (string) $entry['embed_url'];
-                    $digits = vpc_vimeo_digits_from_public_url($entryEmbed);
+                    if ($digits === '') {
+                        $digits = vpc_vimeo_digits_from_public_url($entryEmbed);
+                    }
                 }
                 if ($digits === '') {
                     trigger_error(
@@ -407,7 +409,12 @@ foreach ($playlistNormalized as $pe) {
     $edOut       = isset($pe['edition'])        && is_string($pe['edition'])        ? $pe['edition']        : '';
     $tyOut       = isset($pe['typology'])       && is_string($pe['typology'])       ? $pe['typology']       : '';
     $ptOut       = isset($pe['participant'])    && is_string($pe['participant'])    ? $pe['participant']    : '';
-    $playlistForJson[] = array(
+    $eParams     = isset($pe['embed_params']) && is_array($pe['embed_params']) ? $pe['embed_params'] : array();
+    $embedOut    = '';
+    if (!empty($pe['embed_url']) && is_string($pe['embed_url'])) {
+        $embedOut = vpc_merge_vimeo_embed_query($pe['embed_url'], $defaultParams, array_merge($fallbackExtra, $eParams));
+    }
+    $row = array(
         'videoId'      => $pe['videoId'],
         'tracks'       => $plTracks,
         'signLanguage' => $slOut,
@@ -415,6 +422,10 @@ foreach ($playlistNormalized as $pe) {
         'typology'     => $tyOut,
         'participant'  => $ptOut,
     );
+    if ($embedOut !== '') {
+        $row['embedUrl'] = $embedOut;
+    }
+    $playlistForJson[] = $row;
 }
 
 $catalogForJson = null;
@@ -428,7 +439,12 @@ if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && cou
         $catalogForJson = array();
         foreach ($catalogNormalized as $pe) {
             $plTracks = isset($pe['caption_tracks']) && is_array($pe['caption_tracks']) ? $pe['caption_tracks'] : array();
-            $catalogForJson[] = array(
+            $eParams  = isset($pe['embed_params']) && is_array($pe['embed_params']) ? $pe['embed_params'] : array();
+            $embedOut = '';
+            if (!empty($pe['embed_url']) && is_string($pe['embed_url'])) {
+                $embedOut = vpc_merge_vimeo_embed_query($pe['embed_url'], $defaultParams, array_merge($fallbackExtra, $eParams));
+            }
+            $row = array(
                 'videoId'      => $pe['videoId'],
                 'tracks'       => $plTracks,
                 'signLanguage' => isset($pe['sign_language']) ? $pe['sign_language'] : '',
@@ -436,6 +452,10 @@ if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && cou
                 'typology'     => isset($pe['typology']) ? $pe['typology'] : '',
                 'participant'  => isset($pe['participant']) ? $pe['participant'] : '',
             );
+            if ($embedOut !== '') {
+                $row['embedUrl'] = $embedOut;
+            }
+            $catalogForJson[] = $row;
         }
     }
 }

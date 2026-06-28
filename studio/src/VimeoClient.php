@@ -100,6 +100,19 @@ class VimeoClient
         return array_values($tags);
     }
 
+    public function getPlayerEmbedUrl(string $videoId): ?string
+    {
+        $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
+        $response = $client->request('/videos/' . $videoId . '?fields=player_embed_url', [], 'GET');
+        $status = $response['status'] ?? 0;
+        if ($status < 200 || $status >= 300) {
+            return null;
+        }
+        $url = $response['body']['player_embed_url'] ?? null;
+
+        return is_string($url) && $url !== '' ? $url : null;
+    }
+
     public function getThumbnailUrl(string $id): ?string
     {
         $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);

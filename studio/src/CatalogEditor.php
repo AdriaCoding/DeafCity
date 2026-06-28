@@ -77,6 +77,8 @@ class CatalogEditor
         ?string $thumbnailUrl = null,
         array $tags = [],
         ?string $typology = null,
+        ?string $participant = null,
+        ?string $embedUrl = null,
     ): array {
         if ($this->findVideoByVimeoId($vimeoId) !== null) {
             throw new \RuntimeException('Aquest vídeo ja és al catàleg.');
@@ -96,6 +98,12 @@ class CatalogEditor
         }
         if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
             $entry['thumbnail_url'] = $thumbnailUrl;
+        }
+        if ($participant !== null && trim($participant) !== '') {
+            $entry['participant'] = trim($participant);
+        }
+        if ($embedUrl !== null && trim($embedUrl) !== '') {
+            $entry['embed_url'] = trim($embedUrl);
         }
 
         $fp = fopen($this->catalogFilePath, 'c+');

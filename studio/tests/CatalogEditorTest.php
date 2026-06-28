@@ -226,6 +226,22 @@ class CatalogEditorTest extends TestCase
         $this->assertSame('https://example.com/thumb.jpg', $catalog['videos'][0]['thumbnail_url']);
     }
 
+    public function test_addVideo_stores_participant_when_provided(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        (new CatalogEditor($this->catalogFile))->addVideo(
+            vimeoId: '999',
+            title: '2026_ROMA_Serena_3_HD',
+            signLanguage: 'lis',
+            edition: '2026-rome',
+            participant: 'Serena',
+        );
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertSame('Serena', $entry['participant']);
+    }
+
     public function test_addVideo_throws_when_vimeo_id_already_in_catalog(): void
     {
         $this->writeCatalog(['videos' => [

@@ -124,6 +124,9 @@
 
         var iframeId = cfg.iframeId;
         var captionBoxId = cfg.captionBoxId;
+
+        /** Assigned inside attachPlayer(); noop until the iframe is ready. */
+        var syncCaptionBox = function (_events, _timeMs) {};
         var captionsEndpoint =
             cfg.captionsEndpoint && typeof cfg.captionsEndpoint === 'string'
                 ? cfg.captionsEndpoint
@@ -560,14 +563,14 @@
                 box.style.fontSize = fit + 'px';
             }
 
-            function syncCaptionBox(events, timeMs) {
+            syncCaptionBox = function (events, timeMs) {
                 var box = document.getElementById(captionBoxId);
                 if (!box) return;
                 var caption = findCaption(events, timeMs);
                 var newText = caption ? L.normalizeCaptionText(caption.text) : '';
                 box.textContent = newText;
                 refitCaptionBox();
-            }
+            };
 
             function syncCaptionTypography(trigger) {
                 if (!videoShell) return;
@@ -853,9 +856,16 @@
                 rebuildAllCascadingDropdowns();
             }
 
-            function resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay) {
-                if (isNaN(vidNum) || typeof p.loadVideo !== 'function') {
+            function resolveLoadVideoPromise(item, wantAutoplay) {
+                if (typeof p.loadVideo !== 'function') {
                     return Promise.reject(new Error('Vimeo.Player.loadVideo unavailable'));
+                }
+
+                var vidRaw = item && item.videoId ? String(item.videoId) : '';
+                var vidNum = parseInt(vidRaw, 10);
+                var embedUrl = item && item.embedUrl ? String(item.embedUrl) : '';
+                if (embedUrl === '' && (isNaN(vidNum) || vidRaw === '')) {
+                    return Promise.reject(new Error('Vimeo playlist item lacks video id'));
                 }
 
                 var currentIdP =
@@ -873,13 +883,17 @@
                     if (currentRaw === vidRaw) {
                         return Promise.resolve();
                     }
-                    return p
-                        .loadVideo({
-                            id: vidNum,
-                            autoplay: wantAutoplay,
-                            muted: !sessionSoundOn,
-                        })
-                        .then(function () {});
+                    /** @type {{ autoplay: boolean, muted: boolean, id?: number, url?: string }} */
+                    var loadPayload = {
+                        autoplay: wantAutoplay,
+                        muted: !sessionSoundOn,
+                    };
+                    if (embedUrl !== '') {
+                        loadPayload.url = embedUrl;
+                    } else {
+                        loadPayload.id = vidNum;
+                    }
+                    return p.loadVideo(loadPayload).then(function () {});
                 });
             }
 
@@ -901,7 +915,7 @@
                     forcedPauseLoads++;
                 }
 
-                return resolveLoadVideoPromise(vidNum, vidRaw, wantAutoplay)
+                return resolveLoadVideoPromise(item, wantAutoplay)
                     .then(function () {
                         applyLoadedVideoUi();
                         /** @type {Promise<void>} */
