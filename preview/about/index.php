@@ -16,7 +16,8 @@ $currentRoute = 'about';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/preview/css/site-nav.css?v=3">
-    <link rel="stylesheet" href="/preview/css/about-page.css?v=2">
+    <link rel="stylesheet" href="/leaflet/leaflet.css">
+    <link rel="stylesheet" href="/preview/css/about-page.css?v=3">
 </head>
 <body>
 <div class="preview-about-page">
@@ -33,6 +34,10 @@ $currentRoute = 'about';
         <div id="about-todo">
             <?php include $viewsDir . '/about/todo.php'; ?>
         </div>
+    </div>
+
+    <div id="city-map-section">
+        <?php include $viewsDir . '/about/map.php'; ?>
     </div>
 
     <div id="trio">
@@ -54,5 +59,7 @@ include __DIR__ . '/../components/site_nav.php';
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/leaflet/js/gallery.js"></script>
+<script src="/leaflet/leaflet.js"></script>
+<script src="/leaflet/js/about-map.js?v=1"></script>
 </body>
 </html>
