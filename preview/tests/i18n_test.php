@@ -50,4 +50,16 @@ assert_eq(true, $completeness['es'], 'es complete when all chrome keys have es')
 $incomplete = preview_i18n_compute_completeness($entries, array('fr'));
 assert_eq(false, $incomplete['fr'], 'fr incomplete when chrome keys lack fr');
 
+require_once dirname(__DIR__) . '/lib/preview_locale.php';
+$preview_i18n = new PreviewI18n(array(
+    'content.edition.2020-valencia.label' => array(
+        'section' => 'content',
+        'translations' => array('en' => '2020 València (stale store)', 'es' => '2020 València ES'),
+    ),
+), 'fr');
+$opts = preview_localize_filter_options(array(
+    array('value' => '2020-valencia', 'label' => '2020 València (live config)', 'short_label' => 'València'),
+), 'edition');
+assert_eq('2020 València (live config)', $opts[0]['label'], 'content label without fr translation keeps studio-config label');
+
 echo "All tests passed.\n";

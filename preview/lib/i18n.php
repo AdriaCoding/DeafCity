@@ -125,6 +125,28 @@ if (!class_exists('PreviewI18n')) {
         }
 
         /**
+         * Active-language translation only — no en fallback (for content labels
+         * where studio-config supplies the live base label).
+         */
+        public function tActive($key)
+        {
+            $key = (string) $key;
+            if (!isset($this->entries[$key]) || !is_array($this->entries[$key])) {
+                return '';
+            }
+
+            $translations = isset($this->entries[$key]['translations']) && is_array($this->entries[$key]['translations'])
+                ? $this->entries[$key]['translations']
+                : array();
+
+            if (isset($translations[$this->lang])) {
+                return trim((string) $translations[$this->lang]);
+            }
+
+            return '';
+        }
+
+        /**
          * Resolved chrome map for vpc-config strings injection.
          *
          * @return array<string, string>

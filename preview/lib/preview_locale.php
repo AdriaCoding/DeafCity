@@ -141,14 +141,14 @@ if (!function_exists('preview_localize_filter_options')) {
             $labelKey = 'content.' . $contentType . '.' . $id . '.label';
             $shortKey = 'content.' . $contentType . '.' . $id . '.short_label';
 
-            $label = $preview_i18n->t($labelKey);
-            if ($label !== $labelKey) {
+            $label = $preview_i18n->tActive($labelKey);
+            if ($label !== '') {
                 $opt['label'] = $label;
             }
 
             if (isset($opt['short_label'])) {
-                $short = $preview_i18n->t($shortKey);
-                if ($short !== $shortKey) {
+                $short = $preview_i18n->tActive($shortKey);
+                if ($short !== '') {
                     $opt['short_label'] = $short;
                 }
             }

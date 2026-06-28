@@ -83,4 +83,7 @@ $completeEnOnly = array(
 assert_eq('en', vpc_resolve_language('es', null, $available, $completeEnOnly, $arabicOrder), 'incomplete language falls back to en');
 assert_eq('en', vpc_resolve_language('', null, $available, $completeEnOnly, $arabicOrder), 'empty Accept-Language falls back to en');
 
+$completeBoth = array('en' => true, 'es' => true, 'fr' => false, 'it' => false, 'ca' => false, 'pt' => false, 'arq' => false, 'aeb' => false);
+assert_eq('en', vpc_resolve_language('en,es', null, $available, $completeBoth, $arabicOrder), 'equal-q tags preserve header order (en before es)');
+
 echo "All tests passed.\n";

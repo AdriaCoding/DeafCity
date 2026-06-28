@@ -16,6 +16,7 @@ if (!function_exists('vpc_parse_accept_language')) {
         }
 
         $parts = array();
+        $index = 0;
         foreach (explode(',', $header) as $piece) {
             $piece = trim($piece);
             if ($piece === '') {
@@ -29,14 +30,15 @@ if (!function_exists('vpc_parse_accept_language')) {
                 $q = (float) $m[2];
             }
 
-            $parts[] = array('tag' => $tag, 'q' => $q);
+            $parts[] = array('tag' => $tag, 'q' => $q, 'i' => $index);
+            $index++;
         }
 
         usort($parts, function ($a, $b) {
-            if ($a['q'] === $b['q']) {
-                return 0;
+            if ($a['q'] !== $b['q']) {
+                return ($a['q'] > $b['q']) ? -1 : 1;
             }
-            return ($a['q'] > $b['q']) ? -1 : 1;
+            return $a['i'] - $b['i'];
         });
 
         return $parts;
