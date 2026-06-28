@@ -16,9 +16,11 @@
         .lang-badge.is-incomplete { border-color: #555; color: #999; }
         .section-block { margin-bottom: 2.5rem; }
         .section-block h2 { font-size: 1rem; text-transform: capitalize; margin-bottom: 0.75rem; color: #bbb; }
-        .section-toolbar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
-        .btn-seed { background: #1a3a6e; border: 1px solid #2a5090; border-radius: 4px; color: #9ab8ff; cursor: pointer; font-size: 0.8rem; padding: 0.35rem 0.75rem; }
-        .btn-seed:hover { background: #1f4580; }
+        .global-toolbar { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        .btn-seed-all { background: #1a3a6e; border: 1px solid #2a5090; border-radius: 4px; color: #9ab8ff; cursor: pointer; font-size: 0.85rem; padding: 0.5rem 1rem; }
+        .btn-seed-all:hover:not(:disabled) { background: #1f4580; }
+        .btn-seed-all:disabled { opacity: 0.5; cursor: progress; }
+        .seed-progress { color: #888; font-size: 0.8rem; }
         .loc-table-wrap { overflow-x: auto; border: 1px solid #222; border-radius: 6px; }
         table.loc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 48rem; }
         .loc-table th, .loc-table td { border-bottom: 1px solid #222; padding: 0.5rem 0.65rem; vertical-align: top; text-align: left; }
@@ -52,6 +54,13 @@
         <?php endforeach; ?>
     </div>
 
+    <div class="global-toolbar">
+        <button type="button" class="btn-seed-all" id="seed-all-btn" data-langs="<?= htmlspecialchars(implode(',', array_values(array_filter($languageIds, static fn(string $id): bool => $id !== 'en'))), ENT_QUOTES) ?>">
+            Omple tots els buits (totes les llengües)
+        </button>
+        <span class="seed-progress" id="seed-progress" aria-live="polite"></span>
+    </div>
+
     <?php
     $sectionLabels = [
         'player' => 'Reproductor',
@@ -66,13 +75,6 @@
         <?php if (empty($grouped[$section])) continue; ?>
         <section class="section-block" data-section="<?= htmlspecialchars($section, ENT_QUOTES) ?>">
             <h2><?= htmlspecialchars($sectionLabels[$section] ?? $section, ENT_QUOTES) ?></h2>
-            <div class="section-toolbar">
-                <?php foreach ($editableLangs as $langId): ?>
-                    <button type="button" class="btn-seed" data-seed-lang="<?= htmlspecialchars($langId, ENT_QUOTES) ?>" data-seed-section="<?= htmlspecialchars($section, ENT_QUOTES) ?>">
-                        Omple buits (<?= htmlspecialchars($langId, ENT_QUOTES) ?>)
-                    </button>
-                <?php endforeach; ?>
-            </div>
             <div class="loc-table-wrap">
                 <table class="loc-table">
                     <thead>
@@ -155,30 +157,44 @@
         });
     });
 
-    document.querySelectorAll('.btn-seed').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var lang = btn.getAttribute('data-seed-lang');
-            var section = btn.getAttribute('data-seed-section');
-            btn.disabled = true;
-            var body = new FormData();
-            body.append('lang', lang);
-            body.append('section', section);
-            fetch('?action=localitzacions-seed', { method: 'POST', body: body })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    btn.disabled = false;
-                    if (data.ok) {
-                        window.location.reload();
-                    } else {
-                        alert((data.errors && data.errors[0]) || 'Error en la traducció automàtica.');
-                    }
-                })
-                .catch(function () {
-                    btn.disabled = false;
-                    alert('Error de xarxa.');
-                });
+    var seedBtn = document.getElementById('seed-all-btn');
+    var seedProgress = document.getElementById('seed-progress');
+    if (seedBtn) {
+        seedBtn.addEventListener('click', function () {
+            var langs = (seedBtn.getAttribute('data-langs') || '').split(',').filter(Boolean);
+            if (langs.length === 0) { return; }
+
+            seedBtn.disabled = true;
+            var totalFilled = 0;
+            var errors = [];
+            var i = 0;
+
+            function next() {
+                if (i >= langs.length) {
+                    seedProgress.textContent = 'Fet — ' + totalFilled + ' cel·les omplertes'
+                        + (errors.length ? (' · errors: ' + errors.join(', ')) : '') + '. Recarregant…';
+                    setTimeout(function () { window.location.reload(); }, 1000);
+                    return;
+                }
+
+                var lang = langs[i];
+                seedProgress.textContent = 'Traduint ' + lang + '… (' + (i + 1) + '/' + langs.length + ')';
+
+                var body = new FormData();
+                body.append('lang', lang);
+                fetch('?action=localitzacions-seed', { method: 'POST', body: body })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        if (data.ok) { totalFilled += (data.filled || 0); }
+                        else { errors.push(lang); }
+                    })
+                    .catch(function () { errors.push(lang); })
+                    .then(function () { i++; next(); });
+            }
+
+            next();
         });
-    });
+    }
 }());
 </script>
 </body>

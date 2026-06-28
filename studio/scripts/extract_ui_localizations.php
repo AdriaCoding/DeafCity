@@ -83,28 +83,129 @@ foreach ($manifest as $row) {
 
 $cfgRaw = file_get_contents($configPath);
 $cfg = $cfgRaw !== false ? json_decode($cfgRaw, true) : null;
+$existingStore = is_readable($outPath) ? json_decode((string) file_get_contents($outPath), true) : null;
+if (!is_array($existingStore)) {
+    $existingStore = [];
+}
+
 if (is_array($cfg)) {
-    foreach (['sign_languages' => 'sign_language', 'editions' => 'edition', 'typologies' => 'typology'] as $listKey => $type) {
-        foreach ($cfg[$listKey] ?? [] as $item) {
-            $id = $item['id'] ?? '';
-            if ($id === '') {
-                continue;
+    foreach ($cfg['sign_languages'] ?? [] as $item) {
+        $id = $item['id'] ?? '';
+        if ($id === '') {
+            continue;
+        }
+        if (!empty($item['label'])) {
+            $store["content.sign_language.$id.label"] = [
+                'section' => 'content',
+                'context' => "Sign language label ($id)",
+                'translations' => ['en' => $item['label']],
+            ];
+        }
+        if (!empty($item['short_label'])) {
+            $store["content.sign_language.$id.short_label"] = [
+                'section' => 'content',
+                'context' => "Sign language short label ($id)",
+                'translations' => ['en' => $item['short_label']],
+            ];
+        }
+    }
+
+    // Editions: one city-name key; full label composes year from edition id at render time.
+    foreach ($cfg['editions'] ?? [] as $item) {
+        $id = $item['id'] ?? '';
+        if ($id === '') {
+            continue;
+        }
+        $city = !empty($item['short_label']) ? $item['short_label'] : ($item['label'] ?? '');
+        if ($city === '') {
+            continue;
+        }
+        $key = "content.edition.$id";
+        $store[$key] = [
+            'section' => 'content',
+            'context' => "Edition city ($id)",
+            'translations' => ['en' => $city],
+        ];
+
+        $oldShort = $existingStore["content.edition.$id.short_label"] ?? null;
+        $oldLabel = $existingStore["content.edition.$id.label"] ?? null;
+
+        if (is_array($oldLabel)) {
+            foreach ($oldLabel['translations'] ?? [] as $lang => $text) {
+                if ($lang !== 'en' && trim((string) $text) !== '') {
+                    $store[$key]['translations'][$lang] = $text;
+                }
             }
-            if (!empty($item['label'])) {
-                $labelKey = "content.$type.$id.label";
-                $store[$labelKey] = [
-                    'section' => 'content',
-                    'context' => ucfirst(str_replace('_', ' ', $type)) . " label ($id)",
-                    'translations' => ['en' => $item['label']],
-                ];
+            if (is_array($oldLabel['seeded'] ?? null)) {
+                foreach ($oldLabel['seeded'] as $lang => $flag) {
+                    if ($flag && $lang !== 'en') {
+                        $store[$key]['seeded'][$lang] = true;
+                    }
+                }
             }
-            if (!empty($item['short_label'])) {
-                $shortKey = "content.$type.$id.short_label";
-                $store[$shortKey] = [
-                    'section' => 'content',
-                    'context' => ucfirst(str_replace('_', ' ', $type)) . " short label ($id)",
-                    'translations' => ['en' => $item['short_label']],
-                ];
+        }
+        if (is_array($oldShort)) {
+            foreach ($oldShort['translations'] ?? [] as $lang => $text) {
+                if ($lang !== 'en' && trim((string) $text) !== '') {
+                    $store[$key]['translations'][$lang] = $text;
+                }
+            }
+            if (is_array($oldShort['seeded'] ?? null)) {
+                foreach ($oldShort['seeded'] as $lang => $flag) {
+                    if ($flag && $lang !== 'en') {
+                        $store[$key]['seeded'][$lang] = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // Typologies: one canonical key (short_label form); label display is ALL CAPS at render time.
+    foreach ($cfg['typologies'] ?? [] as $item) {
+        $id = $item['id'] ?? '';
+        if ($id === '') {
+            continue;
+        }
+        $canonical = !empty($item['short_label']) ? $item['short_label'] : ($item['label'] ?? '');
+        if ($canonical === '') {
+            continue;
+        }
+        $key = "content.typology.$id";
+        $store[$key] = [
+            'section' => 'content',
+            'context' => "Typology ($id)",
+            'translations' => ['en' => $canonical],
+        ];
+
+        $oldShort = $existingStore["content.typology.$id.short_label"] ?? null;
+        $oldLabel = $existingStore["content.typology.$id.label"] ?? null;
+
+        if (is_array($oldLabel)) {
+            foreach ($oldLabel['translations'] ?? [] as $lang => $text) {
+                if ($lang !== 'en' && trim((string) $text) !== '') {
+                    $store[$key]['translations'][$lang] = $text;
+                }
+            }
+            if (is_array($oldLabel['seeded'] ?? null)) {
+                foreach ($oldLabel['seeded'] as $lang => $flag) {
+                    if ($flag && $lang !== 'en') {
+                        $store[$key]['seeded'][$lang] = true;
+                    }
+                }
+            }
+        }
+        if (is_array($oldShort)) {
+            foreach ($oldShort['translations'] ?? [] as $lang => $text) {
+                if ($lang !== 'en' && trim((string) $text) !== '') {
+                    $store[$key]['translations'][$lang] = $text;
+                }
+            }
+            if (is_array($oldShort['seeded'] ?? null)) {
+                foreach ($oldShort['seeded'] as $lang => $flag) {
+                    if ($flag && $lang !== 'en') {
+                        $store[$key]['seeded'][$lang] = true;
+                    }
+                }
             }
         }
     }

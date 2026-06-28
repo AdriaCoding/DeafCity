@@ -117,6 +117,47 @@ if (!function_exists('preview_t')) {
     }
 }
 
+if (!function_exists('preview_edition_year_from_id')) {
+    function preview_edition_year_from_id($editionId)
+    {
+        if (preg_match('/^(\d{4})-/', (string) $editionId, $m)) {
+            return $m[1];
+        }
+
+        return '';
+    }
+}
+
+if (!function_exists('preview_edition_full_label')) {
+    /**
+     * Compose full edition label from city name + year extracted from edition id.
+     * Year suffix vs prefix follows the English studio-config label pattern.
+     */
+    function preview_edition_full_label($editionId, $cityName, $englishFullLabel)
+    {
+        $year = preview_edition_year_from_id($editionId);
+        $city = trim((string) $cityName);
+        if ($year === '' || $city === '') {
+            return $city;
+        }
+
+        $reference = trim((string) $englishFullLabel);
+        if ($reference !== '' && preg_match('/\s\d{4}$/', $reference)) {
+            return $city . ' ' . $year;
+        }
+
+        return $year . ' ' . $city;
+    }
+}
+
+if (!function_exists('preview_typology_caps_label')) {
+    /** ALL CAPS display form for typology dropdown labels. */
+    function preview_typology_caps_label($canonical)
+    {
+        return mb_strtoupper((string) $canonical, 'UTF-8');
+    }
+}
+
 if (!function_exists('preview_localize_filter_options')) {
     /**
      * @param array<int, array<string, mixed>> $options
@@ -138,6 +179,28 @@ if (!function_exists('preview_localize_filter_options')) {
             }
 
             $id = (string) $opt['value'];
+
+            if ($contentType === 'typology') {
+                $canonical = $preview_i18n->tActive('content.typology.' . $id);
+                if ($canonical !== '') {
+                    $opt['short_label'] = $canonical;
+                    $opt['label'] = preview_typology_caps_label($canonical);
+                }
+                $localized[] = $opt;
+                continue;
+            }
+
+            if ($contentType === 'edition') {
+                $englishLabel = isset($opt['label']) ? (string) $opt['label'] : '';
+                $city = $preview_i18n->tActive('content.edition.' . $id);
+                if ($city !== '') {
+                    $opt['short_label'] = $city;
+                    $opt['label'] = preview_edition_full_label($id, $city, $englishLabel);
+                }
+                $localized[] = $opt;
+                continue;
+            }
+
             $labelKey = 'content.' . $contentType . '.' . $id . '.label';
             $shortKey = 'content.' . $contentType . '.' . $id . '.short_label';
 

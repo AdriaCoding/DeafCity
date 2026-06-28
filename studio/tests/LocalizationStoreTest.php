@@ -28,10 +28,10 @@ class LocalizationStoreTest extends TestCase
                 'context' => 'About page title',
                 'translations' => ['en' => 'About'],
             ],
-            'content.typology.acudits.label' => [
+            'content.typology.acudits' => [
                 'section' => 'content',
                 'context' => 'Typology label',
-                'translations' => ['en' => 'ACUDITS'],
+                'translations' => ['en' => 'Acudits'],
             ],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
     }
