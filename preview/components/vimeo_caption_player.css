@@ -103,9 +103,10 @@
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
-    height: calc(2 * var(--vpc-caption-line-height) * 1em + 0.6em);
-    min-height: calc(2 * var(--vpc-caption-line-height) * 1em + 0.6em);
-    max-height: calc(2 * var(--vpc-caption-line-height) * 1em + 0.6em);
+    /* Fixed block height — must not scale with font-size (em) or ResizeObserver feedback loops. */
+    height: var(--vpc-caption-block-height, 133px);
+    min-height: var(--vpc-caption-block-height, 133px);
+    max-height: var(--vpc-caption-block-height, 133px);
 }
 
 /* ── Single control row (D15″, D24, D25) ─────────────────────────────────── */

@@ -88,7 +88,13 @@
         var box = document.getElementById(boxId);
         if (!box) return;
         var caption = findCaption(events, timeMs);
-        box.textContent = caption ? caption.text : '';
+        var newText = caption ? caption.text : '';
+        // #region agent log
+        if (newText !== box.textContent && newText.length > 0) {
+            fetch('http://localhost:14610/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b56716'},body:JSON.stringify({sessionId:'b56716',location:'vimeo_caption_player.js:syncCaptionBox',message:'caption text update',data:{textLen:newText.length,boxW:box.getBoundingClientRect().width,timeMs:timeMs},timestamp:Date.now(),hypothesisId:'D',runId:'pre-fix'})}).catch(function(){});
+        }
+        // #endregion
+        box.textContent = newText;
     }
 
     /**
@@ -515,38 +521,62 @@
             var videoShell = root.querySelector('.video-shell');
             var videoStack = root.querySelector('.video-stack');
 
-            function syncCaptionTypography() {
-                var measureEl = iframe || videoShell || videoStack;
-                if (!measureEl) return;
-                var rect = measureEl.getBoundingClientRect();
-                var h = rect.height;
-                if (h <= 0 && videoShell) {
-                    h = videoShell.getBoundingClientRect().height;
-                }
-                root.style.setProperty(
-                    '--vpc-caption-font-size',
-                    captionFontSizePxFromVideoHeight(h) + 'px'
-                );
-                var w = rect.width;
-                if (videoShell) {
-                    var shellW = videoShell.getBoundingClientRect().width;
-                    if (w <= 0 || w > shellW) w = shellW;
+            /* Two caption lines at max font (38px): 2×1.45 + 0.6 ≈ 3.5× — fixed so layout never feeds back into font sizing. */
+            root.style.setProperty('--vpc-caption-block-height', '133px');
+
+            var _dbgTypographyCalls = 0;
+            var _dbgPrevTypography = { h: 0, w: 0, fontSize: 0, shellW: 0 };
+            var _appliedTypography = { fontSize: 0, w: 0 };
+
+            function syncCaptionTypography(trigger) {
+                if (!videoShell) return;
+                var shellRect = videoShell.getBoundingClientRect();
+                var h = shellRect.height;
+                if (h <= 0) return;
+                var fontSize = captionFontSizePxFromVideoHeight(h);
+                var w = shellRect.width;
+                if (iframe) {
+                    var iframeRect = iframe.getBoundingClientRect();
+                    var iframeW = iframeRect.width;
+                    if (iframeW > 0 && iframeW <= w) w = iframeW;
                 }
                 if (w <= 0 && videoStack) {
                     w = videoStack.getBoundingClientRect().width;
                 }
-                if (w > 0) {
-                    root.style.setProperty('--vpc-caption-width', w + 'px');
+                var shellW = shellRect.width;
+                var fontChanged = Math.abs(fontSize - _appliedTypography.fontSize) >= 0.5;
+                var widthChanged = Math.abs(w - _appliedTypography.w) >= 1;
+                if (fontChanged) {
+                    root.style.setProperty('--vpc-caption-font-size', fontSize + 'px');
+                    _appliedTypography.fontSize = fontSize;
                 }
+                if (widthChanged && w > 0) {
+                    root.style.setProperty('--vpc-caption-width', w + 'px');
+                    _appliedTypography.w = w;
+                }
+                // #region agent log
+                _dbgTypographyCalls++;
+                var captionBox = document.getElementById(captionBoxId);
+                var captionBoxW = captionBox ? captionBox.getBoundingClientRect().width : 0;
+                var captionBoxH = captionBox ? captionBox.getBoundingClientRect().height : 0;
+                var shellH = shellRect.height;
+                var hChanged = Math.abs(h - _dbgPrevTypography.h) > 0.05;
+                var wChanged = Math.abs(w - _dbgPrevTypography.w) > 0.05;
+                var fsChanged = fontSize !== _dbgPrevTypography.fontSize;
+                if (_dbgTypographyCalls <= 3 || hChanged || wChanged || fsChanged || _dbgTypographyCalls % 20 === 0) {
+                    fetch('http://localhost:14610/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'b56716'},body:JSON.stringify({sessionId:'b56716',location:'vimeo_caption_player.js:syncCaptionTypography',message:'caption typography sync',data:{trigger:trigger||'init',call:_dbgTypographyCalls,measureEl:'video-shell',h,hChanged,w,wChanged,shellW,shellH,fontSize,fsChanged,fontChanged,widthChanged,captionBoxW,captionBoxH,prevH:_dbgPrevTypography.h,prevW:_dbgPrevTypography.w,prevFs:_dbgPrevTypography.fontSize},timestamp:Date.now(),hypothesisId:'A-B-C-E',runId:'post-fix'})}).catch(function(){});
+                }
+                _dbgPrevTypography = { h: h, w: w, fontSize: fontSize, shellW: shellW };
+                // #endregion
             }
 
-            syncCaptionTypography();
+            syncCaptionTypography('init');
             if (typeof window.ResizeObserver === 'function') {
                 var captionResizeObserver = new window.ResizeObserver(function () {
-                    syncCaptionTypography();
+                    syncCaptionTypography('resizeObserver');
                 });
-                if (iframe) captionResizeObserver.observe(iframe);
-                else if (videoShell) captionResizeObserver.observe(videoShell);
+                captionResizeObserver.observe(videoShell);
+                if (videoStack) captionResizeObserver.observe(videoStack);
             } else {
                 window.addEventListener('resize', syncCaptionTypography);
             }
@@ -690,7 +720,7 @@
                         : Promise.resolve(0);
                 return Promise.all([wP, hP]).then(function (dims) {
                     iframe.style.aspectRatio = aspectRatioFrom(dims[0], dims[1]);
-                    syncCaptionTypography();
+                    syncCaptionTypography('aspectRatio');
                 });
             }
 
