@@ -12,9 +12,10 @@
                 "DEAF&HEARING"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078535510-f3211c725a6bc4323ea2c4434bbff9df2c18ed8f34119be7a1a45f3743438fc7-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078535510-f3211c725a6bc4323ea2c4434bbff9df2c18ed8f34119be7a1a45f3743438fc7-d_960x540?&r=pad&region=us",
             "typology": "acudits",
-            "participant": "Edinho"
+            "participant": "Edinho",
+            "invisible": true
         },
         {
             "id": "libras_1128773138",
@@ -28,9 +29,10 @@
                 "GRANDMOTHER"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078525043-e5c1bdedfefd6fdfbac413d394cd0975008829bec1900b19562831b0b4292dbd-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078525043-e5c1bdedfefd6fdfbac413d394cd0975008829bec1900b19562831b0b4292dbd-d_960x540?&r=pad&region=us",
             "typology": "malentesos",
-            "participant": "AnaLaura"
+            "participant": "AnaLaura",
+            "invisible": true
         },
         {
             "id": "libras_1128883760",
@@ -44,9 +46,10 @@
                 "BAR"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078527500-e831e1c303db2bd68884acc53c8ce3a0cb13c3caadb41565850c632d2dc9ebe7-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078527500-e831e1c303db2bd68884acc53c8ce3a0cb13c3caadb41565850c632d2dc9ebe7-d_960x540?&r=pad&region=us",
             "typology": "endevinalles",
-            "participant": "Fabio"
+            "participant": "Fabio",
+            "invisible": true
         },
         {
             "id": "libras_1128892636",
@@ -60,9 +63,10 @@
                 "VIOLIN"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078534669-df1c7ec1205afe32f0951a5d6331b7c93a98c8642790ea657c52263ccc8d0351-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078534669-df1c7ec1205afe32f0951a5d6331b7c93a98c8642790ea657c52263ccc8d0351-d_960x540?&r=pad&region=us",
             "typology": "memories",
-            "participant": "Fer"
+            "participant": "Fer",
+            "invisible": true
         },
         {
             "id": "libras_1128900689",
@@ -77,9 +81,10 @@
                 "DOORS"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078537167-93f2d8a3fa051e224eac3f34c65a1a72c154a44cb373a15fdd3f960274842eec-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078537167-93f2d8a3fa051e224eac3f34c65a1a72c154a44cb373a15fdd3f960274842eec-d_960x540?&r=pad&region=us",
             "typology": "acudits",
-            "participant": "Vitoria"
+            "participant": "Vitoria",
+            "invisible": true
         },
         {
             "id": "libras_1128897395",
@@ -93,9 +98,10 @@
                 "DEAF&HEARING"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078538593-071364f3d514d985f94e9569b2455de0fb39014589fd32ed0cb285055162e50c-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078538593-071364f3d514d985f94e9569b2455de0fb39014589fd32ed0cb285055162e50c-d_960x540?&r=pad&region=us",
             "typology": "anecdotes",
-            "participant": "Minho"
+            "participant": "Minho",
+            "invisible": true
         },
         {
             "id": "libras_1128880262",
@@ -109,9 +115,10 @@
                 "CAR"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078529767-ac44a93b554009738707d1bea80ea0c66cc5d44b9538cea7a93d71e413ec886b-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078529767-ac44a93b554009738707d1bea80ea0c66cc5d44b9538cea7a93d71e413ec886b-d_960x540?&r=pad&region=us",
             "typology": "malentesos",
-            "participant": "Edinho"
+            "participant": "Edinho",
+            "invisible": true
         },
         {
             "id": "libras_1128906791",
@@ -126,9 +133,10 @@
                 "BAR"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078540413-34695f823c174b6e12631401c8cfc8f9b2242124324fca38ced1c948fa050d36-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078540413-34695f823c174b6e12631401c8cfc8f9b2242124324fca38ced1c948fa050d36-d_960x540?&r=pad&region=us",
             "typology": "endevinalles",
-            "participant": "Fabio"
+            "participant": "Fabio",
+            "invisible": true
         },
         {
             "id": "lsm_638736137",
@@ -151,9 +159,10 @@
                     "file": "638736137.es-MX.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1284888842-43d6d918238020d4f9ed6f484128386612f67e433a76b213b_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1284888842-43d6d918238020d4f9ed6f484128386612f67e433a76b213b_960x540?&r=pad&region=us",
             "typology": "memories",
-            "participant": "Veronica"
+            "participant": "Veronica",
+            "invisible": true
         },
         {
             "id": "lsm_639003988",
@@ -175,9 +184,10 @@
                     "file": "639003988.es-MX.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1284960743-74aa3dc2f105c1612e2a4fffaed889326dd73d5ae4524c7cf_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1284960743-74aa3dc2f105c1612e2a4fffaed889326dd73d5ae4524c7cf_960x540?&r=pad&region=us",
             "typology": "acudits",
-            "participant": "Miguel"
+            "participant": "Miguel",
+            "invisible": true
         },
         {
             "id": "lsm_639052927",
@@ -198,9 +208,10 @@
                     "file": "639052927.es-MX.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1285032917-0f2f774615814a8610a74790aa9e4e3cac8d5b587e46092cd_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1285032917-0f2f774615814a8610a74790aa9e4e3cac8d5b587e46092cd_960x540?&r=pad&region=us",
             "typology": "anecdotes",
-            "participant": "Indy"
+            "participant": "Indy",
+            "invisible": true
         },
         {
             "id": "lsm_639104645",
@@ -223,9 +234,10 @@
                     "file": "639104645.es-MX.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1285152759-ff23c8ccb425035f95616458d31ba1055266e4ef120fd896c_200x150?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1285152759-ff23c8ccb425035f95616458d31ba1055266e4ef120fd896c_200x150?&r=pad&region=us",
             "typology": "malentesos",
-            "participant": "Gustavo"
+            "participant": "Gustavo",
+            "invisible": true
         },
         {
             "id": "lsm_639243143",
@@ -245,9 +257,10 @@
                     "file": "639243143.es-ES.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1285897295-b749063bfbea959323112c684cd5b7865bd9b9befa2df3f93_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1285897295-b749063bfbea959323112c684cd5b7865bd9b9befa2df3f93_960x540?&r=pad&region=us",
             "typology": "endevinalles",
-            "participant": "Ixchel"
+            "participant": "Ixchel",
+            "invisible": true
         },
         {
             "id": "lsm_639451364",
@@ -269,9 +282,10 @@
                     "file": "639451364.es-MX.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1285943446-5e7b39ce0d0ebd3e831dd4ad3cd656e62e5ca0e06c5aeacf9_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1285943446-5e7b39ce0d0ebd3e831dd4ad3cd656e62e5ca0e06c5aeacf9_960x540?&r=pad&region=us",
             "typology": "memories",
-            "participant": "Beto"
+            "participant": "Beto",
+            "invisible": true
         },
         {
             "id": "lsm_643488966",
@@ -293,9 +307,10 @@
                     "file": "643488966.es-MX.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1294684357-13599e0bd0a86aad63260ea2f966a1e67d32ae99524aa1a0e_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1294684357-13599e0bd0a86aad63260ea2f966a1e67d32ae99524aa1a0e_960x540?&r=pad&region=us",
             "typology": "acudits",
-            "participant": "Ole"
+            "participant": "Ole",
+            "invisible": true
         },
         {
             "id": "lse_503427673",
@@ -330,9 +345,10 @@
                     "file": "503427673.ca.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/1041557879-35ab1cb1f3a1096b6a6b3b7c9c41ed9cdf07c64fb77d9f4f2b39f28114123df5-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/1041557879-35ab1cb1f3a1096b6a6b3b7c9c41ed9cdf07c64fb77d9f4f2b39f28114123df5-d_960x540?&r=pad&region=us",
             "typology": "anecdotes",
-            "participant": "Aurora"
+            "participant": "Aurora",
+            "invisible": true
         },
         {
             "id": "lse_506004144",
@@ -366,9 +382,10 @@
                     "file": "506004144.ca.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078157781-3d04f60507876dad63be4fbd8d587d86c4320a96e8c265080fc2b77889513989-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078157781-3d04f60507876dad63be4fbd8d587d86c4320a96e8c265080fc2b77889513989-d_960x540?&r=pad&region=us",
             "typology": "malentesos",
-            "participant": "Pegolino"
+            "participant": "Pegolino",
+            "invisible": true
         },
         {
             "id": "lse_503388856",
@@ -401,9 +418,10 @@
                     "file": "503388856.ca.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2078162101-73940e98bbec57e4305388a7c54fc239daffdbf7adeff8178176f2600a65bf48-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2078162101-73940e98bbec57e4305388a7c54fc239daffdbf7adeff8178176f2600a65bf48-d_960x540?&r=pad&region=us",
             "typology": "endevinalles",
-            "participant": "Dani"
+            "participant": "Dani",
+            "invisible": true
         },
         {
             "id": "lse_501686486",
@@ -439,9 +457,10 @@
                     "file": "501686486.ca.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2077691932-0dc1ae18cea08f725543a1649580c416ee11944949b784af8e709175225eac4f-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2077691932-0dc1ae18cea08f725543a1649580c416ee11944949b784af8e709175225eac4f-d_960x540?&r=pad&region=us",
             "typology": "memories",
-            "participant": "Mònica"
+            "participant": "Mònica",
+            "invisible": true
         },
         {
             "id": "lse_506003536",
@@ -476,9 +495,10 @@
                     "file": "506003536.ca.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2077676619-470475625a21ee6d29c06ed004177c3a6873dbc67231d9dd7a9896019cb6919b-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2077676619-470475625a21ee6d29c06ed004177c3a6873dbc67231d9dd7a9896019cb6919b-d_960x540?&r=pad&region=us",
             "typology": "acudits",
-            "participant": "Riutort"
+            "participant": "Riutort",
+            "invisible": true
         },
         {
             "id": "lse_508315910",
@@ -513,9 +533,10 @@
                     "file": "508315910.ca.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2077680972-5e0b9488cdbac0feed6efd413d1651651557f0a5c66710adf8ec5771d80e4809-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2077680972-5e0b9488cdbac0feed6efd413d1651651557f0a5c66710adf8ec5771d80e4809-d_960x540?&r=pad&region=us",
             "typology": "anecdotes",
-            "participant": "Sony"
+            "participant": "Sony",
+            "invisible": true
         },
         {
             "id": "lse_1129135464",
@@ -531,9 +552,10 @@
                 "LOST"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2077684322-a9247be5143f3ff3eecdb75ab4dd33859fcfa28de654cbb4447165068f8998fb-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2077684322-a9247be5143f3ff3eecdb75ab4dd33859fcfa28de654cbb4447165068f8998fb-d_960x540?&r=pad&region=us",
             "typology": "malentesos",
-            "participant": "Amaia"
+            "participant": "Amaia",
+            "invisible": true
         },
         {
             "id": "lse_1129137464",
@@ -548,9 +570,10 @@
                 "MEETING"
             ],
             "captions": [],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2077686551-392de8851267461930679cd703e192a65a113dc1be5a10ec2f3a79260e5539b2-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2077686551-392de8851267461930679cd703e192a65a113dc1be5a10ec2f3a79260e5539b2-d_960x540?&r=pad&region=us",
             "typology": "endevinalles",
-            "participant": "Aitor"
+            "participant": "Aitor",
+            "invisible": true
         },
         {
             "id": "gss_1197992193",
@@ -584,10 +607,11 @@
                     "file": "1197992193.en.vtt"
                 }
             ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2164460993-0436d89dbbeb45eeeb11f0cd843391d80919ed6596af5d734438f88e7dd2bde3-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https://i.vimeocdn.com/video/2164460993-0436d89dbbeb45eeeb11f0cd843391d80919ed6596af5d734438f88e7dd2bde3-d_960x540?&r=pad&region=us",
             "master_caption_lang": "es",
             "typology": "anecdotes",
-            "participant": "Hamida"
+            "participant": "Hamida",
+            "invisible": true
         }
     ]
 }
