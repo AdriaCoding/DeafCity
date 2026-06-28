@@ -152,23 +152,37 @@ a {
 
 #city-map-canvas {
     width: 100%;
-    height: 420px;
+    aspect-ratio: 3 / 2;
+    position: relative;
+    overflow: hidden;
+    background: #eef2f0;
 }
 
-/* Override Leaflet popup defaults to match site palette */
-.leaflet-popup-content-wrapper {
-    border-radius: 2px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+.map-tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #e0e0e0;
+    padding: 0.35em 0.65em;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    z-index: 10;
 }
 
-.leaflet-popup-content strong {
+.map-tooltip strong {
     color: rgb(0, 120, 0);
 }
 
-@media screen and (max-width: 600px) {
-    #city-map-canvas {
-        height: 280px;
-    }
+#city-map-inset {
+    position: absolute;
+    top: 50%;
+    left: 4%;
+    transform: translateY(-50%);
+    width: 370px;
+    border: 1px solid #c8d4c8;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
 }
 
 #trio {
