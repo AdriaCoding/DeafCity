@@ -46,31 +46,23 @@ $manifest = [
     ['key' => 'about.block.silent_eloquence.title', 'section' => 'about', 'context' => 'About section heading', 'en' => 'Silent Eloquence'],
     ['key' => 'about.block.silent_eloquence.p1', 'section' => 'about', 'context' => 'About paragraph', 'en' => 'By blending humor, art, and activism, DEAF.city makes Deaf culture visible, fosters understanding, and builds bridges between Deaf and hearing communities worldwide.'],
 
+    // Credits — only the reusable rubric labels are translatable. Cities/editions
+    // live in content.edition.*, sign languages in content.sign_language.*, and
+    // people/institution names + links are not translated (see views/about/credits_i18n.php).
+    ['key' => 'about.credits.label.supported_by', 'section' => 'about', 'context' => 'Credits rubric label (keep leading underscore)', 'en' => '_SUPPORTED BY'],
+    ['key' => 'about.credits.label.participants', 'section' => 'about', 'context' => 'Credits rubric label (keep leading underscore)', 'en' => '_PARTICIPANTS'],
+    ['key' => 'about.credits.label.interpreter', 'section' => 'about', 'context' => 'Credits rubric label (keep leading underscore)', 'en' => '_INTERPRETER'],
+    ['key' => 'about.credits.label.interpreters', 'section' => 'about', 'context' => 'Credits rubric label, plural (keep leading underscore)', 'en' => '_INTERPRETERS'],
+    ['key' => 'about.credits.label.coordination', 'section' => 'about', 'context' => 'Credits rubric label (keep leading underscore)', 'en' => '_COORDINATION'],
+    ['key' => 'about.credits.label.collaboration', 'section' => 'about', 'context' => 'Credits rubric label (keep leading underscore)', 'en' => '_COLLABORATION'],
+    ['key' => 'about.credits.label.thanks_to', 'section' => 'about', 'context' => 'Credits rubric label (keep leading underscore)', 'en' => '_THANKS TO'],
+    ['key' => 'about.credits.project_by', 'section' => 'about', 'context' => 'Credits: project attribution line', 'en' => 'DEAF.city is a project by'],
+    ['key' => 'about.credits.contact', 'section' => 'about', 'context' => 'Credits: contact link text', 'en' => 'Contact'],
+
     // Participants page
     ['key' => 'participants.page_title', 'section' => 'participants', 'context' => 'Participants page <title>', 'en' => 'Participants — DEAF.city'],
     ['key' => 'participants.heading', 'section' => 'participants', 'context' => 'Participants page h1', 'en' => 'Participants'],
 ];
-
-$creditsPath = dirname(__DIR__, 2) . '/views/about/credits.php';
-if (is_readable($creditsPath)) {
-    $creditsHtml = file_get_contents($creditsPath);
-    if ($creditsHtml !== false && preg_match_all('~<p>(.*?)</p>~s', $creditsHtml, $matches)) {
-        $n = 1;
-        foreach ($matches[1] as $block) {
-            $text = trim($block);
-            if ($text === '') {
-                continue;
-            }
-            $manifest[] = [
-                'key' => 'about.credits.p' . str_pad((string) $n, 2, '0', STR_PAD_LEFT),
-                'section' => 'about',
-                'context' => 'Credits paragraph ' . $n,
-                'en' => $text,
-            ];
-            $n++;
-        }
-    }
-}
 
 $store = [];
 foreach ($manifest as $row) {
@@ -207,6 +199,26 @@ if (is_array($cfg)) {
                     }
                 }
             }
+        }
+    }
+}
+
+// Preserve existing non-en translations + seeded flags for any key that still
+// exists, so re-running this script never wipes human/seeded translations.
+// (Edition/typology key renames are handled above; this covers same-key chrome.)
+foreach ($store as $key => $entry) {
+    $old = $existingStore[$key] ?? null;
+    if (!is_array($old)) {
+        continue;
+    }
+    foreach ($old['translations'] ?? [] as $lang => $text) {
+        if ($lang !== 'en' && trim((string) $text) !== '' && !isset($store[$key]['translations'][$lang])) {
+            $store[$key]['translations'][$lang] = $text;
+        }
+    }
+    foreach ($old['seeded'] ?? [] as $lang => $flag) {
+        if ($flag && $lang !== 'en') {
+            $store[$key]['seeded'][$lang] = true;
         }
     }
 }
