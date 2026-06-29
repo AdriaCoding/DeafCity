@@ -39,11 +39,6 @@
             "id": "lsc",
             "label": "LSC Catalan Sign Language",
             "short_label": "LSC"
-        },
-        {
-            "id": "gss",
-            "label": "GSS Greek Sign Language",
-            "short_label": "GSS"
         }
     ],
     "editions": [
@@ -51,61 +46,82 @@
             "id": "2020-valencia",
             "label": "2020 València",
             "short_label": "València",
-            "coordinates": [39.4699, -0.3763]
+            "coordinates": [
+                39.4699,
+                -0.3763
+            ]
         },
         {
             "id": "2021-mexico",
             "label": "2021 Mexico City",
             "short_label": "Mexico City",
-            "coordinates": [19.4326, -99.1332]
+            "coordinates": [
+                19.4326,
+                -99.1332
+            ]
         },
         {
             "id": "2023-bilbao",
             "label": "2023 Bilbao",
             "short_label": "Bilbao",
-            "coordinates": [43.2630, -2.9253]
+            "coordinates": [
+                43.263,
+                -2.9253
+            ]
         },
         {
             "id": "2023-sao-paulo",
             "label": "2023 São Paulo",
             "short_label": "São Paulo",
-            "coordinates": [-23.5505, -46.6333]
+            "coordinates": [
+                -23.5505,
+                -46.6333
+            ]
         },
         {
             "id": "2026-marseille",
             "label": "2026 Marseille",
             "short_label": "Marseille",
-            "coordinates": [43.2965, 5.3698]
+            "coordinates": [
+                43.2965,
+                5.3698
+            ]
         },
         {
             "id": "2026-rome",
             "label": "2026 Roma",
             "short_label": "Roma",
-            "coordinates": [41.9028, 12.4964]
+            "coordinates": [
+                41.9028,
+                12.4964
+            ]
         },
         {
             "id": "2026-tunis",
             "label": "2026 Tunis",
             "short_label": "Tunis",
-            "coordinates": [36.8065, 10.1815]
+            "coordinates": [
+                36.8065,
+                10.1815
+            ]
         },
         {
             "id": "2026-algiers",
             "label": "2026 Algiers",
             "short_label": "Algiers",
-            "coordinates": [36.7538, 3.0588]
+            "coordinates": [
+                36.7538,
+                3.0588
+            ]
         },
         {
             "id": "2026-barcelona",
             "label": "2026 Barcelona",
             "short_label": "Barcelona",
-            "coordinates": [41.3851, 2.1734]
-        },
-        {
-            "id": "2028-salamanca",
-            "label": "Salamanca 2028",
-            "short_label": "Salamanca",
-            "coordinates": [40.9701, -5.6636]
+            "coordinates": [
+                41.3851,
+                2.1734
+            ]
         }
     ],
     "subtitle_languages": [
