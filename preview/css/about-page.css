@@ -18,6 +18,7 @@ a {
     max-width: 1200px;
     margin: 0 auto;
     padding: 1rem 1.25rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    width: 100%;
 }
 
 #clock {
@@ -25,14 +26,20 @@ a {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 16px;
     margin-top: 0;
+    width: 100%;
 }
 
 #clock > * {
-    flex: 1 1 280px;
+    flex: 1 1 calc(50% - 8px);
     min-width: 0;
+    max-width: 100%;
+}
+
+.clock {
+    overflow: hidden;
 }
 
 .clock > iframe {
@@ -43,6 +50,7 @@ a {
 }
 
 #gallery {
+    width: 100%;
     aspect-ratio: 16 / 9.04;
     overflow: hidden;
     position: relative;
@@ -180,9 +188,32 @@ a {
     top: 50%;
     left: 4%;
     transform: translateY(-50%);
-    width: 370px;
+    width: 38%;
+    max-width: 370px;
     border: 1px solid #c8d4c8;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+}
+
+#city-map-canvas.city-map-canvas--stacked {
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: auto;
+    height: auto;
+    gap: 0.75rem;
+    overflow: visible;
+}
+
+#city-map-canvas.city-map-canvas--stacked > svg:first-of-type {
+    width: 100%;
+    height: auto;
+}
+
+#city-map-canvas.city-map-canvas--stacked #city-map-inset {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
 }
 
 #trio {
@@ -206,5 +237,21 @@ a {
 @media screen and (max-width: 720px) {
     #clock {
         flex-direction: column;
+    }
+
+    #clock > * {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .gallery-controls .prev,
+    .gallery-controls .next {
+        width: 25px;
+        height: 25px;
+    }
+
+    .map-tooltip {
+        white-space: normal;
+        max-width: min(220px, 75vw);
     }
 }

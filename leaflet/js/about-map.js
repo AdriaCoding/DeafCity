@@ -33,7 +33,19 @@
     }
 
     var vbW = Math.ceil(x1 - x0), vbH = Math.ceil(y1 - y0);
-    container.style.aspectRatio = vbW + ' / ' + vbH;
+    var stackedMq = window.matchMedia('(max-width: 720px)');
+
+    function applyMapLayout() {
+        if (stackedMq.matches) {
+            container.style.aspectRatio = '';
+            container.classList.add('city-map-canvas--stacked');
+            mainSvg.style('height', 'auto');
+        } else {
+            container.style.aspectRatio = vbW + ' / ' + vbH;
+            container.classList.remove('city-map-canvas--stacked');
+            mainSvg.style('height', '100%');
+        }
+    }
 
     var mainSvg = d3.select('#city-map-canvas')
         .append('svg')
@@ -42,6 +54,13 @@
         .style('display', 'block')
         .style('width', '100%')
         .style('height', '100%');
+
+    applyMapLayout();
+    if (stackedMq.addEventListener) {
+        stackedMq.addEventListener('change', applyMapLayout);
+    } else if (stackedMq.addListener) {
+        stackedMq.addListener(applyMapLayout);
+    }
 
     // ── INSET MAP: Americas, Natural Earth ────────────────────────────────
 

@@ -45,5 +45,15 @@ assert_contains('href="/preview/about"', $html, 'navbar includes About route');
 assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');
 assert_contains('aria-current="page"', $html, 'navbar marks current page');
 assert_contains('>About</a>', $html, 'About label in navbar');
+assert_contains('about-map.js?v=8', $html, 'about map script');
+
+$aboutCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/about-page.css');
+assert_contains('city-map-canvas--stacked', $aboutCss, 'stacked map layout class');
+assert_contains('max-width: 370px', $aboutCss, 'responsive inset max width');
+assert_contains('align-items: stretch', $aboutCss, 'clock row stretches children');
+assert_contains('flex: 1 1 calc(50% - 8px)', $aboutCss, 'clock children share row width');
+
+$aboutMapJs = file_get_contents(dirname(dirname(dirname(__FILE__))) . '/leaflet/js/about-map.js');
+assert_contains('city-map-canvas--stacked', $aboutMapJs, 'map layout toggles stacked class');
 
 echo "All tests passed.\n";
