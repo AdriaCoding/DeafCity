@@ -347,9 +347,9 @@ assert_not_contains('2026 Roma', $html, 'empty edition (Rome) absent from dropdo
 assert_not_contains('2026 Tunis', $html, 'empty edition (Tunis) absent from dropdown');
 
 // AC: Typology picker lists typologies present in catalog
-assert_contains('ACUDITS', $html, 'ACUDITS typology option present');
-assert_contains('MALENTESOS', $html, 'MALENTESOS typology option present');
-assert_contains('ENDEVINALLES', $html, 'ENDEVINALLES typology option present');
+assert_contains('JOKES', $html, 'JOKES typology option present');
+assert_contains('MISUNDERSTANDINGS', $html, 'MISUNDERSTANDINGS typology option present');
+assert_contains('RIDDLES', $html, 'RIDDLES typology option present');
 assert_contains('data-value="anecdotes"', $html, 'anecdotes value present in typology picker');
 assert_contains('data-value="memories"', $html, 'memories value present in typology picker');
 

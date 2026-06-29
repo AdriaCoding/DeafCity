@@ -27,7 +27,7 @@ $entries = array(
     ),
     'content.typology.acudits' => array(
         'section' => 'content',
-        'translations' => array('en' => 'Acudits', 'es' => 'Acudits ES'),
+        'translations' => array('en' => 'Jokes', 'es' => 'Chistes'),
     ),
 );
 
@@ -88,7 +88,7 @@ assert_eq('Salamanca 2028', $opts[0]['label'], 'edition label appends year when 
 $preview_i18n = new PreviewI18n(array(
     'content.typology.anecdotes' => array(
         'section' => 'content',
-        'translations' => array('en' => 'Anècdotes', 'es' => 'Anécdotas'),
+        'translations' => array('en' => 'Anecdotes', 'es' => 'Anécdotas'),
     ),
 ), 'es');
 $tyOpts = preview_localize_filter_options(array(
@@ -96,5 +96,17 @@ $tyOpts = preview_localize_filter_options(array(
 ), 'typology');
 assert_eq('Anécdotas', $tyOpts[0]['short_label'], 'typology short_label uses canonical translation');
 assert_eq('ANÉCDOTAS', $tyOpts[0]['label'], 'typology label is ALL CAPS of canonical translation');
+
+$preview_i18n = new PreviewI18n(array(
+    'content.typology.acudits' => array(
+        'section' => 'content',
+        'translations' => array('en' => 'Jokes', 'es' => 'Chistes'),
+    ),
+), 'en');
+$enTyOpts = preview_localize_filter_options(array(
+    array('value' => 'acudits', 'label' => 'ACUDITS', 'short_label' => 'Acudits'),
+), 'typology');
+assert_eq('Jokes', $enTyOpts[0]['short_label'], 'english typology short_label uses store en translation');
+assert_eq('JOKES', $enTyOpts[0]['label'], 'english typology label is ALL CAPS of en translation');
 
 echo "All tests passed.\n";

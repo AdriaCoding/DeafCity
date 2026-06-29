@@ -167,6 +167,37 @@ if (!function_exists('preview_localize_filter_options')) {
     function preview_localize_filter_options(array $options, $contentType)
     {
         global $preview_i18n;
+
+        if ($contentType === 'typology' && $preview_i18n instanceof PreviewI18n) {
+            $localized = array();
+            foreach ($options as $opt) {
+                if (!isset($opt['value'])) {
+                    $localized[] = $opt;
+                    continue;
+                }
+
+                $id = (string) $opt['value'];
+                $key = 'content.typology.' . $id;
+                if ($preview_i18n->getLang() === 'en') {
+                    $canonical = $preview_i18n->t($key);
+                    if ($canonical !== $key) {
+                        $opt['short_label'] = $canonical;
+                        $opt['label'] = preview_typology_caps_label($canonical);
+                    }
+                } else {
+                    $canonical = $preview_i18n->tActive($key);
+                    if ($canonical !== '') {
+                        $opt['short_label'] = $canonical;
+                        $opt['label'] = preview_typology_caps_label($canonical);
+                    }
+                }
+
+                $localized[] = $opt;
+            }
+
+            return $localized;
+        }
+
         if (!($preview_i18n instanceof PreviewI18n) || $preview_i18n->getLang() === 'en') {
             return $options;
         }
@@ -179,16 +210,6 @@ if (!function_exists('preview_localize_filter_options')) {
             }
 
             $id = (string) $opt['value'];
-
-            if ($contentType === 'typology') {
-                $canonical = $preview_i18n->tActive('content.typology.' . $id);
-                if ($canonical !== '') {
-                    $opt['short_label'] = $canonical;
-                    $opt['label'] = preview_typology_caps_label($canonical);
-                }
-                $localized[] = $opt;
-                continue;
-            }
 
             if ($contentType === 'edition') {
                 $englishLabel = isset($opt['label']) ? (string) $opt['label'] : '';

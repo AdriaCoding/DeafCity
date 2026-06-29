@@ -153,20 +153,29 @@ if (is_array($cfg)) {
     }
 
     // Typologies: one canonical key (short_label form); label display is ALL CAPS at render time.
+    // English defaults are proper translations — studio-config short_label is Catalan.
+    $typologyEnDefaults = [
+        'acudits' => 'Jokes',
+        'anecdotes' => 'Anecdotes',
+        'malentesos' => 'Misunderstandings',
+        'endevinalles' => 'Riddles',
+        'memories' => 'Memories',
+    ];
     foreach ($cfg['typologies'] ?? [] as $item) {
         $id = $item['id'] ?? '';
         if ($id === '') {
             continue;
         }
-        $canonical = !empty($item['short_label']) ? $item['short_label'] : ($item['label'] ?? '');
-        if ($canonical === '') {
+        $fallback = !empty($item['short_label']) ? $item['short_label'] : ($item['label'] ?? '');
+        if ($fallback === '') {
             continue;
         }
+        $enLabel = $typologyEnDefaults[$id] ?? $fallback;
         $key = "content.typology.$id";
         $store[$key] = [
             'section' => 'content',
             'context' => "Typology ($id)",
-            'translations' => ['en' => $canonical],
+            'translations' => ['en' => $enLabel],
         ];
 
         $oldShort = $existingStore["content.typology.$id.short_label"] ?? null;

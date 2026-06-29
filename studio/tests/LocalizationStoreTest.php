@@ -31,7 +31,7 @@ class LocalizationStoreTest extends TestCase
             'content.typology.acudits' => [
                 'section' => 'content',
                 'context' => 'Typology label',
-                'translations' => ['en' => 'Acudits'],
+                'translations' => ['en' => 'Jokes'],
             ],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
     }
