@@ -73,6 +73,6 @@ include __DIR__ . '/../components/site_nav.php';
 <script src="/leaflet/js/gallery.js"></script>
 <script src="/js/d3.v7.min.js"></script>
 <script src="/js/topojson-client.min.js"></script>
-<script src="/leaflet/js/about-map.js?v=12"></script>
+<script src="/leaflet/js/about-map.js?v=13"></script>
 </body>
 </html>

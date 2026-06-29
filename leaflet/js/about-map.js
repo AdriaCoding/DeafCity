@@ -69,9 +69,9 @@
     var ivbW = Math.ceil(ix1 - ix0), ivbH = Math.ceil(iy1 - iy0);
 
     // Fraction of the main map's left-pad band used for inset width (tune here)
-    var INSET_SCALE = 0.72;
+    var INSET_SCALE = 0.64;
     // 0 = flush left in pad band, 0.5 = centered in slack space
-    var INSET_LEFT_ALIGN = 0.25;
+    var INSET_LEFT_ALIGN = 0.1;
     var insetBand = PAD_LEFT / vbW;
     var insetWidthPct = insetBand * INSET_SCALE * 100;
     var insetLeftPct = insetBand * (1 - INSET_SCALE) * INSET_LEFT_ALIGN * 100;

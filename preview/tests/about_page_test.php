@@ -45,7 +45,7 @@ assert_contains('href="/preview/about"', $html, 'navbar includes About route');
 assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');
 assert_contains('aria-current="page"', $html, 'navbar marks current page');
 assert_contains('>About</a>', $html, 'About label in navbar');
-assert_contains('about-map.js?v=12', $html, 'about map script');
+assert_contains('about-map.js?v=13', $html, 'about map script');
 
 $aboutCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/about-page.css');
 assert_contains('--inset-width', $aboutCss, 'inset width css variable');
