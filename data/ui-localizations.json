@@ -258,7 +258,7 @@
         "translations": {
             "en": "_COLLABORATION",
             "arq": "_تعاون",
-            "ca": "COL·LABORACIÓ",
+            "ca": "_COL·LABORACIÓ",
             "fr": "_COLLABORATION",
             "it": "_COLLABORAZIONE",
             "pt": "_COLABORAÇÃO",
@@ -267,7 +267,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
@@ -281,7 +280,7 @@
         "translations": {
             "en": "_COORDINATION",
             "arq": "_تنسيق",
-            "ca": "COORDINACIÓ",
+            "ca": "_COORDINACIÓ",
             "fr": "_COORDINATION",
             "it": "_COORDINAMENTO",
             "pt": "_COORDENAÇÃO",
@@ -290,7 +289,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
@@ -304,7 +302,7 @@
         "translations": {
             "en": "_INTERPRETER",
             "arq": "_مترجم",
-            "ca": "INTÈRPRET",
+            "ca": "_INTÈRPRET",
             "fr": "_INTERPRÈTE",
             "it": "_INTERPRETE",
             "pt": "_INTÉRPRETE",
@@ -313,7 +311,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
@@ -327,7 +324,7 @@
         "translations": {
             "en": "_INTERPRETERS",
             "arq": "_مترجمون",
-            "ca": "INTÈRPRETS",
+            "ca": "_INTÈRPRETS",
             "fr": "_INTERPRÈTES",
             "it": "_INTERPRETI",
             "pt": "_INTÉRPRETES",
@@ -336,7 +333,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
@@ -350,7 +346,7 @@
         "translations": {
             "en": "_PARTICIPANTS",
             "arq": "_مشاركون",
-            "ca": "PARTICIPANTS",
+            "ca": "_PARTICIPANTS",
             "fr": "_PARTICIPANTS",
             "it": "_PARTECIPANTI",
             "pt": "_PARTICIPANTES",
@@ -359,7 +355,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
@@ -373,7 +368,7 @@
         "translations": {
             "en": "_SUPPORTED BY",
             "arq": "_مدعوم من طرف",
-            "ca": "AMB EL SUPORT DE",
+            "ca": "_AMB EL SUPORT DE",
             "fr": "_SOUTENU PAR",
             "it": "_SOSTENUTO DA",
             "pt": "_APOIADO POR",
@@ -382,7 +377,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
@@ -396,7 +390,7 @@
         "translations": {
             "en": "_THANKS TO",
             "arq": "_شكراً لـ",
-            "ca": "AGRAÏMENTS A",
+            "ca": "_AGRAÏMENTS A",
             "fr": "_GRÂCE À",
             "it": "_GRAZIE A",
             "pt": "_AGRADECIMENTOS A",
@@ -405,7 +399,6 @@
         },
         "seeded": {
             "arq": true,
-            "ca": true,
             "fr": true,
             "it": true,
             "pt": true,

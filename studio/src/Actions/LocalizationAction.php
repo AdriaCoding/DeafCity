@@ -54,12 +54,6 @@ class LocalizationAction
             exit;
         }
 
-        if ($lang === 'en') {
-            http_response_code(422);
-            echo json_encode(['ok' => false, 'errors' => ['Anglès és només lectura.']], JSON_UNESCAPED_UNICODE);
-            exit;
-        }
-
         try {
             $this->store()->setCell($key, $lang, $value);
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);

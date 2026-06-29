@@ -37,14 +37,13 @@
         .cell-input.is-saving { opacity: 0.6; }
         .cell-input.is-saved { border-color: #2d6a4f; }
         .cell-input.is-error { border-color: #9b2226; }
-        .readonly-en { display: block; padding: 0.35rem 0; line-height: 1.4; }
     </style>
 </head>
 <body>
 <?php Studio\StudioHeader::include(compact('baseUrl', 'syncStatus', 'isSyncing', 'activeNav')); ?>
 <main>
     <h1>Localitzacions</h1>
-    <p class="intro">Traduccions de la interfície del preview (reproductor, About, Participants). L'anglès és la font de referència. Un idioma només s'auto-detecta quan tot el chrome està traduït.</p>
+    <p class="intro">Traduccions de la interfície del preview (reproductor, About, Participants). L'anglès és la font de referència. Subratllats en taronja apareixen els resultats de traducció automàtica. Si a un idioma li falta alguna traducció, no estarà disponible.</p>
 
     <div class="lang-status">
         <?php foreach ($languages as $lang): ?>
@@ -70,7 +69,9 @@
         'participants' => 'Participants',
         'content' => 'Etiquetes de contingut',
     ];
-    $editableLangs = array_values(array_filter($languageIds, static fn(string $id): bool => $id !== 'en'));
+    $tableLangs = in_array('en', $languageIds, true)
+        ? array_merge(['en'], array_values(array_filter($languageIds, static fn(string $id): bool => $id !== 'en')))
+        : $languageIds;
     ?>
 
     <?php foreach (['player', 'about', 'participants', 'content'] as $section): ?>
@@ -83,9 +84,8 @@
                         <tr>
                             <th>Clau</th>
                             <th>Context</th>
-                            <th>Anglès</th>
-                            <?php foreach ($editableLangs as $langId): ?>
-                                <th><?= htmlspecialchars($langId, ENT_QUOTES) ?></th>
+                            <?php foreach ($tableLangs as $langId): ?>
+                                <th><?= $langId === 'en' ? 'Anglès' : htmlspecialchars($langId, ENT_QUOTES) ?></th>
                             <?php endforeach; ?>
                         </tr>
                     </thead>
@@ -94,13 +94,12 @@
                             <tr>
                                 <td class="key-cell"><?= htmlspecialchars($row['key'], ENT_QUOTES) ?></td>
                                 <td class="context-cell"><?= htmlspecialchars($row['context'], ENT_QUOTES) ?></td>
-                                <td class="en-cell"><span class="readonly-en"><?= htmlspecialchars($row['translations']['en'] ?? '', ENT_QUOTES) ?></span></td>
-                                <?php foreach ($editableLangs as $langId): ?>
+                                <?php foreach ($tableLangs as $langId): ?>
                                     <?php
                                     $val = $row['translations'][$langId] ?? '';
                                     $seeded = !empty($row['seeded'][$langId]);
                                     ?>
-                                    <td>
+                                    <td<?= $langId === 'en' ? ' class="en-cell"' : '' ?>>
                                         <div class="cell-fill">
                                             <textarea
                                                 class="cell-input<?= $seeded ? ' is-seeded' : '' ?>"
