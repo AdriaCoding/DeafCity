@@ -186,34 +186,11 @@ a {
 #city-map-inset {
     position: absolute;
     top: 50%;
-    left: 4%;
+    left: var(--inset-left, 1%);
     transform: translateY(-50%);
-    width: 38%;
-    max-width: 370px;
+    width: var(--inset-width, 38%);
     border: 1px solid #c8d4c8;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
-}
-
-#city-map-canvas.city-map-canvas--stacked {
-    display: flex;
-    flex-direction: column;
-    aspect-ratio: auto;
-    height: auto;
-    gap: 0.75rem;
-    overflow: visible;
-}
-
-#city-map-canvas.city-map-canvas--stacked > svg:first-of-type {
-    width: 100%;
-    height: auto;
-}
-
-#city-map-canvas.city-map-canvas--stacked #city-map-inset {
-    position: static;
-    transform: none;
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
 }
 
 #trio {

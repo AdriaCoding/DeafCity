@@ -33,19 +33,7 @@
     }
 
     var vbW = Math.ceil(x1 - x0), vbH = Math.ceil(y1 - y0);
-    var stackedMq = window.matchMedia('(max-width: 720px)');
-
-    function applyMapLayout() {
-        if (stackedMq.matches) {
-            container.style.aspectRatio = '';
-            container.classList.add('city-map-canvas--stacked');
-            mainSvg.style('height', 'auto');
-        } else {
-            container.style.aspectRatio = vbW + ' / ' + vbH;
-            container.classList.remove('city-map-canvas--stacked');
-            mainSvg.style('height', '100%');
-        }
-    }
+    container.style.aspectRatio = vbW + ' / ' + vbH;
 
     var mainSvg = d3.select('#city-map-canvas')
         .append('svg')
@@ -54,13 +42,6 @@
         .style('display', 'block')
         .style('width', '100%')
         .style('height', '100%');
-
-    applyMapLayout();
-    if (stackedMq.addEventListener) {
-        stackedMq.addEventListener('change', applyMapLayout);
-    } else if (stackedMq.addListener) {
-        stackedMq.addListener(applyMapLayout);
-    }
 
     // ── INSET MAP: Americas, Natural Earth ────────────────────────────────
 
@@ -86,6 +67,17 @@
     }
 
     var ivbW = Math.ceil(ix1 - ix0), ivbH = Math.ceil(iy1 - iy0);
+
+    // Fraction of the main map's left-pad band used for inset width (tune here)
+    var INSET_SCALE = 0.72;
+    // 0 = flush left in pad band, 0.5 = centered in slack space
+    var INSET_LEFT_ALIGN = 0.25;
+    var insetBand = PAD_LEFT / vbW;
+    var insetWidthPct = insetBand * INSET_SCALE * 100;
+    var insetLeftPct = insetBand * (1 - INSET_SCALE) * INSET_LEFT_ALIGN * 100;
+
+    container.style.setProperty('--inset-width', insetWidthPct + '%');
+    container.style.setProperty('--inset-left', insetLeftPct + '%');
 
     var insetSvg = d3.select('#city-map-canvas')
         .append('svg')

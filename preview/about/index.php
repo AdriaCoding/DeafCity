@@ -25,7 +25,7 @@ $currentRoute = 'about';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/preview/css/site-nav.css?v=4">
-    <link rel="stylesheet" href="/preview/css/about-page.css?v=6">
+    <link rel="stylesheet" href="/preview/css/about-page.css?v=8">
     <style>
         html[dir="rtl"] .preview-about-page { direction: rtl; text-align: right; }
         html[dir="rtl"] .preview-site-nav { direction: rtl; }
@@ -73,6 +73,6 @@ include __DIR__ . '/../components/site_nav.php';
 <script src="/leaflet/js/gallery.js"></script>
 <script src="/js/d3.v7.min.js"></script>
 <script src="/js/topojson-client.min.js"></script>
-<script src="/leaflet/js/about-map.js?v=8"></script>
+<script src="/leaflet/js/about-map.js?v=12"></script>
 </body>
 </html>
