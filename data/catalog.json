@@ -576,44 +576,6 @@
             "invisible": true
         },
         {
-            "id": "gss_1197992193",
-            "vimeo_id": "1197992193",
-            "title": "#SHEEP by Hamida",
-            "sign_language": "gss",
-            "edition": "2028-salamanca",
-            "tags": [
-                "in",
-                "as"
-            ],
-            "captions": [
-                {
-                    "lang": "es",
-                    "label": "Spanish",
-                    "file": "1197992193.es.vtt"
-                },
-                {
-                    "lang": "pt",
-                    "label": "Portuguese",
-                    "file": "1197992193.pt.vtt"
-                },
-                {
-                    "lang": "it",
-                    "label": "Italian",
-                    "file": "1197992193.it.vtt"
-                },
-                {
-                    "lang": "en",
-                    "label": "English",
-                    "file": "1197992193.en.vtt"
-                }
-            ],
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2164460993-0436d89dbbeb45eeeb11f0cd843391d80919ed6596af5d734438f88e7dd2bde3-d_960x540?&r=pad&region=us",
-            "master_caption_lang": "es",
-            "typology": "anecdotes",
-            "participant": "Hamida",
-            "invisible": true
-        },
-        {
             "id": "lse_1201722064",
             "vimeo_id": "1201722064",
             "title": "2020_VALENCIA_Aurora_1_HD",
