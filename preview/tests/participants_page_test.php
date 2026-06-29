@@ -35,6 +35,10 @@ pp_assert_contains('>Participants</a>', $html, 'Participants label in navbar');
 pp_assert_contains('href="/preview/"', $html, 'navbar includes Player route');
 pp_assert_contains('href="/preview/about"', $html, 'navbar includes About route');
 
+pp_assert_contains('data-picker="language"', $html, 'language picker on participants navbar');
+pp_assert_contains('vpc-picker-dropdown', $html, 'language dropup on participants navbar');
+pp_assert_contains('English</li>', $html, 'English option in language picker');
+
 // Count distinct participant cards
 preg_match_all('~/preview/\?participant=~', $html, $cardMatches);
 $cardCount = count($cardMatches[0]);

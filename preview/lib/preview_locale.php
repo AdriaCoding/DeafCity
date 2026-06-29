@@ -45,6 +45,51 @@ if (!function_exists('preview_language_ids_from_config')) {
     }
 }
 
+if (!function_exists('preview_languages_from_config')) {
+    /**
+     * @return array<int, array{id: string, label: string}>
+     */
+    function preview_languages_from_config($configPath)
+    {
+        if (!is_readable($configPath)) {
+            return array(array('id' => 'en', 'label' => 'English'));
+        }
+
+        $raw = file_get_contents($configPath);
+        $cfg = $raw !== false ? json_decode($raw, true) : null;
+        if (!is_array($cfg) || !isset($cfg['subtitle_languages']) || !is_array($cfg['subtitle_languages'])) {
+            return array(array('id' => 'en', 'label' => 'English'));
+        }
+
+        $languages = array();
+        foreach ($cfg['subtitle_languages'] as $item) {
+            if (empty($item['id'])) {
+                continue;
+            }
+            $id = (string) $item['id'];
+            $label = isset($item['label']) && trim((string) $item['label']) !== ''
+                ? trim((string) $item['label'])
+                : $id;
+            $languages[] = array('id' => $id, 'label' => $label);
+        }
+
+        return $languages !== array() ? $languages : array(array('id' => 'en', 'label' => 'English'));
+    }
+}
+
+if (!function_exists('preview_append_lang_query')) {
+    function preview_append_lang_query($href, $langId)
+    {
+        $href = (string) $href;
+        $langId = (string) $langId;
+        if ($langId === '' || $langId === 'en') {
+            return $href;
+        }
+
+        return $href . (strpos($href, '?') !== false ? '&' : '?') . 'lang=' . rawurlencode($langId);
+    }
+}
+
 if (!function_exists('preview_arabic_language_order')) {
     /** @return list<string> */
     function preview_arabic_language_order(array $languageIds)

@@ -46,6 +46,9 @@ assert_contains('href="/preview/participants"', $html, 'navbar includes Particip
 assert_contains('aria-current="page"', $html, 'navbar marks current page');
 assert_contains('>About</a>', $html, 'About label in navbar');
 assert_contains('about-map.js?v=13', $html, 'about map script');
+assert_contains('data-picker="language"', $html, 'language picker on about navbar');
+assert_contains('vpc-picker-dropdown', $html, 'language dropup on about navbar');
+assert_contains('English</li>', $html, 'English option in language picker');
 
 $aboutCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/about-page.css');
 assert_contains('--inset-width', $aboutCss, 'inset width css variable');

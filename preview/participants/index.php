@@ -27,7 +27,7 @@ $currentRoute = 'participants';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=4">
+    <link rel="stylesheet" href="/preview/css/site-nav.css?v=6">
     <link rel="stylesheet" href="/preview/css/participants-page.css?v=10">
     <style>
         html[dir="rtl"] .preview-participants-page { direction: rtl; }

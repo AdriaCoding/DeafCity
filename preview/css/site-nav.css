@@ -87,3 +87,107 @@ a.preview-site-nav__btn.is-current:hover,
     background: #dff0e0;
     border-color: rgb(0, 100, 0);
 }
+
+/* Language picker — same custom dropup as player filter pickers (vpc-picker) */
+.preview-site-nav--navbar .vpc-picker {
+    position: relative;
+    display: inline-block;
+}
+
+.preview-site-nav--navbar .vpc-picker-btn {
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;
+    min-height: 2.75rem;
+    padding: 0.45em 0.85em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #444;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: border-color 0.1s, color 0.1s, background 0.1s;
+    box-sizing: border-box;
+}
+
+.preview-site-nav--navbar .vpc-picker-btn::after {
+    content: '\25B4';
+    font-size: 0.75em;
+    opacity: 0.5;
+    margin-left: 0.15em;
+}
+
+.preview-site-nav--navbar .vpc-picker-btn:hover {
+    background: #efefef;
+    border-color: #bbb;
+}
+
+.preview-site-nav--navbar .vpc-picker-btn:focus-visible {
+    outline: 2px solid rgb(0, 120, 0);
+    outline-offset: 2px;
+}
+
+.preview-site-nav--navbar .vpc-picker[data-active="true"] .vpc-picker-btn {
+    border-color: rgb(0, 120, 0);
+    color: rgb(0, 100, 0);
+    background: #e8f5e9;
+    font-weight: 500;
+}
+
+.preview-site-nav--navbar .vpc-picker[data-active="true"] .vpc-picker-btn::after {
+    opacity: 1;
+    color: rgb(0, 120, 0);
+}
+
+.preview-site-nav--navbar .vpc-picker-dropdown {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 0;
+    z-index: 200;
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+    min-width: 100%;
+    max-width: 22rem;
+    max-height: min(40vh, 16rem);
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid rgb(0, 120, 0);
+    border-radius: 8px;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.preview-site-nav--navbar .vpc-picker-dropdown[hidden] {
+    display: none;
+}
+
+.preview-site-nav--navbar .vpc-picker-option {
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 0.9375rem;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #333;
+    transition: background 0.08s, color 0.08s;
+}
+
+.preview-site-nav--navbar .vpc-picker-option:hover {
+    background: #e8f5e9;
+    color: rgb(0, 80, 0);
+}
+
+.preview-site-nav--navbar .vpc-picker-option[aria-selected="true"] {
+    background: rgb(0, 120, 0);
+    color: #fff;
+    font-weight: 500;
+}
+
+.preview-site-nav--navbar .vpc-picker-option[aria-selected="true"]:hover {
+    background: rgb(0, 100, 0);
+}

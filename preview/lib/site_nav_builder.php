@@ -28,14 +28,84 @@ function preview_site_nav_route_catalog()
 }
 
 /**
+ * Base path for a preview site route (no query string).
+ *
+ * @param string $route
+ * @return string
+ */
+function preview_route_base_path($route)
+{
+    switch ((string) $route) {
+        case 'about':
+            return '/preview/about';
+        case 'participants':
+            return '/preview/participants';
+        case 'home':
+        default:
+            return '/preview/';
+    }
+}
+
+/**
+ * Language switcher options for the bottom navbar on About/Participants pages.
+ *
+ * @param string $route
+ * @param string $currentLang
+ * @return array<int, array{id: string, label: string, href: string, selected: bool}>
+ */
+function preview_build_language_switcher_options($route, $currentLang)
+{
+    if (!function_exists('preview_languages_from_config')) {
+        require_once __DIR__ . '/preview_locale.php';
+    }
+
+    $configPath = preview_resolve_data_dir() . '/studio-config.json';
+    $languages = preview_languages_from_config($configPath);
+    $languageIds = preview_language_ids_from_config($configPath);
+
+    $byId = array();
+    foreach ($languages as $lang) {
+        $byId[$lang['id']] = $lang;
+    }
+
+    $orderedIds = in_array('en', $languageIds, true)
+        ? array_merge(
+            array('en'),
+            array_values(array_filter($languageIds, function ($id) {
+                return $id !== 'en';
+            }))
+        )
+        : $languageIds;
+
+    $basePath = preview_route_base_path($route);
+    $currentLang = (string) $currentLang;
+    $options = array();
+
+    foreach ($orderedIds as $id) {
+        if (!isset($byId[$id])) {
+            continue;
+        }
+        $options[] = array(
+            'id' => $id,
+            'label' => $byId[$id]['label'],
+            'href' => preview_append_lang_query($basePath, $id),
+            'selected' => ($id === $currentLang),
+        );
+    }
+
+    return $options;
+}
+
+/**
  * Build placement-aware nav link descriptors for site_nav.php rendering.
  *
  * @param string $currentRoute
  * @param string $placement 'chrome' hides current route; 'navbar' includes all with current active
  * @param array<string, string> $activeCollections
+ * @param string $currentLang
  * @return array<int, array<string, mixed>>
  */
-function preview_build_site_nav_links($currentRoute, $placement, $activeCollections = array())
+function preview_build_site_nav_links($currentRoute, $placement, $activeCollections = array(), $currentLang = 'en')
 {
     if (!function_exists('preview_t')) {
         require_once __DIR__ . '/preview_locale.php';
@@ -74,9 +144,11 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
             $dataGenericLabel = $defaultLabel;
         }
 
+        $href = preview_append_lang_query($item['href'], $currentLang);
+
         $links[] = array(
             'route' => $item['route'],
-            'href' => $item['href'],
+            'href' => $href,
             'label' => $label,
             'class' => $class,
             'aria_current' => $ariaCurrent,

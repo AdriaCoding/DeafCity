@@ -78,4 +78,25 @@ foreach ($navbarAbout as $link) {
     sn_assert(strpos($link['class'], 'preview-site-nav__btn') !== false, 'navbar links use button class');
 }
 
+// language switcher options
+$langOpts = preview_build_language_switcher_options('about', 'en');
+sn_assert(count($langOpts) >= 2, 'language switcher lists at least en + one other');
+$enOpt = null;
+foreach ($langOpts as $opt) {
+    if ($opt['id'] === 'en') {
+        $enOpt = $opt;
+        break;
+    }
+}
+sn_assert($enOpt !== null, 'language switcher includes English');
+sn_assert($enOpt['href'] === '/preview/about', 'English href omits lang query');
+sn_assert(!empty($enOpt['selected']), 'English selected when current lang is en');
+
+$esNav = preview_build_site_nav_links('about', 'navbar', array(), 'es');
+$aboutEs = sn_find($esNav, 'about');
+sn_assert(strpos($aboutEs['href'], 'lang=es') !== false, 'navbar links preserve lang query');
+
+sn_assert(preview_append_lang_query('/preview/about', 'en') === '/preview/about', 'append lang skips en');
+sn_assert(preview_append_lang_query('/preview/about', 'es') === '/preview/about?lang=es', 'append lang adds query');
+
 echo "\nAll site_nav tests passed.\n";

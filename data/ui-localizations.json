@@ -1510,6 +1510,13 @@
             "aeb": true
         }
     },
+    "player.nav.language": {
+        "section": "player",
+        "context": "Language switcher aria-label on About/Participants navbar",
+        "translations": {
+            "en": "Language"
+        }
+    },
     "player.nav.player": {
         "section": "player",
         "context": "Site nav link to home player",
