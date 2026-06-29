@@ -1470,20 +1470,17 @@
         "translations": {
             "en": "About",
             "fr": "À propos",
-            "ca": "Sobre",
-            "es": "Acerca de",
+            "ca": "Presentació",
+            "es": "Presentación",
             "arq": "حول",
             "it": "Info",
-            "pt": "Sobre",
+            "pt": "Apresentação",
             "aeb": "عن"
         },
         "seeded": {
             "fr": true,
-            "ca": true,
-            "es": true,
             "arq": true,
             "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -1512,9 +1509,25 @@
     },
     "player.nav.language": {
         "section": "player",
-        "context": "Language switcher aria-label on About/Participants navbar",
+        "context": "Language switcher aria-label on About\/Participants navbar",
         "translations": {
-            "en": "Language"
+            "en": "Language",
+            "arq": "لغة",
+            "ca": "Idioma",
+            "fr": "Langue",
+            "it": "Lingua",
+            "pt": "Linguagem",
+            "es": "Idioma",
+            "aeb": "لغة"
+        },
+        "seeded": {
+            "arq": true,
+            "ca": true,
+            "fr": true,
+            "it": true,
+            "pt": true,
+            "es": true,
+            "aeb": true
         }
     },
     "player.nav.player": {
