@@ -97,10 +97,13 @@ function preview_build_language_switcher_options($route, $currentLang)
 }
 
 /**
- * Build placement-aware nav link descriptors for site_nav.php rendering.
+ * Build nav link descriptors for bottom_bar.php rendering.
+ *
+ * Always returns all three routes; the current route receives is-current + aria-current=page.
+ * Active collections (e.g. participant name on the player page) surface on their nav link.
  *
  * @param string $currentRoute
- * @param string $placement 'chrome' hides current route; 'navbar' includes all with current active
+ * @param string $placement Retained for call-site compatibility; no longer omits routes.
  * @param array<string, string> $activeCollections
  * @param string $currentLang
  * @return array<int, array<string, mixed>>
@@ -116,9 +119,6 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
 
     foreach ($items as $item) {
         $isCurrent = ($currentRoute === $item['route']);
-        if ($placement === 'chrome' && $isCurrent) {
-            continue;
-        }
 
         $defaultLabel = isset($item['label_key']) ? preview_t($item['label_key']) : '';
         $label = $defaultLabel;
@@ -128,10 +128,10 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
         $dataCollection = '';
         $dataGenericLabel = '';
 
-        if ($placement === 'navbar' && $isCurrent) {
+        if ($isCurrent) {
             $class .= ' is-current';
             $ariaCurrent = 'page';
-        } elseif ($placement === 'chrome' && $collectionKey !== ''
+        } elseif ($collectionKey !== ''
             && isset($activeCollections[$collectionKey])
             && trim((string) $activeCollections[$collectionKey]) !== '') {
             $label = trim((string) $activeCollections[$collectionKey]);
@@ -139,7 +139,7 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
             $ariaCurrent = 'true';
         }
 
-        if ($placement === 'chrome' && $collectionKey !== '') {
+        if ($collectionKey !== '') {
             $dataCollection = $collectionKey;
             $dataGenericLabel = $defaultLabel;
         }

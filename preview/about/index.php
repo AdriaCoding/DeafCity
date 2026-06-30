@@ -24,11 +24,11 @@ $currentRoute = 'about';
     <title><?= htmlspecialchars(preview_t('about.page_title'), ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=6">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=1">
     <link rel="stylesheet" href="/preview/css/about-page.css?v=8">
     <style>
         html[dir="rtl"] .preview-about-page { direction: rtl; text-align: right; }
-        html[dir="rtl"] .preview-site-nav { direction: rtl; }
+        html[dir="rtl"] .vpc-bottom-bar { direction: rtl; }
     </style>
 </head>
 <body>
@@ -64,9 +64,12 @@ $currentRoute = 'about';
 </div>
 
 <?php
-$currentRoute = 'about';
-$navPlacement = 'navbar';
-include __DIR__ . '/../components/site_nav.php';
+$bottomBar = array(
+    'mode' => 'nav',
+    'current_route' => 'about',
+    'lang' => $preview_lang,
+);
+include __DIR__ . '/../components/bottom_bar.php';
 ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

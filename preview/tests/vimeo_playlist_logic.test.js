@@ -474,6 +474,20 @@ function simulateSpokenLanguageChange(spokenLangId, stickySpokenLangId, cueTrack
     assert.strictEqual(filteredAfter.length, queueLengthBefore, 'queue length unchanged after track change (D16)');
 })();
 
+// Sticky-by-language via initialSubtitleLang (issue #19)
+(function () {
+    var cueTracksMatch = [
+        { lang: 'es', label: 'a.srt', file: 'x.vtt' },
+        { lang: 'en', label: 'totally_different.srt', file: 'y.vtt' },
+    ];
+    var idx = logic.resolveActiveCaptionTrackIndex(cueTracksMatch, 'es', subtitleLanguagesFixture);
+    assert.strictEqual(idx, 0, 'initialSubtitleLang es selects Spanish track when present');
+
+    var cueTracksNoMatch = [{ lang: 'en', label: 'only_en.srt', file: 'x.vtt' }];
+    var idxFallback = logic.resolveActiveCaptionTrackIndex(cueTracksNoMatch, 'es', subtitleLanguagesFixture);
+    assert.strictEqual(idxFallback, 0, 'initialSubtitleLang es falls back to index 0 when no Spanish track');
+})();
+
 // Sticky-by-language: filename labels differ but lang matches across videos
 (function () {
     var stickySpokenLangId = 'en';

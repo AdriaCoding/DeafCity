@@ -922,7 +922,7 @@
             "es": "LSE Lengua de Signos Española",
             "arq": "لغة الإشارة الإسبانية LSE",
             "it": "LSE Lingua dei Segni Spagnola",
-            "pt": "LSE Língua Gestual Espanhola",
+            "pt": "LSE Língua de Sinais Espanhola",
             "aeb": "لغة الإشارة الإسبانية LSE"
         },
         "seeded": {
@@ -931,7 +931,6 @@
             "es": true,
             "arq": true,
             "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -968,7 +967,7 @@
             "es": "LSF Lengua de Signos Francesa",
             "arq": "لغة الإشارة الفرنسية LSF",
             "it": "LSF Lingua dei Segni Francese",
-            "pt": "LSF Língua Gestual Francesa",
+            "pt": "LSF Língua  de Sinais Francesa",
             "aeb": "لغة الإشارة الفرنسية LSF"
         },
         "seeded": {
@@ -977,7 +976,6 @@
             "es": true,
             "arq": true,
             "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -1014,7 +1012,7 @@
             "es": "LSM Lengua de Señas Mexicana",
             "arq": "لغة الإشارة المكسيكية LSM",
             "it": "LSM Lingua dei Segni Messicana",
-            "pt": "LSM Língua Gestual Mexicana",
+            "pt": "LSM Língua de Sinais Mexicana",
             "aeb": "لغة الإشارة المكسيكية LSM"
         },
         "seeded": {
@@ -1023,7 +1021,6 @@
             "es": true,
             "arq": true,
             "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -1060,7 +1057,7 @@
             "es": "LST Lengua de Signos Tunecina",
             "arq": "لغة الإشارة التونسية LST",
             "it": "LST Lingua dei Segni Tunisina",
-            "pt": "LST Língua Gestual Tunisina",
+            "pt": "LST Língua de Sinais Tunisina",
             "aeb": "لغة الإشارة التونسية LST"
         },
         "seeded": {
@@ -1069,7 +1066,6 @@
             "es": true,
             "arq": true,
             "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -1330,22 +1326,17 @@
         "section": "player",
         "context": "Default option in City\/Edition dropdown",
         "translations": {
-            "en": "All cities",
-            "fr": "Toutes les villes",
-            "ca": "Totes les ciutats",
-            "es": "Todas las ciudades",
+            "en": "Cities",
+            "fr": "Villes",
+            "ca": "Ciutats",
+            "es": "Ciudades",
             "arq": "جميع المدن",
-            "it": "Tutte le città",
-            "pt": "Todas as cidades",
+            "it": "Città",
+            "pt": "Cidades",
             "aeb": "جميع المدن"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
             "arq": true,
-            "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -1353,22 +1344,17 @@
         "section": "player",
         "context": "Default option in Sign language dropdown",
         "translations": {
-            "en": "All sign languages",
-            "fr": "Toutes les langues des signes",
-            "ca": "Totes les llengües de signes",
-            "es": "Todas las lenguas de signos",
+            "en": "Sign Languages",
+            "fr": "Langues des signes",
+            "ca": "Llengües de Signes",
+            "es": "Lenguas de signos",
             "arq": "جميع لغات الإشارة",
-            "it": "Tutte le lingue dei segni",
-            "pt": "Todas as línguas gestuais",
+            "it": "Lingue dei segni",
+            "pt": "Línguas de sinais",
             "aeb": "جميع لغات الإشارة"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
             "arq": true,
-            "it": true,
-            "pt": true,
             "aeb": true
         }
     },
@@ -1376,22 +1362,18 @@
         "section": "player",
         "context": "Default option in Typology dropdown",
         "translations": {
-            "en": "All typologies",
-            "fr": "Toutes les typologies",
-            "ca": "Totes les tipologies",
-            "es": "Todas las tipologías",
+            "en": "Typologies",
+            "fr": "Typologies",
+            "ca": "Tipologies",
+            "es": "Tipologías",
             "arq": "جميع الأنواع",
             "it": "Tutte le tipologie",
-            "pt": "Todas as tipologias",
+            "pt": "Tipologias",
             "aeb": "جميع الأنواع"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
             "arq": true,
             "it": true,
-            "pt": true,
             "aeb": true
         }
     },

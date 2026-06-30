@@ -24,7 +24,7 @@ function gc_assert_not_contains($needle, $haystack, $label) {
 $homePage = dirname(dirname(__FILE__)) . '/index.php';
 $jsPath = dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js';
 $navPath = dirname(dirname(__FILE__)) . '/lib/site_nav_builder.php';
-$cssPath = dirname(dirname(__FILE__)) . '/css/site-nav.css';
+$cssPath = dirname(dirname(__FILE__)) . '/css/bottom-bar.css';
 $pickerCssPath = dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.css';
 
 // ── Neutral home: no green collection nav button ─────────────────────────────

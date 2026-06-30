@@ -30,7 +30,6 @@ if (count($playlist) > 0) {
         'instance_id'    => 'preview-playlist-demo',
         'playlist'       => $playlist,
         'catalog_playlist' => $catalogPlaylist,
-        'site_nav_route' => 'home',
         // Tell JS the server already placed the chosen poster at index 0.
         'playlist_index' => 0,
     ];
@@ -74,8 +73,8 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=36">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=4">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=37">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=1">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -86,7 +85,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
         }
         .preview-block { height: 100%; }
         html[dir="rtl"] .vpc-control-row { direction: rtl; }
-        html[dir="rtl"] .preview-site-nav { direction: rtl; }
+        html[dir="rtl"] .vpc-bottom-bar { direction: rtl; }
     </style>
 </head>
 <body>
@@ -102,6 +101,6 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 </div>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=9"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=38" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=39" defer></script>
 </body>
 </html>

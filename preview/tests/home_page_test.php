@@ -57,11 +57,12 @@ include $homePage;
 $html = ob_get_clean();
 
 assert_contains('vimeo_caption_player', $html, 'player component');
-assert_not_contains('>Player</span>', $html, 'no redundant player button on home');
-assert_not_contains('is-active', $html, 'no active nav button on home');
-assert_contains('href="/preview/about"', $html, 'about nav link');
-assert_contains('preview-site-nav--chrome', $html, 'nav in player chrome');
+assert_contains('vpc-bottom-bar--player', $html, 'unified bottom bar on player page');
 assert_contains('vpc-site-nav-wrap', $html, 'nav in control row');
+assert_contains('data-picker="language"', $html, 'unified language picker on player page');
+assert_contains('aria-current="page"', $html, 'current route highlighted on player page');
+assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker');
+assert_not_contains('preview-site-nav--chrome', $html, 'no legacy chrome nav class');
 assert_contains('vpc-control-row', $html, 'single control row wrapper');
 assert_contains('vpc-control-transport-cluster', $html, 'transport cluster group');
 assert_contains('vpc-control-center', $html, 'play in center cell');
@@ -88,36 +89,30 @@ if (!preg_match('~<div[^>]*vpc-control-transport-cluster[^>]*>.*?vpc-play-pause-
 }
 echo "PASS: play button in transport cluster center cell\n";
 
+assert_contains('href="/preview/about"', $html, 'about nav link');
+
 $navPos = strpos($html, 'vpc-site-nav-wrap');
-$spokenPos = strpos($html, 'data-picker="spoken_language"');
+$langPos = strpos($html, 'data-picker="language"');
 $shufflePos = strpos($html, 'vpc-shuffle-btn');
 $prevPos = strpos($html, 'vpc-prev-btn');
 $nextPos = strpos($html, 'vpc-next-btn');
 $resetPos = strpos($html, 'vpc-reset-btn');
 $filtersPos = strpos($html, 'vpc-r2-filters');
 $signPos = strpos($html, 'data-picker="sign_language"');
-if ($navPos === false || $spokenPos === false || $shufflePos === false || $prevPos === false
+if ($navPos === false || $langPos === false || $shufflePos === false || $prevPos === false
     || $nextPos === false || $resetPos === false || $filtersPos === false || $signPos === false) {
     fwrite(STDERR, "FAIL: missing control-row group markers for order check\n");
     exit(1);
 }
-if (!($navPos < $spokenPos && $spokenPos < $filtersPos && $filtersPos < $signPos
+if (!($navPos < $langPos && $langPos < $filtersPos && $filtersPos < $signPos
     && $signPos < $clusterPos && $clusterPos < $shufflePos && $shufflePos < $prevPos
     && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
-    fwrite(STDERR, "FAIL: control groups should appear nav → spoken → filters → transport cluster\n");
+    fwrite(STDERR, "FAIL: control groups should appear nav → language → filters → transport cluster\n");
     exit(1);
 }
-echo "PASS: control groups in nav → spoken → filters → transport cluster order\n";
+echo "PASS: control groups in nav → language → filters → transport cluster order\n";
 
-if (preg_match('~<div class="vpc-r2-filters"[^>]*>.*?data-picker="spoken_language"~s', $html)) {
-    fwrite(STDERR, "FAIL: Spoken Language picker must not remain inside vpc-r2-filters (D25)\n");
-    exit(1);
-}
-if (!preg_match('~<div[^>]*vpc-control-secondary-l[^>]*>.*?data-picker="spoken_language"~s', $html)) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should be inside vpc-control-secondary-l (D25)\n");
-    exit(1);
-}
-echo "PASS: Spoken Language in secondary-L, not in filters\n";
+assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker in DOM');
 
 // ── Issue #1: paused random poster & no-autoplay ──────────────────────────────
 
@@ -376,13 +371,12 @@ if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
 }
 echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
 
-// Issue #17 (D25): filter pickers in right wing — sign_language → edition → typology
+// Issue #17: filter pickers in right wing — sign_language → edition → typology
 $slPos  = strpos($html, 'data-picker="sign_language"');
-$spPos  = strpos($html, 'data-picker="spoken_language"');
 $edPos  = strpos($html, 'data-picker="edition"');
 $tyPos  = strpos($html, 'data-picker="typology"');
 if ($slPos === false || $edPos === false || $tyPos === false) {
-    fwrite(STDERR, "FAIL: one or more pickers missing from HTML\n");
+    fwrite(STDERR, "FAIL: one or more filter pickers missing from HTML\n");
     exit(1);
 }
 if (!($slPos < $edPos && $edPos < $tyPos)) {
@@ -391,61 +385,25 @@ if (!($slPos < $edPos && $edPos < $tyPos)) {
 }
 echo "PASS: filter pickers in correct DOM order (sign_language → edition → typology)\n";
 
-// ── Issue #6: Spoken Language track selector ──────────────────────────────────
-
-// AC: Control is labelled "Spoken Language" everywhere — no "Captions" or "Subtitle" wording
-assert_not_contains('Captions', $html, 'no "Captions" wording anywhere in HTML');
-assert_not_contains('Subtitle language', $html, 'no "Subtitle language" wording');
-assert_not_contains('Caption language', $html, 'no "Caption language" wording');
-assert_not_contains('caption-lang-select', $html, 'no legacy caption-lang-select element');
-
-// AC: Spoken Language picker renders in R2 using custom picker style
-if ($spPos === false) {
-    fwrite(STDERR, "FAIL: Spoken Language picker (data-picker=\"spoken_language\") missing from HTML\n");
+// Issue #19: unified language picker + initialSubtitleLang in config
+if (!isset($cfg['initialSubtitleLang']) || $cfg['initialSubtitleLang'] !== 'en') {
+    fwrite(STDERR, "FAIL: initialSubtitleLang should be 'en' on default load, got: " . json_encode($cfg['initialSubtitleLang'] ?? null) . "\n");
     exit(1);
 }
-echo "PASS: Spoken Language picker renders in R2 (data-picker=spoken_language)\n";
+echo "PASS: initialSubtitleLang=en in vpc-config on default load\n";
 
-assert_contains('data-generic-label="Spoken Language"', $html, 'Spoken Language picker generic label');
-
-// AC: Spoken Language picker uses custom picker style (vpc-picker-btn, vpc-picker-dropdown)
-// (no native <select> — already checked above in the "no native <select>" assertion)
-
-// Issue #17 (D25): Spoken Language in secondary-L — before transport cluster, not among filter pickers
-$secondaryLPos = strpos($html, 'vpc-control-secondary-l');
-if ($spPos === false || $secondaryLPos === false || $spPos < $secondaryLPos) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should appear inside vpc-control-secondary-l\n");
+$subtitleLangCfg = isset($cfg['subtitleLanguages']) ? $cfg['subtitleLanguages'] : null;
+if (!is_array($subtitleLangCfg) || count($subtitleLangCfg) === 0) {
+    fwrite(STDERR, "FAIL: subtitleLanguages in vpc-config is empty or missing\n");
     exit(1);
 }
-if ($spPos > $clusterPos) {
-    fwrite(STDERR, "FAIL: Spoken Language picker should appear before transport cluster\n");
+echo "PASS: subtitleLanguages present in vpc-config (" . count($subtitleLangCfg) . " entries)\n";
+
+if (preg_match('~data-picker="language"[^>]*data-active="false"~', $html) !== 1) {
+    fwrite(STDERR, "FAIL: language picker should have data-active=\"false\" when lang is en\n");
     exit(1);
 }
-echo "PASS: Spoken Language picker in secondary-L before transport cluster\n";
-
-// AC: Spoken Language picker has disabled "No subtitles" state on initial render (D16′)
-assert_contains('>No subtitles<', $html, 'Spoken Language disabled state says "No subtitles"');
-
-// AC: subtitleLanguages present in vpc-config JSON (JS maps track lang → studio labels)
-$cfg3 = $cfg;
-$subtitleLangCfg = isset($cfg3['subtitleLanguages']) ? $cfg3['subtitleLanguages'] : null;
-if ($subtitleLangCfg !== null) {
-    if (!is_array($subtitleLangCfg) || count($subtitleLangCfg) === 0) {
-        fwrite(STDERR, "FAIL: subtitleLanguages in vpc-config is empty or not an array\n");
-        exit(1);
-    }
-    echo "PASS: subtitleLanguages present in vpc-config (" . count($subtitleLangCfg) . " entries)\n";
-} else {
-    fwrite(STDERR, "FAIL: subtitleLanguages missing from vpc-config\n");
-    exit(1);
-}
-
-// AC: spoken language picker is a track selector — never uses green active styling class hook
-assert_contains('vpc-picker--track-selector', $html, 'spoken language picker has track-selector class');
-
-// AC: No wording that could cause confusion with the category filters in the picker
-// The picker aria-label should say "Spoken Language", not "Caption" or "Subtitle"
-assert_contains('aria-label="Spoken Language"', $html, 'Spoken Language listbox aria-label');
+echo "PASS: language picker neutral when English is active\n";
 
 // ── Issue #3: Shuffle toggle UX (D13) ─────────────────────────────────────────
 

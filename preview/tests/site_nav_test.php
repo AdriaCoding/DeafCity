@@ -35,47 +35,44 @@ function sn_find($links, $route)
     return null;
 }
 
-// chrome placement omits the current route
-$chromeAbout = preview_build_site_nav_links('about', 'chrome', array());
-sn_assert(count($chromeAbout) === 2, 'chrome on about returns two links');
-sn_assert(!in_array('about', sn_routes($chromeAbout), true), 'chrome on about omits about');
-sn_assert(in_array('home', sn_routes($chromeAbout), true), 'chrome on about includes home');
-sn_assert(in_array('participants', sn_routes($chromeAbout), true), 'chrome on about includes participants');
+// All routes always returned (issue #19 — chrome placement retired)
+$aboutLinks = preview_build_site_nav_links('about', 'chrome', array());
+sn_assert(count($aboutLinks) === 3, 'about route returns all three links');
+sn_assert(in_array('about', sn_routes($aboutLinks), true), 'about route includes about');
+sn_assert(in_array('home', sn_routes($aboutLinks), true), 'about route includes home');
+sn_assert(in_array('participants', sn_routes($aboutLinks), true), 'about route includes participants');
 
-// navbar placement includes all routes
-$navbarAbout = preview_build_site_nav_links('about', 'navbar', array());
-sn_assert(count($navbarAbout) === 3, 'navbar on about returns all three routes');
-sn_assert(in_array('about', sn_routes($navbarAbout), true), 'navbar on about includes about');
+$aboutLink = sn_find($aboutLinks, 'about');
+sn_assert($aboutLink !== null, 'about link exists');
+sn_assert($aboutLink['aria_current'] === 'page', 'current route has aria-current=page');
+sn_assert(strpos($aboutLink['class'], 'is-current') !== false, 'current route has is-current class');
 
-$aboutLink = sn_find($navbarAbout, 'about');
-sn_assert($aboutLink !== null, 'navbar about link exists');
-sn_assert($aboutLink['aria_current'] === 'page', 'navbar marks current route with aria-current=page');
-sn_assert(strpos($aboutLink['class'], 'is-current') !== false, 'navbar current route has is-current class');
+$playerLink = sn_find($aboutLinks, 'home');
+sn_assert($playerLink['aria_current'] === '', 'non-current route has no aria-current');
 
-$playerLink = sn_find($navbarAbout, 'home');
-sn_assert($playerLink['aria_current'] === '', 'navbar non-current route has no aria-current');
+// home route on player page
+$homeLinks = preview_build_site_nav_links('home', 'bottom', array());
+sn_assert(count($homeLinks) === 3, 'home route returns all three links');
+$homeLink = sn_find($homeLinks, 'home');
+sn_assert(strpos($homeLink['class'], 'is-current') !== false, 'home marked current on player page');
 
-// active collection surfaces collection label on chrome (D21)
-$chromeHome = preview_build_site_nav_links('home', 'chrome', array('participants' => 'Hamida'));
-$participantsLink = sn_find($chromeHome, 'participants');
-sn_assert($participantsLink !== null, 'chrome home includes participants link');
-sn_assert($participantsLink['label'] === 'Hamida', 'chrome active collection shows participant name');
-sn_assert(strpos($participantsLink['class'], 'is-active') !== false, 'chrome active collection has is-active');
-sn_assert($participantsLink['aria_current'] === 'true', 'chrome active collection has aria-current=true');
+// active collection surfaces collection label when not on that route
+$homeParticipant = preview_build_site_nav_links('home', 'bottom', array('participants' => 'Hamida'));
+$participantsLink = sn_find($homeParticipant, 'participants');
+sn_assert($participantsLink !== null, 'home includes participants link');
+sn_assert($participantsLink['label'] === 'Hamida', 'active collection shows participant name');
+sn_assert(strpos($participantsLink['class'], 'is-active') !== false, 'active collection has is-active');
+sn_assert($participantsLink['aria_current'] === 'true', 'active collection has aria-current=true');
 
-// navbar does not override label with active collection
-$navbarParticipants = preview_build_site_nav_links('participants', 'navbar', array('participants' => 'Hamida'));
-$navParticipantsLink = sn_find($navbarParticipants, 'participants');
-sn_assert($navParticipantsLink['label'] === 'Participants', 'navbar keeps generic Participants label');
-sn_assert($navParticipantsLink['aria_current'] === 'page', 'navbar marks participants as current page');
+// participants page keeps generic label for current route
+$participantsPage = preview_build_site_nav_links('participants', 'bottom', array('participants' => 'Hamida'));
+$navParticipantsLink = sn_find($participantsPage, 'participants');
+sn_assert($navParticipantsLink['label'] === 'Participants', 'participants page keeps generic label');
+sn_assert($navParticipantsLink['aria_current'] === 'page', 'participants page marks current route');
 
-// chrome uses button style; navbar uses button style
-foreach ($chromeAbout as $link) {
-    sn_assert(strpos($link['class'], 'preview-site-nav__btn') !== false, 'chrome links use button class');
-    sn_assert(strpos($link['class'], 'preview-site-nav__link') === false, 'chrome links avoid text link class');
-}
-foreach ($navbarAbout as $link) {
-    sn_assert(strpos($link['class'], 'preview-site-nav__btn') !== false, 'navbar links use button class');
+// all links use button style
+foreach ($aboutLinks as $link) {
+    sn_assert(strpos($link['class'], 'preview-site-nav__btn') !== false, 'links use button class');
 }
 
 // language switcher options
@@ -92,9 +89,9 @@ sn_assert($enOpt !== null, 'language switcher includes English');
 sn_assert($enOpt['href'] === '/preview/about', 'English href omits lang query');
 sn_assert(!empty($enOpt['selected']), 'English selected when current lang is en');
 
-$esNav = preview_build_site_nav_links('about', 'navbar', array(), 'es');
+$esNav = preview_build_site_nav_links('about', 'bottom', array(), 'es');
 $aboutEs = sn_find($esNav, 'about');
-sn_assert(strpos($aboutEs['href'], 'lang=es') !== false, 'navbar links preserve lang query');
+sn_assert(strpos($aboutEs['href'], 'lang=es') !== false, 'nav links preserve lang query');
 
 sn_assert(preview_append_lang_query('/preview/about', 'en') === '/preview/about', 'append lang skips en');
 sn_assert(preview_append_lang_query('/preview/about', 'es') === '/preview/about?lang=es', 'append lang adds query');

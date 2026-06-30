@@ -28,7 +28,7 @@ $html = ob_get_clean();
 
 pp_assert_contains('participants-grid', $html, 'participants grid present');
 pp_assert_not_contains('go back to player', $html, 'no back-to-player link on participants page');
-pp_assert_contains('preview-site-nav--navbar', $html, 'sticky bottom navbar on participants page');
+pp_assert_contains('vpc-bottom-bar--nav', $html, 'sticky bottom bar on participants page');
 pp_assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');
 pp_assert_contains('aria-current="page"', $html, 'navbar marks current page');
 pp_assert_contains('>Participants</a>', $html, 'Participants label in navbar');

@@ -66,15 +66,16 @@ ob_start();
 include $homePage;
 $html = ob_get_clean();
 
-assert_true(strpos($html, 'data-picker="spoken_language"') !== false, 'spoken language picker always present');
-assert_true(strpos($html, 'vpc-picker--track-selector') !== false, 'spoken language picker has track-selector class');
-assert_true(strpos($html, '>No subtitles<') !== false, 'initial disabled state shows No subtitles');
+assert_true(strpos($html, 'data-picker="language"') !== false, 'unified language picker present');
+assert_true(strpos($html, 'data-picker="spoken_language"') === false, 'spoken language picker removed');
 assert_true(strpos($html, 'subtitleLanguages') !== false, 'vpc-config includes subtitleLanguages');
+assert_true(strpos($html, 'initialSubtitleLang') !== false, 'vpc-config includes initialSubtitleLang');
 
 if (preg_match('~<script[^>]+class="vpc-config"[^>]*>(.*?)</script>~s', $html, $m)) {
     $cfg = json_decode(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'), true);
     assert_true(is_array($cfg), 'vpc-config parses');
     assert_true(isset($cfg['subtitleLanguages']) && is_array($cfg['subtitleLanguages']), 'subtitleLanguages in config');
+    assert_eq('en', $cfg['initialSubtitleLang'] ?? null, 'initialSubtitleLang defaults to en');
     $firstWithTracks = null;
     foreach ($cfg['playlist'] as $item) {
         if (!empty($item['tracks']) && !empty($item['tracks'][0]['lang'])) {

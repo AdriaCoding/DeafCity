@@ -475,14 +475,10 @@ $signLangOptionsList = isset($vpc['sign_language_filter']['options']) && is_arra
     : array();
 $useSignLanguageFilter = count($signLangOptionsList) > 0;
 
-// ── R2 Spoken Language track selector (D16′) ─────────────────────────────────
-// NOT a filter — swaps the subtitle track of the current video only.
-// Dropup options are built client-side from the current video's caption tracks.
-// Always present in R2 (disabled with "No subtitles" when the video has none).
+// Subtitle language labels for JS track selection (website lang → subtitle track on load).
 $subtitleLanguagesList = isset($vpc['subtitle_languages']) && is_array($vpc['subtitle_languages'])
     ? $vpc['subtitle_languages']
     : array();
-$useSpokenLanguagePicker = true;
 
 // ── R2 filter row: City/Edition custom picker (D15, D17) ───────────────────────
 $editionOptionsList = isset($vpc['edition_filter']['options']) && is_array($vpc['edition_filter']['options'])
@@ -498,8 +494,7 @@ $useTypologyFilter = count($typologyOptionsList) > 0;
 
 $captionPickerDynamic = false;
 
-// R2 row shows when there is at least one filter picker or the spoken language selector.
-$showR2FilterRow = $useSignLanguageFilter || $useSpokenLanguagePicker || $useEditionFilter || $useTypologyFilter;
+$showR2FilterRow = $useSignLanguageFilter || $useEditionFilter || $useTypologyFilter;
 
 // Prepare sign-language picker config for JS (D18 composable filter state).
 $signLangFilterForConfig = $useSignLanguageFilter
@@ -563,6 +558,8 @@ $config = array(
     'typologyFilter'       => $typologyFilterForConfig,
     // D16′: studio-config subtitle_languages for track lang → label mapping.
     'subtitleLanguages'    => $subtitleLanguagesForConfig,
+    // Website language drives initial subtitle track selection (issue #19).
+    'initialSubtitleLang'  => isset($preview_lang) ? (string) $preview_lang : 'en',
     // D18: Participant mode — non-empty when a participant playlist is active.
     'participantName' => isset($vpc['participant_name']) ? (string)$vpc['participant_name'] : '',
     // Localized chrome strings for JS (player.* keys).
@@ -608,251 +605,41 @@ $navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
         </div>
     </div>
     <?php
-    $signLangPickerId    = $idBase . '__sign-lang-picker';
-    $signLangDropdownId  = $idBase . '__sign-lang-dropdown';
-    $signLangPickerBtnId = $idBase . '__sign-lang-btn';
-
-    $spokenLangPickerId    = $idBase . '__spoken-lang-picker';
-    $spokenLangDropdownId  = $idBase . '__spoken-lang-dropdown';
-    $spokenLangPickerBtnId = $idBase . '__spoken-lang-btn';
-
-    $editionPickerId    = $idBase . '__edition-picker';
-    $editionDropdownId  = $idBase . '__edition-dropdown';
-    $editionPickerBtnId = $idBase . '__edition-btn';
-
-    $typologyPickerId    = $idBase . '__typology-picker';
-    $typologyDropdownId  = $idBase . '__typology-dropdown';
-    $typologyPickerBtnId = $idBase . '__typology-btn';
-
-    $siteNavRoute = isset($vpc['site_nav_route']) ? trim((string) $vpc['site_nav_route']) : '';
-    $siteNavHtml = '';
-    if ($siteNavRoute !== '') {
-        $currentRoute = $siteNavRoute;
-        $navPlacement = 'chrome';
-        $activeCollections = array();
-        $participantNavName = isset($vpc['participant_name']) ? trim((string) $vpc['participant_name']) : '';
-        if ($participantNavName !== '') {
-            $activeCollections['participants'] = $participantNavName;
-        }
-        ob_start();
-        include dirname(__DIR__) . '/components/site_nav.php';
-        $siteNavHtml = ob_get_clean();
+    $bottomBarActiveCollections = array();
+    $participantNavName = isset($vpc['participant_name']) ? trim((string) $vpc['participant_name']) : '';
+    if ($participantNavName !== '') {
+        $bottomBarActiveCollections['participants'] = $participantNavName;
     }
+    $bottomBar = array(
+        'mode' => 'player',
+        'current_route' => 'home',
+        'lang' => isset($preview_lang) ? (string) $preview_lang : 'en',
+        'active_collections' => $bottomBarActiveCollections,
+        'player' => array(
+            'transport_id' => $transportId,
+            'iframe_id' => $iframeId,
+            'nav_hidden_class' => $navHiddenClass,
+            'show_r2_filter_row' => $showR2FilterRow,
+            'sign_lang_picker_id' => $idBase . '__sign-lang-picker',
+            'sign_lang_dropdown_id' => $idBase . '__sign-lang-dropdown',
+            'sign_lang_picker_btn_id' => $idBase . '__sign-lang-btn',
+            'edition_picker_id' => $idBase . '__edition-picker',
+            'edition_dropdown_id' => $idBase . '__edition-dropdown',
+            'edition_picker_btn_id' => $idBase . '__edition-btn',
+            'typology_picker_id' => $idBase . '__typology-picker',
+            'typology_dropdown_id' => $idBase . '__typology-dropdown',
+            'typology_picker_btn_id' => $idBase . '__typology-btn',
+            'use_sign_language_filter' => $useSignLanguageFilter,
+            'use_edition_filter' => $useEditionFilter,
+            'use_typology_filter' => $useTypologyFilter,
+            'sign_lang_options' => $signLangOptionsList,
+            'edition_options' => $editionOptionsList,
+            'typology_options' => $typologyOptionsList,
+            'initial_sign_lang_readout' => $initialSignLangReadout,
+            'initial_edition_readout' => $initialEditionReadout,
+            'initial_typology_readout' => $initialTypologyReadout,
+        ),
+    );
+    include dirname(__DIR__) . '/components/bottom_bar.php';
     ?>
-    <div
-        id="<?php echo htmlspecialchars($transportId, ENT_QUOTES, 'UTF-8'); ?>"
-        class="vpc-control-row"
-    >
-        <div class="vpc-control-secondary">
-            <?php if ($siteNavHtml !== '' || $useSpokenLanguagePicker): ?>
-            <div class="vpc-control-secondary-l">
-                <?php if ($siteNavHtml !== ''): ?>
-                <div class="vpc-site-nav-wrap vpc-control-zone vpc-control-zone--nav">
-                    <?php echo $siteNavHtml; ?>
-                </div>
-                <?php endif; ?>
-                <?php if ($useSpokenLanguagePicker): ?>
-                <?php
-                /*
-                 * Spoken Language picker (D16′, D25) — left of transport cluster, not filters.
-                 * data-picker="spoken_language" — JS identifies this picker by attribute.
-                 */
-                ?>
-                <div
-                    class="vpc-picker vpc-picker--track-selector"
-                    id="<?php echo htmlspecialchars($spokenLangPickerId, ENT_QUOTES, 'UTF-8'); ?>"
-                    data-picker="spoken_language"
-                    data-disabled="true"
-                >
-                    <button
-                        type="button"
-                        id="<?php echo htmlspecialchars($spokenLangPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-btn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        aria-controls="<?php echo htmlspecialchars($spokenLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        data-generic-label="<?= htmlspecialchars(preview_t('player.spoken_language.label'), ENT_QUOTES, 'UTF-8') ?>"
-                        disabled
-                    ><?= htmlspecialchars(preview_t('player.spoken_language.no_subtitles'), ENT_QUOTES, 'UTF-8') ?></button>
-                    <ul
-                        role="listbox"
-                        id="<?php echo htmlspecialchars($spokenLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-dropdown"
-                        aria-label="<?= htmlspecialchars(preview_t('player.spoken_language.label'), ENT_QUOTES, 'UTF-8') ?>"
-                        hidden
-                    ></ul>
-                </div>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
-            <?php if ($showR2FilterRow): ?>
-            <div class="vpc-control-secondary-r">
-            <div class="vpc-r2-filters vpc-control-zone vpc-control-zone--filters" role="group" aria-label="<?= htmlspecialchars(preview_t('player.aria.filters'), ENT_QUOTES, 'UTF-8') ?>">
-                <?php if ($useSignLanguageFilter): ?>
-                <div
-                    class="vpc-picker"
-                    id="<?php echo htmlspecialchars($signLangPickerId, ENT_QUOTES, 'UTF-8'); ?>"
-                    data-picker="sign_language"
-                    data-active="false"
-                >
-                    <button
-                        type="button"
-                        id="<?php echo htmlspecialchars($signLangPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-btn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        aria-controls="<?php echo htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        data-generic-label="<?= htmlspecialchars(preview_t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?php echo htmlspecialchars($initialSignLangReadout, ENT_QUOTES, 'UTF-8'); ?></button>
-                    <ul
-                        role="listbox"
-                        id="<?php echo htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-dropdown"
-                        aria-label="<?= htmlspecialchars(preview_t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') ?>"
-                        hidden
-                    >
-                        <li
-                            role="option"
-                            class="vpc-picker-option vpc-picker-clear"
-                            data-value=""
-                            aria-selected="true"
-                        ><?= htmlspecialchars(preview_t('player.filter.all_sign_languages'), ENT_QUOTES, 'UTF-8') ?></li>
-                        <?php foreach ($signLangOptionsList as $opt): ?>
-                            <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
-                        <li
-                            role="option"
-                            class="vpc-picker-option"
-                            data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
-                            aria-selected="false"
-                        ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <?php endif; ?>
-                <?php if ($useEditionFilter): ?>
-                <div
-                    class="vpc-picker"
-                    id="<?php echo htmlspecialchars($editionPickerId, ENT_QUOTES, 'UTF-8'); ?>"
-                    data-picker="edition"
-                    data-active="false"
-                >
-                    <button
-                        type="button"
-                        id="<?php echo htmlspecialchars($editionPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-btn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        aria-controls="<?php echo htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        data-generic-label="<?= htmlspecialchars(preview_t('player.filter.city_edition'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?php echo htmlspecialchars($initialEditionReadout, ENT_QUOTES, 'UTF-8'); ?></button>
-                    <ul
-                        role="listbox"
-                        id="<?php echo htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-dropdown"
-                        aria-label="<?= htmlspecialchars(preview_t('player.filter.city_edition'), ENT_QUOTES, 'UTF-8') ?>"
-                        hidden
-                    >
-                        <li
-                            role="option"
-                            class="vpc-picker-option vpc-picker-clear"
-                            data-value=""
-                            aria-selected="true"
-                        ><?= htmlspecialchars(preview_t('player.filter.all_cities'), ENT_QUOTES, 'UTF-8') ?></li>
-                        <?php foreach ($editionOptionsList as $opt): ?>
-                            <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
-                        <li
-                            role="option"
-                            class="vpc-picker-option"
-                            data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
-                            aria-selected="false"
-                        ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <?php endif; ?>
-                <?php if ($useTypologyFilter): ?>
-                <div
-                    class="vpc-picker"
-                    id="<?php echo htmlspecialchars($typologyPickerId, ENT_QUOTES, 'UTF-8'); ?>"
-                    data-picker="typology"
-                    data-active="false"
-                >
-                    <button
-                        type="button"
-                        id="<?php echo htmlspecialchars($typologyPickerBtnId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-btn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        aria-controls="<?php echo htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        data-generic-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?php echo htmlspecialchars($initialTypologyReadout, ENT_QUOTES, 'UTF-8'); ?></button>
-                    <ul
-                        role="listbox"
-                        id="<?php echo htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8'); ?>"
-                        class="vpc-picker-dropdown"
-                        aria-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
-                        hidden
-                    >
-                        <li
-                            role="option"
-                            class="vpc-picker-option vpc-picker-clear"
-                            data-value=""
-                            aria-selected="true"
-                        ><?= htmlspecialchars(preview_t('player.filter.all_typologies'), ENT_QUOTES, 'UTF-8') ?></li>
-                        <?php foreach ($typologyOptionsList as $opt): ?>
-                            <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
-                        <li
-                            role="option"
-                            class="vpc-picker-option"
-                            data-value="<?php echo htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8'); ?>"
-                            aria-selected="false"
-                        ><?php echo htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <?php endif; ?>
-            </div>
-            </div>
-            <?php endif; ?>
-        </div>
-        <div
-            class="vpc-control-transport-cluster"
-            role="group"
-            aria-label="<?= htmlspecialchars(preview_t('player.aria.playback'), ENT_QUOTES, 'UTF-8') ?>"
-        >
-            <button
-                type="button"
-                class="vpc-shuffle-btn<?php echo $navHiddenClass; ?>"
-                aria-pressed="true"
-                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.shuffle'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">shuffle</span></button>
-            <button
-                type="button"
-                class="vpc-prev-btn<?php echo $navHiddenClass; ?>"
-                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.prev'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
-            <div class="vpc-control-center">
-                <button
-                    type="button"
-                    class="vpc-play-pause-btn"
-                    aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                    aria-label="<?= htmlspecialchars(preview_t('player.transport.play'), ENT_QUOTES, 'UTF-8') ?>"
-                ><span class="material-icons" aria-hidden="true">play_arrow</span></button>
-            </div>
-            <button
-                type="button"
-                class="vpc-next-btn<?php echo $navHiddenClass; ?>"
-                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.next'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">skip_next</span></button>
-            <button
-                type="button"
-                class="vpc-reset-btn"
-                aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">replay</span></button>
-        </div>
-    </div>
 </div>

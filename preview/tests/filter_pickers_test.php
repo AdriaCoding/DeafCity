@@ -121,13 +121,13 @@ foreach (array(
     }
 }
 
-// Spoken Language never green on load
-assert_true(strpos($html, 'vpc-picker--track-selector') !== false, 'spoken language track selector class');
+// Unified language picker on player page (issue #19)
+assert_true(strpos($html, 'data-picker="language"') !== false, 'unified language picker on player page');
 if (preg_match('~data-picker="spoken_language"[^>]*data-active="true"~', $html)) {
-    fwrite(STDERR, "FAIL: spoken language picker must never be data-active=true (D21)\n");
+    fwrite(STDERR, "FAIL: spoken language picker removed — should not appear\n");
     exit(1);
 }
-echo "PASS: spoken language picker not green on load\n";
+echo "PASS: spoken language picker removed from player page\n";
 
 // Load shared logic for unit-testable filter helpers
 $logicPath = dirname(dirname(__FILE__)) . '/js/vimeo_playlist_logic.js';

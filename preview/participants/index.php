@@ -27,11 +27,11 @@ $currentRoute = 'participants';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/css/site-nav.css?v=6">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=1">
     <link rel="stylesheet" href="/preview/css/participants-page.css?v=10">
     <style>
         html[dir="rtl"] .preview-participants-page { direction: rtl; }
-        html[dir="rtl"] .preview-site-nav { direction: rtl; }
+        html[dir="rtl"] .vpc-bottom-bar { direction: rtl; }
     </style>
 </head>
 <body>
@@ -63,9 +63,12 @@ $currentRoute = 'participants';
 </div>
 
 <?php
-$currentRoute = 'participants';
-$navPlacement = 'navbar';
-include __DIR__ . '/../components/site_nav.php';
+$bottomBar = array(
+    'mode' => 'nav',
+    'current_route' => 'participants',
+    'lang' => $preview_lang,
+);
+include __DIR__ . '/../components/bottom_bar.php';
 ?>
 
 <script>
