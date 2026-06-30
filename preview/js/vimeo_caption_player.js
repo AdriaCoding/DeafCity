@@ -760,13 +760,16 @@
                           })
                         : Promise.resolve(0);
                 return Promise.all([wP, hP]).then(function (dims) {
-                    iframe.style.aspectRatio = aspectRatioFrom(dims[0], dims[1]);
+                    var ratio = aspectRatioFrom(dims[0], dims[1]);
+                    iframe.style.aspectRatio = ratio;
+                    if (videoShell) videoShell.style.aspectRatio = ratio;
                     syncCaptionTypography('aspectRatio');
                 });
             }
 
             function resetVideoAspectPlaceholder() {
                 if (iframe) iframe.style.aspectRatio = '16 / 9';
+                if (videoShell) videoShell.style.aspectRatio = '';
             }
 
             function iframeEmbedVideoId() {
