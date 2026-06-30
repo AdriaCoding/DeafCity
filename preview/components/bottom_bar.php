@@ -51,16 +51,9 @@ $langDropdownId = 'preview-lang-dropdown';
 
 $barClass = 'vpc-bottom-bar vpc-bottom-bar--' . ($mode === 'player' ? 'player' : 'nav');
 
-/**
- * Render nav links + unified language picker (shared by both modes).
- */
-if (!function_exists('preview_render_bottom_bar_nav')) {
-    function preview_render_bottom_bar_nav($links, $langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId)
+if (!function_exists('preview_render_nav_link')) {
+    function preview_render_nav_link($link)
     {
-    ?>
-    <nav class="preview-site-nav" aria-label="Site">
-    <?php foreach ($links as $link): ?>
-        <?php
         $collectionAttr = '';
         if ($link['data_collection'] !== '') {
             $collectionAttr = ' data-collection="' . htmlspecialchars($link['data_collection'], ENT_QUOTES, 'UTF-8') . '"'
@@ -71,8 +64,17 @@ if (!function_exists('preview_render_bottom_bar_nav')) {
             : '';
         ?>
         <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?>><?= htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8') ?></a>
-    <?php endforeach; ?>
-    <?php if (count($langOptions) > 1): ?>
+        <?php
+    }
+}
+
+if (!function_exists('preview_render_lang_picker')) {
+    function preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId)
+    {
+        if (count($langOptions) <= 1) {
+            return;
+        }
+        ?>
         <div
             class="vpc-picker preview-lang-picker"
             id="<?= htmlspecialchars($langPickerId, ENT_QUOTES, 'UTF-8') ?>"
@@ -105,7 +107,44 @@ if (!function_exists('preview_render_bottom_bar_nav')) {
                 <?php endforeach; ?>
             </ul>
         </div>
-    <?php endif; ?>
+        <?php
+    }
+}
+
+if (!function_exists('preview_nav_links_for_routes')) {
+    /**
+     * @param array<int, array<string, mixed>> $links
+     * @param array<int, string> $routes
+     * @return array<int, array<string, mixed>>
+     */
+    function preview_nav_links_for_routes($links, $routes)
+    {
+        $byRoute = array();
+        foreach ($links as $link) {
+            $byRoute[$link['route']] = $link;
+        }
+        $out = array();
+        foreach ($routes as $route) {
+            if (isset($byRoute[$route])) {
+                $out[] = $byRoute[$route];
+            }
+        }
+        return $out;
+    }
+}
+
+/**
+ * Render nav links + unified language picker (nav mode on About/Participants pages).
+ */
+if (!function_exists('preview_render_bottom_bar_nav')) {
+    function preview_render_bottom_bar_nav($links, $langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId)
+    {
+    ?>
+    <nav class="preview-site-nav" aria-label="Site">
+    <?php foreach ($links as $link): ?>
+        <?php preview_render_nav_link($link); ?>
+    <?php endforeach; ?>
+    <?php preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
     </nav>
     <?php
     }
@@ -138,6 +177,8 @@ if ($mode === 'player'):
     $initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout']) ? (string) $playerCfg['initial_sign_lang_readout'] : '';
     $initialEditionReadout = isset($playerCfg['initial_edition_readout']) ? (string) $playerCfg['initial_edition_readout'] : '';
     $initialTypologyReadout = isset($playerCfg['initial_typology_readout']) ? (string) $playerCfg['initial_typology_readout'] : '';
+    $leftNavLinks = preview_nav_links_for_routes($links, array('about', 'home'));
+    $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
     ?>
 <div class="<?= htmlspecialchars($barClass, ENT_QUOTES, 'UTF-8') ?>">
     <div
@@ -146,12 +187,56 @@ if ($mode === 'player'):
     >
         <div class="vpc-control-secondary">
             <div class="vpc-control-secondary-l">
-                <div class="vpc-site-nav-wrap vpc-control-zone vpc-control-zone--nav">
-                    <?php preview_render_bottom_bar_nav($links, $langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
+                <nav class="preview-site-nav vpc-site-nav-wrap vpc-control-zone vpc-control-zone--nav" aria-label="Site">
+                <?php foreach ($leftNavLinks as $link): ?>
+                    <?php preview_render_nav_link($link); ?>
+                <?php endforeach; ?>
+                </nav>
+                <?php if ($useTypologyFilter): ?>
+                <div
+                    class="vpc-picker"
+                    id="<?= htmlspecialchars($typologyPickerId, ENT_QUOTES, 'UTF-8') ?>"
+                    data-picker="typology"
+                    data-active="false"
+                >
+                    <button
+                        type="button"
+                        id="<?= htmlspecialchars($typologyPickerBtnId, ENT_QUOTES, 'UTF-8') ?>"
+                        class="vpc-picker-btn"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-controls="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
+                        data-generic-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
+                    ><?= htmlspecialchars($initialTypologyReadout, ENT_QUOTES, 'UTF-8') ?></button>
+                    <ul
+                        role="listbox"
+                        id="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
+                        class="vpc-picker-dropdown"
+                        aria-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
+                        hidden
+                    >
+                        <li
+                            role="option"
+                            class="vpc-picker-option vpc-picker-clear"
+                            data-value=""
+                            aria-selected="true"
+                        ><?= htmlspecialchars(preview_t('player.filter.all_typologies'), ENT_QUOTES, 'UTF-8') ?></li>
+                        <?php foreach ($typologyOptionsList as $opt): ?>
+                            <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
+                        <li
+                            role="option"
+                            class="vpc-picker-option"
+                            data-value="<?= htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8') ?>"
+                            aria-selected="false"
+                        ><?= htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8') ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 </div>
+                <?php endif; ?>
+                <?php preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
             </div>
-            <?php if ($showR2FilterRow): ?>
             <div class="vpc-control-secondary-r">
+            <?php if ($useSignLanguageFilter || $useEditionFilter): ?>
             <div class="vpc-r2-filters vpc-control-zone vpc-control-zone--filters" role="group" aria-label="<?= htmlspecialchars(preview_t('player.aria.filters'), ENT_QUOTES, 'UTF-8') ?>">
                 <?php if ($useSignLanguageFilter): ?>
                 <div
@@ -235,50 +320,14 @@ if ($mode === 'player'):
                     </ul>
                 </div>
                 <?php endif; ?>
-                <?php if ($useTypologyFilter): ?>
-                <div
-                    class="vpc-picker"
-                    id="<?= htmlspecialchars($typologyPickerId, ENT_QUOTES, 'UTF-8') ?>"
-                    data-picker="typology"
-                    data-active="false"
-                >
-                    <button
-                        type="button"
-                        id="<?= htmlspecialchars($typologyPickerBtnId, ENT_QUOTES, 'UTF-8') ?>"
-                        class="vpc-picker-btn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        aria-controls="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
-                        data-generic-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?= htmlspecialchars($initialTypologyReadout, ENT_QUOTES, 'UTF-8') ?></button>
-                    <ul
-                        role="listbox"
-                        id="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
-                        class="vpc-picker-dropdown"
-                        aria-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
-                        hidden
-                    >
-                        <li
-                            role="option"
-                            class="vpc-picker-option vpc-picker-clear"
-                            data-value=""
-                            aria-selected="true"
-                        ><?= htmlspecialchars(preview_t('player.filter.all_typologies'), ENT_QUOTES, 'UTF-8') ?></li>
-                        <?php foreach ($typologyOptionsList as $opt): ?>
-                            <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
-                        <li
-                            role="option"
-                            class="vpc-picker-option"
-                            data-value="<?= htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8') ?>"
-                            aria-selected="false"
-                        ><?= htmlspecialchars((string) $opt['label'], ENT_QUOTES, 'UTF-8') ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-                <?php endif; ?>
-            </div>
             </div>
             <?php endif; ?>
+            <nav class="preview-site-nav vpc-control-zone vpc-control-zone--nav-r" aria-label="Collections">
+                <?php foreach ($rightNavLinks as $link): ?>
+                    <?php preview_render_nav_link($link); ?>
+                <?php endforeach; ?>
+            </nav>
+            </div>
         </div>
         <div
             class="vpc-control-transport-cluster"

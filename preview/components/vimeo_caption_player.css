@@ -137,6 +137,9 @@
     gap: 0.5rem;
     min-width: 0;
 }
+.vpc-control-zone--nav-r {
+    flex-wrap: nowrap;
+}
 .vpc-control-secondary-l {
     grid-column: 1;
     grid-row: 1;

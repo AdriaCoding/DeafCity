@@ -91,26 +91,31 @@ echo "PASS: play button in transport cluster center cell\n";
 
 assert_contains('href="/preview/about"', $html, 'about nav link');
 
-$navPos = strpos($html, 'vpc-site-nav-wrap');
+$aboutPos = strpos($html, 'href="/preview/about"');
+$playerPos = strpos($html, 'href="/preview/"');
+$typPos = strpos($html, 'data-picker="typology"');
 $langPos = strpos($html, 'data-picker="language"');
+$signPos = strpos($html, 'data-picker="sign_language"');
+$edPos = strpos($html, 'data-picker="edition"');
+$partPos = strpos($html, 'href="/preview/participants"');
 $shufflePos = strpos($html, 'vpc-shuffle-btn');
 $prevPos = strpos($html, 'vpc-prev-btn');
 $nextPos = strpos($html, 'vpc-next-btn');
 $resetPos = strpos($html, 'vpc-reset-btn');
-$filtersPos = strpos($html, 'vpc-r2-filters');
-$signPos = strpos($html, 'data-picker="sign_language"');
-if ($navPos === false || $langPos === false || $shufflePos === false || $prevPos === false
-    || $nextPos === false || $resetPos === false || $filtersPos === false || $signPos === false) {
-    fwrite(STDERR, "FAIL: missing control-row group markers for order check\n");
+if ($aboutPos === false || $playerPos === false || $typPos === false || $langPos === false
+    || $signPos === false || $edPos === false || $partPos === false
+    || $shufflePos === false || $prevPos === false || $nextPos === false || $resetPos === false) {
+    fwrite(STDERR, "FAIL: missing control-row markers for player wing order check\n");
     exit(1);
 }
-if (!($navPos < $langPos && $langPos < $filtersPos && $filtersPos < $signPos
-    && $signPos < $clusterPos && $clusterPos < $shufflePos && $shufflePos < $prevPos
+if (!($aboutPos < $playerPos && $playerPos < $typPos && $typPos < $langPos
+    && $langPos < $signPos && $signPos < $edPos && $edPos < $partPos
+    && $partPos < $clusterPos && $clusterPos < $shufflePos && $shufflePos < $prevPos
     && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
-    fwrite(STDERR, "FAIL: control groups should appear nav → language → filters → transport cluster\n");
+    fwrite(STDERR, "FAIL: player wings should be About → Player → Typology → Language → Sign lang → Edition → Participants → transport\n");
     exit(1);
 }
-echo "PASS: control groups in nav → language → filters → transport cluster order\n";
+echo "PASS: player wing order About → Player → Typology → Language | Sign lang → Edition → Participants\n";
 
 assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker in DOM');
 
@@ -371,7 +376,7 @@ if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
 }
 echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
 
-// Issue #17: filter pickers in right wing — sign_language → edition → typology
+// Player wing filter order: sign_language → edition (typology is on the left wing)
 $slPos  = strpos($html, 'data-picker="sign_language"');
 $edPos  = strpos($html, 'data-picker="edition"');
 $tyPos  = strpos($html, 'data-picker="typology"');
@@ -379,11 +384,11 @@ if ($slPos === false || $edPos === false || $tyPos === false) {
     fwrite(STDERR, "FAIL: one or more filter pickers missing from HTML\n");
     exit(1);
 }
-if (!($slPos < $edPos && $edPos < $tyPos)) {
-    fwrite(STDERR, "FAIL: filter picker order should be sign_language → edition → typology in DOM\n");
+if (!($tyPos < $slPos && $slPos < $edPos)) {
+    fwrite(STDERR, "FAIL: typology on left wing; right wing filters should be sign_language → edition\n");
     exit(1);
 }
-echo "PASS: filter pickers in correct DOM order (sign_language → edition → typology)\n";
+echo "PASS: typology on left; sign_language → edition on right wing\n";
 
 // Issue #19: unified language picker + initialSubtitleLang in config
 if (!isset($cfg['initialSubtitleLang']) || $cfg['initialSubtitleLang'] !== 'en') {
