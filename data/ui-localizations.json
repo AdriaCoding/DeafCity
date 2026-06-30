@@ -1450,19 +1450,17 @@
         "section": "player",
         "context": "Site nav link to About page",
         "translations": {
-            "en": "About",
-            "fr": "À propos",
-            "ca": "Presentació",
-            "es": "Presentación",
+            "en": "?",
+            "fr": "?",
+            "ca": "?",
+            "es": "?",
             "arq": "حول",
-            "it": "Info",
-            "pt": "Apresentação",
+            "it": "?",
+            "pt": "?",
             "aeb": "عن"
         },
         "seeded": {
-            "fr": true,
             "arq": true,
-            "it": true,
             "aeb": true
         }
     },
