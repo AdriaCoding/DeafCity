@@ -1,3 +1,12 @@
+<?php
+if (!function_exists('preview_t')) {
+    require_once dirname(dirname(__DIR__)) . '/preview/lib/preview_locale.php';
+}
+if (!isset($GLOBALS['preview_i18n']) || !($GLOBALS['preview_i18n'] instanceof PreviewI18n)) {
+    $__todo_locale = preview_bootstrap_locale();
+    $GLOBALS['preview_i18n'] = $__todo_locale['i18n'];
+}
+?>
 <b><?= htmlspecialchars(preview_t('about.block.deaf_city.title'), ENT_QUOTES, 'UTF-8') ?></b>
 <p class="style1"><?= preview_t('about.block.deaf_city.p1') ?></p>
 
