@@ -6,21 +6,26 @@
 
 .vpc-bottom-bar .preview-site-nav {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     margin: 0;
     padding: 0;
 }
 
-/* Player mode: flex child of .preview-vimeo-player-root (not fixed) */
-.vpc-bottom-bar--player {
-    flex-shrink: 0;
+/* Shared chrome cluster — Player, About, Participants, Language (all pages) */
+.vpc-bar-zone--chrome {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    min-width: 0;
 }
 
-.vpc-bottom-bar--player .preview-site-nav {
-    flex-wrap: nowrap;
+.vpc-bottom-bar--nav .vpc-bar-zone--chrome {
+    width: 100%;
 }
 
 /* Nav mode: fixed bottom bar on About / Participants pages */
@@ -35,6 +40,11 @@
     background: rgba(255, 255, 255, 0.97);
     border-top: 1px solid #ccc;
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Player mode: flex child of .preview-vimeo-player-root (not fixed) */
+.vpc-bottom-bar--player {
+    flex-shrink: 0;
 }
 
 /* Shared nav link button face */
@@ -198,4 +208,16 @@ a.preview-site-nav__btn[aria-current="page"]:hover {
 
 .vpc-bottom-bar .vpc-picker-option[aria-selected="true"]:hover {
     background: rgb(0, 100, 0);
+}
+
+/* Mobile: center the nav chrome row (player bottom row + About/Participants bar) */
+@media screen and (max-width: 1024px) {
+    .vpc-bar-zone--chrome {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .vpc-bottom-bar .preview-site-nav {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
