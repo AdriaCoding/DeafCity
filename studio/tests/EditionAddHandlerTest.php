@@ -37,6 +37,7 @@ class EditionAddHandlerTest extends TestCase
         $reloaded = new StudioConfig($this->configPath);
         $ids = array_column($reloaded->getEditions(), 'id');
         $this->assertContains('2027-lisboa', $ids);
+        $this->assertSame('2027-lisboa', $ids[0], 'new editions are prepended to the top');
     }
 
     public function test_rejects_duplicate_edition(): void

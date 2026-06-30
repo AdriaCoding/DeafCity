@@ -810,6 +810,21 @@ var allOptionsByFacet = {
     assert.ok(cascade.typology.length >= 2, 'typology options present for valencia videos');
 })();
 
+// D17′: edition dropup follows studio-config order, not alphabetical
+(function () {
+    var cascade = logic.buildCascadingFilterOptions(
+        samplePlaylist,
+        { sign_language: null, edition: null, typology: null },
+        allOptionsByFacet
+    );
+    var editionValues = cascade.edition.map(function (opt) { return opt.value; });
+    assert.deepStrictEqual(
+        editionValues,
+        ['2023-sao-paulo', '2020-valencia', '2023-bilbao', '2021-mexico', '2028-salamanca'],
+        'edition options follow catalog order'
+    );
+})();
+
 // D17′: AND composition never empty when UI only offers cascading values
 (function () {
     var cascade = logic.buildCascadingFilterOptions(

@@ -435,6 +435,23 @@
     }
 
     /**
+     * Index of a facet value in the studio-config catalog (preserves config order).
+     * @param {string} value
+     * @param {Array<{ value?: string, label?: string }>} catalog
+     * @returns {number}
+     */
+    function catalogOptionIndex(value, catalog) {
+        var list = Array.isArray(catalog) ? catalog : [];
+        var i;
+        for (i = 0; i < list.length; i++) {
+            if (list[i] && list[i].value === value) {
+                return i;
+            }
+        }
+        return 999;
+    }
+
+    /**
      * Distinct facet values present in a subset of the master playlist.
      * @param {Array<{ signLanguage?: string, edition?: string, typology?: string }>} fullPlaylistItems
      * @param {number[]} masterIndices
@@ -496,6 +513,13 @@
                 });
             }
             opts.sort(function (a, b) {
+                if (facet === 'edition') {
+                    var orderA = catalogOptionIndex(a.value, catalog);
+                    var orderB = catalogOptionIndex(b.value, catalog);
+                    if (orderA !== orderB) {
+                        return orderA - orderB;
+                    }
+                }
                 return String(a.label).localeCompare(String(b.label), undefined, { sensitivity: 'base' });
             });
             result[facet] = opts;

@@ -30,7 +30,45 @@ class StudioConfig
             throw new \InvalidArgumentException('Invalid edition id.');
         }
 
-        $this->appendConfigEntry('editions', $id, $label);
+        $this->prependConfigEntry('editions', $id, $label);
+    }
+
+    private function prependConfigEntry(string $listKey, string $id, string $label): void
+    {
+        $fp = fopen($this->configPath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open studio config for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $data = json_decode($raw ?: '', true);
+        if (!is_array($data)) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid studio config JSON.');
+        }
+
+        $entries = $data[$listKey] ?? [];
+        foreach ($entries as $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                flock($fp, LOCK_UN);
+                fclose($fp);
+                throw new \RuntimeException('Config entry already exists.');
+            }
+        }
+
+        array_unshift($entries, ['id' => $id, 'label' => $label]);
+        $data[$listKey] = $entries;
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        $this->data = $data;
     }
 
     private function appendConfigEntry(string $listKey, string $id, string $label): void
