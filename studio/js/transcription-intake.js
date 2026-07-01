@@ -1,6 +1,23 @@
-/* transcription-intake.js — auto-detect audio language from filename suffix */
+/* transcription-intake.js — auto-detect language from filename suffix */
 (function () {
     'use strict';
+
+    var AUDIO_EXTENSIONS = ['mp3', 'wav', 'm4a', 'aac', 'ogg', 'oga', 'flac', 'webm', 'wma', 'mp4', 'opus'];
+
+    function fileExtension(filename) {
+        var match = filename.replace(/^.*[\\/]/, '').match(/\.([^.]+)$/);
+        return match ? match[1].toLowerCase() : '';
+    }
+
+    function isSubtitleFile(filename) {
+        var ext = fileExtension(filename);
+        return ext === 'vtt' || ext === 'srt';
+    }
+
+    function isAudioFile(filename) {
+        var ext = fileExtension(filename);
+        return AUDIO_EXTENSIONS.indexOf(ext) !== -1;
+    }
 
     function detectSubtitleLanguageFromFilename(filename, languages) {
         var stem = filename.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '').toLowerCase();
@@ -66,6 +83,15 @@
         });
     }
 
+    function showBulkError(bulkContainer, message) {
+        bulkContainer.style.display = '';
+        bulkContainer.innerHTML = '';
+        var error = document.createElement('p');
+        error.className = 'error';
+        error.textContent = message;
+        bulkContainer.appendChild(error);
+    }
+
     function renderBulkTable(fileInput, languages, singleField, bulkContainer, templateSelect) {
         var files = fileInput.files;
         if (!files || files.length < 2) {
@@ -76,6 +102,33 @@
                 templateSelect.required = true;
             }
             return 'single';
+        }
+
+        for (var j = 0; j < files.length; j++) {
+            if (isSubtitleFile(files[j].name)) {
+                singleField.style.display = '';
+                bulkContainer.style.display = '';
+                if (templateSelect) {
+                    templateSelect.required = true;
+                }
+                showBulkError(
+                    bulkContainer,
+                    'La transcripció en massa només accepta fitxers d\'àudio. Pugeu un sol fitxer .vtt o .srt.'
+                );
+                return 'bulk-error';
+            }
+            if (!isAudioFile(files[j].name)) {
+                singleField.style.display = '';
+                bulkContainer.style.display = '';
+                if (templateSelect) {
+                    templateSelect.required = true;
+                }
+                showBulkError(
+                    bulkContainer,
+                    'Format no reconegut. En mode massa, només s\'accepten fitxers d\'àudio.'
+                );
+                return 'bulk-error';
+            }
         }
 
         singleField.style.display = 'none';
@@ -117,6 +170,7 @@
         var languageSelect = document.getElementById('subtitle_language');
         var singleField = document.getElementById('single-language-field');
         var bulkContainer = document.getElementById('bulk-language-table');
+        var form = document.getElementById('intake-form');
         if (!fileInput || !languageSelect || !Array.isArray(languages)) {
             return;
         }
@@ -139,10 +193,29 @@
             renderBulkTable(fileInput, languages, singleField, bulkContainer, languageSelect);
         }
 
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                var files = fileInput.files;
+                if (!files || files.length < 2) {
+                    return;
+                }
+                for (var i = 0; i < files.length; i++) {
+                    if (isSubtitleFile(files[i].name) || !isAudioFile(files[i].name)) {
+                        event.preventDefault();
+                        renderBulkTable(fileInput, languages, singleField, bulkContainer, languageSelect);
+                        return;
+                    }
+                }
+            });
+        }
+
         fileInput.addEventListener('change', onFileChange);
     }
 
     window.TranscriptionIntake = {
+        fileExtension: fileExtension,
+        isSubtitleFile: isSubtitleFile,
+        isAudioFile: isAudioFile,
         detectSubtitleLanguageFromFilename: detectSubtitleLanguageFromFilename,
         initIntakeLanguageDetection: initIntakeLanguageDetection,
         renderBulkTable: renderBulkTable,

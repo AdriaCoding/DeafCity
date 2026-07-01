@@ -76,6 +76,12 @@
             color: #e05555;
             margin-top: 0.35rem;
         }
+        .field-hint {
+            font-size: 0.78rem;
+            color: #555;
+            margin-top: 0.35rem;
+            line-height: 1.45;
+        }
         .form-error {
             margin-bottom: 1.25rem;
             padding: 0.75rem;
@@ -103,7 +109,7 @@
     <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Nova transcripció</h2>
-        <p class="lead">Pugeu l'àudio de l'intèrpret. El sistema el transcriurà i el traduirà automàticament a l'anglès, i descarregarà els dos fitxers de subtítols quan estigui llest.</p>
+        <p class="lead">Pugeu l'àudio de l'intèrpret o un esborrany de subtítols (.vtt / .srt). El sistema transcriurà o revisarà el fitxer amb IA, el traduirà a l'anglès si cal, i descarregarà els fitxers de subtítols quan estigui llest.</p>
 
         <?php if (!empty($errors['_form'])): ?>
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
@@ -111,7 +117,7 @@
 
         <form method="POST" action="?action=transcription-intake" enctype="multipart/form-data" id="intake-form">
             <div class="field" id="single-language-field">
-                <label for="subtitle_language">Llengua de l'àudio</label>
+                <label for="subtitle_language">Llengua dels subtítols</label>
                 <select id="subtitle_language" name="subtitle_language" required>
                     <option value="">Seleccioneu…</option>
                     <?php foreach ($subtitleLanguages as $option): ?>
@@ -127,16 +133,19 @@
             </div>
 
             <div class="field">
-                <label for="intake_file">Fitxer(s) d'àudio de l'intèrpret</label>
+                <label for="intake_file">Fitxer d'entrada</label>
                 <input type="file" id="intake_file" name="intake_file[]" multiple
-                    accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm" required>
+                    accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm,.vtt,.srt" required>
+                <p class="field-hint" id="intake-file-hint">
+                    Àudio (.mp3, .wav, .m4a…) o subtítols (.vtt, .srt). Un sol fitxer de subtítols; per a diversos fitxers, només àudio.
+                </p>
                 <div id="bulk-language-table" style="display:none"></div>
                 <?php if (!empty($errors['intake_file'])): ?>
                     <p class="error"><?= htmlspecialchars($errors['intake_file']) ?></p>
                 <?php endif; ?>
             </div>
 
-            <button type="submit">Comença la transcripció</button>
+            <button type="submit">Comença el processament</button>
         </form>
     </main>
     <script>

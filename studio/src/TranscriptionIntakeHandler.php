@@ -10,6 +10,9 @@ class TranscriptionIntakeHandler
         private readonly ?object $orchestrator = null,
         private readonly ?BackgroundJobLauncher $launcher = null,
         private readonly ?TranslationJobState $translationState = null,
+        private readonly IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
+        private readonly SrtToVttConverter $srtConverter = new SrtToVttConverter(),
+        private readonly WebVttValidator $vttValidator = new WebVttValidator(),
     ) {}
 
     /**
@@ -31,7 +34,7 @@ class TranscriptionIntakeHandler
 
         $upload = $files['intake_file'] ?? null;
         if (!$upload || ($upload['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
-            $errors['intake_file'] = 'Pugeu un fitxer d\'àudio de l\'intèrpret.';
+            $errors['intake_file'] = 'Pugeu un fitxer d\'àudio o de subtítols (.vtt / .srt).';
         } elseif (($upload['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) {
             $errors['intake_file'] = 'No s\'ha pogut pujar el fitxer.';
         }
@@ -40,7 +43,28 @@ class TranscriptionIntakeHandler
             return ['errors' => $errors, 'values' => $values];
         }
 
-        $originalName = $upload['name'] ?? 'audio';
+        $originalName = $upload['name'] ?? 'upload';
+        $fileKind = TranscriptionIntakeFileKind::fromFilename($originalName);
+        if ($fileKind === null) {
+            $errors['intake_file'] = 'Format no reconegut. Pugeu un fitxer d\'àudio o subtítols (.vtt / .srt).';
+            return ['errors' => $errors, 'values' => $values];
+        }
+
+        if ($fileKind === 'subtitle') {
+            return $this->handleSubtitleUpload($upload, $originalName, $values);
+        }
+
+        return $this->handleAudioUpload($upload, $originalName, $values);
+    }
+
+    /**
+     * @param array<string, mixed> $upload
+     * @param array{subtitle_language: string} $values
+     * @return array{errors: array<string, string>, values: array<string, string>, created?: bool}
+     */
+    private function handleAudioUpload(array $upload, string $originalName, array $values): array
+    {
+        $errors = [];
         $meta = [
             'job_type'          => 'transcription',
             'subtitle_language' => $values['subtitle_language'],
@@ -58,35 +82,99 @@ class TranscriptionIntakeHandler
         $outcome = $this->orchestrator->run();
 
         if ($outcome['result'] === 'pipeline_transcribed') {
-            $revisionPath = $this->jobManager->revisionStatePath();
-            file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
-
-            if ($this->shouldSkipEnglishTranslation($values['subtitle_language'])) {
-                $this->translationState->initiate([]);
-                $targetLangs = [];
-            } else {
-                $this->translationState->initiate(['en']);
-                $targetLangs = ['en'];
-            }
-
-            $this->launcher->launchRevisionAndTranslation(
-                $this->jobManager->draftVttPath(),
-                $revisionPath,
-                $this->jobManager->translationStatePath(),
-                $values['subtitle_language'],
-                dirname($this->jobManager->draftVttPath()),
-                $targetLangs,
-            );
-            return ['errors' => [], 'values' => $values, 'created' => true];
+            return $this->startRevisionPipeline($values);
         }
 
         if ($outcome['result'] === 'loading') {
             return ['errors' => [], 'values' => $values, 'created' => true];
         }
 
-        // error — job was destroyed by orchestrator
         $errors['_form'] = $outcome['message'] ?? 'Error en la generació de subtítols.';
         return ['errors' => $errors, 'values' => $values];
+    }
+
+    /**
+     * @param array<string, mixed> $upload
+     * @param array{subtitle_language: string} $values
+     * @return array{errors: array<string, string>, values: array<string, string>, created?: bool}
+     */
+    private function handleSubtitleUpload(array $upload, string $originalName, array $values): array
+    {
+        $errors = [];
+        $meta = [
+            'job_type'          => 'transcription',
+            'subtitle_language' => $values['subtitle_language'],
+            'original_filename' => pathinfo($originalName, PATHINFO_FILENAME),
+            'intake_mode'       => 'upload',
+        ];
+
+        try {
+            if ($this->sourceDetector->isSubRip($upload['tmp_name'], $originalName)) {
+                $vttContent = $this->srtConverter->convert($upload['tmp_name']);
+                $vttLabel = pathinfo($originalName, PATHINFO_FILENAME) . '.vtt';
+                $this->validateVttContent($vttContent, $vttLabel);
+                $this->jobManager->createWithContent($meta, $vttContent);
+            } else {
+                $this->vttValidator->validate($upload['tmp_name'], $originalName);
+                $this->jobManager->create($meta, new UploadedFile($upload['tmp_name'], $originalName));
+            }
+        } catch (\InvalidArgumentException $e) {
+            $errors['intake_file'] = $e->getMessage();
+            return ['errors' => $errors, 'values' => $values];
+        } catch (\RuntimeException $e) {
+            $errors['_form'] = $e->getMessage();
+            return ['errors' => $errors, 'values' => $values];
+        }
+
+        return $this->startRevisionPipeline($values);
+    }
+
+    /**
+     * @param array{subtitle_language: string} $values
+     * @return array{errors: array<string, string>, values: array<string, string>, created: true}
+     */
+    private function startRevisionPipeline(array $values): array
+    {
+        $revisionPath = $this->jobManager->revisionStatePath();
+        file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
+
+        if ($this->shouldSkipEnglishTranslation($values['subtitle_language'])) {
+            $this->translationState->initiate([]);
+            $targetLangs = [];
+        } else {
+            $this->translationState->initiate(['en']);
+            $targetLangs = ['en'];
+        }
+
+        $this->launcher->launchRevisionAndTranslation(
+            $this->jobManager->draftVttPath(),
+            $revisionPath,
+            $this->jobManager->translationStatePath(),
+            $values['subtitle_language'],
+            dirname($this->jobManager->draftVttPath()),
+            $targetLangs,
+        );
+
+        return ['errors' => [], 'values' => $values, 'created' => true];
+    }
+
+    private function validateVttContent(string $vttContent, string $label): void
+    {
+        $tmpPath = tempnam(sys_get_temp_dir(), 'studio-intake-vtt-');
+        if ($tmpPath === false) {
+            throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
+        }
+
+        try {
+            if (file_put_contents($tmpPath, $vttContent) === false) {
+                throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
+            }
+            $this->vttValidator->validate($tmpPath, $label);
+        } finally {
+            if (is_file($tmpPath)) {
+                unlink($tmpPath);
+            }
+        }
     }
 
     private function isValidLanguage(string $id): bool

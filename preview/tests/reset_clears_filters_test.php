@@ -34,7 +34,13 @@ $html = ob_get_clean();
 // Reset no longer advertises restart-from-beginning behaviour
 rcf_assert_not_contains('Restart video from the beginning', $html, 'no restart aria-label on reset button');
 rcf_assert_contains('aria-label="Reset filters and playlist"', $html, 'reset button has neutral-reset aria-label');
-rcf_assert_contains('vpc-reset-btn', $html, 'reset button present in transport row');
+rcf_assert_contains('vpc-reset-btn', $html, 'reset button present in filters zone');
+if (strpos($html, 'vpc-bar-zone--filters') === false
+    || !preg_match('~vpc-bar-zone--filters.*?vpc-reset-btn~s', $html)) {
+    fwrite(STDERR, "FAIL: reset button should be inside filters zone\n");
+    exit(1);
+}
+echo "PASS: reset button inside filters zone\n";
 
 $js = file_get_contents($jsPath);
 rcf_assert_not_contains('resetFromBeginning', $js, 'old resetFromBeginning handler removed');

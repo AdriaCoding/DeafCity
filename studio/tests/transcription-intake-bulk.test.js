@@ -163,4 +163,17 @@ function makeDom() {
     assert.strictEqual(select.children[1].tagName, 'OPTION');
 }
 
+assert.strictEqual(TI.isSubtitleFile('talk_ca.vtt'), true);
+assert.strictEqual(TI.isSubtitleFile('talk_ca.srt'), true);
+assert.strictEqual(TI.isAudioFile('talk_ca.mp3'), true);
+assert.strictEqual(TI.isSubtitleFile('talk_ca.mp3'), false);
+
+{
+    const dom = makeDom();
+    dom.fileInput.files = makeFileList(['a.mp3', 'b.vtt']);
+    const mode = TI.renderBulkTable(dom.fileInput, languages, dom.singleField, dom.bulkContainer, dom.templateSelect);
+    assert.strictEqual(mode, 'bulk-error');
+    assert.strictEqual(dom.bulkContainer.style.display, '');
+}
+
 console.log('transcription-intake-bulk.test.js: ok');

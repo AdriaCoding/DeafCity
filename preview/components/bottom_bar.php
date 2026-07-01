@@ -205,13 +205,6 @@ if ($mode === 'player'):
         >
             <button
                 type="button"
-                class="vpc-shuffle-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
-                aria-pressed="true"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.shuffle'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">shuffle</span></button>
-            <button
-                type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.prev'), ENT_QUOTES, 'UTF-8') ?>"
@@ -230,14 +223,7 @@ if ($mode === 'player'):
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.next'), ENT_QUOTES, 'UTF-8') ?>"
             ><span class="material-icons" aria-hidden="true">skip_next</span></button>
-            <button
-                type="button"
-                class="vpc-reset-btn"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">replay</span></button>
         </div>
-        <?php if ($hasFilters): ?>
         <div class="vpc-bar-zone vpc-bar-zone--filters vpc-r2-filters" role="group" aria-label="<?= htmlspecialchars(preview_t('player.aria.filters'), ENT_QUOTES, 'UTF-8') ?>">
             <?php if ($useTypologyFilter): ?>
             <div
@@ -362,8 +348,13 @@ if ($mode === 'player'):
                 </ul>
             </div>
             <?php endif; ?>
+            <button
+                type="button"
+                class="vpc-reset-btn"
+                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
+            ><span class="material-icons" aria-hidden="true">replay</span></button>
         </div>
-        <?php endif; ?>
     </div>
 </div>
     <?php

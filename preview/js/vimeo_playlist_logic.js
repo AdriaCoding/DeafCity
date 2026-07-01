@@ -684,8 +684,7 @@
         var fc = filteredMasterIndices.length;
         if (fc === 0) return null;
 
-        var shuffledSequence = buildShuffledSequence(fc, randomFn);
-        var filteredCursor = shuffledSequence[0];
+        var filteredCursor = Math.floor(randomFn() * fc);
         var loadMasterIndex = filteredMasterIndices[filteredCursor];
 
         return {
@@ -695,8 +694,8 @@
             filteredMasterIndices: filteredMasterIndices,
             filteredCursor: filteredCursor,
             shuffleStep: 0,
-            shuffledSequence: shuffledSequence,
-            shuffleMode: true,
+            shuffledSequence: [],
+            shuffleMode: false,
             loadMasterIndex: loadMasterIndex,
             shouldAutoplay: false,
         };

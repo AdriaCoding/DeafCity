@@ -67,6 +67,11 @@ class BulkIntakeHandler
             }
 
             $originalName = (string) ($upload['name'][$i] ?? 'audio');
+            if (TranscriptionIntakeFileKind::fromFilename($originalName) !== 'audio') {
+                $errors['intake_file'] = 'La transcripció en massa només accepta fitxers d\'àudio.';
+                return ['errors' => $errors, 'values' => $values];
+            }
+
             $items[] = [
                 'index' => $i,
                 'language' => $lang,

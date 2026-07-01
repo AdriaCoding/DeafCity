@@ -908,9 +908,9 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(plan.isParticipantMode, false, 'clears participant mode');
     assert.strictEqual(plan.participantName, '', 'clears participant name');
     assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'unfiltered ALL catalog');
-    assert.strictEqual(plan.shuffleMode, true, 'reset uses shuffle-on ALL');
-    assert.strictEqual(plan.shuffleStep, 0, 'reset starts at shuffle step 0');
-    assert.strictEqual(plan.shuffledSequence.length, samplePlaylist.length, 'full reshuffle');
+    assert.strictEqual(plan.shuffleMode, false, 'reset uses sequential ALL');
+    assert.strictEqual(plan.shuffleStep, 0, 'reset shuffle step unused');
+    assert.strictEqual(plan.shuffledSequence.length, 0, 'no shuffle sequence on reset');
     assert.strictEqual(plan.shouldAutoplay, false, 'reset never auto-plays (D1′ exception)');
     assert.strictEqual(
         logic.shouldAutoplayWithSound(true, plan.shouldAutoplay),
@@ -918,8 +918,8 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
         'reset stays paused even after gesture unlock'
     );
     assert.ok(plan.loadMasterIndex >= 0 && plan.loadMasterIndex < samplePlaylist.length, 'valid load index');
-    assert.strictEqual(plan.filteredCursor, plan.shuffledSequence[0], 'cursor follows shuffle head');
-    assert.strictEqual(plan.loadMasterIndex, plan.filteredMasterIndices[plan.filteredCursor], 'load index maps from shuffle head');
+    assert.strictEqual(plan.filteredCursor, 0, 'randomFn=0 picks first filtered index');
+    assert.strictEqual(plan.loadMasterIndex, plan.filteredMasterIndices[plan.filteredCursor], 'load index maps from cursor');
 })();
 
 // Reset from a narrowed filtered state still widens to full catalog

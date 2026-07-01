@@ -51,6 +51,20 @@ class TranscriptionIntakeHandlerTest extends TestCase
         return ['tmp_name' => $tmp, 'name' => $name, 'error' => $error, 'size' => 5];
     }
 
+    private function vttUpload(string $name = 'draft_ca.vtt', string $content = "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n"): array
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($tmp, $content);
+        return ['tmp_name' => $tmp, 'name' => $name, 'error' => UPLOAD_ERR_OK, 'size' => strlen($content)];
+    }
+
+    private function srtUpload(string $name = 'draft_ca.srt', string $content = "1\n00:00:01,000 --> 00:00:04,000\nHello\n"): array
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'srt');
+        file_put_contents($tmp, $content);
+        return ['tmp_name' => $tmp, 'name' => $name, 'error' => UPLOAD_ERR_OK, 'size' => strlen($content)];
+    }
+
     private function handler(): TranscriptionIntakeHandler
     {
         return new TranscriptionIntakeHandler(
@@ -65,15 +79,24 @@ class TranscriptionIntakeHandlerTest extends TestCase
     private function handlerWithFakeOrchestrator(
         array $orchestratorResult,
         ?callable $captureCmd = null,
+        ?object $runState = null,
     ): TranscriptionIntakeHandler {
-        $fakeOrchestrator = new class ($orchestratorResult) {
+        $fakeOrchestrator = new class ($orchestratorResult, $runState) {
             private array $result;
-            public function __construct(array $result)
+            private ?object $runState;
+
+            public function __construct(array $result, ?object $runState)
             {
                 $this->result = $result;
+                $this->runState = $runState;
             }
+
             public function run(): array
             {
+                if ($this->runState !== null) {
+                    $this->runState->count++;
+                }
+
                 return $this->result;
             }
         };
@@ -279,6 +302,65 @@ class TranscriptionIntakeHandlerTest extends TestCase
 
         $this->assertTrue($result['created'] ?? false);
         $this->assertSame(0, $launchCount, 'Pipeline script chains translation — handler must not spawn extra');
+    }
+
+    public function test_rejects_unknown_file_extension(): void
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'txt');
+        file_put_contents($tmp, 'hello');
+        $result = $this->handler()->handlePost(
+            ['subtitle_language' => 'ca'],
+            ['intake_file' => ['tmp_name' => $tmp, 'name' => 'notes.txt', 'error' => UPLOAD_ERR_OK, 'size' => 5]]
+        );
+        $this->assertArrayHasKey('intake_file', $result['errors']);
+    }
+
+    // ── Subtitle upload path ─────────────────────────────────────────────────
+
+    public function test_vtt_upload_skips_orchestrator_and_launches_revision(): void
+    {
+        $launched = null;
+        $runState = (object) ['count' => 0];
+        $handler = $this->handlerWithFakeOrchestrator(
+            ['result' => 'pipeline_transcribed'],
+            function ($cmd) use (&$launched) { $launched = $cmd; },
+            $runState,
+        );
+
+        $result = $handler->handlePost(
+            ['subtitle_language' => 'ca'],
+            ['intake_file' => $this->vttUpload('talk_ca.vtt')]
+        );
+
+        $this->assertSame(0, $runState->count);
+        $this->assertTrue($result['created'] ?? false);
+        $this->assertSame('upload', $this->jobManager->read()['intake_mode']);
+        $this->assertFileExists($this->jobManager->draftVttPath());
+        $this->assertNotNull($launched);
+        $this->assertStringContainsString('run_revise.sh', $launched);
+    }
+
+    public function test_srt_upload_converts_to_vtt_and_launches_revision(): void
+    {
+        $handler = $this->handlerWithFakeOrchestrator(['result' => 'pipeline_transcribed']);
+        $result = $handler->handlePost(
+            ['subtitle_language' => 'ca'],
+            ['intake_file' => $this->srtUpload('talk_ca.srt')]
+        );
+
+        $this->assertTrue($result['created'] ?? false);
+        $this->assertStringStartsWith("WEBVTT\n", (string) file_get_contents($this->jobManager->draftVttPath()));
+    }
+
+    public function test_rejects_invalid_vtt_upload(): void
+    {
+        $result = $this->handlerWithFakeOrchestrator(['result' => 'pipeline_transcribed'])->handlePost(
+            ['subtitle_language' => 'ca'],
+            ['intake_file' => $this->vttUpload('bad.vtt', 'not a vtt file')]
+        );
+
+        $this->assertArrayHasKey('intake_file', $result['errors']);
+        $this->assertFalse($this->jobManager->exists());
     }
 
     // ── Error path ───────────────────────────────────────────────────────────

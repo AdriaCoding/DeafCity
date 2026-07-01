@@ -128,4 +128,21 @@ class BulkIntakeHandlerTest extends TestCase
         $this->assertArrayHasKey('_form', $result['errors']);
         $this->assertFalse($this->bulkQueue->exists());
     }
+
+    public function test_rejects_bulk_upload_with_subtitle_file(): void
+    {
+        $vtt = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
+        $upload = $this->multiFileUpload(['talk_ca.mp3', 'session_es.wav']);
+        $upload['name'][1] = 'session_es.vtt';
+        $upload['tmp_name'][1] = $vtt;
+
+        $result = $this->handler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $upload],
+        );
+
+        $this->assertArrayHasKey('intake_file', $result['errors']);
+        $this->assertFalse($this->bulkQueue->exists());
+    }
 }
