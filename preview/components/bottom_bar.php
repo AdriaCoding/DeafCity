@@ -336,6 +336,13 @@ if ($mode === 'player'):
         >
             <button
                 type="button"
+                class="vpc-shuffle-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
+                aria-pressed="true"
+                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars(preview_t('player.transport.shuffle'), ENT_QUOTES, 'UTF-8') ?>"
+            ><span class="material-icons" aria-hidden="true">shuffle</span></button>
+            <button
+                type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.prev'), ENT_QUOTES, 'UTF-8') ?>"

@@ -98,20 +98,21 @@ $langPos = strpos($html, 'data-picker="language"');
 $signPos = strpos($html, 'data-picker="sign_language"');
 $edPos = strpos($html, 'data-picker="edition"');
 $partPos = strpos($html, 'href="/preview/participants"');
+$shufflePos = strpos($html, 'vpc-shuffle-btn');
 $prevPos = strpos($html, 'vpc-prev-btn');
 $nextPos = strpos($html, 'vpc-next-btn');
 $resetPos = strpos($html, 'vpc-reset-btn');
 if ($aboutPos === false || $playerPos === false || $typPos === false || $langPos === false
     || $signPos === false || $edPos === false || $partPos === false
-    || $prevPos === false || $nextPos === false || $resetPos === false) {
+    || $shufflePos === false || $prevPos === false || $nextPos === false || $resetPos === false) {
     fwrite(STDERR, "FAIL: missing control-row markers for player wing order check\n");
     exit(1);
 }
 if (!($aboutPos < $playerPos && $playerPos < $typPos && $typPos < $langPos
     && $langPos < $signPos && $signPos < $edPos && $edPos < $partPos
-    && $partPos < $clusterPos && $clusterPos < $prevPos
+    && $partPos < $clusterPos && $clusterPos < $shufflePos && $shufflePos < $prevPos
     && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
-    fwrite(STDERR, "FAIL: player wings should be About → Player → Typology → Language → Sign lang → Edition → Participants → transport\n");
+    fwrite(STDERR, "FAIL: player wings should be About → Player → Typology → Language → Sign lang → Edition → Participants → transport (shuffle → prev → play → next → reset)\n");
     exit(1);
 }
 echo "PASS: player wing order About → Player → Typology → Language | Sign lang → Edition → Participants\n";
@@ -409,8 +410,46 @@ if (preg_match('~data-picker="language"[^>]*data-active="false"~', $html) !== 1)
 }
 echo "PASS: language picker neutral when English is active\n";
 
-assert_not_contains('vpc-shuffle-btn', $html, 'no shuffle button in DOM');
-assert_not_contains('aria-label="Shuffle playlist"', $html, 'no shuffle aria-label');
+// ── Issue #3: Shuffle toggle UX (D13) ─────────────────────────────────────────
+
+// AC: Shuffle button exists in transport row
+assert_contains('vpc-shuffle-btn', $html, 'shuffle button element present');
+assert_contains('aria-label="Shuffle playlist"', $html, 'shuffle button has aria-label');
+
+// AC: Shuffle is ON by default — aria-pressed="true" on initial render (D13)
+if (!preg_match('~class="vpc-shuffle-btn"[^>]*aria-pressed="true"~', $html)
+    && !preg_match('~aria-pressed="true"[^>]*class="vpc-shuffle-btn"~', $html)) {
+    fwrite(STDERR, "FAIL: shuffle button should have aria-pressed=\"true\" on initial render (shuffle-on default, D13)\n");
+    exit(1);
+}
+echo "PASS: shuffle button starts with aria-pressed=\"true\" (shuffle on by default, D13)\n";
+
+assert_contains('>shuffle<', $html, 'shuffle button contains shuffle Material Icon text');
+assert_not_contains('shuffleState', $html, 'no shuffleState key in page (not persisted, D13)');
+assert_not_contains('shuffle_state', $html, 'no shuffle_state key in page (not persisted)');
+
+$cssPath = dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.css';
+if (is_file($cssPath)) {
+    $css = file_get_contents($cssPath);
+    if (strpos($css, ".vpc-shuffle-btn[aria-pressed='true'] .material-icons") === false
+        && strpos($css, ".vpc-shuffle-btn.is-active .material-icons") === false) {
+        fwrite(STDERR, "FAIL: CSS lacks explicit brand-green icon color for shuffle active state (D13)\n");
+        exit(1);
+    }
+    echo "PASS: CSS has explicit icon color rule for shuffle active state\n";
+
+    if (strpos($css, ".vpc-shuffle-btn[aria-pressed='false']") === false) {
+        fwrite(STDERR, "FAIL: CSS lacks explicit inactive state rule for .vpc-shuffle-btn[aria-pressed='false'] (D13)\n");
+        exit(1);
+    }
+    if (!preg_match("~\.vpc-shuffle-btn\[aria-pressed='false'\][^{]*\{[^}]*color\s*:[^}]*\}~s", $css)) {
+        fwrite(STDERR, "FAIL: CSS inactive shuffle state does not set an explicit 'color' — must not rely on opacity alone (D13)\n");
+        exit(1);
+    }
+    echo "PASS: CSS inactive shuffle state uses explicit muted color (not opacity alone, D13)\n";
+} else {
+    echo "SKIP: CSS file not found at expected path — visual state CSS checks skipped\n";
+}
 
 // Reset lives in the transport cluster (after next)
 if (!preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-next-btn.*?vpc-reset-btn~s', $html)) {
