@@ -39,7 +39,7 @@ assert_contains('ministerio.png', $html, 'sponsor logos');
 assert_contains('Roboto', $html, 'Roboto font');
 assert_not_contains('go back to player', $html, 'no back link on about page');
 assert_contains('vpc-bottom-bar--nav', $html, 'sticky bottom bar on about page');
-assert_contains('vpc-bar-zone--chrome', $html, 'chrome zone on about page');
+assert_contains('preview-site-nav__btn', $html, 'navbar uses button style');
 assert_contains('href="/preview/"', $html, 'navbar includes Player route');
 assert_contains('href="/preview/about"', $html, 'navbar includes About route');
 assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');

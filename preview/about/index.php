@@ -24,7 +24,7 @@ $currentRoute = 'about';
     <title><?= htmlspecialchars(preview_t('about.page_title'), ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=3">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=1">
     <link rel="stylesheet" href="/preview/css/about-page.css?v=8">
     <style>
         html[dir="rtl"] .preview-about-page { direction: rtl; text-align: right; }

@@ -58,7 +58,7 @@ $html = ob_get_clean();
 
 assert_contains('vimeo_caption_player', $html, 'player component');
 assert_contains('vpc-bottom-bar--player', $html, 'unified bottom bar on player page');
-assert_contains('vpc-bar-zone--chrome', $html, 'chrome zone on player page');
+assert_contains('vpc-site-nav-wrap', $html, 'nav in control row');
 assert_contains('data-picker="language"', $html, 'unified language picker on player page');
 assert_contains('aria-current="page"', $html, 'current route highlighted on player page');
 assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker');
@@ -91,33 +91,30 @@ echo "PASS: play button in transport cluster center cell\n";
 
 assert_contains('href="/preview/about"', $html, 'about nav link');
 
-$chromePos = strpos($html, 'vpc-bar-zone--chrome');
-$transportZonePos = strpos($html, 'vpc-bar-zone--transport');
-$filtersZonePos = strpos($html, 'vpc-bar-zone--filters');
-$playerPos = strpos($html, 'vpc-bar-zone--chrome');
-if ($playerPos !== false) {
-    $playerPos = strpos($html, 'href="/preview/"', $playerPos);
-}
 $aboutPos = strpos($html, 'href="/preview/about"');
-$partPos = strpos($html, 'href="/preview/participants"');
-$langPos = strpos($html, 'data-picker="language"');
+$playerPos = strpos($html, 'href="/preview/"');
 $typPos = strpos($html, 'data-picker="typology"');
+$langPos = strpos($html, 'data-picker="language"');
 $signPos = strpos($html, 'data-picker="sign_language"');
 $edPos = strpos($html, 'data-picker="edition"');
+$partPos = strpos($html, 'href="/preview/participants"');
+$prevPos = strpos($html, 'vpc-prev-btn');
+$nextPos = strpos($html, 'vpc-next-btn');
 $resetPos = strpos($html, 'vpc-reset-btn');
-if ($chromePos === false || $transportZonePos === false || $filtersZonePos === false
-    || $playerPos === false || $aboutPos === false || $partPos === false || $langPos === false
-    || $typPos === false || $signPos === false || $edPos === false || $resetPos === false) {
-    fwrite(STDERR, "FAIL: missing control-row zone markers\n");
+if ($aboutPos === false || $playerPos === false || $typPos === false || $langPos === false
+    || $signPos === false || $edPos === false || $partPos === false
+    || $prevPos === false || $nextPos === false || $resetPos === false) {
+    fwrite(STDERR, "FAIL: missing control-row markers for player wing order check\n");
     exit(1);
 }
-if (!($playerPos < $aboutPos && $aboutPos < $partPos && $partPos < $langPos
-    && $langPos < $transportZonePos && $transportZonePos < $filtersZonePos
-    && $typPos < $signPos && $signPos < $edPos && $edPos < $resetPos)) {
-    fwrite(STDERR, "FAIL: zones should be chrome (Player→About→Participants→Language) | transport | filters (typology→sign→edition→reset)\n");
+if (!($aboutPos < $playerPos && $playerPos < $typPos && $typPos < $langPos
+    && $langPos < $signPos && $signPos < $edPos && $edPos < $partPos
+    && $partPos < $clusterPos && $clusterPos < $prevPos
+    && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
+    fwrite(STDERR, "FAIL: player wings should be About → Player → Typology → Language → Sign lang → Edition → Participants → transport\n");
     exit(1);
 }
-echo "PASS: three-zone layout chrome left | transport center | filters right\n";
+echo "PASS: player wing order About → Player → Typology → Language | Sign lang → Edition → Participants\n";
 
 assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker in DOM');
 
@@ -378,7 +375,7 @@ if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
 }
 echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
 
-// Filter zone order: typology → sign_language → edition
+// Player wing filter order: sign_language → edition (typology is on the left wing)
 $slPos  = strpos($html, 'data-picker="sign_language"');
 $edPos  = strpos($html, 'data-picker="edition"');
 $tyPos  = strpos($html, 'data-picker="typology"');
@@ -387,10 +384,10 @@ if ($slPos === false || $edPos === false || $tyPos === false) {
     exit(1);
 }
 if (!($tyPos < $slPos && $slPos < $edPos)) {
-    fwrite(STDERR, "FAIL: right filter zone should be typology → sign_language → edition\n");
+    fwrite(STDERR, "FAIL: typology on left wing; right wing filters should be sign_language → edition\n");
     exit(1);
 }
-echo "PASS: filter zone order typology → sign_language → edition\n";
+echo "PASS: typology on left; sign_language → edition on right wing\n";
 
 // Issue #19: unified language picker + initialSubtitleLang in config
 if (!isset($cfg['initialSubtitleLang']) || $cfg['initialSubtitleLang'] !== 'en') {
@@ -415,12 +412,12 @@ echo "PASS: language picker neutral when English is active\n";
 assert_not_contains('vpc-shuffle-btn', $html, 'no shuffle button in DOM');
 assert_not_contains('aria-label="Shuffle playlist"', $html, 'no shuffle aria-label');
 
-// Reset lives in the filters zone (right of edition picker)
-if (!preg_match('~vpc-bar-zone--filters[^>]*>.*?data-picker="edition".*?vpc-reset-btn~s', $html)) {
-    fwrite(STDERR, "FAIL: reset button should appear in filters zone after edition picker\n");
+// Reset lives in the transport cluster (after next)
+if (!preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-next-btn.*?vpc-reset-btn~s', $html)) {
+    fwrite(STDERR, "FAIL: reset button should appear in transport cluster after next\n");
     exit(1);
 }
-echo "PASS: reset button in filters zone after edition picker\n";
+echo "PASS: reset button in transport cluster after next\n";
 
 // ── Issue #7: R3 Participants nav button ──────────────────────────────────────
 assert_contains('href="/preview/participants"', $html, 'Participants nav button in R3');
