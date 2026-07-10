@@ -1344,13 +1344,13 @@
         "section": "player",
         "context": "Default option in Sign language dropdown",
         "translations": {
-            "en": "Sign Languages",
-            "fr": "Langues des signes",
-            "ca": "Llengües de Signes",
-            "es": "Lenguas de signos",
+            "en": "Signs",
+            "fr": "Signes",
+            "ca": "Signes",
+            "es": "Signos",
             "arq": "جميع لغات الإشارة",
-            "it": "Lingue dei segni",
-            "pt": "Línguas de sinais",
+            "it": "Segni",
+            "pt": "Sinais",
             "aeb": "جميع لغات الإشارة"
         },
         "seeded": {
@@ -1367,13 +1367,12 @@
             "ca": "Tipologies",
             "es": "Tipologías",
             "arq": "جميع الأنواع",
-            "it": "Tutte le tipologie",
+            "it": "Tipologie",
             "pt": "Tipologias",
             "aeb": "جميع الأنواع"
         },
         "seeded": {
             "arq": true,
-            "it": true,
             "aeb": true
         }
     },
