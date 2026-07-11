@@ -522,6 +522,19 @@ if (is_file($playerCssPath)) {
         exit(1);
     }
     echo "PASS: stacked chrome reserves enough width for Participants\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 500px\)\s*\{.*?\.vpc-control-secondary\s*\{[^}]*flex-direction:\s*column[^}]*\}.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r\s*\{[^}]*display:\s*flex[^}]*width:\s*100%~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: narrow screens should split chrome into three rows\n");
+        exit(1);
+    }
+    echo "PASS: narrow screens split chrome into three rows\n";
+    if (!preg_match('~--vpc-chrome-reset-max:\s*8rem~', $playerCss)) {
+        fwrite(STDERR, "FAIL: reset button max width should fit longest locale label\n");
+        exit(1);
+    }
+    echo "PASS: reset button max width fits longest locale label\n";
 }
 
 // Reset lives in the transport cluster (after next)

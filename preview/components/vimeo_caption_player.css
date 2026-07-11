@@ -147,7 +147,7 @@
     --vpc-chrome-nav-flex: 0.9;
     --vpc-chrome-participants-flex: 0.62;
     --vpc-chrome-participants-max: 7.25rem;
-    --vpc-chrome-reset-max: 5.25rem;
+    --vpc-chrome-reset-max: 8rem; /* fits longest reset_short label (Restablecer) */
     --vpc-chrome-reset-min: 3.5rem;
 }
 .vpc-control-secondary {
@@ -414,6 +414,35 @@
 }
 
 @media screen and (max-width: 500px) {
+    .vpc-control-secondary {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 0.35rem;
+    }
+    .vpc-control-secondary-l,
+    .vpc-control-secondary-r {
+        display: flex;
+        flex-wrap: nowrap;
+        width: 100%;
+        min-width: 0;
+        gap: 0.5rem;
+    }
+    .vpc-control-row .vpc-control-secondary-l > .preview-site-nav,
+    .vpc-control-row .vpc-control-secondary-l > .vpc-picker {
+        flex: 1 1 0;
+    }
+    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters {
+        flex: 2 1 0;
+        flex-wrap: nowrap;
+        min-width: 0;
+    }
+    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters > .vpc-picker {
+        flex: 1 1 0;
+    }
+    .vpc-control-row .vpc-control-secondary-r > .preview-site-nav {
+        flex: 1 1 0;
+        max-width: none;
+    }
     .vpc-control-row .vpc-picker-btn {
         font-size: 0.875rem;
         padding: 0.4em 0.7em;
