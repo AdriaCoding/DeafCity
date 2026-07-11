@@ -146,6 +146,9 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 $participantMeta = isset($entry['participant']) && is_string($entry['participant'])
                     ? trim($entry['participant'])
                     : '';
+                $thumbnailMeta = isset($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])
+                    ? trim($entry['thumbnail_url'])
+                    : '';
 
                 $out[] = array(
                     'videoId' => $digits,
@@ -156,6 +159,7 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                     'edition' => $editionMeta,
                     'typology' => $typologyMeta,
                     'participant' => $participantMeta,
+                    'thumbnail_url' => $thumbnailMeta,
                 );
             }
         }
@@ -387,6 +391,7 @@ $defaultParams = array(
     'dnt'      => '1',
     'controls' => '0',
     'autoplay'    => '0',
+    'preload'     => 'auto',
     'playsinline' => '1',
 );
 
@@ -417,6 +422,7 @@ foreach ($playlistNormalized as $pe) {
     $edOut       = isset($pe['edition'])        && is_string($pe['edition'])        ? $pe['edition']        : '';
     $tyOut       = isset($pe['typology'])       && is_string($pe['typology'])       ? $pe['typology']       : '';
     $ptOut       = isset($pe['participant'])    && is_string($pe['participant'])    ? $pe['participant']    : '';
+    $thumbOut    = isset($pe['thumbnail_url'])   && is_string($pe['thumbnail_url'])   ? $pe['thumbnail_url']   : '';
     $eParams     = isset($pe['embed_params']) && is_array($pe['embed_params']) ? $pe['embed_params'] : array();
     $embedOut    = '';
     if (!empty($pe['embed_url']) && is_string($pe['embed_url'])) {
@@ -432,6 +438,9 @@ foreach ($playlistNormalized as $pe) {
     );
     if ($embedOut !== '') {
         $row['embedUrl'] = $embedOut;
+    }
+    if ($thumbOut !== '') {
+        $row['thumbnailUrl'] = vpc_participant_thumbnail_display_url($thumbOut);
     }
     $playlistForJson[] = $row;
 }
@@ -462,6 +471,10 @@ if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && cou
             );
             if ($embedOut !== '') {
                 $row['embedUrl'] = $embedOut;
+            }
+            $thumbOut = isset($pe['thumbnail_url']) && is_string($pe['thumbnail_url']) ? $pe['thumbnail_url'] : '';
+            if ($thumbOut !== '') {
+                $row['thumbnailUrl'] = vpc_participant_thumbnail_display_url($thumbOut);
             }
             $catalogForJson[] = $row;
         }
@@ -520,6 +533,9 @@ $initialPlaylistIndex = isset($vpc['playlist_index']) ? (int) $vpc['playlist_ind
 $initialPlaylistIndex = max(0, min($initialPlaylistIndex, count($playlistNormalized) - 1));
 
 $initialEntry = $playlistNormalized[$initialPlaylistIndex];
+$initialPosterUrl = isset($initialEntry['thumbnail_url']) && is_string($initialEntry['thumbnail_url'])
+    ? vpc_participant_thumbnail_display_url($initialEntry['thumbnail_url'])
+    : '';
 $initialSignLangReadout = vpc_compact_label_for_filter_option(
     'sign_language',
     $signLangOptionsList,
@@ -585,6 +601,14 @@ $navHiddenClass = '';
         <div class="video-stack">
             <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box"></div>
             <div class="video-shell">
+                <?php if ($initialPosterUrl !== ''): ?>
+                <img
+                    class="vpc-poster-cover"
+                    src="<?php echo htmlspecialchars($initialPosterUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                    alt=""
+                    aria-hidden="true"
+                    draggable="false">
+                <?php endif; ?>
                 <iframe
                     id="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
                     src="<?php echo htmlspecialchars($embedSrc, ENT_QUOTES, 'UTF-8'); ?>"

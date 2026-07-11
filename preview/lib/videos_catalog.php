@@ -125,6 +125,10 @@ if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
                 $entry['sign_language'] = $sl;
             }
 
+            if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
+                $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
+            }
+
             if (empty($entry['video_id']) && empty($entry['embed_url'])) {
                 continue;
             }
@@ -391,6 +395,10 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
                 $entry['participant'] = $participant;
             }
 
+            if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
+                $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
+            }
+
             $eParams = isset($v['embed_params']) && is_array($v['embed_params'])
                 ? $v['embed_params']
                 : array();
@@ -571,6 +579,10 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
             $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
             if ($participant !== '') {
                 $entry['participant'] = $participant;
+            }
+
+            if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
+                $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
             }
 
             $eParams = isset($v['embed_params']) && is_array($v['embed_params'])

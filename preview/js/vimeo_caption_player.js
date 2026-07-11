@@ -594,6 +594,70 @@
 
             var videoShell = root.querySelector('.video-shell');
             var videoStack = root.querySelector('.video-stack');
+            var posterCover = root.querySelector('.vpc-poster-cover');
+            var posterRequestToken = 0;
+            var posterTargetVideoId = '';
+            var posterLoadedVideoId = '';
+            var posterPlaybackStarted = false;
+
+            /**
+             * Keep Vimeo's internal loading UI covered while the target Video loads.
+             * The existing poster remains visible until the next thumbnail is ready.
+             * @param {any} item
+             * @returns {number}
+             */
+            function beginPosterCoveredLoad(item) {
+                posterRequestToken++;
+                var token = posterRequestToken;
+                posterTargetVideoId = item && item.videoId ? String(item.videoId) : '';
+                posterPlaybackStarted = false;
+
+                if (!posterCover) return token;
+
+                var thumbnailUrl =
+                    item && item.thumbnailUrl ? String(item.thumbnailUrl) : '';
+                if (thumbnailUrl === '') {
+                    posterCover.classList.add('is-hidden');
+                    return token;
+                }
+
+                posterCover.classList.remove('is-hidden');
+                if (posterCover.getAttribute('src') === thumbnailUrl) return token;
+
+                var pendingPoster = new window.Image();
+                pendingPoster.onload = function () {
+                    if (token !== posterRequestToken) return;
+                    posterCover.setAttribute('src', thumbnailUrl);
+                };
+                pendingPoster.src = thumbnailUrl;
+                return token;
+            }
+
+            function markPosterVideoLoaded(item, token) {
+                if (token !== posterRequestToken) return;
+                posterLoadedVideoId = item && item.videoId ? String(item.videoId) : '';
+            }
+
+            function revealLoadedPosterVideo() {
+                if (!posterCover) return;
+                if (
+                    posterTargetVideoId !== '' &&
+                    posterLoadedVideoId === posterTargetVideoId
+                ) {
+                    posterCover.classList.add('is-hidden');
+                }
+            }
+
+            function markPosterPlaybackStarted() {
+                if (posterLoadedVideoId === posterTargetVideoId) {
+                    posterPlaybackStarted = true;
+                }
+            }
+
+            function revealPosterAfterPlaybackProgress(seconds) {
+                if (!posterPlaybackStarted || Number(seconds) <= 0.05) return;
+                revealLoadedPosterVideo();
+            }
 
             /* One caption line at max font (38px): 1×1.28 + 0.15 ≈ 1.43× — fixed so layout never feeds back into font sizing. */
             root.style.setProperty('--vpc-caption-block-height', '55px');
@@ -849,6 +913,7 @@
                         return unmuteForPlayback().then(function () {
                             return p.getPaused().then(function (paused) {
                                 if (paused) return p.play();
+                                if (!paused) markPosterPlaybackStarted();
                             });
                         });
                     })
@@ -934,10 +999,11 @@
                     if (currentRaw === vidRaw) {
                         return Promise.resolve();
                     }
-                    /** @type {{ autoplay: boolean, muted: boolean, id?: number, url?: string }} */
+                    /** @type {{ autoplay: boolean, muted: boolean, preload: string, id?: number, url?: string }} */
                     var loadPayload = {
                         autoplay: wantAutoplay,
                         muted: !sessionSoundOn,
+                        preload: 'auto',
                     };
                     if (embedUrl !== '') {
                         loadPayload.url = embedUrl;
@@ -948,7 +1014,7 @@
                 });
             }
 
-            function loadVideoMaster(masterIx, autoPlayPreferred) {
+            function loadVideoMaster(masterIx, autoPlayPreferred, seekToStart) {
                 var target =
                     typeof masterIx === 'number' && masterIx >= 0 ? masterIx : playlistIndex;
 
@@ -960,6 +1026,7 @@
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
                 var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
+                var posterToken = beginPosterCoveredLoad(item);
 
                 setTransportLoading(true);
                 if (!wantAutoplay) {
@@ -968,14 +1035,21 @@
 
                 return resolveLoadVideoPromise(item, wantAutoplay)
                     .then(function () {
+                        markPosterVideoLoaded(item, posterToken);
                         applyLoadedVideoUi();
                         /** @type {Promise<void>} */
                         var autoplayP;
                         if (wantAutoplay) {
                             autoplayP = tryAutoplayFallback();
                         } else {
-                            autoplayP = p.pause()
-                                .catch(function () {})
+                            var resetP = Promise.resolve();
+                            if (seekToStart && typeof p.setCurrentTime === 'function') {
+                                resetP = p.setCurrentTime(0).catch(function () {});
+                            }
+                            autoplayP = resetP
+                                .then(function () {
+                                    return p.pause().catch(function () {});
+                                })
                                 .then(function () {
                                     setTransportPlaying(false);
                                 })
@@ -1047,7 +1121,7 @@
                 if (!plan) return;
                 shuffleStep = plan.shuffleStep;
                 filteredCursor = plan.filteredCursor;
-                loadVideoMaster(plan.loadMasterIndex, plan.shouldAutoplay).then(function () {
+                loadVideoMaster(plan.loadMasterIndex, plan.shouldAutoplay, true).then(function () {
                     updatePlaylistNavButtons();
                     syncCollectionNavButtons();
                 });
@@ -1429,6 +1503,9 @@
                 setTransportPlaying(true);
                 savePlaybackSession();
             });
+            p.on('playing', function () {
+                markPosterPlaybackStarted();
+            });
             p.on('pause', function () {
                 setTransportPlaying(false);
                 p.getCurrentTime().then(syncVimeoCaptionBoxes);
@@ -1440,6 +1517,7 @@
             });
 
             p.on('timeupdate', function (data) {
+                revealPosterAfterPlaybackProgress(data.seconds);
                 syncVimeoCaptionBoxes(data.seconds);
             });
             p.on('seeked', function () {

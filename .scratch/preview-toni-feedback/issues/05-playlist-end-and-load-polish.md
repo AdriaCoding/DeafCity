@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Playlist end behaviour and video load polish
 
@@ -14,12 +14,12 @@ Status: ready-for-agent
 
 ## Acceptance criteria
 
-- [ ] Participant playlist end: paused poster = first video of that participant playlist; no full-page redirect
-- [ ] Filtered playlist end: paused poster = first video of filtered playlist
-- [ ] Full ALL playlist end: paused poster = first video of current playback sequence
-- [ ] No visible thumb flash on end-of-video advance
-- [ ] No gray frame flash on next/previous selection (or reduced to imperceptible; spinner on play button during load)
-- [ ] `vimeo_playlist_logic.test.js` covers end-of-playlist plan; manual check on HD test video
+- [x] Participant playlist end: paused poster = first video of that participant playlist; no full-page redirect
+- [x] Filtered playlist end: paused poster = first video of filtered playlist
+- [x] Full ALL playlist end: paused poster = first video of current playback sequence
+- [x] No visible thumb flash on end-of-video advance
+- [x] No gray frame flash on next/previous selection (or reduced to imperceptible; spinner on play button during load)
+- [x] `vimeo_playlist_logic.test.js` covers end-of-playlist plan; manual check on HD test video
 
 ## Blocked by
 

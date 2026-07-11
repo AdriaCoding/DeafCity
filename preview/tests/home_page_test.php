@@ -130,6 +130,7 @@ if (preg_match('~player\.vimeo\.com/video/\d+[^"]*autoplay=([^&"]+)~', $html, $a
 }
 assert_not_contains('autoplay=1', $html, 'no autoplay=1 in iframe src');
 echo "PASS: no autoplay on load\n";
+assert_contains('preload=auto', $html, 'Vimeo preloads the current video before playback');
 
 // AC: No mute/unmute control visible in HTML.
 assert_not_contains('vpc-mute-btn', $html, 'no mute button element');
@@ -182,6 +183,25 @@ if ($firstVideoId !== $headVideoId) {
 }
 echo "PASS: iframe poster matches playlist[0] (paused poster = queue head, no silent swap)\n";
 
+// Loading cover: the server-selected video is visible as a poster while Vimeo initializes.
+$headThumbnailUrl = isset($playlistItems[0]['thumbnailUrl'])
+    ? (string)$playlistItems[0]['thumbnailUrl']
+    : '';
+if ($headThumbnailUrl === '') {
+    fwrite(STDERR, "FAIL: playlist[0] needs a thumbnail for the loading cover\n");
+    exit(1);
+}
+$escapedHeadThumbnailUrl = htmlspecialchars($headThumbnailUrl, ENT_QUOTES, 'UTF-8');
+if (!preg_match(
+    '~<img[^>]+class="vpc-poster-cover"[^>]+src="' . preg_quote($escapedHeadThumbnailUrl, '~') . '"[^>]*>~',
+    $html
+)) {
+    fwrite(STDERR, "FAIL: initial loading cover should render playlist[0] thumbnail\n");
+    exit(1);
+}
+echo "PASS: initial loading cover renders the selected video thumbnail\n";
+
+// Issue #05 load polish: transport spinner during loadVideo.
 // AC: Over many reloads every video appears first with roughly equal frequency.
 // Verify randomness: shuffle the full catalog playlist 30 times in-process and
 // check that at least 2 distinct video IDs appear at index 0.
@@ -445,6 +465,19 @@ if (is_file($playerJsPath)) {
     $playerJs = file_get_contents($playerJsPath);
     assert_not_contains('setShuffleToggleUi', $playerJs, 'no shuffle toggle UI dead code in player JS');
     assert_not_contains("querySelector('.vpc-shuffle-btn')", $playerJs, 'no shuffle button DOM queries in player JS');
+    assert_contains('setTransportLoading', $playerJs, 'player shows transport spinner during loadVideo');
+    assert_contains("querySelector('.vpc-poster-cover')", $playerJs, 'player controls the loading cover');
+    assert_contains("preload: 'auto'", $playerJs, 'playlist transitions preload initial video segments');
+    assert_contains(
+        'revealPosterAfterPlaybackProgress(data.seconds)',
+        $playerJs,
+        'loading cover waits for real playback progress'
+    );
+    assert_contains(
+        'if (!paused) markPosterPlaybackStarted()',
+        $playerJs,
+        'already-running autoplay still arms progress-based reveal'
+    );
 }
 
 $chromeWidthsPath = dirname(dirname(__FILE__)) . '/js/chrome_button_widths.js';
@@ -460,6 +493,13 @@ if (is_file($playerCssPath)) {
     assert_contains('--vpc-chrome-filter-flex', $playerCss, 'filter chrome flex weight vars');
     assert_contains('--vpc-chrome-participants-max', $playerCss, 'participants chrome max width var');
     assert_contains('--vpc-chrome-reset-max', $playerCss, 'reset chrome max width var');
+    assert_contains('vpc-poster-cover', $playerCss, 'loading cover CSS');
+    assert_not_contains(
+        'transition: opacity',
+        $playerCss,
+        'loading cover reveals without exposing Vimeo through a fade'
+    );
+    assert_contains('vpc-transport-spin', $playerCss, 'transport loading spinner animation');
     assert_contains('vpc-chrome-btn__label', $html, 'chrome button labels wrapped for ellipsis');
     if (!preg_match('~\.vpc-chrome-btn__label[^}]*text-overflow:\s*ellipsis~s', $playerCss)) {
         fwrite(STDERR, "FAIL: chrome button label span should ellipsis overflow\n");

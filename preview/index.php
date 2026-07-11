@@ -73,7 +73,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=41">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=45">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=1">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -99,6 +99,6 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 </div>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=11"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=43" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=49" defer></script>
 </body>
 </html>
