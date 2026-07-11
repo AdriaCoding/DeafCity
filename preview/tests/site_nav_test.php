@@ -108,6 +108,13 @@ sn_assert(strpos($arOpt['label'], 'Arabic') !== false || $arOpt['label'] === 'Ar
 $esNav = preview_build_site_nav_links('about', 'bottom', array(), 'es');
 $aboutEs = sn_find($esNav, 'about');
 sn_assert(strpos($aboutEs['href'], 'lang=es') !== false, 'nav links preserve lang query');
+sn_assert($aboutEs['label'] === '?', 'about nav label is ? in Spanish locale');
+
+foreach (array('en', 'fr', 'ca', 'es', 'it', 'pt', 'ar') as $langId) {
+    $nav = preview_build_site_nav_links('home', 'bottom', array(), $langId);
+    $about = sn_find($nav, 'about');
+    sn_assert($about !== null && $about['label'] === '?', "about nav label is ? in {$langId} locale");
+}
 
 sn_assert(preview_append_lang_query('/preview/about', 'en') === '/preview/about?lang=en', 'append lang includes en');
 sn_assert(preview_append_lang_query('/preview/about', 'es') === '/preview/about?lang=es', 'append lang adds query');

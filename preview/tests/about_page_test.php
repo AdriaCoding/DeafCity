@@ -51,7 +51,7 @@ assert_contains('preview-site-nav__btn', $html, 'navbar uses button style');
 assert_contains('/preview/about', $html, 'navbar includes About route');
 assert_contains('/preview/participants', $html, 'navbar includes Participants route');
 assert_contains('aria-current="page"', $html, 'navbar marks current page');
-assert_contains('vpc-chrome-btn__label">About</span>', $html, 'About label in navbar');
+assert_contains('vpc-chrome-btn__label">?</span>', $html, 'About nav button shows ? in all locales');
 assert_not_contains('city-map-section', $html, 'map section removed');
 assert_not_contains('about-map.js', $html, 'about map script removed');
 assert_not_contains('d3.v7.min.js', $html, 'd3 script removed');

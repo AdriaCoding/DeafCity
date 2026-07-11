@@ -1313,15 +1313,15 @@
     },
     "player.nav.about": {
         "section": "player",
-        "context": "Site nav link to About page",
+        "context": "Site nav link to About page — Toni design decision: visible label is always \"?\" in every locale (see ADR-0012)",
         "translations": {
-            "en": "About",
-            "fr": "À propos",
-            "ca": "Sobre",
-            "es": "Acerca de",
-            "it": "Informazioni",
-            "pt": "Sobre",
-            "ar": "حول"
+            "en": "?",
+            "fr": "?",
+            "ca": "?",
+            "es": "?",
+            "it": "?",
+            "pt": "?",
+            "ar": "?"
         },
         "seeded": {
             "fr": true,

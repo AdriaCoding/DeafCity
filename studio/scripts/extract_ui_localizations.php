@@ -12,7 +12,7 @@ $outPath = $dataDir . '/ui-localizations.json';
 $manifest = [
     // Player chrome
     ['key' => 'player.nav.player', 'section' => 'player', 'context' => 'Site nav link to home player', 'en' => 'Player'],
-    ['key' => 'player.nav.about', 'section' => 'player', 'context' => 'Site nav link to About page', 'en' => 'About'],
+    ['key' => 'player.nav.about', 'section' => 'player', 'context' => 'Site nav link to About page — Toni design decision: visible label is always "?" in every locale (see ADR-0012)', 'en' => '?'],
     ['key' => 'player.nav.participants', 'section' => 'player', 'context' => 'Site nav link to Participants page', 'en' => 'Participants'],
     ['key' => 'player.nav.language', 'section' => 'player', 'context' => 'Language switcher aria-label on About/Participants navbar', 'en' => 'Language'],
     ['key' => 'player.filter.all_sign_languages', 'section' => 'player', 'context' => 'Default option in Sign language dropdown', 'en' => 'All sign languages'],
