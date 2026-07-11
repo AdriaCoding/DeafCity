@@ -60,10 +60,12 @@ sn_assert($participantsLink['label'] === 'Hamida', 'active collection shows part
 sn_assert(strpos($participantsLink['class'], 'is-active') !== false, 'active collection has is-active');
 sn_assert($participantsLink['aria_current'] === 'true', 'active collection has aria-current=true');
 
-// participants page keeps generic label for current route
+// participants page shows participant name when collection is active
 $participantsPage = preview_build_site_nav_links('participants', 'bottom', array('participants' => 'Hamida'));
 $navParticipantsLink = sn_find($participantsPage, 'participants');
-sn_assert($navParticipantsLink['label'] === 'Participants', 'participants page keeps generic label');
+sn_assert($navParticipantsLink['label'] === 'Hamida', 'participants page shows name when collection active');
+sn_assert(strpos($navParticipantsLink['class'], 'is-active') !== false, 'participants page green when collection active');
+sn_assert(strpos($navParticipantsLink['class'], 'is-current') !== false, 'participants page keeps is-current');
 sn_assert($navParticipantsLink['aria_current'] === 'page', 'participants page marks current route');
 
 // all links use button style

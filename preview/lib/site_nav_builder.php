@@ -121,15 +121,19 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
         $collectionKey = isset($item['collection']) ? (string) $item['collection'] : '';
         $dataCollection = '';
         $dataGenericLabel = '';
+        $collectionActive = ($collectionKey !== ''
+            && isset($activeCollections[$collectionKey])
+            && trim((string) $activeCollections[$collectionKey]) !== '');
+
+        if ($collectionActive) {
+            $label = trim((string) $activeCollections[$collectionKey]);
+            $class .= ' is-active';
+        }
 
         if ($isCurrent) {
             $class .= ' is-current';
             $ariaCurrent = 'page';
-        } elseif ($collectionKey !== ''
-            && isset($activeCollections[$collectionKey])
-            && trim((string) $activeCollections[$collectionKey]) !== '') {
-            $label = trim((string) $activeCollections[$collectionKey]);
-            $class .= ' is-active';
+        } elseif ($collectionActive) {
             $ariaCurrent = 'true';
         }
 

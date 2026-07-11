@@ -1052,6 +1052,27 @@ assert.strictEqual(logic.parsePlaybackSession('not-json'), null);
     assert.strictEqual(plan.loadMasterIndex, 1);
 })();
 
+// Explicit ?participant= navigation must not restore a stale neutral session (issue #04).
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 5,
+        filterState: { sign_language: 'lse', edition: null, typology: null },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [2, 0, 1],
+        shuffleStep: 1,
+        filteredCursor: 0,
+        playbackTimeSec: 44,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: '',
+        fullPlaylistItems: samplePlaylist,
+        explicitParticipantName: 'Hamida',
+    });
+    assert.strictEqual(plan, null, 'participant card click skips session restore');
+})();
+
 // Branch B: reset clears to neutral ALL
 (function () {
     var session = logic.buildPlaybackSessionSnapshot({
@@ -1078,7 +1099,55 @@ assert.strictEqual(logic.parsePlaybackSession('not-json'), null);
 
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
 
-// ── Issue #04: participant name from single-participant filtered playlist ───
+// ── Issue #04: Participants nav button label + green state ─────────────────
+
+(function () {
+    var state = logic.resolveParticipantsNavState({
+        isParticipantMode: true,
+        participantName: 'Hamida',
+        onPlayerPage: true,
+        isPlaying: false,
+        currentVideoParticipant: 'Hamida',
+    });
+    assert.strictEqual(state.label, 'Hamida', 'participant playlist: name while paused');
+    assert.strictEqual(state.isActive, true, 'participant playlist: green while paused');
+})();
+
+(function () {
+    var state = logic.resolveParticipantsNavState({
+        isParticipantMode: true,
+        participantName: 'Hamida',
+        onPlayerPage: false,
+        isPlaying: false,
+        currentVideoParticipant: '',
+    });
+    assert.strictEqual(state.label, 'Hamida', 'participant playlist: name on about/participants');
+    assert.strictEqual(state.isActive, true, 'participant playlist: green on about/participants');
+})();
+
+(function () {
+    var state = logic.resolveParticipantsNavState({
+        isParticipantMode: false,
+        participantName: '',
+        onPlayerPage: true,
+        isPlaying: false,
+        currentVideoParticipant: 'Aurora',
+    });
+    assert.strictEqual(state.label, '', 'neutral playlist paused: generic label');
+    assert.strictEqual(state.isActive, false, 'neutral playlist paused: not green');
+})();
+
+(function () {
+    var state = logic.resolveParticipantsNavState({
+        isParticipantMode: false,
+        participantName: '',
+        onPlayerPage: true,
+        isPlaying: true,
+        currentVideoParticipant: 'Aurora',
+    });
+    assert.strictEqual(state.label, 'Aurora', 'neutral playlist playing: current participant name');
+    assert.strictEqual(state.isActive, false, 'neutral playlist playing: stays gray');
+})();
 
 (function () {
     var filtered = recomputeFilteredMasterIndices(samplePlaylist, {
@@ -1091,34 +1160,15 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
         ['Hamida'],
         'gss filter yields one participant'
     );
-    assert.strictEqual(
-        logic.resolveCollectionParticipantLabel(samplePlaylist, filtered, '', false),
-        'Hamida',
-        'single-participant filter shows name without participant mode'
-    );
-})();
-
-(function () {
-    var filtered = recomputeFilteredMasterIndices(samplePlaylist, {
-        sign_language: 'lse',
-        edition: null,
-        typology: null,
+    var state = logic.resolveParticipantsNavState({
+        isParticipantMode: false,
+        participantName: '',
+        onPlayerPage: true,
+        isPlaying: true,
+        currentVideoParticipant: 'Hamida',
     });
-    assert.strictEqual(
-        logic.distinctParticipantsInSubset(samplePlaylist, filtered).length,
-        3,
-        'lse filter has three participants'
-    );
-    assert.strictEqual(
-        logic.resolveCollectionParticipantLabel(samplePlaylist, filtered, '', false),
-        '',
-        'multi-participant filter keeps generic label'
-    );
-    assert.strictEqual(
-        logic.resolveCollectionParticipantLabel(samplePlaylist, filtered, 'Aurora', true),
-        'Aurora',
-        'explicit participant mode still wins'
-    );
+    assert.strictEqual(state.label, 'Hamida', 'single-participant filter: name only while playing');
+    assert.strictEqual(state.isActive, false, 'single-participant filter: never green without participant mode');
 })();
 
 // ── Issue #05: generalized end-of-playlist ───────────────────────────────────

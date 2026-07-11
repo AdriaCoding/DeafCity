@@ -91,7 +91,8 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
 
 <?php include __DIR__ . '/../components/bottom_bar.php'; ?>
 
-<script src="/preview/js/secondary_player_chrome.js?v=1"></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=10"></script>
+<script src="/preview/js/secondary_player_chrome.js?v=2"></script>
 <script>
 (function () {
     'use strict';

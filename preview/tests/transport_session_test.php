@@ -23,14 +23,16 @@ ts_assert_contains("NAV_INTENT_KEY = 'vpc-nav-intent'", $logicJs, 'nav intent ke
 ts_assert_contains('planSecondaryNavRestore', $logicJs, 'secondary nav restore planner');
 ts_assert_contains('buildPlaybackSessionSnapshot', $logicJs, 'session snapshot builder');
 
-ts_assert_contains('planSecondaryNavRestore', $playerJs, 'player reads nav restore plan');
+ts_assert_contains('explicitParticipantName', $logicJs, 'explicit participant bypasses session restore');
+ts_assert_contains('explicitParticipantName: participantName', $playerJs, 'player passes URL participant to restore planner');
 ts_assert_contains('savePlaybackSession', $playerJs, 'player persists playback session');
 ts_assert_contains('__vpcSavePlaybackSession', $playerJs, 'session save exposed for lang handoff');
 ts_assert_contains('sessionStorage.removeItem(L.NAV_INTENT_KEY)', $playerJs, 'nav intent cleared after read');
 
 ts_assert_contains("sessionStorage.setItem('vpc-nav-intent'", $secondaryJs, 'secondary chrome writes nav intent');
 ts_assert_contains("sessionStorage.removeItem('vpc-playback-session')", $secondaryJs, 'reset clears playback session');
-ts_assert_contains("params.push('lang='", $secondaryJs, 'lang query preserved on navigation');
+ts_assert_contains('syncParticipantsNavFromSession', $secondaryJs, 'secondary chrome syncs participants nav from session');
+ts_assert_contains('resolveParticipantsNavState', $secondaryJs, 'secondary chrome uses participants nav state');
 
 if (strpos($secondaryJs, "match[1] !== 'en'") !== false) {
     fwrite(STDERR, "FAIL: secondary chrome still skips lang=en\n");

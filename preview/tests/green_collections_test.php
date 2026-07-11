@@ -63,7 +63,8 @@ $js = file_get_contents($jsPath);
 $navPhp = file_get_contents($navPath);
 
 gc_assert_contains('syncCollectionNavButtons', $js, 'generic collection nav sync function');
-gc_assert_contains('getActiveCollectionLabel', $js, 'collection label resolver for future Tags');
+gc_assert_contains('getCollectionNavState', $js, 'collection nav state resolver for future Tags');
+gc_assert_contains('L.resolveParticipantsNavState', $js, 'player uses participants nav state from playlist logic');
 gc_assert_not_contains('syncParticipantButtonLabel', $js, 'old participant-only sync removed');
 gc_assert_contains('syncCollectionNavButtons()', $js, 'collection sync invoked on init');
 gc_assert_contains("btn.classList.add('is-active')", $js, 'JS toggles is-active class');
