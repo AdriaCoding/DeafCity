@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Participants grid: layout, thumbs, random order, alternation
 
@@ -17,11 +17,11 @@ Refine the Participants page content area (chrome handled in issue 01):
 
 ## Acceptance criteria
 
-- [ ] No `<h1>` / heading above the participants grid
-- [ ] Thumbnails display without cropping heads on representative catalog entries
-- [ ] Grid order differs between two consecutive reloads (statistically — not hardcoded shuffle seed)
-- [ ] Multi-video participant alternates thumb across visits; single-video participant is stable
-- [ ] `participants_page_test.php` updated
+- [x] No `<h1>` / heading above the participants grid
+- [x] Thumbnails display without cropping heads on representative catalog entries
+- [x] Grid order differs between two consecutive reloads (statistically — not hardcoded shuffle seed)
+- [x] Multi-video participant alternates thumb across visits; single-video participant is stable
+- [x] `participants_page_test.php` updated
 
 ## Blocked by
 
