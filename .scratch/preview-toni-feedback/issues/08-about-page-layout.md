@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # About page: remove map, full-width layout, logo alignment
 
@@ -18,11 +18,11 @@ Player chrome unification is handled in issue 01; this issue covers only the scr
 
 ## Acceptance criteria
 
-- [ ] `#city-map-section`, map.php include, about-map.js, and map-specific CSS removed
-- [ ] About content uses full viewport width responsively (clock/gallery row, text blocks, credits)
-- [ ] Credits logos visually aligned per legacy reference (side-by-side, consistent spacing)
-- [ ] `about_page_test.php` updated; no broken script references
-- [ ] Page remains usable with unified player chrome from issue 01
+- [x] `#city-map-section`, map.php include, about-map.js, and map-specific CSS removed
+- [x] About content uses full viewport width responsively (clock/gallery row, text blocks, credits)
+- [x] Credits logos visually aligned per legacy reference (side-by-side, consistent spacing)
+- [x] `about_page_test.php` updated; no broken script references
+- [x] Page remains usable with unified player chrome from issue 01
 
 ## Blocked by
 
