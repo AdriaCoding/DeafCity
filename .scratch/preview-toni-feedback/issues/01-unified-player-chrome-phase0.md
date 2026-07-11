@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Unified player chrome (Phase 0)
 
@@ -16,13 +16,13 @@ Reset from About navigates to neutral `/preview/` (clears filters and participan
 
 ## Acceptance criteria
 
-- [ ] About and Participants include `bottom_bar.php` in `player` mode; `nav` mode and `preview_render_bottom_bar_nav()` are removed or unused
-- [ ] Shuffle/Random button removed from transport; reset still clears all filters and collections
-- [ ] Reset button shows visible text (not icon-only); aria-label retained
-- [ ] Non-transport buttons (nav, filters, language, Reset) share uniform width; Prev / Play / Next unchanged
-- [ ] No top border / horizontal rule above bottom chrome on any page
-- [ ] Reproductor link no longer appears in site nav
-- [ ] Tests updated (`home_page_test.php`, `about_page_test.php`, `participants_page_test.php`, `site_nav_test.php`)
+- [x] About and Participants include `bottom_bar.php` in `player` mode; `nav` mode and `preview_render_bottom_bar_nav()` are removed or unused
+- [x] Shuffle/Random button removed from transport; reset still clears all filters and collections
+- [x] Reset button shows visible text (not icon-only); aria-label retained
+- [x] Non-transport buttons (nav, filters, language, Reset) share uniform width; Prev / Play / Next unchanged
+- [x] No top border / horizontal rule above bottom chrome on any page
+- [x] Reproductor link no longer appears in site nav
+- [x] Tests updated (`home_page_test.php`, `about_page_test.php`, `participants_page_test.php`, `site_nav_test.php`)
 
 ## Blocked by
 

@@ -44,13 +44,14 @@ assert_not_contains('vpc-bottom-bar--nav', $html, 'no legacy nav-mode bottom bar
 assert_contains('data-secondary-page="true"', $html, 'secondary page player chrome flag');
 assert_contains('vpc-control-transport-cluster', $html, 'transport cluster on about page');
 assert_contains('vpc-reset-btn__text', $html, 'reset shows visible text');
+assert_contains('chrome_button_widths.js', $html, 'uniform chrome width sync script');
 assert_not_contains('vpc-shuffle-btn', $html, 'no shuffle button on about page');
 assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 assert_contains('preview-site-nav__btn', $html, 'navbar uses button style');
 assert_contains('/preview/about', $html, 'navbar includes About route');
 assert_contains('/preview/participants', $html, 'navbar includes Participants route');
 assert_contains('aria-current="page"', $html, 'navbar marks current page');
-assert_contains('>About</a>', $html, 'About label in navbar');
+assert_contains('vpc-chrome-btn__label">About</span>', $html, 'About label in navbar');
 assert_not_contains('city-map-section', $html, 'map section removed');
 assert_not_contains('about-map.js', $html, 'about map script removed');
 assert_not_contains('d3.v7.min.js', $html, 'd3 script removed');
@@ -74,5 +75,10 @@ if (preg_match('~\[data-secondary-page="true"\]\s*\{[^}]*box-shadow~s', $bottomB
     exit(1);
 }
 echo "PASS: no box-shadow on secondary page bottom bar\n";
+if (preg_match('~\[data-secondary-page="true"\]\s*\{[^}]+\}~s', $bottomBarCss)) {
+    fwrite(STDERR, "FAIL: secondary page bottom bar must not add extra wrapper padding (match player control-row)\n");
+    exit(1);
+}
+echo "PASS: secondary page chrome spacing matches player page\n";
 
 echo "All tests passed.\n";

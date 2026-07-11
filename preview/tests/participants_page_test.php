@@ -56,7 +56,7 @@ pp_assert_not_contains('vpc-shuffle-btn', $html, 'no shuffle button');
 pp_assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 pp_assert_contains('/preview/participants', $html, 'navbar includes Participants route');
 pp_assert_contains('aria-current="page"', $html, 'navbar marks current page');
-pp_assert_contains('>Participants</a>', $html, 'Participants label in navbar');
+pp_assert_contains('vpc-chrome-btn__label">Participants</span>', $html, 'Participants label in navbar');
 pp_assert_contains('/preview/about', $html, 'navbar includes About route');
 pp_assert_contains('data-picker="language"', $html, 'language picker on participants chrome');
 pp_assert_contains('vpc-picker-dropdown', $html, 'language dropup on participants chrome');
@@ -196,7 +196,7 @@ if (($cfg2['participantName'] ?? 'NOT_SET') !== '') {
 echo "PASS: participantName empty when no ?participant param\n";
 
 pp_assert_contains('/preview/participants', $homeHtml2, 'Participants nav button on home page');
-pp_assert_contains('>Participants<', $homeHtml2, 'Participants button label text');
+pp_assert_contains('vpc-chrome-btn__label">Participants</span>', $homeHtml2, 'Participants button label text');
 
 $_GET['participant'] = 'Frank';
 ob_start();

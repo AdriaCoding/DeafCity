@@ -1141,6 +1141,24 @@
                 return '';
             }
 
+            function chromeBtnLabelEl(btn) {
+                return btn.querySelector('.vpc-chrome-btn__label');
+            }
+
+            function setChromeBtnLabel(btn, label) {
+                var el = chromeBtnLabelEl(btn);
+                if (el) {
+                    el.textContent = label;
+                    return;
+                }
+                btn.textContent = label;
+            }
+
+            function getChromeBtnLabel(btn) {
+                var el = chromeBtnLabelEl(btn);
+                return el ? el.textContent.trim() : btn.textContent.trim();
+            }
+
             /**
              * Sync all R3 collection nav buttons: green + name when active, generic label otherwise (D21).
              */
@@ -1156,15 +1174,15 @@
                     var activeLabel = getActiveCollectionLabel(key);
                     var genericLabel = btn.getAttribute('data-generic-label');
                     if (!genericLabel) {
-                        genericLabel = btn.textContent.trim();
+                        genericLabel = getChromeBtnLabel(btn);
                         btn.setAttribute('data-generic-label', genericLabel);
                     }
                     if (activeLabel) {
-                        btn.textContent = activeLabel;
+                        setChromeBtnLabel(btn, activeLabel);
                         btn.classList.add('is-active');
                         btn.setAttribute('aria-current', 'true');
                     } else {
-                        btn.textContent = genericLabel;
+                        setChromeBtnLabel(btn, genericLabel);
                         btn.classList.remove('is-active');
                         btn.removeAttribute('aria-current');
                     }
@@ -1193,7 +1211,7 @@
                     genericLabel
                 );
 
-                btn.textContent = readout.label;
+                setChromeBtnLabel(btn, readout.label);
                 pickerEl.setAttribute('data-active', readout.fixed ? 'true' : 'false');
             }
 

@@ -80,6 +80,15 @@ $initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout']) ? (stri
 $initialEditionReadout = isset($playerCfg['initial_edition_readout']) ? (string) $playerCfg['initial_edition_readout'] : '';
 $initialTypologyReadout = isset($playerCfg['initial_typology_readout']) ? (string) $playerCfg['initial_typology_readout'] : '';
 
+if (!function_exists('preview_chrome_btn_label')) {
+    function preview_chrome_btn_label($text)
+    {
+        return '<span class="vpc-chrome-btn__label">'
+            . htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8')
+            . '</span>';
+    }
+}
+
 if (!function_exists('preview_render_nav_link')) {
     function preview_render_nav_link($link)
     {
@@ -92,7 +101,7 @@ if (!function_exists('preview_render_nav_link')) {
             ? ' aria-current="' . htmlspecialchars($link['aria_current'], ENT_QUOTES, 'UTF-8') . '"'
             : '';
         ?>
-        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?>><?= htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8') ?></a>
+        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?>><?= preview_chrome_btn_label($link['label']) ?></a>
         <?php
     }
 }
@@ -118,7 +127,7 @@ if (!function_exists('preview_render_lang_picker')) {
                 aria-expanded="false"
                 aria-controls="<?= htmlspecialchars($langDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                 data-generic-label="<?= htmlspecialchars($langLabel, ENT_QUOTES, 'UTF-8') ?>"
-            ><?= htmlspecialchars($currentLangLabel, ENT_QUOTES, 'UTF-8') ?></button>
+            ><?= preview_chrome_btn_label($currentLangLabel) ?></button>
             <ul
                 role="listbox"
                 id="<?= htmlspecialchars($langDropdownId, ENT_QUOTES, 'UTF-8') ?>"
@@ -193,7 +202,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         aria-expanded="false"
                         aria-controls="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         data-generic-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?= htmlspecialchars($initialTypologyReadout, ENT_QUOTES, 'UTF-8') ?></button>
+                    ><?= preview_chrome_btn_label($initialTypologyReadout) ?></button>
                     <ul
                         role="listbox"
                         id="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
@@ -239,7 +248,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         aria-expanded="false"
                         aria-controls="<?= htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         data-generic-label="<?= htmlspecialchars(preview_t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?= htmlspecialchars($initialSignLangReadout, ENT_QUOTES, 'UTF-8') ?></button>
+                    ><?= preview_chrome_btn_label($initialSignLangReadout) ?></button>
                     <ul
                         role="listbox"
                         id="<?= htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8') ?>"
@@ -280,7 +289,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         aria-expanded="false"
                         aria-controls="<?= htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         data-generic-label="<?= htmlspecialchars(preview_t('player.filter.city_edition'), ENT_QUOTES, 'UTF-8') ?>"
-                    ><?= htmlspecialchars($initialEditionReadout, ENT_QUOTES, 'UTF-8') ?></button>
+                    ><?= preview_chrome_btn_label($initialEditionReadout) ?></button>
                     <ul
                         role="listbox"
                         id="<?= htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8') ?>"
@@ -407,4 +416,4 @@ if (count($langOptions) > 1):
 }());
 </script>
 <?php endif; ?>
-<script src="/preview/js/chrome_button_widths.js?v=1"></script>
+<script src="/preview/js/chrome_button_widths.js?v=5"></script>

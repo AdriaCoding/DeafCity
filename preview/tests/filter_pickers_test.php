@@ -107,7 +107,7 @@ foreach (array(
 
     if (!preg_match(
         '~data-picker="' . preg_quote($facet, '~') . '"[^>]*>.*?class="vpc-picker-btn"[^>]*>'
-        . preg_quote($compactEsc, '~') . '</button>~s',
+        . '.*?class="vpc-chrome-btn__label">' . preg_quote($compactEsc, '~') . '</span></button>~s',
         $html
     )) {
         fwrite(STDERR, "FAIL: {$facet} picker face should show compact label \"{$compact}\"\n");

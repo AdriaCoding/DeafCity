@@ -447,6 +447,27 @@ if (is_file($playerJsPath)) {
     assert_not_contains("querySelector('.vpc-shuffle-btn')", $playerJs, 'no shuffle button DOM queries in player JS');
 }
 
+$chromeWidthsPath = dirname(dirname(__FILE__)) . '/js/chrome_button_widths.js';
+if (is_file($chromeWidthsPath)) {
+    $chromeWidthsJs = file_get_contents($chromeWidthsPath);
+    assert_contains('vpcSyncChromeButtonWidths', $chromeWidthsJs, 'chrome width sync hook present');
+}
+
+$playerCssPath = dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.css';
+if (is_file($playerCssPath)) {
+    $playerCss = file_get_contents($playerCssPath);
+    assert_contains('text-overflow: ellipsis', $playerCss, 'chrome buttons crop overflowing labels');
+    assert_contains('--vpc-chrome-filter-flex', $playerCss, 'filter chrome flex weight vars');
+    assert_contains('--vpc-chrome-participants-max', $playerCss, 'participants chrome max width var');
+    assert_contains('--vpc-chrome-reset-max', $playerCss, 'reset chrome max width var');
+    assert_contains('vpc-chrome-btn__label', $html, 'chrome button labels wrapped for ellipsis');
+    if (!preg_match('~\.vpc-chrome-btn__label[^}]*text-overflow:\s*ellipsis~s', $playerCss)) {
+        fwrite(STDERR, "FAIL: chrome button label span should ellipsis overflow\n");
+        exit(1);
+    }
+    echo "PASS: chrome button label span ellipsis overflow\n";
+}
+
 // Reset lives in the transport cluster (after next)
 if (!preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-next-btn.*?vpc-reset-btn~s', $html)) {
     fwrite(STDERR, "FAIL: reset button should appear in transport cluster after next\n");
@@ -456,6 +477,6 @@ echo "PASS: reset button in transport cluster after next\n";
 
 // ── Issue #7: R3 Participants nav button ──────────────────────────────────────
 assert_contains('/preview/participants', $html, 'Participants nav button in R3');
-assert_contains('>Participants<', $html, 'Participants button label text');
+assert_contains('vpc-chrome-btn__label">Participants</span>', $html, 'Participants button label text');
 
 echo "\nAll tests passed.\n";

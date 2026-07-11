@@ -36,7 +36,7 @@ $neutralHtml = ob_get_clean();
 gc_assert_not_contains('data-collection="participants" class="preview-site-nav__btn is-active"', $neutralHtml, 'no SSR green Participants button on neutral home');
 gc_assert_contains('data-collection="participants"', $neutralHtml, 'Participants button has data-collection hook');
 gc_assert_contains('data-generic-label="Participants"', $neutralHtml, 'Participants button stores generic label for JS reset');
-gc_assert_contains('>Participants</a>', $neutralHtml, 'neutral Participants label on home');
+gc_assert_contains('vpc-chrome-btn__label">Participants</span>', $neutralHtml, 'neutral Participants label on home');
 
 // ── Active participant collection: SSR green + name ───────────────────────────
 $_GET['participant'] = 'Hamida';
@@ -46,7 +46,7 @@ $activeHtml = ob_get_clean();
 
 gc_assert_contains('data-collection="participants"', $activeHtml, 'participant home has collection hook');
 gc_assert_contains('class="preview-site-nav__btn is-active"', $activeHtml, 'SSR is-active on participant collection');
-gc_assert_contains('>Hamida</a>', $activeHtml, 'SSR shows participant name on nav button');
+gc_assert_contains('vpc-chrome-btn__label">Hamida</span>', $activeHtml, 'SSR shows participant name on nav button');
 gc_assert_contains('aria-current="true"', $activeHtml, 'SSR aria-current on active collection button');
 
 // ── CSS: brand green matches fixed-filter picker (D21) ───────────────────────
