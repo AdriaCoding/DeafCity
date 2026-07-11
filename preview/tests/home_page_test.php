@@ -506,6 +506,22 @@ if (is_file($playerCssPath)) {
         exit(1);
     }
     echo "PASS: chrome button label span ellipsis overflow\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary\s*\{[^}]*width:\s*100%[^}]*\}.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r\s*\{[^}]*display:\s*contents~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: stacked control row should stretch secondary chrome across full width\n");
+        exit(1);
+    }
+    echo "PASS: stacked secondary chrome stretches full width\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-row \.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*flex:\s*0\.65 1 0[^}]*\}.*?\.vpc-control-row \.vpc-control-secondary-l > \.vpc-picker\s*\{[^}]*flex:\s*1 1 0[^}]*\}.*?\.vpc-control-row \.vpc-control-secondary-r > \.vpc-r2-filters\s*\{[^}]*flex:\s*1\.7 1 0[^}]*\}.*?\.vpc-control-row \.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*flex:\s*1\.3 1 0[^}]*max-width:\s*none~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: stacked chrome should reserve enough width for Participants\n");
+        exit(1);
+    }
+    echo "PASS: stacked chrome reserves enough width for Participants\n";
 }
 
 // Reset lives in the transport cluster (after next)
