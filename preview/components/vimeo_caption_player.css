@@ -61,12 +61,15 @@
 }
 .vpc-poster-cover {
     position: absolute;
-    inset: 0;
     z-index: 1;
     display: block;
-    width: 100%;
+    width: auto;
     height: 100%;
-    object-fit: contain;
+    aspect-ratio: 16 / 9; /* match iframe; overridden at runtime from Vimeo dimensions */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
     background: #fff;
     opacity: 1;
     pointer-events: none;

@@ -942,6 +942,7 @@
                     var ratio = aspectRatioFrom(dims[0], dims[1]);
                     iframe.style.aspectRatio = ratio;
                     if (videoShell) videoShell.style.aspectRatio = ratio;
+                    if (posterCover) posterCover.style.aspectRatio = ratio;
                     syncCaptionTypography('aspectRatio');
                 });
             }
@@ -949,6 +950,7 @@
             function resetVideoAspectPlaceholder() {
                 if (iframe) iframe.style.aspectRatio = '16 / 9';
                 if (videoShell) videoShell.style.aspectRatio = '';
+                if (posterCover) posterCover.style.aspectRatio = '';
             }
 
             function iframeEmbedVideoId() {
