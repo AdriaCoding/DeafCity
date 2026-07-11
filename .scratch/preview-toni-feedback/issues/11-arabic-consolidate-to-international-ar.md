@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Consolidate Arabic: remove Darija/Tunisian, use international Arabic (`ar`)
 
@@ -24,12 +24,12 @@ Scope spans preview and Studio:
 
 ## Acceptance criteria
 
-- [ ] Language picker shows **Arabic** (`ar`), not Algerian Darija or Tunisian Arabic
-- [ ] `?lang=ar` resolves correctly; RTL layout applies to page text
-- [ ] No remaining references to `arq` or `aeb` in config, resolver, or active UI paths (grep clean or documented exceptions for legacy catalog data)
-- [ ] Existing Arabic UI strings available under `ar` (merged from best complete dialect copy or re-translated — document choice in PR)
-- [ ] Studio subtitle language list matches preview
-- [ ] Tests pass
+- [x] Language picker shows **Arabic** (`ar`), not Algerian Darija or Tunisian Arabic
+- [x] `?lang=ar` resolves correctly; RTL layout applies to page text
+- [x] No remaining references to `arq` or `aeb` in config, resolver, or active UI paths (grep clean or documented exceptions for legacy catalog data)
+- [x] Existing Arabic UI strings available under `ar` (merged from best complete dialect copy or re-translated — document choice in PR)
+- [x] Studio subtitle language list matches preview
+- [x] Tests pass
 
 ## Blocked by
 
@@ -38,3 +38,5 @@ None — can start immediately (orthogonal to issue 01; may ship in same PR as i
 ## Comments
 
 > Decision confirmed Jul 2026 — replaces pending Alger/Tunis dialect scope question (#14).
+>
+> **Arabic merge source (Jul 2026):** Both `arq` and `aeb` had 77 translation keys each (tie). **`arq` copy preferred** as first in legacy config order. Merged into single `ar` slot in `ui-localizations.json`.

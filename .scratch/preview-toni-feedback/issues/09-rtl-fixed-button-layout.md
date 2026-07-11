@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # RTL languages: fixed button layout
 
@@ -23,9 +23,9 @@ Arabic language ids (`arq`, `aeb`) are removed in issue 11; this issue targets `
 
 ## Acceptance criteria
 
-- [ ] With `?lang=ar`, button order matches English layout (spot-check ? / filters / transport / Participants positions)
-- [ ] About and Participants page text still renders RTL where appropriate
-- [ ] No menu reorder regression when switching from a LTR language to Arabic
+- [x] With `?lang=ar`, button order matches English layout (spot-check ? / filters / transport / Participants positions)
+- [x] About and Participants page text still renders RTL where appropriate
+- [x] No menu reorder regression when switching from a LTR language to Arabic
 
 ## Blocked by
 
