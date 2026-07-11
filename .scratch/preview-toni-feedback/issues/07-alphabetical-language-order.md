@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Alphabetical language order (preview + Studio)
 
@@ -14,11 +14,11 @@ English may remain first or be sorted purely alphabetically — pick one rule an
 
 ## Acceptance criteria
 
-- [ ] Preview language dropdown order is alphabetical by localized label (verify ES, CA, EN, AR entries)
-- [ ] Studio language list matches the same ordering rule
-- [ ] Existing tests for language switcher updated
-- [ ] No change to language resolution / completeness gate logic
+- [x] Preview language dropdown order is alphabetical by localized label (verify ES, CA, EN, AR entries)
+- [x] Studio language list matches the same ordering rule
+- [x] Existing tests for language switcher updated
+- [x] No change to language resolution / completeness gate logic
 
-## Blocked by
+## Comments
 
-None — can start immediately
+> **Alphabetical order rule (Jul 2026):** Pure A–Z by displayed label — English is not pinned first; all languages including EN sort alphabetically.
