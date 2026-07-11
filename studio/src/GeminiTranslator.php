@@ -16,8 +16,7 @@ class GeminiTranslator
         'fr' => 'French',
         'ca' => 'Catalan',
         'pt' => 'Portuguese',
-        'arq' => 'Algerian Darija (Algerian Arabic dialect, Arabic script)',
-        'aeb' => 'Tunisian Arabic (Tunisian Derja dialect, Arabic script)',
+        'ar' => 'Arabic (Modern Standard Arabic, Arabic script)',
     ];
 
     private string $apiKey;

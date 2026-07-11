@@ -82,26 +82,11 @@ if (!function_exists('preview_append_lang_query')) {
     {
         $href = (string) $href;
         $langId = (string) $langId;
-        if ($langId === '' || $langId === 'en') {
+        if ($langId === '') {
             return $href;
         }
 
         return $href . (strpos($href, '?') !== false ? '&' : '?') . 'lang=' . rawurlencode($langId);
-    }
-}
-
-if (!function_exists('preview_arabic_language_order')) {
-    /** @return list<string> */
-    function preview_arabic_language_order(array $languageIds)
-    {
-        $arabic = array();
-        foreach ($languageIds as $id) {
-            if ($id === 'arq' || $id === 'aeb') {
-                $arabic[] = $id;
-            }
-        }
-
-        return $arabic;
     }
 }
 
@@ -118,7 +103,6 @@ if (!function_exists('preview_bootstrap_locale')) {
         $entries = preview_i18n_load_store($storePath);
         $languageIds = preview_language_ids_from_config($configPath);
         $completeness = preview_i18n_compute_completeness($entries, $languageIds);
-        $arabicOrder = preview_arabic_language_order($languageIds);
 
         $acceptLang = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
         $langOverride = isset($_GET['lang']) ? trim((string) $_GET['lang']) : null;
@@ -130,12 +114,11 @@ if (!function_exists('preview_bootstrap_locale')) {
             $acceptLang,
             $langOverride,
             $languageIds,
-            $completeness,
-            $arabicOrder
+            $completeness
         );
 
         $i18n = new PreviewI18n($entries, $resolvedLang);
-        $dir = ($resolvedLang === 'arq' || $resolvedLang === 'aeb') ? 'rtl' : 'ltr';
+        $dir = ($resolvedLang === 'ar') ? 'rtl' : 'ltr';
 
         return array(
             'lang' => $resolvedLang,

@@ -17,13 +17,13 @@ assert_true($missing === array(), 'missing file returns empty array');
 
 $fixture = sys_get_temp_dir() . '/preview-gallery-fixture-' . getmypid() . '.json';
 file_put_contents($fixture, json_encode(array(
-    array('image' => '01.avif', 'caption' => 'Example caption'),
+    array('image' => '01.avif'),
 )));
 
 $images = preview_load_gallery_images($fixture);
 assert_true(count($images) === 1, 'loads one image');
 assert_true($images[0]['image'] === '/gallery/01.avif', 'prefixes gallery path');
-assert_true($images[0]['caption'] === 'Example caption', 'preserves caption');
+assert_true(!isset($images[0]['caption']), 'gallery.json no longer carries captions');
 
 unlink($fixture);
 

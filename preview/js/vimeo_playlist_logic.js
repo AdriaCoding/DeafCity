@@ -702,6 +702,341 @@
         };
     }
 
+    /** sessionStorage key for cross-page playback context (issue #02). */
+    var PLAYBACK_SESSION_KEY = 'vpc-playback-session';
+    /** One-shot nav intent from About/Participants transport (issue #02). */
+    var NAV_INTENT_KEY = 'vpc-nav-intent';
+
+    /**
+     * Build a serializable playback session snapshot.
+     * @param {{
+     *   masterIndex: number,
+     *   filterState: VpcFilterState,
+     *   participantName: string,
+     *   shuffleMode: boolean,
+     *   shuffledSequence: number[],
+     *   shuffleStep: number,
+     *   filteredCursor: number,
+     *   playbackTimeSec?: number
+     * }} opts
+     * @returns {object}
+     */
+    function buildPlaybackSessionSnapshot(opts) {
+        return {
+            v: 1,
+            masterIndex: typeof opts.masterIndex === 'number' ? opts.masterIndex : 0,
+            filterState: {
+                sign_language: opts.filterState.sign_language,
+                edition: opts.filterState.edition,
+                typology: opts.filterState.typology,
+            },
+            participantName: typeof opts.participantName === 'string' ? opts.participantName : '',
+            shuffleMode: !!opts.shuffleMode,
+            shuffledSequence: Array.isArray(opts.shuffledSequence)
+                ? opts.shuffledSequence.slice()
+                : [],
+            shuffleStep: typeof opts.shuffleStep === 'number' ? opts.shuffleStep : 0,
+            filteredCursor: typeof opts.filteredCursor === 'number' ? opts.filteredCursor : 0,
+            playbackTimeSec: typeof opts.playbackTimeSec === 'number' ? opts.playbackTimeSec : 0,
+        };
+    }
+
+    /**
+     * Parse a playback session JSON string, or null when invalid.
+     * @param {string} raw
+     * @returns {object|null}
+     */
+    function parsePlaybackSession(raw) {
+        if (!raw || typeof raw !== 'string') return null;
+        try {
+            var data = JSON.parse(raw);
+            if (!data || typeof data !== 'object' || data.v !== 1) return null;
+            if (typeof data.masterIndex !== 'number') return null;
+            if (!data.filterState || typeof data.filterState !== 'object') return null;
+            return data;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    /**
+     * Rebuild filtered master indices from session filter + optional participant mode.
+     * @param {Array<{ participant?: string }>} fullPlaylistItems
+     * @param {VpcFilterState} filterState
+     * @param {string} participantName
+     * @returns {number[]}
+     */
+    function filteredIndicesFromSessionContext(fullPlaylistItems, filterState, participantName) {
+        var indices = recomputeFilteredMasterIndices(fullPlaylistItems, filterState);
+        var name = typeof participantName === 'string' ? participantName.trim() : '';
+        if (name === '') return indices;
+        return indices.filter(function (ix) {
+            var item = fullPlaylistItems[ix];
+            return item && (item.participant || '') === name;
+        });
+    }
+
+    /**
+     * Apply a transport step (−1 / +1) within restored shuffle or linear state.
+     * @param {{
+     *   shuffleMode: boolean,
+     *   shuffledSequence: number[],
+     *   shuffleStep: number,
+     *   filteredCursor: number,
+     *   filteredCount: number,
+     *   delta: number
+     * }} opts
+     * @returns {{ shuffleStep: number, filteredCursor: number } | null}
+     */
+    function applyTransportStep(opts) {
+        var fc = opts.filteredCount;
+        if (fc <= 0) return null;
+        var delta = opts.delta;
+
+        if (opts.shuffleMode) {
+            var nextStep = opts.shuffleStep + delta;
+            if (nextStep < 0 || nextStep >= fc) return null;
+            var shuffledCursor = filteredCursorFromShuffleStep(
+                opts.shuffledSequence,
+                nextStep,
+                fc
+            );
+            if (shuffledCursor === null) return null;
+            return { shuffleStep: nextStep, filteredCursor: shuffledCursor };
+        }
+
+        var nextCursor = opts.filteredCursor + delta;
+        if (nextCursor < 0 || nextCursor >= fc) return null;
+        return { shuffleStep: opts.shuffleStep, filteredCursor: nextCursor };
+    }
+
+    /**
+     * Plan player restore after navigating from About/Participants (issue #02).
+     * @param {{
+     *   session: object|null,
+     *   navIntent: string|null|undefined,
+     *   fullPlaylistItems: Array<{ signLanguage?: string, edition?: string, typology?: string, participant?: string }>,
+     *   randomFn?: () => number
+     * }} opts
+     * @returns {{
+     *   kind: 'fresh'|'restore'|'reset',
+     *   plan?: object,
+     *   filterState?: VpcFilterState,
+     *   participantName?: string,
+     *   isParticipantMode?: boolean,
+     *   filteredMasterIndices?: number[],
+     *   filteredCursor?: number,
+     *   shuffleStep?: number,
+     *   shuffledSequence?: number[],
+     *   shuffleMode?: boolean,
+     *   loadMasterIndex?: number,
+     *   shouldAutoplay?: boolean,
+     *   playbackTimeSec?: number
+     * } | null}
+     */
+    function planSecondaryNavRestore(opts) {
+        var session = opts.session;
+        var navIntent = opts.navIntent ? String(opts.navIntent) : '';
+        var items = opts.fullPlaylistItems;
+        var randomFn = opts.randomFn || Math.random;
+
+        if (navIntent === 'reset') {
+            var resetPlan = planResetToNeutralAll({
+                fullPlaylistItems: items,
+                randomFn: randomFn,
+            });
+            if (!resetPlan) return { kind: 'fresh' };
+            return { kind: 'reset', plan: resetPlan };
+        }
+
+        if (!session) {
+            if (navIntent === 'play' || navIntent === 'prev' || navIntent === 'next') {
+                return { kind: 'fresh' };
+            }
+            return null;
+        }
+
+        var filterState = {
+            sign_language: session.filterState.sign_language !== undefined
+                ? session.filterState.sign_language
+                : null,
+            edition: session.filterState.edition !== undefined
+                ? session.filterState.edition
+                : null,
+            typology: session.filterState.typology !== undefined
+                ? session.filterState.typology
+                : null,
+        };
+        var participantName = typeof session.participantName === 'string'
+            ? session.participantName.trim()
+            : '';
+        var isParticipantMode = participantName !== '';
+        var filteredMasterIndices = filteredIndicesFromSessionContext(
+            items,
+            filterState,
+            participantName
+        );
+        var fc = filteredMasterIndices.length;
+        if (fc === 0) return { kind: 'fresh' };
+
+        var shuffleMode = !!session.shuffleMode;
+        var shuffledSequence = Array.isArray(session.shuffledSequence)
+            ? session.shuffledSequence.slice()
+            : [];
+        var shuffleStep = typeof session.shuffleStep === 'number' ? session.shuffleStep : 0;
+        var filteredCursor = typeof session.filteredCursor === 'number'
+            ? session.filteredCursor
+            : 0;
+        var playbackTimeSec = typeof session.playbackTimeSec === 'number'
+            ? session.playbackTimeSec
+            : 0;
+        var shouldAutoplay = false;
+
+        if (navIntent === 'prev') {
+            var prevStep = applyTransportStep({
+                shuffleMode: shuffleMode,
+                shuffledSequence: shuffledSequence,
+                shuffleStep: shuffleStep,
+                filteredCursor: filteredCursor,
+                filteredCount: fc,
+                delta: -1,
+            });
+            if (prevStep) {
+                shuffleStep = prevStep.shuffleStep;
+                filteredCursor = prevStep.filteredCursor;
+            }
+            playbackTimeSec = 0;
+        } else if (navIntent === 'next') {
+            var nextStep = applyTransportStep({
+                shuffleMode: shuffleMode,
+                shuffledSequence: shuffledSequence,
+                shuffleStep: shuffleStep,
+                filteredCursor: filteredCursor,
+                filteredCount: fc,
+                delta: 1,
+            });
+            if (nextStep) {
+                shuffleStep = nextStep.shuffleStep;
+                filteredCursor = nextStep.filteredCursor;
+            }
+            playbackTimeSec = 0;
+        } else if (navIntent === 'play') {
+            shouldAutoplay = playbackTimeSec > 0;
+        }
+
+        filteredCursor = Math.min(Math.max(filteredCursor, 0), fc - 1);
+        var loadMasterIndex = filteredMasterIndices[filteredCursor];
+        if (loadMasterIndex === undefined) {
+            loadMasterIndex = typeof session.masterIndex === 'number' ? session.masterIndex : 0;
+        }
+
+        return {
+            kind: 'restore',
+            filterState: filterState,
+            participantName: participantName,
+            isParticipantMode: isParticipantMode,
+            filteredMasterIndices: filteredMasterIndices,
+            filteredCursor: filteredCursor,
+            shuffleStep: shuffleStep,
+            shuffledSequence: shuffledSequence,
+            shuffleMode: shuffleMode,
+            loadMasterIndex: loadMasterIndex,
+            shouldAutoplay: shouldAutoplay,
+            playbackTimeSec: playbackTimeSec,
+        };
+    }
+
+    /**
+     * Distinct participant names in a filtered playlist subset.
+     * @param {Array<{ participant?: string }>} fullPlaylistItems
+     * @param {number[]} masterIndices
+     * @returns {string[]}
+     */
+    function distinctParticipantsInSubset(fullPlaylistItems, masterIndices) {
+        var seen = {};
+        var out = [];
+        var i;
+        for (i = 0; i < masterIndices.length; i++) {
+            var ix = masterIndices[i];
+            var item = fullPlaylistItems[ix];
+            var name = item && typeof item.participant === 'string' ? item.participant.trim() : '';
+            if (name !== '' && !seen[name]) {
+                seen[name] = true;
+                out.push(name);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Participants nav label: explicit mode or exactly one participant in filtered set (issue #04).
+     * @param {Array<{ participant?: string }>} fullPlaylistItems
+     * @param {number[]} masterIndices
+     * @param {string} participantName
+     * @param {boolean} isParticipantMode
+     * @returns {string}
+     */
+    function resolveCollectionParticipantLabel(
+        fullPlaylistItems,
+        masterIndices,
+        participantName,
+        isParticipantMode
+    ) {
+        if (isParticipantMode && participantName) {
+            return participantName;
+        }
+        var names = distinctParticipantsInSubset(fullPlaylistItems, masterIndices);
+        if (names.length === 1) {
+            return names[0];
+        }
+        return '';
+    }
+
+    /**
+     * End of playlist: pause on first video of current playback sequence (issue #05).
+     * @param {{
+     *   shuffleMode: boolean,
+     *   shuffledSequence: number[],
+     *   filteredCount: number,
+     *   filteredMasterIndices: number[]
+     * }} opts
+     * @returns {{
+     *   filteredCursor: number,
+     *   shuffleStep: number,
+     *   loadMasterIndex: number,
+     *   shouldAutoplay: boolean
+     * } | null}
+     */
+    function planEndOfPlaylist(opts) {
+        var fc = opts.filteredCount;
+        if (fc <= 0) return null;
+        var filteredMasterIndices = Array.isArray(opts.filteredMasterIndices)
+            ? opts.filteredMasterIndices
+            : [];
+        var filteredCursor = 0;
+        var shuffleStep = 0;
+
+        if (opts.shuffleMode) {
+            var head = filteredCursorFromShuffleStep(opts.shuffledSequence, 0, fc);
+            if (head === null) {
+                filteredCursor = 0;
+            } else {
+                filteredCursor = head;
+            }
+            shuffleStep = 0;
+        }
+
+        var loadMasterIndex = filteredMasterIndices[filteredCursor];
+        if (loadMasterIndex === undefined) return null;
+
+        return {
+            filteredCursor: filteredCursor,
+            shuffleStep: shuffleStep,
+            loadMasterIndex: loadMasterIndex,
+            shouldAutoplay: false,
+        };
+    }
+
     /** Editorial target for one-line cues; preview still renders longer tracks smaller. */
     var CAPTION_TARGET_MAX_CHARS = 60;
     var CAPTION_MAX_CHARS_TOLERANCE = 5;
@@ -779,5 +1114,15 @@
         shouldClearCollectionOnFilterFix: shouldClearCollectionOnFilterFix,
         emptyFilterState: emptyFilterState,
         planResetToNeutralAll: planResetToNeutralAll,
+        PLAYBACK_SESSION_KEY: PLAYBACK_SESSION_KEY,
+        NAV_INTENT_KEY: NAV_INTENT_KEY,
+        buildPlaybackSessionSnapshot: buildPlaybackSessionSnapshot,
+        parsePlaybackSession: parsePlaybackSession,
+        filteredIndicesFromSessionContext: filteredIndicesFromSessionContext,
+        applyTransportStep: applyTransportStep,
+        planSecondaryNavRestore: planSecondaryNavRestore,
+        distinctParticipantsInSubset: distinctParticipantsInSubset,
+        resolveCollectionParticipantLabel: resolveCollectionParticipantLabel,
+        planEndOfPlaylist: planEndOfPlaylist,
     };
 }));

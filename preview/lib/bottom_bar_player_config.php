@@ -1,0 +1,124 @@
+<?php
+
+/**
+ * Build bottom bar player-mode configuration for About / Participants pages.
+ * Filter options are derived from the visible catalog (same as preview/index.php).
+ *
+ * PHP 5.6 compatible.
+ */
+
+require_once __DIR__ . '/videos_catalog.php';
+
+if (!function_exists('preview_filter_readout_for_value')) {
+    /**
+     * @param array<int, array<string, mixed>> $optionsList
+     * @param string $value
+     * @param string $fallback
+     * @return string
+     */
+    function preview_filter_readout_for_value(array $optionsList, $value, $fallback)
+    {
+        $value = (string) $value;
+        if ($value === '') {
+            return $fallback;
+        }
+        foreach ($optionsList as $opt) {
+            if (!is_array($opt) || !isset($opt['value'])) {
+                continue;
+            }
+            if ((string) $opt['value'] !== $value) {
+                continue;
+            }
+            if (!empty($opt['short_label']) && is_string($opt['short_label'])) {
+                return (string) $opt['short_label'];
+            }
+            if (!empty($opt['label']) && is_string($opt['label'])) {
+                return (string) $opt['label'];
+            }
+        }
+
+        return $fallback;
+    }
+}
+
+if (!function_exists('preview_build_bottom_bar_player_config')) {
+    /**
+     * @param string $currentRoute about|participants|home
+     * @param string $lang
+     * @param string $instanceSuffix Unique suffix for element ids on this page
+     * @return array<string, mixed>
+     */
+    function preview_build_bottom_bar_player_config($currentRoute, $lang, $instanceSuffix)
+    {
+        if (!function_exists('preview_t')) {
+            require_once __DIR__ . '/preview_locale.php';
+        }
+
+        $dataDir = preview_resolve_data_dir();
+        $catalogJsonPath = $dataDir . '/catalog.json';
+        $studioConfigPath = $dataDir . '/studio-config.json';
+        $catalog = vpc_load_videos_catalog($catalogJsonPath);
+
+        $signLanguageOptions = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : array();
+        $editionOptions = $catalog ? vpc_edition_options_from_catalog($catalog, $studioConfigPath) : array();
+        $typologyOptions = $catalog ? vpc_typology_options_from_catalog($catalog, $studioConfigPath) : array();
+        $signLanguageOptions = preview_localize_filter_options($signLanguageOptions, 'sign_language');
+        $editionOptions = preview_localize_filter_options($editionOptions, 'edition');
+        $typologyOptions = preview_localize_filter_options($typologyOptions, 'typology');
+
+        $playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog($catalog)) : array();
+        $initialEntry = count($playlist) > 0 ? $playlist[0] : array();
+
+        $idBase = 'preview-secondary-' . preg_replace('/[^a-z0-9_-]/i', '', (string) $instanceSuffix);
+        $transportId = $idBase . '__transport';
+        $iframeId = $idBase . '__iframe';
+
+        $initialSignLangReadout = preview_filter_readout_for_value(
+            $signLanguageOptions,
+            isset($initialEntry['sign_language']) ? $initialEntry['sign_language'] : '',
+            preview_t('player.filter.sign_language')
+        );
+        $initialEditionReadout = preview_filter_readout_for_value(
+            $editionOptions,
+            isset($initialEntry['edition']) ? $initialEntry['edition'] : '',
+            preview_t('player.filter.city_edition')
+        );
+        $initialTypologyReadout = preview_filter_readout_for_value(
+            $typologyOptions,
+            isset($initialEntry['typology']) ? $initialEntry['typology'] : '',
+            preview_t('player.filter.typology')
+        );
+
+        return array(
+            'mode' => 'player',
+            'current_route' => $currentRoute,
+            'lang' => $lang,
+            'active_collections' => array(),
+            'player' => array(
+                'transport_id' => $transportId,
+                'iframe_id' => $iframeId,
+                'nav_hidden_class' => '',
+                'show_r2_filter_row' => count($signLanguageOptions) > 0 || count($editionOptions) > 0,
+                'sign_lang_picker_id' => $idBase . '__sign-lang-picker',
+                'sign_lang_dropdown_id' => $idBase . '__sign-lang-dropdown',
+                'sign_lang_picker_btn_id' => $idBase . '__sign-lang-btn',
+                'edition_picker_id' => $idBase . '__edition-picker',
+                'edition_dropdown_id' => $idBase . '__edition-dropdown',
+                'edition_picker_btn_id' => $idBase . '__edition-btn',
+                'typology_picker_id' => $idBase . '__typology-picker',
+                'typology_dropdown_id' => $idBase . '__typology-dropdown',
+                'typology_picker_btn_id' => $idBase . '__typology-btn',
+                'use_sign_language_filter' => count($signLanguageOptions) > 0,
+                'use_edition_filter' => count($editionOptions) > 0,
+                'use_typology_filter' => count($typologyOptions) > 0,
+                'sign_lang_options' => $signLanguageOptions,
+                'edition_options' => $editionOptions,
+                'typology_options' => $typologyOptions,
+                'initial_sign_lang_readout' => $initialSignLangReadout,
+                'initial_edition_readout' => $initialEditionReadout,
+                'initial_typology_readout' => $initialTypologyReadout,
+                'secondary_page' => true,
+            ),
+        );
+    }
+}

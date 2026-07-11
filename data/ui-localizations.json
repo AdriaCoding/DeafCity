@@ -7,19 +7,17 @@
             "fr": "DEAF.city utilise l'humour visuel-gestuel pour défier l'indifférence des entendants, célébrer la culture sourde et connecter les communautés. Les participants partagent histoires et blagues, transformant les malentendus quotidiens en moments de rire et de réflexion. L'humour devient un pont entre publics sourds et entendants, permettant aux conteurs de retrouver leur visibilité et de promouvoir l'inclusion.",
             "ca": "DEAF.city utilitza l'humor visual-gestual per desafiar la indiferència auditiva, celebrar la cultura Sorda i connectar comunitats. Els participants comparteixen històries i acudits, convertint els malentesos quotidians en moments de riure i reflexió. L'humor esdevé un pont entre el públic Sord i oient, empoderant els narradors per recuperar la visibilitat i promoure la inclusió.",
             "es": "DEAF.city utiliza el humor visual-gestual para desafiar la indiferencia oyente, celebrar la cultura Sorda y conectar comunidades. Los participantes comparten historias y chistes, transformando los malentendidos cotidianos en momentos de risa y reflexión. El humor se convierte en un puente entre el público Sordo y oyente, empoderando a los narradores para recuperar la visibilidad y promover la inclusión.",
-            "arq": "DEAF.city تستعمل الفكاهة البصرية-الحركية باش تتحدى اللامبالاة تاع السامعين، باش تحتفل بالثقافة تاع الصم وتربط المجتمعات. المشاركين يشاركو قصص ونكت، ويحولو سوء التفاهم اليومي للحظات ضحك وتفكير. الفكاهة تولي جسر بين جمهور الصم والسامعين، وتقوي رواة القصص باش يسترجعو رؤيتهم ويدعمو الإدماج.",
             "it": "DEAF.city usa l'umorismo visivo-gestuale per sfidare l'indifferenza udente, celebrare la cultura Sorda e connettere le comunità. I partecipanti condividono storie e battute, trasformando i malintesi quotidiani in momenti di risate e riflessione. L'umorismo diventa un ponte tra il pubblico Sordo e udente, dando potere ai narratori di rivendicare visibilità e promuovere l'inclusione.",
             "pt": "DEAF.city usa o humor visual-gestual para desafiar a indiferença auditiva, celebrar a cultura surda e conectar comunidades. Os participantes partilham histórias e anedotas, transformando mal-entendidos quotidianos em momentos de riso e reflexão. O humor torna-se uma ponte entre as audiências surdas e ouvintes, capacitando os contadores de histórias a recuperar a visibilidade e a promover a inclusão.",
-            "aeb": "DEAF.city تستعمل الفكاهة البصرية-الحركية باش تتحدى اللامبالاة متاع اللي يسمعوا، باش تحتفل بثقافة الصم وتربط المجتمعات. المشاركون يتقاسموا حكايات و نكت، يحولوا سوء الفهم اليومي للحظات ضحك وتأمل. الفكاهة تولي جسر بين جمهور الصم و جمهور اللي يسمعوا، وتقوي رواة القصص باش يسترجعوا الرؤية ويعززوا الإدماج."
+            "ar": "DEAF.city تستعمل الفكاهة البصرية-الحركية باش تتحدى اللامبالاة تاع السامعين، باش تحتفل بالثقافة تاع الصم وتربط المجتمعات. المشاركين يشاركو قصص ونكت، ويحولو سوء التفاهم اليومي للحظات ضحك وتفكير. الفكاهة تولي جسر بين جمهور الصم والسامعين، وتقوي رواة القصص باش يسترجعو رؤيتهم ويدعمو الإدماج."
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.breaking_silence.title": {
@@ -30,19 +28,17 @@
             "fr": "Briser le silence",
             "ca": "Trencar el Silenci",
             "es": "Rompiendo el silencio",
-            "arq": "كسر الصمت",
             "it": "Rompere il Silenzio",
             "pt": "Quebrando o Silêncio",
-            "aeb": "كسر الصمت"
+            "ar": "كسر الصمت"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.deaf_city.p1": {
@@ -53,19 +49,17 @@
             "fr": "La communauté sourde vit dans un monde qui ignore souvent son mode de communication naturel : la langue des signes. Alors que de nombreux Sourds se fient à la lecture labiale, la plupart des entendants ne comprennent pas les langues des signes, ce qui entraîne isolement et invisibilité. Pour beaucoup, la rare apparition d'un interprète en langue des signes à la télévision est la seule reconnaissance de l'existence sourde.",
             "ca": "La comunitat Sorda viu en un món que sovint ignora la seva forma natural de comunicar-se: la llengua de signes. Mentre moltes persones Sordes depenen de la lectura de llavis, la majoria d'oients no entenen les llengües de signes, cosa que provoca aïllament i invisibilitat. Per a molts, la rara aparició d'un intèrpret de llengua de signes a la televisió és l'únic reconeixement de l'existència Sorda.",
             "es": "La comunidad Sorda vive en un mundo que a menudo ignora su forma natural de comunicación: la lengua de signos. Aunque muchas personas Sordas dependen de la lectura de labios, la mayoría de los oyentes no entienden las lenguas de signos, lo que resulta en aislamiento e invisibilidad. Para muchos, la rara aparición de un intérprete de lengua de signos en televisión es el único reconocimiento de la existencia Sorda.",
-            "arq": "مجتمع الصم يعيش في عالم غالبا ما يتجاهل طريقة التواصل الطبيعية ديالو: لغة الإشارة. في حين أن بزاف من الصم يعتمدو على قراءة الشفاه، معظم الناس السامعين ما يفهموش لغات الإشارة، وهذا يؤدي للعزلة وعدم الظهور. بالنسبة للكثيرين، الظهور النادر لمترجم لغة الإشارة في التلفزيون هو الاعتراف الوحيد بوجود الصم.",
             "it": "La comunità Sorda vive in un mondo che spesso trascura il suo modo naturale di comunicare: la lingua dei segni. Mentre molti Sordi si affidano alla lettura labiale, la maggior parte degli udenti non comprende le lingue dei segni, il che porta a isolamento e invisibilità. Per molti, la rara apparizione di un interprete di lingua dei segni in televisione è l'unico riconoscimento dell'esistenza Sorda.",
             "pt": "A comunidade surda vive num mundo que muitas vezes ignora a sua forma natural de comunicação: a língua gestual. Enquanto muitos surdos dependem da leitura labial, a maioria dos ouvintes não compreende as línguas gestuais, resultando em isolamento e invisibilidade. Para muitos, a rara aparição de um intérprete de língua gestual na televisão é o único reconhecimento da existência surda.",
-            "aeb": "مجتمع الصم يعيش في عالم غالبًا ما يتجاهل طريقة التواصل الطبيعية متاعو: لغة الإشارة. في حين يعتمد العديد من الصم على قراءة الشفاه، فإن معظم الأشخاص اللي يسمعوا ما يفهموش لغات الإشارة، مما يؤدي إلى العزلة و عدم الظهور. بالنسبة للعديد، الظهور النادر لمترجم لغة الإشارة في التلفزيون هو الاعتراف الوحيد بوجود الصم."
+            "ar": "مجتمع الصم يعيش في عالم غالبا ما يتجاهل طريقة التواصل الطبيعية ديالو: لغة الإشارة. في حين أن بزاف من الصم يعتمدو على قراءة الشفاه، معظم الناس السامعين ما يفهموش لغات الإشارة، وهذا يؤدي للعزلة وعدم الظهور. بالنسبة للكثيرين، الظهور النادر لمترجم لغة الإشارة في التلفزيون هو الاعتراف الوحيد بوجود الصم."
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.deaf_city.title": {
@@ -76,19 +70,17 @@
             "fr": "DEAF.city",
             "ca": "DEAF.city",
             "es": "DEAF.city",
-            "arq": "DEAF.city",
             "it": "DEAF.city",
             "pt": "DEAF.city",
-            "aeb": "DEAF.city"
+            "ar": "DEAF.city"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.dissemination.p1": {
@@ -99,19 +91,17 @@
             "fr": "Le projet s'étend sur un référentiel vidéo en libre accès avec des installations multi-écrans dans les musées, centres d'art et espaces publics, utilisant des télévisions, des panneaux LED ou des projections. Les vidéos — associées à des sons générés par les participants tels que des vocalisations, des applaudissements et des claquements de doigts — créent un paysage sonore riche et captivant.",
             "ca": "El projecte s'estén a través d'un repositori de vídeo d'accés obert amb instal·lacions multipantalla en museus, centres d'art i espais públics, utilitzant televisors, panells LED o projeccions. Els vídeos —acompanyats de sons generats pels participants com vocalitzacions, aplaudiments i clics de dits— creen un paisatge sonor ric i atractiu.",
             "es": "El proyecto se extiende a través de un repositorio de videos de acceso abierto con instalaciones multipantalla en museos, centros de arte y espacios públicos, utilizando televisores, paneles LED o proyecciones. Los videos —emparejados con sonidos generados por los participantes, como vocalizaciones, aplausos y chasquidos de dedos— crean un paisaje sonoro rico y cautivador.",
-            "arq": "المشروع ينتشر عبر مستودع فيديوهات مفتوح الوصول مع منشآت متعددة الشاشات في المتاحف، مراكز الفن والأماكن العامة، باستخدام أجهزة تلفزيون، لوحات LED، أو عروض. الفيديوهات—مقترنة بأصوات يولدها المشاركون مثل أصواتهم، التصفيقات، ونقرات الأصابع—تخلق مشهد صوتي غني وجذاب.",
             "it": "Il progetto si estende attraverso un archivio video ad accesso aperto con installazioni multi-schermo in musei, centri d'arte e spazi pubblici, utilizzando TV, pannelli LED o proiezioni. I video—abbinati a suoni generati dai partecipanti come vocalizzazioni, battiti di mani e schiocchi di dita—creano un paesaggio sonoro ricco e coinvolgente.",
             "pt": "O projeto estende-se por um repositório de vídeo de acesso aberto com instalações multi-ecrã em museus, centros de arte e espaços públicos, utilizando televisores, painéis LED ou projeções. Os vídeos – combinados com sons gerados pelos participantes, como vocalizações, palmas e estalar de dedos – criam uma paisagem sonora rica e envolvente.",
-            "aeb": "المشروع ينتشر على مستودع فيديوهات مفتوح الوصول مع منشآت متعددة الشاشات في المتاحف، مراكز الفن، و الفضاءات العمومية، باستعمال التلفزيونات، لوحات LED، أو عروض ضوئية. الفيديوهات—مصحوبة بأصوات يولدها المشاركون كيما النطق، التصفيق، و طقطقة الأصابع—تخلق مشهد صوتي غني و جذاب."
+            "ar": "المشروع ينتشر عبر مستودع فيديوهات مفتوح الوصول مع منشآت متعددة الشاشات في المتاحف، مراكز الفن والأماكن العامة، باستخدام أجهزة تلفزيون، لوحات LED، أو عروض. الفيديوهات—مقترنة بأصوات يولدها المشاركون مثل أصواتهم، التصفيقات، ونقرات الأصابع—تخلق مشهد صوتي غني وجذاب."
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.dissemination.title": {
@@ -122,19 +112,17 @@
             "fr": "Diffusion",
             "ca": "Difusió",
             "es": "Difusión",
-            "arq": "الانتشار",
             "it": "Diffusione",
             "pt": "Disseminação",
-            "aeb": "نشر"
+            "ar": "الانتشار"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.silent_eloquence.p1": {
@@ -145,19 +133,17 @@
             "fr": "En mêlant humour, art et activisme, DEAF.city rend la culture sourde visible, favorise la compréhension et tisse des liens entre les communautés sourdes et entendantes du monde entier.",
             "ca": "Barrejant humor, art i activisme, DEAF.city fa visible la cultura Sorda, fomenta la comprensió i construeix ponts entre les comunitats Sordes i oients d'arreu del món.",
             "es": "Al combinar humor, arte y activismo, DEAF.city visibiliza la cultura Sorda, fomenta la comprensión y construye puentes entre las comunidades Sordas y oyentes de todo el mundo.",
-            "arq": "من خلال دمج الفكاهة، الفن، والنشاط، DEAF.city تخلي ثقافة الصم مرئية، تعزز التفاهم، وتبني جسور بين مجتمعات الصم والسامعين في جميع أنحاء العالم.",
             "it": "Unendo umorismo, arte e attivismo, DEAF.city rende visibile la cultura Sorda, favorisce la comprensione e costruisce ponti tra le comunità Sorde e udenti in tutto il mondo.",
             "pt": "Ao misturar humor, arte e ativismo, DEAF.city torna a cultura surda visível, fomenta a compreensão e constrói pontes entre as comunidades surdas e ouvintes em todo o mundo.",
-            "aeb": "بمزج الفكاهة، الفن، و النشاط، DEAF.city تخلي ثقافة الصم مرئية، تعزز التفاهم، و تبني جسور بين مجتمعات الصم و اللي يسمعوا في جميع أنحاء العالم."
+            "ar": "من خلال دمج الفكاهة، الفن، والنشاط، DEAF.city تخلي ثقافة الصم مرئية، تعزز التفاهم، وتبني جسور بين مجتمعات الصم والسامعين في جميع أنحاء العالم."
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.silent_eloquence.title": {
@@ -168,19 +154,17 @@
             "fr": "Éloquence Silencieuse",
             "ca": "Eloqüència Silenciosa",
             "es": "Elocuencia silenciosa",
-            "arq": "بلاغة صامتة",
             "it": "Eloquenza Silenziosa",
             "pt": "Eloquência Silenciosa",
-            "aeb": "فصاحة صامتة"
+            "ar": "بلاغة صامتة"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.timeline.p1": {
@@ -191,19 +175,17 @@
             "fr": "Depuis son lancement à Valence en 2020, DEAF.city s'est étendu à Mexico en 2021, et en 2023 à Bilbao et São Paulo. Vingt-six participants ont partagé des monologues humoristiques en langues des signes espagnole, mexicaine et brésilienne. En 2026, le projet s'étendra à Marseille, Rome, Athènes, Istanbul, Tunis, Alger et Barcelone, intégrant les langues des signes française, italienne, grecque, turque, tunisienne, algérienne et catalane.",
             "ca": "Des del seu llançament a València el 2020, DEAF.city s'ha expandit a la Ciutat de Mèxic el 2021 i el 2023 a Bilbao i São Paulo. Vint-i-sis participants han compartit monòlegs humorístics en llengües de signes espanyola, mexicana i brasilera. El 2026, el projecte s'estendrà a Marsella, Roma, Atenes, Istanbul, Tunis, Alger i Barcelona, incorporant les llengües de signes francesa, italiana, grega, turca, tunisiana, algeriana i catalana.",
             "es": "Desde su lanzamiento en Valencia en 2020, DEAF.city se ha expandido a Ciudad de México en 2021, y en 2023 a Bilbao y São Paulo. Veintiséis participantes han compartido monólogos humorísticos en Lengua de Signos Española, Mexicana y Brasileña. En 2026, el proyecto crecerá a Marsella, Roma, Atenas, Estambul, Túnez, Argel y Barcelona, incorporando las lenguas de signos francesa, italiana, griega, turca, tunecina, argelina y catalana.",
-            "arq": "منذ إطلاقه في فالنسيا في عام 2020، DEAF.city توسع لمدينة مكسيكو في عام 2021، وفي عام 2023 لبلباو وساو باولو. ستة وعشرين مشاركًا شاركو مونولوجات فكاهية بلغات الإشارة الإسبانية، المكسيكية، والبرازيلية. في عام 2026، المشروع سيتوسع لمرسيليا، روما، أثينا، إسطنبول، تونس، الجزائر، وبرشلونة، وسيضم لغات الإشارة الفرنسية، الإيطالية، اليونانية، التركية، التونسية، الجزائرية، والكاتالونية.",
             "it": "Dal suo lancio a Valencia nel 2020, DEAF.city si è espanso a Città del Messico nel 2021 e nel 2023 a Bilbao e San Paolo. Ventisei partecipanti hanno condiviso monologhi umoristici in Lingua dei Segni Spagnola, Messicana e Brasiliana. Nel 2026, il progetto si estenderà a Marsiglia, Roma, Atene, Istanbul, Tunisi, Algeri e Barcellona, incorporando le lingue dei segni Francese, Italiana, Greca, Turca, Tunisina, Algerina e Catalana.",
             "pt": "Desde o seu lançamento em Valência em 2020, DEAF.city expandiu-se para a Cidade do México em 2021 e, em 2023, para Bilbau e São Paulo. Vinte e seis participantes partilharam monólogos humorísticos em Língua Gestual Espanhola, Mexicana e Brasileira. Em 2026, o projeto irá expandir-se para Marselha, Roma, Atenas, Istambul, Tunes, Argel e Barcelona, incorporando as línguas gestuais Francesa, Italiana, Grega, Turca, Tunisina, Argelina e Catalã.",
-            "aeb": "منذ إطلاقو في فالنسيا عام 2020، DEAF.city توسع لمدينة مكسيكو عام 2021، و في 2023 لبلباو و ساو باولو. ستة وعشرين مشارك تقاسموا مونولوجات فكاهية بلغات الإشارة الإسبانية، المكسيكية، و البرازيلية. في 2026، المشروع باش يكبر لمرسيليا، روما، أثينا، إسطنبول، تونس، الجزائر، و برشلونة، و يدمج لغات الإشارة الفرنسية، الإيطالية، اليونانية، التركية، التونسية، الجزائرية، و الكاتالونية."
+            "ar": "منذ إطلاقه في فالنسيا في عام 2020، DEAF.city توسع لمدينة مكسيكو في عام 2021، وفي عام 2023 لبلباو وساو باولو. ستة وعشرين مشاركًا شاركو مونولوجات فكاهية بلغات الإشارة الإسبانية، المكسيكية، والبرازيلية. في عام 2026، المشروع سيتوسع لمرسيليا، روما، أثينا، إسطنبول، تونس، الجزائر، وبرشلونة، وسيضم لغات الإشارة الفرنسية، الإيطالية، اليونانية، التركية، التونسية، الجزائرية، والكاتالونية."
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.block.timeline.title": {
@@ -214,19 +196,17 @@
             "fr": "Chronologie",
             "ca": "Cronologia",
             "es": "Cronología",
-            "arq": "الجدول الزمني",
             "it": "Cronologia",
             "pt": "Cronologia",
-            "aeb": "جدول زمني"
+            "ar": "الجدول الزمني"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.contact": {
@@ -234,22 +214,20 @@
         "context": "Credits: contact link text",
         "translations": {
             "en": "Contact",
-            "arq": "اتصال",
             "ca": "Contacte",
             "fr": "Contact",
             "it": "Contatti",
             "pt": "Contacto",
             "es": "Contacto",
-            "aeb": "اتصال"
+            "ar": "اتصال"
         },
         "seeded": {
-            "arq": true,
             "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.collaboration": {
@@ -257,21 +235,19 @@
         "context": "Credits rubric label (keep leading underscore)",
         "translations": {
             "en": "_COLLABORATION",
-            "arq": "_تعاون",
             "ca": "_COL·LABORACIÓ",
             "fr": "_COLLABORATION",
             "it": "_COLLABORAZIONE",
             "pt": "_COLABORAÇÃO",
             "es": "_COLABORACIÓN",
-            "aeb": "_تعاون"
+            "ar": "_تعاون"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.coordination": {
@@ -279,21 +255,19 @@
         "context": "Credits rubric label (keep leading underscore)",
         "translations": {
             "en": "_COORDINATION",
-            "arq": "_تنسيق",
             "ca": "_COORDINACIÓ",
             "fr": "_COORDINATION",
             "it": "_COORDINAMENTO",
             "pt": "_COORDENAÇÃO",
             "es": "_COORDINACIÓN",
-            "aeb": "_تنسيق"
+            "ar": "_تنسيق"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.interpreter": {
@@ -301,21 +275,19 @@
         "context": "Credits rubric label (keep leading underscore)",
         "translations": {
             "en": "_INTERPRETER",
-            "arq": "_مترجم",
             "ca": "_INTÈRPRET",
             "fr": "_INTERPRÈTE",
             "it": "_INTERPRETE",
             "pt": "_INTÉRPRETE",
             "es": "_INTÉRPRETE",
-            "aeb": "_مترجم"
+            "ar": "_مترجم"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.interpreters": {
@@ -323,21 +295,19 @@
         "context": "Credits rubric label, plural (keep leading underscore)",
         "translations": {
             "en": "_INTERPRETERS",
-            "arq": "_مترجمون",
             "ca": "_INTÈRPRETS",
             "fr": "_INTERPRÈTES",
             "it": "_INTERPRETI",
             "pt": "_INTÉRPRETES",
             "es": "_INTÉRPRETES",
-            "aeb": "_مترجمين"
+            "ar": "_مترجمون"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.participants": {
@@ -345,21 +315,19 @@
         "context": "Credits rubric label (keep leading underscore)",
         "translations": {
             "en": "_PARTICIPANTS",
-            "arq": "_مشاركون",
             "ca": "_PARTICIPANTS",
             "fr": "_PARTICIPANTS",
             "it": "_PARTECIPANTI",
             "pt": "_PARTICIPANTES",
             "es": "_PARTICIPANTES",
-            "aeb": "_مشاركون"
+            "ar": "_مشاركون"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.supported_by": {
@@ -367,21 +335,19 @@
         "context": "Credits rubric label (keep leading underscore)",
         "translations": {
             "en": "_SUPPORTED BY",
-            "arq": "_مدعوم من طرف",
             "ca": "_AMB EL SUPORT DE",
             "fr": "_SOUTENU PAR",
             "it": "_SOSTENUTO DA",
             "pt": "_APOIADO POR",
             "es": "_CON EL APOYO DE",
-            "aeb": "_بدعم من"
+            "ar": "_مدعوم من طرف"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.label.thanks_to": {
@@ -389,21 +355,19 @@
         "context": "Credits rubric label (keep leading underscore)",
         "translations": {
             "en": "_THANKS TO",
-            "arq": "_شكراً لـ",
             "ca": "_AGRAÏMENTS A",
             "fr": "_GRÂCE À",
             "it": "_GRAZIE A",
             "pt": "_AGRADECIMENTOS A",
             "es": "_GRACIAS A",
-            "aeb": "_شكرًا لـ"
+            "ar": "_شكراً لـ"
         },
         "seeded": {
-            "arq": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.credits.project_by": {
@@ -411,22 +375,20 @@
         "context": "Credits: project attribution line",
         "translations": {
             "en": "DEAF.city is a project by",
-            "arq": "DEAF.city مشروع من طرف",
             "ca": "DEAF.city és un projecte de",
             "fr": "DEAF.city est un projet de",
             "it": "DEAF.city è un progetto di",
             "pt": "DEAF.city é um projeto de",
             "es": "DEAF.city es un proyecto de",
-            "aeb": "DEAF.city هو مشروع من قبل"
+            "ar": "DEAF.city مشروع من طرف"
         },
         "seeded": {
-            "arq": true,
             "ca": true,
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "about.page_title": {
@@ -437,19 +399,17 @@
             "fr": "À propos — DEAF.city",
             "ca": "Sobre — DEAF.city",
             "es": "Acerca de — DEAF.city",
-            "arq": "حول — DEAF.city",
             "it": "Info — DEAF.city",
             "pt": "Sobre — DEAF.city",
-            "aeb": "عن — DEAF.city"
+            "ar": "حول — DEAF.city"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2020-valencia": {
@@ -460,19 +420,17 @@
             "fr": "Valence",
             "ca": "València",
             "es": "Valencia",
-            "arq": "فالنسيا",
             "it": "València",
             "pt": "Valência",
-            "aeb": "فالنسيا"
+            "ar": "فالنسيا"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2021-mexico": {
@@ -483,19 +441,17 @@
             "fr": "Mexico",
             "ca": "Ciutat de Mèxic",
             "es": "Ciudad de México",
-            "arq": "مدينة مكسيكو",
             "it": "Città del Messico",
             "pt": "Cidade do México",
-            "aeb": "مدينة مكسيكو"
+            "ar": "مدينة مكسيكو"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2023-bilbao": {
@@ -506,19 +462,17 @@
             "fr": "Bilbao",
             "ca": "Bilbao",
             "es": "Bilbao",
-            "arq": "بلباو",
             "it": "Bilbao",
             "pt": "Bilbau",
-            "aeb": "بلباو"
+            "ar": "بلباو"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2023-sao-paulo": {
@@ -529,19 +483,17 @@
             "fr": "São Paulo",
             "ca": "São Paulo",
             "es": "São Paulo",
-            "arq": "ساو باولو",
             "it": "San Paolo",
             "pt": "São Paulo",
-            "aeb": "ساو باولو"
+            "ar": "ساو باولو"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2026-algiers": {
@@ -552,19 +504,17 @@
             "fr": "Alger",
             "ca": "Alger",
             "es": "Argel",
-            "arq": "الجزائر",
             "it": "Algeri",
             "pt": "Argel",
-            "aeb": "الجزائر العاصمة"
+            "ar": "الجزائر"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2026-barcelona": {
@@ -575,19 +525,17 @@
             "fr": "Barcelone",
             "ca": "Barcelona",
             "es": "Barcelona",
-            "arq": "برشلونة",
             "it": "Barcellona",
             "pt": "Barcelona",
-            "aeb": "برشلونة"
+            "ar": "برشلونة"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2026-marseille": {
@@ -598,19 +546,17 @@
             "fr": "Marseille",
             "ca": "Marsella",
             "es": "Marsella",
-            "arq": "مرسيليا",
             "it": "Marsiglia",
             "pt": "Marselha",
-            "aeb": "مرسيليا"
+            "ar": "مرسيليا"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2026-rome": {
@@ -621,19 +567,17 @@
             "fr": "Rome",
             "ca": "Roma",
             "es": "Roma",
-            "arq": "روما",
             "it": "Roma",
             "pt": "Roma",
-            "aeb": "روما"
+            "ar": "روما"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.edition.2026-tunis": {
@@ -644,42 +588,17 @@
             "fr": "Tunis",
             "ca": "Tunis",
             "es": "Túnez",
-            "arq": "تونس",
             "it": "Tunisi",
             "pt": "Tunes",
-            "aeb": "تونس"
+            "ar": "تونس"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
-        }
-    },
-    "content.edition.2028-salamanca": {
-        "section": "content",
-        "context": "Edition city (2028-salamanca)",
-        "translations": {
-            "en": "Salamanca",
-            "fr": "Salamanque",
-            "ca": "Salamanca",
-            "es": "Salamanca",
-            "arq": "سالامانكا",
-            "it": "Salamanca",
-            "pt": "Salamanca",
-            "aeb": "سالامانكا"
-        },
-        "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "arq": true,
-            "it": true,
-            "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.algerian-sl.label": {
@@ -690,19 +609,17 @@
             "fr": "LSA Langue des Signes Algérienne",
             "ca": "LSA Llengua de Signes Algeriana",
             "es": "LSA Lengua de Signos Argelina",
-            "arq": "لغة الإشارة الجزائرية LSA",
             "it": "LSA Lingua dei Segni Algerina",
             "pt": "LSA Língua Gestual Argelina",
-            "aeb": "لغة الإشارة الجزائرية LSA"
+            "ar": "لغة الإشارة الجزائرية LSA"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.algerian-sl.short_label": {
@@ -713,65 +630,17 @@
             "fr": "LSA",
             "ca": "LSA",
             "es": "LSA",
-            "arq": "LSA",
             "it": "LSA",
             "pt": "LSA",
-            "aeb": "LSA"
+            "ar": "LSA"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
-        }
-    },
-    "content.sign_language.gss.label": {
-        "section": "content",
-        "context": "Sign language label (gss)",
-        "translations": {
-            "en": "GSS Greek Sign Language",
-            "fr": "GSS Langue des Signes Grecque",
-            "ca": "GSS Llengua de Signes Grega",
-            "es": "GSS Lengua de Signos Griega",
-            "arq": "لغة الإشارة اليونانية GSS",
-            "it": "GSS Lingua dei Segni Greca",
-            "pt": "GSS Língua Gestual Grega",
-            "aeb": "لغة الإشارة اليونانية GSS"
-        },
-        "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "arq": true,
-            "it": true,
-            "pt": true,
-            "aeb": true
-        }
-    },
-    "content.sign_language.gss.short_label": {
-        "section": "content",
-        "context": "Sign language short label (gss)",
-        "translations": {
-            "en": "GSS",
-            "fr": "GSS",
-            "ca": "GSS",
-            "es": "GSS",
-            "arq": "GSS",
-            "it": "GSS",
-            "pt": "GSS",
-            "aeb": "GSS"
-        },
-        "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "arq": true,
-            "it": true,
-            "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.libras.label": {
@@ -782,19 +651,17 @@
             "fr": "LIBRAS Langue des Signes Brésilienne",
             "ca": "LIBRAS Llengua de Signes Brasilera",
             "es": "LIBRAS Lengua de Signos Brasileña",
-            "arq": "لغة الإشارة البرازيلية LIBRAS",
             "it": "LIBRAS Lingua dei Segni Brasiliana",
             "pt": "LIBRAS Língua Gestual Brasileira",
-            "aeb": "لغة الإشارة البرازيلية LIBRAS"
+            "ar": "لغة الإشارة البرازيلية LIBRAS"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.libras.short_label": {
@@ -805,19 +672,17 @@
             "fr": "LIBRAS",
             "ca": "LIBRAS",
             "es": "LIBRAS",
-            "arq": "LIBRAS",
             "it": "LIBRAS",
             "pt": "LIBRAS",
-            "aeb": "LIBRAS"
+            "ar": "LIBRAS"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lis.label": {
@@ -828,19 +693,17 @@
             "fr": "LIS Langue des Signes Italienne",
             "ca": "LIS Llengua de Signes Italiana",
             "es": "LIS Lengua de Signos Italiana",
-            "arq": "لغة الإشارة الإيطالية LIS",
             "it": "LIS Lingua dei Segni Italiana",
             "pt": "LIS Língua Gestual Italiana",
-            "aeb": "لغة الإشارة الإيطالية LIS"
+            "ar": "لغة الإشارة الإيطالية LIS"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lis.short_label": {
@@ -851,19 +714,17 @@
             "fr": "LIS",
             "ca": "LIS",
             "es": "LIS",
-            "arq": "LIS",
             "it": "LIS",
             "pt": "LIS",
-            "aeb": "LIS"
+            "ar": "LIS"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lsc.label": {
@@ -874,19 +735,17 @@
             "fr": "LSC Langue des Signes Catalane",
             "ca": "LSC Llengua de Signes Catalana",
             "es": "LSC Lengua de Signos Catalana",
-            "arq": "لغة الإشارة الكاتالونية LSC",
             "it": "LSC Lingua dei Segni Catalana",
             "pt": "LSC Língua Gestual Catalã",
-            "aeb": "لغة الإشارة الكاتالونية LSC"
+            "ar": "لغة الإشارة الكاتالونية LSC"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lsc.short_label": {
@@ -897,19 +756,17 @@
             "fr": "LSC",
             "ca": "LSC",
             "es": "LSC",
-            "arq": "LSC",
             "it": "LSC",
             "pt": "LSC",
-            "aeb": "LSC"
+            "ar": "LSC"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lse.label": {
@@ -920,18 +777,16 @@
             "fr": "LSE Langue des Signes Espagnole",
             "ca": "LSE Llengua de Signes Espanyola",
             "es": "LSE Lengua de Signos Española",
-            "arq": "لغة الإشارة الإسبانية LSE",
             "it": "LSE Lingua dei Segni Spagnola",
             "pt": "LSE Língua de Sinais Espanhola",
-            "aeb": "لغة الإشارة الإسبانية LSE"
+            "ar": "لغة الإشارة الإسبانية LSE"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lse.short_label": {
@@ -942,19 +797,17 @@
             "fr": "LSE",
             "ca": "LSE",
             "es": "LSE",
-            "arq": "LSE",
             "it": "LSE",
             "pt": "LSE",
-            "aeb": "LSE"
+            "ar": "LSE"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lsf.label": {
@@ -965,18 +818,16 @@
             "fr": "LSF Langue des Signes Française",
             "ca": "LSF Llengua de Signes Francesa",
             "es": "LSF Lengua de Signos Francesa",
-            "arq": "لغة الإشارة الفرنسية LSF",
             "it": "LSF Lingua dei Segni Francese",
             "pt": "LSF Língua  de Sinais Francesa",
-            "aeb": "لغة الإشارة الفرنسية LSF"
+            "ar": "لغة الإشارة الفرنسية LSF"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lsf.short_label": {
@@ -987,19 +838,17 @@
             "fr": "LSF",
             "ca": "LSF",
             "es": "LSF",
-            "arq": "LSF",
             "it": "LSF",
             "pt": "LSF",
-            "aeb": "LSF"
+            "ar": "LSF"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lsm.label": {
@@ -1010,18 +859,16 @@
             "fr": "LSM Langue des Signes Mexicaine",
             "ca": "LSM Llengua de Signes Mexicana",
             "es": "LSM Lengua de Señas Mexicana",
-            "arq": "لغة الإشارة المكسيكية LSM",
             "it": "LSM Lingua dei Segni Messicana",
             "pt": "LSM Língua de Sinais Mexicana",
-            "aeb": "لغة الإشارة المكسيكية LSM"
+            "ar": "لغة الإشارة المكسيكية LSM"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.lsm.short_label": {
@@ -1032,19 +879,17 @@
             "fr": "LSM",
             "ca": "LSM",
             "es": "LSM",
-            "arq": "LSM",
             "it": "LSM",
             "pt": "LSM",
-            "aeb": "LSM"
+            "ar": "LSM"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.tunisian-sl.label": {
@@ -1055,18 +900,16 @@
             "fr": "LST Langue des Signes Tunisienne",
             "ca": "LST Llengua de Signes Tunisiana",
             "es": "LST Lengua de Signos Tunecina",
-            "arq": "لغة الإشارة التونسية LST",
             "it": "LST Lingua dei Segni Tunisina",
             "pt": "LST Língua de Sinais Tunisina",
-            "aeb": "لغة الإشارة التونسية LST"
+            "ar": "لغة الإشارة التونسية LST"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.sign_language.tunisian-sl.short_label": {
@@ -1077,19 +920,17 @@
             "fr": "LST",
             "ca": "LST",
             "es": "LST",
-            "arq": "LST",
             "it": "LST",
             "pt": "LST",
-            "aeb": "LST"
+            "ar": "LST"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.typology.acudits": {
@@ -1100,19 +941,17 @@
             "fr": "Blagues",
             "ca": "Acudits",
             "es": "Chistes",
-            "arq": "نكت",
             "it": "Battute",
             "pt": "Piadas",
-            "aeb": "نكت"
+            "ar": "نكت"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.typology.anecdotes": {
@@ -1123,19 +962,17 @@
             "fr": "Anecdotes",
             "ca": "Anècdotes",
             "es": "Anécdotas",
-            "arq": "حكايات",
             "it": "Aneddoti",
             "pt": "Anedotas",
-            "aeb": "حكايات"
+            "ar": "حكايات"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.typology.endevinalles": {
@@ -1146,19 +983,17 @@
             "fr": "Énigmes",
             "ca": "Endevinalles",
             "es": "Adivinanzas",
-            "arq": "ألغاز",
             "it": "Indovinelli",
             "pt": "Adivinhas",
-            "aeb": "ألغاز"
+            "ar": "ألغاز"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.typology.malentesos": {
@@ -1169,19 +1004,17 @@
             "fr": "Malentendus",
             "ca": "Malentesos",
             "es": "Malentendidos",
-            "arq": "سوء تفاهم",
             "it": "Malintesi",
             "pt": "Mal-entendidos",
-            "aeb": "سوء فهم"
+            "ar": "سوء تفاهم"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "content.typology.memories": {
@@ -1192,19 +1025,59 @@
             "fr": "Souvenirs",
             "ca": "Memòries",
             "es": "Memorias",
-            "arq": "ذكريات",
             "it": "Memorie",
             "pt": "Memórias",
-            "aeb": "ذكريات"
+            "ar": "ذكريات"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
+        }
+    },
+    "gallery.caption.01": {
+        "section": "about",
+        "context": "Gallery image 1 caption",
+        "translations": {
+            "en": "Double-sided display of 10 Sign Languages on TVs"
+        }
+    },
+    "gallery.caption.02": {
+        "section": "about",
+        "context": "Gallery image 2 caption",
+        "translations": {
+            "en": "Double-sided display of 10 Sign Languages on TVs"
+        }
+    },
+    "gallery.caption.03": {
+        "section": "about",
+        "context": "Gallery image 3 caption",
+        "translations": {
+            "en": "Double-sided display of 10 Sign Languages on TVs"
+        }
+    },
+    "gallery.caption.04": {
+        "section": "about",
+        "context": "Gallery image 4 caption",
+        "translations": {
+            "en": "TVs on the wall displaying 8 Sign Languages"
+        }
+    },
+    "gallery.caption.05": {
+        "section": "about",
+        "context": "Gallery image 5 caption",
+        "translations": {
+            "en": "Projections displaying 4 Sign Languages"
+        }
+    },
+    "gallery.caption.06": {
+        "section": "about",
+        "context": "Gallery image 6 caption",
+        "translations": {
+            "en": "TVs on the wall displaying 15 Sign Languages"
         }
     },
     "participants.heading": {
@@ -1215,19 +1088,17 @@
             "fr": "Participants",
             "ca": "Participants",
             "es": "Participantes",
-            "arq": "مشاركون",
             "it": "Partecipanti",
             "pt": "Participantes",
-            "aeb": "مشاركون"
+            "ar": "مشاركون"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "participants.page_title": {
@@ -1238,19 +1109,17 @@
             "fr": "Participants — DEAF.city",
             "ca": "Participants — DEAF.city",
             "es": "Participantes — DEAF.city",
-            "arq": "مشاركون — DEAF.city",
             "it": "Partecipanti — DEAF.city",
             "pt": "Participantes — DEAF.city",
-            "aeb": "مشاركون — DEAF.city"
+            "ar": "مشاركون — DEAF.city"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.aria.filters": {
@@ -1261,19 +1130,17 @@
             "fr": "Filtres",
             "ca": "Filtres",
             "es": "Filtros",
-            "arq": "فلاتر",
             "it": "Filtri",
             "pt": "Filtros",
-            "aeb": "فلاتر"
+            "ar": "فلاتر"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.aria.playback": {
@@ -1284,19 +1151,17 @@
             "fr": "Lecture",
             "ca": "Reproducció",
             "es": "Reproducción",
-            "arq": "تشغيل",
             "it": "Riproduzione",
             "pt": "Reprodução",
-            "aeb": "تشغيل"
+            "ar": "تشغيل"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.error.no_playlist": {
@@ -1307,73 +1172,80 @@
             "fr": "Aucune playlist chargée. Vérifiez que data\/catalog.json existe.",
             "ca": "No s'ha carregat cap llista de reproducció. Comprova que data\/catalog.json existeix.",
             "es": "No se ha cargado ninguna lista de reproducción. Compruebe que data\/catalog.json existe.",
-            "arq": "لم يتم تحميل قائمة التشغيل. تأكد من وجود data\/catalog.json.",
             "it": "Nessuna playlist caricata. Verifica che data\/catalog.json esista.",
             "pt": "Nenhuma lista de reprodução carregada. Verifique se data\/catalog.json existe.",
-            "aeb": "قائمة التشغيل ماهيش محملة. تأكد من وجود data\\\/catalog.json."
+            "ar": "لم يتم تحميل قائمة التشغيل. تأكد من وجود data\/catalog.json."
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.filter.all_cities": {
         "section": "player",
         "context": "Default option in City\/Edition dropdown",
         "translations": {
-            "en": "Cities",
-            "fr": "Villes",
-            "ca": "Ciutats",
-            "es": "Ciudades",
-            "arq": "جميع المدن",
-            "it": "Città",
-            "pt": "Cidades",
-            "aeb": "جميع المدن"
+            "en": "All cities",
+            "fr": "Toutes les villes",
+            "ca": "Totes les ciutats",
+            "es": "Todas las ciudades",
+            "it": "Tutte le città",
+            "pt": "Todas as cidades",
+            "ar": "جميع المدن"
         },
         "seeded": {
-            "arq": true,
-            "aeb": true
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true
         }
     },
     "player.filter.all_sign_languages": {
         "section": "player",
         "context": "Default option in Sign language dropdown",
         "translations": {
-            "en": "Signs",
-            "fr": "Signes",
-            "ca": "Signes",
-            "es": "Signos",
-            "arq": "جميع لغات الإشارة",
-            "it": "Segni",
-            "pt": "Sinais",
-            "aeb": "جميع لغات الإشارة"
+            "en": "All sign languages",
+            "fr": "Toutes les langues des signes",
+            "ca": "Totes les llengües de signes",
+            "es": "Todos los lenguajes de signos",
+            "it": "Tutte le lingue dei segni",
+            "pt": "Todas as línguas de sinais",
+            "ar": "جميع لغات الإشارة"
         },
         "seeded": {
-            "arq": true,
-            "aeb": true
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true
         }
     },
     "player.filter.all_typologies": {
         "section": "player",
         "context": "Default option in Typology dropdown",
         "translations": {
-            "en": "Typologies",
-            "fr": "Typologies",
-            "ca": "Tipologies",
-            "es": "Tipologías",
-            "arq": "جميع الأنواع",
-            "it": "Tipologie",
-            "pt": "Tipologias",
-            "aeb": "جميع الأنواع"
+            "en": "All typologies",
+            "fr": "Toutes les typologies",
+            "ca": "Totes les tipologies",
+            "es": "Todas las tipologías",
+            "it": "Tutte le tipologie",
+            "pt": "Todas as tipologias",
+            "ar": "جميع الأنواع"
         },
         "seeded": {
-            "arq": true,
-            "aeb": true
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true
         }
     },
     "player.filter.city_edition": {
@@ -1384,19 +1256,17 @@
             "fr": "Ville \/ Édition",
             "ca": "Ciutat \/ Edició",
             "es": "Ciudad \/ Edición",
-            "arq": "مدينة \/ إصدار",
             "it": "Città \/ Edizione",
             "pt": "Cidade \/ Edição",
-            "aeb": "مدينة \/ طبعة"
+            "ar": "مدينة \/ إصدار"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.filter.sign_language": {
@@ -1407,19 +1277,17 @@
             "fr": "Langue des signes",
             "ca": "Llengua de signes",
             "es": "Lengua de signos",
-            "arq": "لغة الإشارة",
             "it": "Lingua dei segni",
             "pt": "Língua gestual",
-            "aeb": "لغة الإشارة"
+            "ar": "لغة الإشارة"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.filter.typology": {
@@ -1430,37 +1298,59 @@
             "fr": "Typologie",
             "ca": "Tipologia",
             "es": "Tipología",
-            "arq": "النوع",
             "it": "Tipologia",
             "pt": "Tipologia",
-            "aeb": "نوع"
+            "ar": "النوع"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.nav.about": {
         "section": "player",
         "context": "Site nav link to About page",
         "translations": {
-            "en": "?",
-            "fr": "?",
-            "ca": "?",
-            "es": "?",
-            "arq": "حول",
-            "it": "?",
-            "pt": "?",
-            "aeb": "عن"
+            "en": "About",
+            "fr": "À propos",
+            "ca": "Sobre",
+            "es": "Acerca de",
+            "it": "Informazioni",
+            "pt": "Sobre",
+            "ar": "حول"
         },
         "seeded": {
-            "arq": true,
-            "aeb": true
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true
+        }
+    },
+    "player.nav.language": {
+        "section": "player",
+        "context": "Language switcher aria-label on About\/Participants navbar",
+        "translations": {
+            "en": "Language",
+            "ca": "Idioma",
+            "fr": "Langue",
+            "it": "Lingua",
+            "pt": "Linguagem",
+            "es": "Idioma",
+            "ar": "لغة"
+        },
+        "seeded": {
+            "ca": true,
+            "fr": true,
+            "it": true,
+            "pt": true,
+            "es": true,
+            "ar": true
         }
     },
     "player.nav.participants": {
@@ -1471,42 +1361,17 @@
             "fr": "Participants",
             "ca": "Participants",
             "es": "Participantes",
-            "arq": "مشاركون",
             "it": "Partecipanti",
             "pt": "Participantes",
-            "aeb": "مشاركون"
+            "ar": "مشاركون"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
-        }
-    },
-    "player.nav.language": {
-        "section": "player",
-        "context": "Language switcher aria-label on About\/Participants navbar",
-        "translations": {
-            "en": "Language",
-            "arq": "لغة",
-            "ca": "Idioma",
-            "fr": "Langue",
-            "it": "Lingua",
-            "pt": "Linguagem",
-            "es": "Idioma",
-            "aeb": "لغة"
-        },
-        "seeded": {
-            "arq": true,
-            "ca": true,
-            "fr": true,
-            "it": true,
-            "pt": true,
-            "es": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.nav.player": {
@@ -1517,19 +1382,17 @@
             "fr": "Lecteur",
             "ca": "Reproductor",
             "es": "Reproductor",
-            "arq": "المشغل",
             "it": "Lettore",
             "pt": "Leitor",
-            "aeb": "مشغل"
+            "ar": "المشغل"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.spoken_language.label": {
@@ -1540,19 +1403,17 @@
             "fr": "Langue parlée",
             "ca": "Idioma parlat",
             "es": "Idioma hablado",
-            "arq": "اللغة المنطوقة",
             "it": "Lingua Parlata",
             "pt": "Idioma Falado",
-            "aeb": "اللغة المنطوقة"
+            "ar": "اللغة المنطوقة"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.spoken_language.no_subtitles": {
@@ -1563,19 +1424,17 @@
             "fr": "Pas de sous-titres",
             "ca": "Sense subtítols",
             "es": "Sin subtítulos",
-            "arq": "لا توجد ترجمة",
             "it": "Nessun sottotitolo",
             "pt": "Sem legendas",
-            "aeb": "لا توجد ترجمة"
+            "ar": "لا توجد ترجمة"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.transport.next": {
@@ -1586,19 +1445,17 @@
             "fr": "Vidéo suivante dans la playlist",
             "ca": "Següent vídeo de la llista",
             "es": "Siguiente video en la lista de reproducción",
-            "arq": "الفيديو التالي في قائمة التشغيل",
             "it": "Prossimo video nella playlist",
             "pt": "Próximo vídeo na lista de reprodução",
-            "aeb": "الفيديو التالي في قائمة التشغيل"
+            "ar": "الفيديو التالي في قائمة التشغيل"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.transport.pause": {
@@ -1609,19 +1466,17 @@
             "fr": "Mettre la vidéo en pause",
             "ca": "Pausar vídeo",
             "es": "Pausar video",
-            "arq": "إيقاف الفيديو مؤقتًا",
             "it": "Pausa video",
             "pt": "Pausar vídeo",
-            "aeb": "إيقاف الفيديو مؤقتًا"
+            "ar": "إيقاف الفيديو مؤقتًا"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.transport.play": {
@@ -1632,19 +1487,17 @@
             "fr": "Lire la vidéo",
             "ca": "Reproduir vídeo",
             "es": "Reproducir video",
-            "arq": "تشغيل الفيديو",
             "it": "Avvia video",
             "pt": "Reproduzir vídeo",
-            "aeb": "تشغيل الفيديو"
+            "ar": "تشغيل الفيديو"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.transport.play_or_pause": {
@@ -1655,19 +1508,17 @@
             "fr": "Lire ou mettre en pause la vidéo",
             "ca": "Reproduir o pausar vídeo",
             "es": "Reproducir o pausar video",
-            "arq": "تشغيل أو إيقاف الفيديو مؤقتًا",
             "it": "Riproduci\/Pausa video",
             "pt": "Reproduzir ou pausar vídeo",
-            "aeb": "تشغيل أو إيقاف الفيديو مؤقتًا"
+            "ar": "تشغيل أو إيقاف الفيديو مؤقتًا"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.transport.prev": {
@@ -1678,19 +1529,17 @@
             "fr": "Vidéo précédente dans la playlist",
             "ca": "Vídeo anterior de la llista",
             "es": "Video anterior en la lista de reproducción",
-            "arq": "الفيديو السابق في قائمة التشغيل",
             "it": "Video precedente nella playlist",
             "pt": "Vídeo anterior na lista de reprodução",
-            "aeb": "الفيديو السابق في قائمة التشغيل"
+            "ar": "الفيديو السابق في قائمة التشغيل"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     },
     "player.transport.reset": {
@@ -1701,19 +1550,38 @@
             "fr": "Réinitialiser les filtres et la playlist",
             "ca": "Reiniciar filtres i llista de reproducció",
             "es": "Restablecer filtros y lista de reproducción",
-            "arq": "إعادة تعيين الفلاتر وقائمة التشغيل",
             "it": "Reimposta filtri e playlist",
             "pt": "Redefinir filtros e lista de reprodução",
-            "aeb": "إعادة تعيين الفلاتر وقائمة التشغيل"
+            "ar": "إعادة تعيين الفلاتر وقائمة التشغيل"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
+        }
+    },
+    "player.transport.reset_short": {
+        "section": "player",
+        "context": "Reset button visible short label",
+        "translations": {
+            "en": "Reset",
+            "fr": "Réinit.",
+            "ca": "Reinicia",
+            "es": "Restablecer",
+            "it": "Reimposta",
+            "pt": "Redefinir",
+            "ar": "إعادة"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true
         }
     },
     "player.transport.shuffle": {
@@ -1724,19 +1592,17 @@
             "fr": "Lecture aléatoire de la playlist",
             "ca": "Reproducció aleatòria de la llista",
             "es": "Mezclar lista de reproducción",
-            "arq": "تشغيل عشوائي",
             "it": "Mescola playlist",
             "pt": "Aleatorizar lista de reprodução",
-            "aeb": "خلط قائمة التشغيل"
+            "ar": "تشغيل عشوائي"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
-            "arq": true,
             "it": true,
             "pt": true,
-            "aeb": true
+            "ar": true
         }
     }
 }

@@ -11,15 +11,15 @@ html, body {
 }
 
 .preview-participants-page {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
     max-width: none;
-    padding: 0.5rem 1rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.5rem 1rem;
 }
 
 .participants-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0.5rem 0;
-    color: #111;
+    display: none;
 }
 
 .participants-grid {
@@ -43,15 +43,13 @@ html, body {
     background: #fff;
 }
 
-/* Crop horizontal margins: thumbs are 16:9 with the signer centered in whitespace. */
+/* Full frame visible — no horizontal crop */
 .participant-thumb img {
     display: block;
-    width: 140%;
+    width: 100%;
     height: 100%;
-    max-width: none;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
-    margin-left: -20%;
 }
 
 .participant-name {

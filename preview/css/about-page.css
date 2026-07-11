@@ -15,9 +15,11 @@ a {
 }
 
 .preview-about-page {
-    max-width: 1200px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
     margin: 0 auto;
-    padding: 1rem 1.25rem calc(4.5rem + env(safe-area-inset-bottom, 0px));
+    padding: 1rem 1.25rem;
     width: 100%;
 }
 
@@ -154,45 +156,6 @@ a {
     border: 0;
 }
 
-#city-map-section {
-    margin-top: 1.25rem;
-}
-
-#city-map-canvas {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    position: relative;
-    overflow: hidden;
-    background: #eef2f0;
-}
-
-.map-tooltip {
-    position: absolute;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid #e0e0e0;
-    padding: 0.35em 0.65em;
-    font-size: 0.82rem;
-    line-height: 1.4;
-    white-space: nowrap;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    z-index: 10;
-}
-
-.map-tooltip strong {
-    color: rgb(0, 120, 0);
-}
-
-#city-map-inset {
-    position: absolute;
-    top: 50%;
-    left: var(--inset-left, 1%);
-    transform: translateY(-50%);
-    width: var(--inset-width, 38%);
-    border: 1px solid #c8d4c8;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
-}
-
 #trio {
     margin-top: 1.25rem;
 }
@@ -204,6 +167,19 @@ a {
 #credits {
     margin-top: 1.25rem;
     font-size: 83%;
+}
+
+#credits .credits-logos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+}
+
+#credits .credits-logos img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
 }
 
 #credits img.logos {
@@ -225,10 +201,5 @@ a {
     .gallery-controls .next {
         width: 25px;
         height: 25px;
-    }
-
-    .map-tooltip {
-        white-space: normal;
-        max-width: min(220px, 75vw);
     }
 }

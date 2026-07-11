@@ -9,11 +9,6 @@ function preview_site_nav_route_catalog()
 {
     return array(
         array(
-            'route' => 'home',
-            'href' => '/preview/',
-            'label_key' => 'player.nav.player',
-        ),
-        array(
             'route' => 'about',
             'href' => '/preview/about',
             'label_key' => 'player.nav.about',
@@ -68,14 +63,13 @@ function preview_build_language_switcher_options($route, $currentLang)
         $byId[$lang['id']] = $lang;
     }
 
-    $orderedIds = in_array('en', $languageIds, true)
-        ? array_merge(
-            array('en'),
-            array_values(array_filter($languageIds, function ($id) {
-                return $id !== 'en';
-            }))
-        )
-        : $languageIds;
+    $orderedIds = $languageIds;
+    usort($orderedIds, function ($a, $b) use ($byId) {
+        $labelA = isset($byId[$a]['label']) ? (string) $byId[$a]['label'] : (string) $a;
+        $labelB = isset($byId[$b]['label']) ? (string) $byId[$b]['label'] : (string) $b;
+
+        return strcasecmp($labelA, $labelB);
+    });
 
     $basePath = preview_route_base_path($route);
     $currentLang = (string) $currentLang;
@@ -99,7 +93,7 @@ function preview_build_language_switcher_options($route, $currentLang)
 /**
  * Build nav link descriptors for bottom_bar.php rendering.
  *
- * Always returns all three routes; the current route receives is-current + aria-current=page.
+ * Always returns visible routes (about, participants); home/Reproductor is not shown.
  * Active collections (e.g. participant name on the player page) surface on their nav link.
  *
  * @param string $currentRoute

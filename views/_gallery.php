@@ -1,9 +1,15 @@
 <?php
 
+if (!function_exists('preview_t')) {
+    require_once dirname(__DIR__) . '/preview/lib/preview_locale.php';
+}
+
 foreach ($gallery_images as $i => $image) {
+    $captionKey = sprintf('gallery.caption.%02d', $i + 1);
+    $caption = preview_t($captionKey);
     echo '<div class="gallery-image' . ($i == 0 ? ' current' : '') . '">' . "\n";
     echo '  <img src="' . $image['image'] . '">' . "\n";
-    echo '  <span class="caption">' . htmlspecialchars($image['caption']) . '</span>' . "\n";
+    echo '  <span class="caption">' . htmlspecialchars($caption, ENT_QUOTES, 'UTF-8') . '</span>' . "\n";
     echo "</div>\n";
 }
 ?>

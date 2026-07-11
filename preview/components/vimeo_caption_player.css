@@ -197,7 +197,6 @@
 
 /* Unified control-row button styling (D15″ story 16) */
 .vpc-control-row .vpc-picker-btn,
-.vpc-control-row .vpc-shuffle-btn,
 .vpc-control-row .vpc-prev-btn,
 .vpc-control-row .vpc-next-btn,
 .vpc-control-row .vpc-reset-btn,
@@ -223,7 +222,6 @@
     text-decoration: none;
 }
 .vpc-control-row .vpc-picker-btn:hover,
-.vpc-control-row .vpc-shuffle-btn:hover:not([aria-pressed='false']),
 .vpc-control-row .vpc-prev-btn:hover:not(:disabled),
 .vpc-control-row .vpc-next-btn:hover:not(:disabled),
 .vpc-control-row .vpc-reset-btn:hover,
@@ -232,7 +230,6 @@
     border-color: #bbb;
 }
 .vpc-control-row .vpc-picker-btn:focus-visible,
-.vpc-control-row .vpc-shuffle-btn:focus-visible,
 .vpc-control-row .vpc-prev-btn:focus-visible,
 .vpc-control-row .vpc-next-btn:focus-visible,
 .vpc-control-row .vpc-reset-btn:focus-visible,
@@ -405,19 +402,52 @@
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
+.vpc-control-secondary-l > .preview-site-nav,
+.vpc-control-secondary-l > .vpc-picker,
+.vpc-control-secondary-r > .vpc-r2-filters,
+.vpc-control-secondary-r > .preview-site-nav {
+    flex: 1 1 0;
+    min-width: 0;
+}
+.vpc-control-secondary-l .preview-site-nav__btn,
+.vpc-control-secondary-l .vpc-picker-btn,
+.vpc-control-secondary-r .vpc-picker-btn,
+.vpc-control-secondary-r .preview-site-nav__btn {
+    width: 100%;
+}
+.vpc-control-row .vpc-reset-btn {
+    width: auto;
+    flex: 0 0 auto;
+}
+.vpc-control-secondary-l > .preview-site-nav {
+    display: flex;
+}
+.vpc-control-secondary-r > .vpc-r2-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+.vpc-control-secondary-r > .vpc-r2-filters > .vpc-picker {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
 .vpc-control-row .vpc-shuffle-btn,
 .vpc-control-row .vpc-prev-btn,
 .vpc-control-row .vpc-next-btn {
     min-width: 2.75rem;
     padding: 0.5rem;
     color: #222;
+    width: auto;
 }
 .vpc-control-row .vpc-reset-btn {
-    min-width: 2.75rem;
-    padding: 0.5rem;
+    padding: 0.45em 0.85em;
     border-color: #999;
     background: #f5f5f5;
     color: #222;
+}
+.vpc-reset-btn__text {
+    font-size: 0.9375rem;
+    line-height: 1;
 }
 .vpc-prev-btn:hover:not(:disabled),
 .vpc-next-btn:hover:not(:disabled) {
@@ -458,8 +488,7 @@
     opacity: 0.45;
     cursor: not-allowed;
 }
-/* Single-video Playlist: playlist nav is hidden, not just dimmed. JS toggles this
-   from the current playlist count so Reset / filter changes restore the controls. */
+/* Legacy: vpc-nav-hidden kept for shuffle button removal compat; prev/next use disabled only. */
 .vpc-shuffle-btn.vpc-nav-hidden,
 .vpc-prev-btn.vpc-nav-hidden,
 .vpc-next-btn.vpc-nav-hidden {

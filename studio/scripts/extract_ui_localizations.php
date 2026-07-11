@@ -30,6 +30,7 @@ $manifest = [
     ['key' => 'player.transport.prev', 'section' => 'player', 'context' => 'Previous button aria-label', 'en' => 'Previous video in playlist'],
     ['key' => 'player.transport.next', 'section' => 'player', 'context' => 'Next button aria-label', 'en' => 'Next video in playlist'],
     ['key' => 'player.transport.reset', 'section' => 'player', 'context' => 'Reset button aria-label', 'en' => 'Reset filters and playlist'],
+    ['key' => 'player.transport.reset_short', 'section' => 'player', 'context' => 'Reset button visible short label', 'en' => 'Reset'],
     ['key' => 'player.aria.filters', 'section' => 'player', 'context' => 'Filters group aria-label', 'en' => 'Filters'],
     ['key' => 'player.aria.playback', 'section' => 'player', 'context' => 'Playback group aria-label', 'en' => 'Playback'],
     ['key' => 'player.error.no_playlist', 'section' => 'player', 'context' => 'Empty catalog message', 'en' => 'No playlist loaded. Check that data/catalog.json exists.'],
@@ -63,6 +64,14 @@ $manifest = [
     // Participants page
     ['key' => 'participants.page_title', 'section' => 'participants', 'context' => 'Participants page <title>', 'en' => 'Participants — DEAF.city'],
     ['key' => 'participants.heading', 'section' => 'participants', 'context' => 'Participants page h1', 'en' => 'Participants'],
+
+    // About gallery captions (issue #06)
+    ['key' => 'gallery.caption.01', 'section' => 'about', 'context' => 'Gallery image 1 caption', 'en' => 'Double-sided display of 10 Sign Languages on TVs'],
+    ['key' => 'gallery.caption.02', 'section' => 'about', 'context' => 'Gallery image 2 caption', 'en' => 'Double-sided display of 10 Sign Languages on TVs'],
+    ['key' => 'gallery.caption.03', 'section' => 'about', 'context' => 'Gallery image 3 caption', 'en' => 'Double-sided display of 10 Sign Languages on TVs'],
+    ['key' => 'gallery.caption.04', 'section' => 'about', 'context' => 'Gallery image 4 caption', 'en' => 'TVs on the wall displaying 8 Sign Languages'],
+    ['key' => 'gallery.caption.05', 'section' => 'about', 'context' => 'Gallery image 5 caption', 'en' => 'Projections displaying 4 Sign Languages'],
+    ['key' => 'gallery.caption.06', 'section' => 'about', 'context' => 'Gallery image 6 caption', 'en' => 'TVs on the wall displaying 15 Sign Languages'],
 ];
 
 $store = [];

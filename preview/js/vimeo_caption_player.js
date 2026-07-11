@@ -438,51 +438,105 @@
 
         recomputeFilteredMasterIndices();
 
-        if (isParticipantMode) {
-            filteredMasterIndices = fullPlaylistItems
-                .map(function (item, ix) {
-                    return (item.participant || '') === participantName ? ix : -1;
-                })
-                .filter(function (ix) { return ix >= 0; });
+        /** Resume from sessionStorage when returning from About/Participants (issue #02). */
+        var restoredFromSession = false;
+        var pendingPlaybackTimeSec = 0;
+        var sessionRestoreAutoplay = false;
+
+        if (typeof sessionStorage !== 'undefined') {
+            try {
+                var navIntentRaw = sessionStorage.getItem(L.NAV_INTENT_KEY);
+                if (navIntentRaw) {
+                    sessionStorage.removeItem(L.NAV_INTENT_KEY);
+                }
+                var sessionRaw = sessionStorage.getItem(L.PLAYBACK_SESSION_KEY);
+                var parsedSession = sessionRaw ? L.parsePlaybackSession(sessionRaw) : null;
+                var navPlan = L.planSecondaryNavRestore({
+                    session: parsedSession,
+                    navIntent: navIntentRaw,
+                    fullPlaylistItems: fullPlaylistItems,
+                });
+
+                if (navPlan && navPlan.kind === 'reset' && navPlan.plan) {
+                    sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
+                    filterState = navPlan.plan.filterState;
+                    isParticipantMode = false;
+                    participantName = '';
+                    filteredMasterIndices = navPlan.plan.filteredMasterIndices;
+                    filteredCursor = navPlan.plan.filteredCursor;
+                    shuffleStep = navPlan.plan.shuffleStep;
+                    shuffledSequence = navPlan.plan.shuffledSequence;
+                    shuffleMode = navPlan.plan.shuffleMode;
+                    playlistIndex = navPlan.plan.loadMasterIndex;
+                    restoredFromSession = true;
+                    serverShuffled = false;
+                } else if (navPlan && navPlan.kind === 'fresh') {
+                    sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
+                } else if (navPlan && navPlan.kind === 'restore') {
+                    filterState = navPlan.filterState;
+                    participantName = navPlan.participantName || '';
+                    isParticipantMode = !!navPlan.isParticipantMode;
+                    filteredMasterIndices = navPlan.filteredMasterIndices;
+                    filteredCursor = navPlan.filteredCursor;
+                    shuffleStep = navPlan.shuffleStep;
+                    shuffledSequence = navPlan.shuffledSequence;
+                    shuffleMode = navPlan.shuffleMode;
+                    playlistIndex = navPlan.loadMasterIndex;
+                    pendingPlaybackTimeSec = navPlan.playbackTimeSec || 0;
+                    sessionRestoreAutoplay = !!navPlan.shouldAutoplay;
+                    restoredFromSession = true;
+                    serverShuffled = false;
+                }
+            } catch (e) {}
         }
 
-        if (serverShuffled && filteredCount() > 0 && !isParticipantMode) {
-            shuffleMode = true;
-            shuffledSequence = [];
-            serverPlaylist.forEach(function (entry) {
-                var mix = masterIndexForVideoId(entry.videoId);
-                var fpos = filteredMasterIndices.indexOf(mix);
-                if (fpos >= 0 && shuffledSequence.indexOf(fpos) < 0) {
-                    shuffledSequence.push(fpos);
-                }
-            });
-            filteredMasterIndices.forEach(function (_, fpos) {
-                if (shuffledSequence.indexOf(fpos) < 0) {
-                    shuffledSequence.push(fpos);
-                }
-            });
-            var startFpos = filteredMasterIndices.indexOf(playlistIndex);
-            shuffleStep = startFpos >= 0 ? shuffledSequence.indexOf(startFpos) : 0;
-            if (shuffleStep < 0) shuffleStep = 0;
-            filteredCursor = shuffledSequence[shuffleStep];
-        } else if (serverShuffled && filteredCount() > 0 && isParticipantMode) {
-            shuffleMode = true;
-            shuffledSequence = [];
-            for (var _psi = 0; _psi < filteredCount(); _psi++) {
-                shuffledSequence.push(_psi);
+        if (!restoredFromSession) {
+            if (isParticipantMode) {
+                filteredMasterIndices = fullPlaylistItems
+                    .map(function (item, ix) {
+                        return (item.participant || '') === participantName ? ix : -1;
+                    })
+                    .filter(function (ix) { return ix >= 0; });
             }
-            shuffleStep = 0;
-            filteredCursor = Math.max(0, filteredMasterIndices.indexOf(playlistIndex));
-            if (filteredCursor < 0) filteredCursor = 0;
-            playlistIndex = filteredMasterIndices[filteredCursor];
-        } else {
-            var defaultShuffle = L.createDefaultShuffleState(filteredCount());
-            shuffleMode = defaultShuffle.shuffleMode;
-            shuffledSequence = defaultShuffle.shuffledSequence;
-            shuffleStep = defaultShuffle.shuffleStep;
-            filteredCursor = defaultShuffle.filteredCursor;
-            if (filteredCount() > 0) {
+
+            if (serverShuffled && filteredCount() > 0 && !isParticipantMode) {
+                shuffleMode = true;
+                shuffledSequence = [];
+                serverPlaylist.forEach(function (entry) {
+                    var mix = masterIndexForVideoId(entry.videoId);
+                    var fpos = filteredMasterIndices.indexOf(mix);
+                    if (fpos >= 0 && shuffledSequence.indexOf(fpos) < 0) {
+                        shuffledSequence.push(fpos);
+                    }
+                });
+                filteredMasterIndices.forEach(function (_, fpos) {
+                    if (shuffledSequence.indexOf(fpos) < 0) {
+                        shuffledSequence.push(fpos);
+                    }
+                });
+                var startFpos = filteredMasterIndices.indexOf(playlistIndex);
+                shuffleStep = startFpos >= 0 ? shuffledSequence.indexOf(startFpos) : 0;
+                if (shuffleStep < 0) shuffleStep = 0;
+                filteredCursor = shuffledSequence[shuffleStep];
+            } else if (serverShuffled && filteredCount() > 0 && isParticipantMode) {
+                shuffleMode = true;
+                shuffledSequence = [];
+                for (var _psi = 0; _psi < filteredCount(); _psi++) {
+                    shuffledSequence.push(_psi);
+                }
+                shuffleStep = 0;
+                filteredCursor = Math.max(0, filteredMasterIndices.indexOf(playlistIndex));
+                if (filteredCursor < 0) filteredCursor = 0;
                 playlistIndex = filteredMasterIndices[filteredCursor];
+            } else {
+                var defaultShuffle = L.createDefaultShuffleState(filteredCount());
+                shuffleMode = defaultShuffle.shuffleMode;
+                shuffledSequence = defaultShuffle.shuffledSequence;
+                shuffleStep = defaultShuffle.shuffleStep;
+                filteredCursor = defaultShuffle.filteredCursor;
+                if (filteredCount() > 0) {
+                    playlistIndex = filteredMasterIndices[filteredCursor];
+                }
             }
         }
 
@@ -624,15 +678,64 @@
 
             var playBtn = root.querySelector('.vpc-play-pause-btn');
 
+            /** Persist playback context for About/Participants transport (issue #02). */
+            function savePlaybackSession(done) {
+                if (typeof sessionStorage === 'undefined') {
+                    if (typeof done === 'function') done();
+                    return;
+                }
+                var timeP =
+                    vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function'
+                        ? vimeoPlayer.getCurrentTime().catch(function () { return 0; })
+                        : Promise.resolve(0);
+                timeP.then(function (sec) {
+                    var snap = L.buildPlaybackSessionSnapshot({
+                        masterIndex: playlistIndex,
+                        filterState: filterState,
+                        participantName: participantName,
+                        shuffleMode: shuffleMode,
+                        shuffledSequence: shuffledSequence,
+                        shuffleStep: shuffleStep,
+                        filteredCursor: filteredCursor,
+                        playbackTimeSec: typeof sec === 'number' ? sec : 0,
+                    });
+                    try {
+                        sessionStorage.setItem(L.PLAYBACK_SESSION_KEY, JSON.stringify(snap));
+                    } catch (e) {}
+                    if (typeof done === 'function') done();
+                });
+            }
+
+            window.__vpcSavePlaybackSession = savePlaybackSession;
+
+            window.addEventListener('pagehide', function () {
+                savePlaybackSession();
+            });
+
             function setTransportPlaying(isPlaying) {
                 if (!playBtn) return;
                 var icon = playBtn.querySelector('.material-icons');
+                if (playBtn.getAttribute('data-loading') === 'true') return;
                 if (isPlaying) {
                     if (icon) icon.textContent = 'pause';
                     playBtn.setAttribute('aria-label', vpcString('player.transport.pause', 'Pause video'));
                 } else {
                     if (icon) icon.textContent = 'play_arrow';
                     playBtn.setAttribute('aria-label', vpcString('player.transport.play', 'Play video'));
+                }
+            }
+
+            function setTransportLoading(isLoading) {
+                if (!playBtn) return;
+                var icon = playBtn.querySelector('.material-icons');
+                if (isLoading) {
+                    playBtn.setAttribute('data-loading', 'true');
+                    playBtn.disabled = true;
+                    if (icon) icon.textContent = 'hourglass_empty';
+                } else {
+                    playBtn.removeAttribute('data-loading');
+                    playBtn.disabled = false;
+                    refreshTransport();
                 }
             }
 
@@ -698,7 +801,6 @@
                 shuffledSequence = plan.shuffledSequence;
                 shuffleMode = plan.shuffleMode;
 
-                setShuffleToggleUi(shuffleMode);
                 syncCollectionNavButtons();
                 updateAllFilterPickerReadouts();
                 rebuildAllCascadingDropdowns();
@@ -712,6 +814,10 @@
                         }
                     } catch (e) {}
                 }
+
+                try {
+                    sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
+                } catch (e) {}
 
                 playlistIndex = plan.loadMasterIndex;
                 loadVideoMaster(playlistIndex, plan.shouldAutoplay).then(function () {
@@ -847,7 +953,7 @@
                 var vidNum = parseInt(vidRaw, 10);
                 var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
 
-                resetVideoAspectPlaceholder();
+                setTransportLoading(true);
                 if (!wantAutoplay) {
                     forcedPauseLoads++;
                 }
@@ -881,13 +987,22 @@
                     })
                     .then(function () {
                         updatePlaylistNavButtons();
+                        syncCollectionNavButtons();
                         syncCaptionBox(eventsForSync(), 0);
+                        setTransportLoading(false);
                         refreshTransport();
+                        savePlaybackSession();
+                        if (pendingPlaybackTimeSec > 0 && typeof p.setCurrentTime === 'function') {
+                            var seekSec = pendingPlaybackTimeSec;
+                            pendingPlaybackTimeSec = 0;
+                            return p.setCurrentTime(seekSec).catch(function () {});
+                        }
                     })
                     .catch(function (e) {
                         if (!wantAutoplay) {
                             forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
                         }
+                        setTransportLoading(false);
                         console.warn('Vimeo playlist: loadVideo failed', e);
                         applyLoadedVideoUi();
                         refreshTransport();
@@ -897,16 +1012,11 @@
             function updatePlaylistNavButtons() {
                 var prevBtn = root.querySelector('.vpc-prev-btn');
                 var nextBtn = root.querySelector('.vpc-next-btn');
-                var shuffleBtn = root.querySelector('.vpc-shuffle-btn');
                 if (!prevBtn || !nextBtn) return;
                 var fc = filteredCount();
-                // Hide playlist nav entirely for a single-video Playlist; show + enable
-                // at-ends logic when the Playlist has more than one video. Driven by the
-                // current count so Reset / filter changes restore it (not server-fixed).
-                var single = fc <= 1;
-                prevBtn.classList.toggle('vpc-nav-hidden', single);
-                nextBtn.classList.toggle('vpc-nav-hidden', single);
-                if (shuffleBtn) shuffleBtn.classList.toggle('vpc-nav-hidden', single);
+                // Prev/next always visible; disabled at ends or on single-video playlists.
+                prevBtn.classList.remove('vpc-nav-hidden');
+                nextBtn.classList.remove('vpc-nav-hidden');
                 if (shuffleMode) {
                     prevBtn.disabled = fc <= 1 || shuffleStep <= 0;
                     nextBtn.disabled = fc <= 1 || shuffleStep >= fc - 1;
@@ -917,36 +1027,21 @@
             }
 
             /**
-             * Update shuffle button visual state (D13).
-             * aria-pressed drives the CSS; is-active class mirrors it for robustness.
-             * @param {boolean} on
+             * End of playlist: pause on first video of current playback sequence (issue #05).
              */
-            function setShuffleToggleUi(on) {
-                var btn = root.querySelector('.vpc-shuffle-btn');
-                if (!btn) return;
-                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-                btn.classList.toggle('is-active', !!on);
-                var icon = btn.querySelector('.material-icons');
-                if (icon) icon.textContent = 'shuffle';
-            }
-
-            /**
-             * Reset to a fresh reshuffled ALL Playlist, paused on a new random poster (D19).
-             * Called when the ALL Playlist (or a collection) reaches its last video.
-             */
-            function resetToFreshShuffledPlaylist() {
-                var fc = filteredCount();
-                if (fc <= 0) return;
-                // Build a brand-new shuffle — item at sequence[0] becomes the new poster.
-                shuffledSequence = L.buildShuffledSequence(fc);
-                shuffleStep = 0;
-                filteredCursor = shuffledSequence[0];
-                shuffleMode = true;
-                var masterIx = filteredMasterIndices[filteredCursor];
-                if (masterIx === undefined) return;
-                // Load the new head, paused (false = no autoplay).
-                loadVideoMaster(masterIx, false).then(function () {
+            function pauseAtPlaylistHead() {
+                var plan = L.planEndOfPlaylist({
+                    shuffleMode: shuffleMode,
+                    shuffledSequence: shuffledSequence,
+                    filteredCount: filteredCount(),
+                    filteredMasterIndices: filteredMasterIndices,
+                });
+                if (!plan) return;
+                shuffleStep = plan.shuffleStep;
+                filteredCursor = plan.filteredCursor;
+                loadVideoMaster(plan.loadMasterIndex, plan.shouldAutoplay).then(function () {
                     updatePlaylistNavButtons();
+                    syncCollectionNavButtons();
                 });
             }
 
@@ -960,13 +1055,7 @@
                     shuffledSequence: shuffledSequence,
                 });
                 if (!step) {
-                    if (isParticipantMode) {
-                        // D19: participant collection finished → fresh ALL paused (page reload without ?participant)
-                        window.location.href = '/preview/';
-                        return;
-                    }
-                    // End of ALL playlist (D19): reset to fresh reshuffle, paused on new poster.
-                    resetToFreshShuffledPlaylist();
+                    pauseAtPlaylistHead();
                     return;
                 }
                 if (shuffleMode) {
@@ -1013,44 +1102,6 @@
                 });
             }
 
-            var shuffleBtn = root.querySelector('.vpc-shuffle-btn');
-            if (shuffleBtn) {
-                shuffleBtn.addEventListener('click', function () {
-                    if (shuffleMode) {
-                        // D13: Shuffle OFF — remaining queue follows catalog order from
-                        // the current video onward. Current video keeps playing.
-                        // Sync filteredCursor to current video's position in the
-                        // catalog-ordered filtered list (it was set by shuffle step,
-                        // which is already the filtered-list position, so this is a
-                        // no-op in most cases — but explicit for clarity).
-                        var currentMasterIx = filteredMasterIndices[filteredCursor];
-                        var catalogPos = filteredMasterIndices.indexOf(currentMasterIx);
-                        if (catalogPos >= 0) filteredCursor = catalogPos;
-                        shuffleMode = false;
-                        shuffledSequence = [];
-                        setShuffleToggleUi(false);
-                        updatePlaylistNavButtons();
-                        return;
-                    }
-                    // D13: Shuffle ON — re-shuffle remaining queue from current position.
-                    // Current video keeps playing; future queue is re-randomised.
-                    shuffleMode = true;
-                    shuffledSequence = L.buildShuffledSequence(filteredCount());
-                    // Place current video at step 0 of the new shuffle so Prev/Next
-                    // navigate coherently relative to what is playing now.
-                    shuffleStep = 0;
-                    var s;
-                    for (s = 0; s < shuffledSequence.length; s++) {
-                        if (shuffledSequence[s] === filteredCursor) {
-                            shuffleStep = s;
-                            break;
-                        }
-                    }
-                    setShuffleToggleUi(true);
-                    updatePlaylistNavButtons();
-                });
-            }
-
             var prevTransport = root.querySelector('.vpc-prev-btn');
             if (prevTransport) {
                 prevTransport.addEventListener('click', function () {
@@ -1077,7 +1128,12 @@
              */
             function getActiveCollectionLabel(collectionKey) {
                 if (collectionKey === 'participants') {
-                    return isParticipantMode && participantName ? participantName : '';
+                    return L.resolveCollectionParticipantLabel(
+                        fullPlaylistItems,
+                        filteredMasterIndices,
+                        participantName,
+                        isParticipantMode
+                    );
                 }
                 if (collectionKey === 'tags') {
                     return '';
@@ -1088,6 +1144,12 @@
             /**
              * Sync all R3 collection nav buttons: green + name when active, generic label otherwise (D21).
              */
+            function syncChromeButtonWidths() {
+                if (typeof window.vpcSyncChromeButtonWidths === 'function') {
+                    window.vpcSyncChromeButtonWidths();
+                }
+            }
+
             function syncCollectionNavButtons() {
                 root.querySelectorAll('.preview-site-nav__btn[data-collection]').forEach(function (btn) {
                     var key = btn.getAttribute('data-collection') || '';
@@ -1107,6 +1169,7 @@
                         btn.removeAttribute('aria-current');
                     }
                 });
+                syncChromeButtonWidths();
             }
 
             /**
@@ -1136,6 +1199,7 @@
 
             function updateAllFilterPickerReadouts() {
                 ['sign_language', 'edition', 'typology'].forEach(updateFilterPickerReadout);
+                syncChromeButtonWidths();
             }
 
             /**
@@ -1225,13 +1289,13 @@
                 shuffleStep = plan.shuffleStep;
                 shuffledSequence = plan.shuffledSequence;
                 shuffleMode = plan.shuffleMode;
-                setShuffleToggleUi(shuffleMode);
 
                 updateAllFilterPickerReadouts();
                 rebuildAllCascadingDropdowns();
 
                 if (plan.keepCurrentVideo) {
                     updatePlaylistNavButtons();
+                    syncCollectionNavButtons();
                     tryAutoplayFallback();
                     return;
                 }
@@ -1239,6 +1303,7 @@
                 playlistIndex = plan.loadMasterIndex;
                 loadVideoMaster(playlistIndex, true).then(function () {
                     updatePlaylistNavButtons();
+                    savePlaybackSession();
                 });
             }
 
@@ -1320,9 +1385,7 @@
                 closeAllPickers();
             });
 
-            setShuffleToggleUi(shuffleMode);
-
-            loadVideoMaster(playlistIndex, participantGestureCarried)
+            loadVideoMaster(playlistIndex, participantGestureCarried || sessionRestoreAutoplay)
                 .then(function () {})
                 .catch(function () {});
 
@@ -1334,10 +1397,12 @@
                 }
                 markGestureActivation();
                 setTransportPlaying(true);
+                savePlaybackSession();
             });
             p.on('pause', function () {
                 setTransportPlaying(false);
                 p.getCurrentTime().then(syncVimeoCaptionBoxes);
+                savePlaybackSession();
             });
             p.on('ended', function () {
                 setTransportPlaying(false);

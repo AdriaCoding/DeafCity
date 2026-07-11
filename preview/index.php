@@ -84,8 +84,6 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
             font-family: Roboto, Arial, sans-serif;
         }
         .preview-block { height: 100%; }
-        html[dir="rtl"] .vpc-control-row { direction: rtl; }
-        html[dir="rtl"] .vpc-bottom-bar { direction: rtl; }
     </style>
 </head>
 <body>

@@ -451,6 +451,36 @@ if (!function_exists('vpc_participant_thumbnail_display_url')) {
     }
 }
 
+if (!function_exists('vpc_participant_videos_from_catalog')) {
+    /**
+     * All visible catalog entries for one participant (catalog order).
+     *
+     * @param array<string, mixed> $catalog
+     * @param string $participantName
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_participant_videos_from_catalog(array $catalog, $participantName)
+    {
+        $participantName = trim((string) $participantName);
+        if ($participantName === '' || !isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            return array();
+        }
+
+        $videos = array();
+        foreach ($catalog['videos'] as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            $name = isset($v['participant']) ? trim((string) $v['participant']) : '';
+            if ($name === $participantName) {
+                $videos[] = $v;
+            }
+        }
+
+        return $videos;
+    }
+}
+
 if (!function_exists('vpc_participants_from_catalog')) {
     /**
      * Return one representative visible video per distinct participant name.

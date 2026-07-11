@@ -574,11 +574,9 @@ if ($configJson === false) {
     return;
 }
 
-// Playlist nav (shuffle/prev/next) is always rendered; JS toggles visibility from the
-// *current* (dynamic) playlist count so Reset / filter changes can restore it. The
-// initial hidden class only avoids a flash when the first playlist has a single video.
-$showPlaylistNav = count($playlistNormalized) > 1;
-$navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
+// Prev/next transport always visible; disabled state toggled by JS from playlist count.
+$singleVideoPlaylist = count($playlistNormalized) <= 1;
+$navHiddenClass = '';
 ?>
 <div class="<?php echo htmlspecialchars($wrapperClass, ENT_QUOTES, 'UTF-8'); ?>">
 <script type="application/json" class="vpc-config"><?php echo $configJson; ?></script>
@@ -619,6 +617,8 @@ $navHiddenClass = $showPlaylistNav ? '' : ' vpc-nav-hidden';
             'transport_id' => $transportId,
             'iframe_id' => $iframeId,
             'nav_hidden_class' => $navHiddenClass,
+            'transport_prev_disabled' => $singleVideoPlaylist,
+            'transport_next_disabled' => $singleVideoPlaylist,
             'show_r2_filter_row' => $showR2FilterRow,
             'sign_lang_picker_id' => $idBase . '__sign-lang-picker',
             'sign_lang_dropdown_id' => $idBase . '__sign-lang-dropdown',

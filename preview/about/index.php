@@ -2,6 +2,7 @@
 $rootDir = dirname(dirname(dirname(__FILE__)));
 require __DIR__ . '/../lib/gallery_images.php';
 require __DIR__ . '/../lib/preview_locale.php';
+require __DIR__ . '/../lib/bottom_bar_player_config.php';
 
 $locale = preview_bootstrap_locale();
 $preview_i18n = $locale['i18n'];
@@ -15,6 +16,8 @@ if (!is_readable($galleryJsonPath)) {
 $gallery_images = preview_load_gallery_images($galleryJsonPath);
 $viewsDir = $rootDir . '/views';
 $currentRoute = 'about';
+
+$bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'about');
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($preview_lang, ENT_QUOTES, 'UTF-8') ?>" dir="<?= htmlspecialchars($preview_dir, ENT_QUOTES, 'UTF-8') ?>">
@@ -24,11 +27,20 @@ $currentRoute = 'about';
     <title><?= htmlspecialchars(preview_t('about.page_title'), ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=1">
-    <link rel="stylesheet" href="/preview/css/about-page.css?v=8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="page-url" content="/preview/about">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=38">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=3">
+    <link rel="stylesheet" href="/preview/css/about-page.css?v=11">
     <style>
+        html, body { height: 100%; margin: 0; overflow: hidden; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            font-family: Roboto, Arial, sans-serif;
+        }
         html[dir="rtl"] .preview-about-page { direction: rtl; text-align: right; }
-        html[dir="rtl"] .vpc-bottom-bar { direction: rtl; }
     </style>
 </head>
 <body>
@@ -48,10 +60,6 @@ $currentRoute = 'about';
         </div>
     </div>
 
-    <div id="city-map-section">
-        <?php include $viewsDir . '/about/map.php'; ?>
-    </div>
-
     <div id="trio">
         <?php include $viewsDir . '/about/trio.php'; ?>
     </div>
@@ -63,19 +71,10 @@ $currentRoute = 'about';
     </div>
 </div>
 
-<?php
-$bottomBar = array(
-    'mode' => 'nav',
-    'current_route' => 'about',
-    'lang' => $preview_lang,
-);
-include __DIR__ . '/../components/bottom_bar.php';
-?>
+<?php include __DIR__ . '/../components/bottom_bar.php'; ?>
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/leaflet/js/gallery.js"></script>
-<script src="/js/d3.v7.min.js"></script>
-<script src="/js/topojson-client.min.js"></script>
-<script src="/leaflet/js/about-map.js?v=13"></script>
+<script src="/preview/js/secondary_player_chrome.js?v=1"></script>
 </body>
 </html>

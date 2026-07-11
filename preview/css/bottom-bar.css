@@ -1,5 +1,11 @@
 /* Unified bottom bar — nav + language picker on all pages (issue #19) */
 
+/* Issue #09: chrome button order stays LTR even when page text is RTL */
+html[dir="rtl"] .vpc-bottom-bar,
+html[dir="rtl"] .vpc-control-row {
+    direction: ltr;
+}
+
 .vpc-bottom-bar {
     font-family: Roboto, Arial, sans-serif;
 }
@@ -19,22 +25,14 @@
     flex-shrink: 0;
 }
 
-.vpc-bottom-bar--player .preview-site-nav {
-    flex-wrap: nowrap;
-}
-
-/* Nav mode: fixed bottom bar on About / Participants pages */
-.vpc-bottom-bar--nav {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 100;
-    margin: 0;
+.vpc-bottom-bar--player[data-secondary-page="true"] {
+    flex-shrink: 0;
     padding: 0.65rem 1rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
     background: rgba(255, 255, 255, 0.97);
-    border-top: 1px solid #ccc;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.vpc-bottom-bar--player .preview-site-nav {
+    flex-wrap: nowrap;
 }
 
 /* Shared nav link button face */

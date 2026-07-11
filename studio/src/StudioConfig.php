@@ -5,7 +5,7 @@ namespace Studio;
 class StudioConfig
 {
     /** @var list<string> Legacy ids defaulting to non-target when field is absent. */
-    private const TRANSLATION_TARGET_MIGRATION_DENYLIST = ['arq', 'aeb'];
+    private const TRANSLATION_TARGET_MIGRATION_DENYLIST = [];
 
     private array $data;
 

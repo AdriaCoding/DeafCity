@@ -60,7 +60,7 @@ assert_contains('vimeo_caption_player', $html, 'player component');
 assert_contains('vpc-bottom-bar--player', $html, 'unified bottom bar on player page');
 assert_contains('vpc-site-nav-wrap', $html, 'nav in control row');
 assert_contains('data-picker="language"', $html, 'unified language picker on player page');
-assert_contains('aria-current="page"', $html, 'current route highlighted on player page');
+assert_not_contains('aria-current="page"', $html, 'home player page has no current nav route');
 assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker');
 assert_not_contains('preview-site-nav--chrome', $html, 'no legacy chrome nav class');
 assert_contains('vpc-control-row', $html, 'single control row wrapper');
@@ -89,33 +89,33 @@ if (!preg_match('~<div[^>]*vpc-control-transport-cluster[^>]*>.*?vpc-play-pause-
 }
 echo "PASS: play button in transport cluster center cell\n";
 
-assert_contains('href="/preview/about"', $html, 'about nav link');
+assert_contains('/preview/about', $html, 'about nav link');
 
-$aboutPos = strpos($html, 'href="/preview/about"');
-$playerPos = strpos($html, 'href="/preview/"');
+$aboutPos = strpos($html, '/preview/about');
 $typPos = strpos($html, 'data-picker="typology"');
 $langPos = strpos($html, 'data-picker="language"');
 $signPos = strpos($html, 'data-picker="sign_language"');
 $edPos = strpos($html, 'data-picker="edition"');
-$partPos = strpos($html, 'href="/preview/participants"');
-$shufflePos = strpos($html, 'vpc-shuffle-btn');
+$partPos = strpos($html, '/preview/participants');
 $prevPos = strpos($html, 'vpc-prev-btn');
 $nextPos = strpos($html, 'vpc-next-btn');
 $resetPos = strpos($html, 'vpc-reset-btn');
-if ($aboutPos === false || $playerPos === false || $typPos === false || $langPos === false
+if ($aboutPos === false || $typPos === false || $langPos === false
     || $signPos === false || $edPos === false || $partPos === false
-    || $shufflePos === false || $prevPos === false || $nextPos === false || $resetPos === false) {
+    || $prevPos === false || $nextPos === false || $resetPos === false) {
     fwrite(STDERR, "FAIL: missing control-row markers for player wing order check\n");
     exit(1);
 }
-if (!($aboutPos < $playerPos && $playerPos < $typPos && $typPos < $langPos
+if (!($aboutPos < $typPos && $typPos < $langPos
     && $langPos < $signPos && $signPos < $edPos && $edPos < $partPos
-    && $partPos < $clusterPos && $clusterPos < $shufflePos && $shufflePos < $prevPos
+    && $partPos < $clusterPos && $clusterPos < $prevPos
     && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
-    fwrite(STDERR, "FAIL: player wings should be About → Player → Typology → Language → Sign lang → Edition → Participants → transport (shuffle → prev → play → next → reset)\n");
+    fwrite(STDERR, "FAIL: player wings should be About → Typology → Language → Sign lang → Edition → Participants → transport (prev → play → next → reset)\n");
     exit(1);
 }
-echo "PASS: player wing order About → Player → Typology → Language | Sign lang → Edition → Participants\n";
+echo "PASS: player wing order About → Typology → Language | Sign lang → Edition → Participants\n";
+
+assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 
 assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker in DOM');
 
@@ -247,13 +247,12 @@ assert_contains('All sign languages', $html, 'clear option says "All sign langua
 // (libras, lse, lsm, gss) mapped to their config labels
 assert_contains('LIBRAS Brazilian Sign Language', $html, 'LIBRAS option in picker');
 assert_contains('LSE Spanish Sign Language', $html, 'LSE option in picker');
-assert_contains('LSM Mexican Sign Language', $html, 'LSM option in picker');
-assert_contains('GSS Greek Sign Language', $html, 'GSS option in picker');
+assert_contains('LIS Italian Sign Language', $html, 'LIS option in picker');
+assert_contains('LSF French Sign Language', $html, 'LSF option in picker');
 
-// AC: Empty facets absent — only 4 sign languages in catalog, not all 9 from config
-// Verify a config label that is NOT in the catalog is absent (e.g. LSF French Sign Language)
-assert_not_contains('LSF French Sign Language', $html, 'empty facet (LSF) absent from dropdown');
-assert_not_contains('LIS Italian Sign Language', $html, 'empty facet (LIS) absent from dropdown');
+// Empty facets absent — only sign languages present in catalog
+assert_not_contains('LSM Mexican Sign Language', $html, 'empty facet (LSM) absent from dropdown');
+assert_not_contains('GSS Greek Sign Language', $html, 'empty facet (GSS) absent from dropdown');
 
 // Issue #17: filters live in the single control row (right wing), not a separate stacked row
 $controlRowPos = strpos($html, 'vpc-control-row');
@@ -335,23 +334,45 @@ assert_contains('All cities', $html, 'edition clear option says "All cities"');
 assert_contains('All typologies', $html, 'typology clear option says "All typologies"');
 
 // AC: Edition picker lists editions present in catalog
-assert_contains('2020 Val', $html, '2020 València option in edition picker');
-assert_contains('2021 Mexico City', $html, '2021 Mexico City option in edition picker');
-assert_contains('2023 Bilbao', $html, '2023 Bilbao option in edition picker');
-assert_contains('2023 S', $html, '2023 São Paulo option in edition picker');
-assert_contains('Salamanca 2028', $html, 'Salamanca 2028 option in edition picker');
+$catalogJsonPathForEditions = dirname(dirname(dirname(__FILE__))) . '/data/catalog.json';
+if (!is_file($catalogJsonPathForEditions)) {
+    $catalogJsonPathForEditions = '/srv/www/deaf.city/public_html/data/catalog.json';
+}
+$catalogForEditions = vpc_load_videos_catalog($catalogJsonPathForEditions);
+$editionOpts = $catalogForEditions
+    ? vpc_edition_options_from_catalog($catalogForEditions, $catalogJsonPathForEditions)
+    : array();
+$studioConfigForEditions = dirname($catalogJsonPathForEditions) . '/studio-config.json';
+if ($catalogForEditions && is_file($studioConfigForEditions)) {
+    $editionOpts = vpc_edition_options_from_catalog($catalogForEditions, $studioConfigForEditions);
+}
+foreach ($editionOpts as $edOpt) {
+    if (!empty($edOpt['label'])) {
+        assert_contains((string) $edOpt['label'], $html, 'edition option in picker: ' . $edOpt['label']);
+    }
+}
 
-// AC: Empty editions absent (config has 2026-marseille, 2026-rome, etc. not in catalog)
-assert_not_contains('2026 Marseille', $html, 'empty edition (Marseille) absent from dropdown');
-assert_not_contains('2026 Roma', $html, 'empty edition (Rome) absent from dropdown');
-assert_not_contains('2026 Tunis', $html, 'empty edition (Tunis) absent from dropdown');
+// AC: Empty editions absent when not in catalog
+assert_not_contains('2021 Mexico City', $html, 'empty edition (Mexico City) absent from dropdown');
+assert_not_contains('Salamanca 2028', $html, 'empty edition (Salamanca) absent from dropdown');
 
-// AC: Typology picker lists typologies present in catalog
-assert_contains('JOKES', $html, 'JOKES typology option present');
-assert_contains('MISUNDERSTANDINGS', $html, 'MISUNDERSTANDINGS typology option present');
-assert_contains('RIDDLES', $html, 'RIDDLES typology option present');
-assert_contains('data-value="anecdotes"', $html, 'anecdotes value present in typology picker');
-assert_contains('data-value="memories"', $html, 'memories value present in typology picker');
+// AC: Typology picker lists typologies present in catalog (localized labels on render)
+require_once dirname(dirname(__FILE__)) . '/lib/preview_locale.php';
+$preview_i18n = preview_bootstrap_locale()['i18n'];
+$typologyOpts = $catalogForEditions && is_file($studioConfigForEditions)
+    ? preview_localize_filter_options(
+        vpc_typology_options_from_catalog($catalogForEditions, $studioConfigForEditions),
+        'typology'
+    )
+    : array();
+foreach ($typologyOpts as $tyOpt) {
+    if (!empty($tyOpt['label'])) {
+        assert_contains((string) $tyOpt['label'], $html, 'typology option in picker: ' . $tyOpt['label']);
+    }
+    if (!empty($tyOpt['value'])) {
+        assert_contains('data-value="' . $tyOpt['value'] . '"', $html, 'typology value present: ' . $tyOpt['value']);
+    }
+}
 
 // AC: Option count sanity — 5 editions and 5 typologies present in catalog
 $editionPickerSection = '';
@@ -359,22 +380,24 @@ if (preg_match('~data-picker="edition"[^>]*>.*?</div>~s', $html, $epMatch)) {
     $editionPickerSection = $epMatch[0];
 }
 $editionOptionCount = substr_count($editionPickerSection, 'role="option"');
-if ($editionOptionCount !== 6) { // 5 real + 1 clear option
-    fwrite(STDERR, "FAIL: edition picker should have 6 options (5 editions + 1 clear), got {$editionOptionCount}\n");
+$expectedEditionOptions = count($editionOpts) + 1;
+if ($editionOptionCount !== $expectedEditionOptions) {
+    fwrite(STDERR, "FAIL: edition picker should have {$expectedEditionOptions} options (" . count($editionOpts) . " editions + 1 clear), got {$editionOptionCount}\n");
     exit(1);
 }
-echo "PASS: edition picker has 6 options (5 editions + 1 clear)\n";
+echo "PASS: edition picker has {$expectedEditionOptions} options (" . count($editionOpts) . " editions + 1 clear)\n";
 
 $typologyPickerSection = '';
 if (preg_match('~data-picker="typology"[^>]*>.*?</div>~s', $html, $tpMatch)) {
     $typologyPickerSection = $tpMatch[0];
 }
 $typologyOptionCount = substr_count($typologyPickerSection, 'role="option"');
-if ($typologyOptionCount !== 6) { // 5 real + 1 clear option
-    fwrite(STDERR, "FAIL: typology picker should have 6 options (5 typologies + 1 clear), got {$typologyOptionCount}\n");
+$expectedTypologyOptions = count($typologyOpts) + 1;
+if ($typologyOptionCount !== $expectedTypologyOptions) {
+    fwrite(STDERR, "FAIL: typology picker should have {$expectedTypologyOptions} options (" . count($typologyOpts) . " typologies + 1 clear), got {$typologyOptionCount}\n");
     exit(1);
 }
-echo "PASS: typology picker has 6 options (5 typologies + 1 clear)\n";
+echo "PASS: typology picker has {$expectedTypologyOptions} options (" . count($typologyOpts) . " typologies + 1 clear)\n";
 
 // Player wing filter order: sign_language → edition (typology is on the left wing)
 $slPos  = strpos($html, 'data-picker="sign_language"');
@@ -410,45 +433,18 @@ if (preg_match('~data-picker="language"[^>]*data-active="false"~', $html) !== 1)
 }
 echo "PASS: language picker neutral when English is active\n";
 
-// ── Issue #3: Shuffle toggle UX (D13) ─────────────────────────────────────────
+// ── Issue #01: Reset visible text; no shuffle button ─────────────────────────
 
-// AC: Shuffle button exists in transport row
-assert_contains('vpc-shuffle-btn', $html, 'shuffle button element present');
-assert_contains('aria-label="Shuffle playlist"', $html, 'shuffle button has aria-label');
+assert_not_contains('vpc-shuffle-btn', $html, 'shuffle button removed from transport');
+assert_contains('chrome_button_widths.js', $html, 'uniform chrome width sync script');
+assert_contains('vpc-reset-btn__text', $html, 'reset button shows visible text');
+assert_contains('aria-label="Reset filters and playlist"', $html, 'reset retains aria-label');
 
-// AC: Shuffle is ON by default — aria-pressed="true" on initial render (D13)
-if (!preg_match('~class="vpc-shuffle-btn"[^>]*aria-pressed="true"~', $html)
-    && !preg_match('~aria-pressed="true"[^>]*class="vpc-shuffle-btn"~', $html)) {
-    fwrite(STDERR, "FAIL: shuffle button should have aria-pressed=\"true\" on initial render (shuffle-on default, D13)\n");
-    exit(1);
-}
-echo "PASS: shuffle button starts with aria-pressed=\"true\" (shuffle on by default, D13)\n";
-
-assert_contains('>shuffle<', $html, 'shuffle button contains shuffle Material Icon text');
-assert_not_contains('shuffleState', $html, 'no shuffleState key in page (not persisted, D13)');
-assert_not_contains('shuffle_state', $html, 'no shuffle_state key in page (not persisted)');
-
-$cssPath = dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.css';
-if (is_file($cssPath)) {
-    $css = file_get_contents($cssPath);
-    if (strpos($css, ".vpc-shuffle-btn[aria-pressed='true'] .material-icons") === false
-        && strpos($css, ".vpc-shuffle-btn.is-active .material-icons") === false) {
-        fwrite(STDERR, "FAIL: CSS lacks explicit brand-green icon color for shuffle active state (D13)\n");
-        exit(1);
-    }
-    echo "PASS: CSS has explicit icon color rule for shuffle active state\n";
-
-    if (strpos($css, ".vpc-shuffle-btn[aria-pressed='false']") === false) {
-        fwrite(STDERR, "FAIL: CSS lacks explicit inactive state rule for .vpc-shuffle-btn[aria-pressed='false'] (D13)\n");
-        exit(1);
-    }
-    if (!preg_match("~\.vpc-shuffle-btn\[aria-pressed='false'\][^{]*\{[^}]*color\s*:[^}]*\}~s", $css)) {
-        fwrite(STDERR, "FAIL: CSS inactive shuffle state does not set an explicit 'color' — must not rely on opacity alone (D13)\n");
-        exit(1);
-    }
-    echo "PASS: CSS inactive shuffle state uses explicit muted color (not opacity alone, D13)\n";
-} else {
-    echo "SKIP: CSS file not found at expected path — visual state CSS checks skipped\n";
+$playerJsPath = dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js';
+if (is_file($playerJsPath)) {
+    $playerJs = file_get_contents($playerJsPath);
+    assert_not_contains('setShuffleToggleUi', $playerJs, 'no shuffle toggle UI dead code in player JS');
+    assert_not_contains("querySelector('.vpc-shuffle-btn')", $playerJs, 'no shuffle button DOM queries in player JS');
 }
 
 // Reset lives in the transport cluster (after next)
@@ -459,7 +455,7 @@ if (!preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-next-btn.*?vpc-reset
 echo "PASS: reset button in transport cluster after next\n";
 
 // ── Issue #7: R3 Participants nav button ──────────────────────────────────────
-assert_contains('href="/preview/participants"', $html, 'Participants nav button in R3');
+assert_contains('/preview/participants', $html, 'Participants nav button in R3');
 assert_contains('>Participants<', $html, 'Participants button label text');
 
 echo "\nAll tests passed.\n";

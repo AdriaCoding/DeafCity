@@ -35,11 +35,11 @@ function sn_find($links, $route)
     return null;
 }
 
-// All routes always returned (issue #19 — chrome placement retired)
+// Visible routes: about + participants (home/Reproductor hidden)
 $aboutLinks = preview_build_site_nav_links('about', 'chrome', array());
-sn_assert(count($aboutLinks) === 3, 'about route returns all three links');
+sn_assert(count($aboutLinks) === 2, 'about route returns about + participants');
 sn_assert(in_array('about', sn_routes($aboutLinks), true), 'about route includes about');
-sn_assert(in_array('home', sn_routes($aboutLinks), true), 'about route includes home');
+sn_assert(!in_array('home', sn_routes($aboutLinks), true), 'home/Reproductor not in visible nav');
 sn_assert(in_array('participants', sn_routes($aboutLinks), true), 'about route includes participants');
 
 $aboutLink = sn_find($aboutLinks, 'about');
@@ -47,14 +47,10 @@ sn_assert($aboutLink !== null, 'about link exists');
 sn_assert($aboutLink['aria_current'] === 'page', 'current route has aria-current=page');
 sn_assert(strpos($aboutLink['class'], 'is-current') !== false, 'current route has is-current class');
 
-$playerLink = sn_find($aboutLinks, 'home');
-sn_assert($playerLink['aria_current'] === '', 'non-current route has no aria-current');
-
-// home route on player page
+// home route on player page — no home link in nav
 $homeLinks = preview_build_site_nav_links('home', 'bottom', array());
-sn_assert(count($homeLinks) === 3, 'home route returns all three links');
-$homeLink = sn_find($homeLinks, 'home');
-sn_assert(strpos($homeLink['class'], 'is-current') !== false, 'home marked current on player page');
+sn_assert(count($homeLinks) === 2, 'home route returns visible links only');
+sn_assert(sn_find($homeLinks, 'home') === null, 'home/Reproductor link omitted on player page');
 
 // active collection surfaces collection label when not on that route
 $homeParticipant = preview_build_site_nav_links('home', 'bottom', array('participants' => 'Hamida'));
@@ -75,9 +71,17 @@ foreach ($aboutLinks as $link) {
     sn_assert(strpos($link['class'], 'preview-site-nav__btn') !== false, 'links use button class');
 }
 
-// language switcher options
+// language switcher options — pure alphabetical by label
 $langOpts = preview_build_language_switcher_options('about', 'en');
 sn_assert(count($langOpts) >= 2, 'language switcher lists at least en + one other');
+$labels = array();
+foreach ($langOpts as $opt) {
+    $labels[] = $opt['label'];
+}
+$sorted = $labels;
+sort($sorted, SORT_FLAG_CASE | SORT_STRING);
+sn_assert($labels === $sorted, 'language switcher sorted A-Z by label');
+
 $enOpt = null;
 foreach ($langOpts as $opt) {
     if ($opt['id'] === 'en') {
@@ -86,14 +90,24 @@ foreach ($langOpts as $opt) {
     }
 }
 sn_assert($enOpt !== null, 'language switcher includes English');
-sn_assert($enOpt['href'] === '/preview/about', 'English href omits lang query');
+sn_assert($enOpt['href'] === '/preview/about?lang=en', 'English href includes explicit lang=en');
 sn_assert(!empty($enOpt['selected']), 'English selected when current lang is en');
+
+$arOpt = null;
+foreach ($langOpts as $opt) {
+    if ($opt['id'] === 'ar') {
+        $arOpt = $opt;
+        break;
+    }
+}
+sn_assert($arOpt !== null, 'language switcher includes Arabic (ar)');
+sn_assert(strpos($arOpt['label'], 'Arabic') !== false || $arOpt['label'] === 'Arabic', 'Arabic label present');
 
 $esNav = preview_build_site_nav_links('about', 'bottom', array(), 'es');
 $aboutEs = sn_find($esNav, 'about');
 sn_assert(strpos($aboutEs['href'], 'lang=es') !== false, 'nav links preserve lang query');
 
-sn_assert(preview_append_lang_query('/preview/about', 'en') === '/preview/about', 'append lang skips en');
+sn_assert(preview_append_lang_query('/preview/about', 'en') === '/preview/about?lang=en', 'append lang includes en');
 sn_assert(preview_append_lang_query('/preview/about', 'es') === '/preview/about?lang=es', 'append lang adds query');
 
 echo "\nAll site_nav tests passed.\n";

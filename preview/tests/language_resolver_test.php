@@ -12,8 +12,7 @@ function assert_eq($expected, $actual, $label)
     echo "PASS: {$label}\n";
 }
 
-$available = array('es', 'en', 'it', 'fr', 'ca', 'pt', 'arq', 'aeb');
-$arabicOrder = array('arq', 'aeb');
+$available = array('es', 'en', 'it', 'fr', 'ca', 'pt', 'ar');
 $complete = array(
     'en' => true,
     'es' => true,
@@ -21,54 +20,38 @@ $complete = array(
     'it' => false,
     'ca' => false,
     'pt' => false,
-    'arq' => true,
-    'aeb' => false,
+    'ar' => true,
 );
 
-assert_eq('es', vpc_resolve_language('it,es;q=0.9', null, $available, $complete, $arabicOrder), 'quality order skips incomplete it, picks es');
-assert_eq('fr', vpc_resolve_language('fr-FR', null, $available, $complete, $arabicOrder), 'fr-FR maps to fr');
+assert_eq('es', vpc_resolve_language('it,es;q=0.9', null, $available, $complete), 'quality order skips incomplete it, picks es');
+assert_eq('fr', vpc_resolve_language('fr-FR', null, $available, $complete), 'fr-FR maps to fr');
 
 $completePt = $complete;
 $completePt['pt'] = true;
-assert_eq('pt', vpc_resolve_language('pt-BR', null, $available, $completePt, $arabicOrder), 'pt-BR maps to pt');
-assert_eq('pt', vpc_resolve_language('pt-PT;q=0.8', null, $available, $completePt, $arabicOrder), 'pt-PT maps to pt');
+assert_eq('pt', vpc_resolve_language('pt-BR', null, $available, $completePt), 'pt-BR maps to pt');
+assert_eq('pt', vpc_resolve_language('pt-PT;q=0.8', null, $available, $completePt), 'pt-PT maps to pt');
 
-assert_eq('arq', vpc_resolve_language('ar-DZ', null, $available, $complete, $arabicOrder), 'ar-DZ maps to arq');
+assert_eq('ar', vpc_resolve_language('ar-DZ', null, $available, $complete), 'ar-DZ maps to international ar');
+assert_eq('ar', vpc_resolve_language('ar-TN', null, $available, $complete), 'ar-TN maps to international ar');
+assert_eq('ar', vpc_resolve_language('ar', null, $available, $complete), 'bare ar maps to ar when complete');
 
-$completeAeb = $complete;
-$completeAeb['aeb'] = true;
-assert_eq('aeb', vpc_resolve_language('ar-TN', null, $available, $completeAeb, $arabicOrder), 'ar-TN maps to aeb');
-
-assert_eq('en', vpc_resolve_language('ar-TN', null, $available, $complete, $arabicOrder), 'ar-TN with incomplete aeb falls through to en');
-
-assert_eq('arq', vpc_resolve_language('ar', null, $available, $complete, $arabicOrder), 'bare ar picks first ready Arabic in config order');
-
-$completeArqOnly = array(
+$completeArOnly = array(
     'en' => true,
     'es' => false,
     'fr' => false,
     'it' => false,
     'ca' => false,
     'pt' => false,
-    'arq' => true,
-    'aeb' => false,
+    'ar' => true,
 );
-assert_eq('arq', vpc_resolve_language('ar', null, $available, $completeArqOnly, $arabicOrder), 'bare ar picks arq when only arq is ready');
+assert_eq('ar', vpc_resolve_language('ar', null, $available, $completeArOnly), 'bare ar resolves when ar is ready');
 
-$completeAebOnly = array(
-    'en' => true,
-    'es' => false,
-    'fr' => false,
-    'it' => false,
-    'ca' => false,
-    'pt' => false,
-    'arq' => false,
-    'aeb' => true,
-);
-assert_eq('aeb', vpc_resolve_language('ar', null, $available, $completeAebOnly, $arabicOrder), 'bare ar picks aeb when only aeb is ready');
+$completeNoAr = $complete;
+$completeNoAr['ar'] = false;
+assert_eq('en', vpc_resolve_language('ar', null, $available, $completeNoAr), 'incomplete ar falls through to en');
 
-assert_eq('it', vpc_resolve_language('en', 'it', $available, $complete, $arabicOrder), '?lang=it bypasses completeness gate');
-assert_eq('es', vpc_resolve_language('es', 'xx', $available, $complete, $arabicOrder), 'unknown ?lang= ignored, auto-detect applies');
+assert_eq('it', vpc_resolve_language('en', 'it', $available, $complete), '?lang=it bypasses completeness gate');
+assert_eq('es', vpc_resolve_language('es', 'xx', $available, $complete), 'unknown ?lang= ignored, auto-detect applies');
 
 $completeEnOnly = array(
     'en' => true,
@@ -77,13 +60,14 @@ $completeEnOnly = array(
     'it' => false,
     'ca' => false,
     'pt' => false,
-    'arq' => false,
-    'aeb' => false,
+    'ar' => false,
 );
-assert_eq('en', vpc_resolve_language('es', null, $available, $completeEnOnly, $arabicOrder), 'incomplete language falls back to en');
-assert_eq('en', vpc_resolve_language('', null, $available, $completeEnOnly, $arabicOrder), 'empty Accept-Language falls back to en');
+assert_eq('en', vpc_resolve_language('es', null, $available, $completeEnOnly), 'incomplete language falls back to en');
+assert_eq('en', vpc_resolve_language('', null, $available, $completeEnOnly), 'empty Accept-Language falls back to en');
 
-$completeBoth = array('en' => true, 'es' => true, 'fr' => false, 'it' => false, 'ca' => false, 'pt' => false, 'arq' => false, 'aeb' => false);
-assert_eq('en', vpc_resolve_language('en,es', null, $available, $completeBoth, $arabicOrder), 'equal-q tags preserve header order (en before es)');
+$completeBoth = array('en' => true, 'es' => true, 'fr' => false, 'it' => false, 'ca' => false, 'pt' => false, 'ar' => false);
+assert_eq('en', vpc_resolve_language('en,es', null, $available, $completeBoth), 'equal-q tags preserve header order (en before es)');
+
+assert_eq('en', vpc_resolve_language('ca', 'en', $available, $completeBoth), 'explicit ?lang=en persists over Accept-Language');
 
 echo "All tests passed.\n";

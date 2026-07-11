@@ -73,5 +73,4 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
 
 <p><b><?= $pby ?> <a href="https://www.antoniabad.info" target="_blank">Antoni Abad</a> &nbsp; <a href="https://www.instagram.com/antoni__abad/" target="_blank"><?= $ct ?></a></b></p>
 
-<p><img class="logos" src="/img/ministerio.png" width="367" height="80"/> &nbsp; &nbsp; <img src="/img/ecausp2.png" width="150" height="45"/> &nbsp; &nbsp;
-  <img src="/img/bilbaomuseoa2.png" width="154" height="30"/> &nbsp; &nbsp; <img src="/img/uam2.png" width="100" height="100"/> &nbsp; &nbsp; <img src="/img/cccc.png" width="100" height="63"/></p>
+<p class="credits-logos"><img class="logos" src="/img/ministerio.png" width="367" height="80" alt="" /><img src="/img/ecausp2.png" width="150" height="45" alt="" /><img src="/img/bilbaomuseoa2.png" width="154" height="30" alt="" /><img src="/img/uam2.png" width="100" height="100" alt="" /><img src="/img/cccc.png" width="100" height="63" alt="" /></p>

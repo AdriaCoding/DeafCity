@@ -963,3 +963,202 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
 
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #13)');
 
+// ── Issue #02: playback session + secondary-page nav intent ─────────────────
+
+assert.strictEqual(logic.PLAYBACK_SESSION_KEY, 'vpc-playback-session');
+assert.strictEqual(logic.NAV_INTENT_KEY, 'vpc-nav-intent');
+
+(function () {
+    var snap = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 2,
+        filterState: { sign_language: 'lse', edition: null, typology: null },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [1, 0, 2],
+        shuffleStep: 1,
+        filteredCursor: 0,
+        playbackTimeSec: 12.5,
+    });
+    assert.strictEqual(snap.masterIndex, 2);
+    assert.strictEqual(snap.filterState.sign_language, 'lse');
+    assert.strictEqual(snap.shuffleStep, 1);
+    assert.strictEqual(snap.playbackTimeSec, 12.5);
+
+    var parsed = logic.parsePlaybackSession(JSON.stringify(snap));
+    assert.ok(parsed);
+    assert.strictEqual(parsed.masterIndex, 2);
+    assert.strictEqual(parsed.playbackTimeSec, 12.5);
+})();
+
+assert.strictEqual(logic.parsePlaybackSession(''), null);
+assert.strictEqual(logic.parsePlaybackSession('not-json'), null);
+
+// Branch A: nav intent without session → fresh neutral
+(function () {
+    var plan = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'play',
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'fresh');
+})();
+
+// Branch B: play restores same video context
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 1,
+        filterState: { sign_language: null, edition: null, typology: null },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [1, 0, 2],
+        shuffleStep: 0,
+        filteredCursor: 1,
+        playbackTimeSec: 33,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'play',
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'restore');
+    assert.strictEqual(plan.loadMasterIndex, 1);
+    assert.strictEqual(plan.playbackTimeSec, 33);
+    assert.strictEqual(plan.shouldAutoplay, true);
+})();
+
+// Branch B: prev steps within saved shuffle sequence
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 6,
+        filterState: { sign_language: 'lse', edition: null, typology: null },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [2, 0, 1],
+        shuffleStep: 2,
+        filteredCursor: 1,
+        playbackTimeSec: 0,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'prev',
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'restore');
+    assert.strictEqual(plan.shuffleStep, 1);
+    assert.strictEqual(plan.filteredCursor, 0);
+    assert.strictEqual(plan.loadMasterIndex, 1);
+})();
+
+// Branch B: reset clears to neutral ALL
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 3,
+        filterState: { sign_language: 'lse', edition: null, typology: null },
+        participantName: 'Aurora',
+        shuffleMode: true,
+        shuffledSequence: [0, 1],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 5,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'reset',
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'reset');
+    assert.strictEqual(plan.plan.filterState.sign_language, null);
+    assert.strictEqual(plan.plan.isParticipantMode, false);
+    assert.strictEqual(plan.plan.shouldAutoplay, false);
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
+
+// ── Issue #04: participant name from single-participant filtered playlist ───
+
+(function () {
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, {
+        sign_language: 'gss',
+        edition: null,
+        typology: null,
+    });
+    assert.deepStrictEqual(
+        logic.distinctParticipantsInSubset(samplePlaylist, filtered),
+        ['Hamida'],
+        'gss filter yields one participant'
+    );
+    assert.strictEqual(
+        logic.resolveCollectionParticipantLabel(samplePlaylist, filtered, '', false),
+        'Hamida',
+        'single-participant filter shows name without participant mode'
+    );
+})();
+
+(function () {
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, {
+        sign_language: 'lse',
+        edition: null,
+        typology: null,
+    });
+    assert.strictEqual(
+        logic.distinctParticipantsInSubset(samplePlaylist, filtered).length,
+        3,
+        'lse filter has three participants'
+    );
+    assert.strictEqual(
+        logic.resolveCollectionParticipantLabel(samplePlaylist, filtered, '', false),
+        '',
+        'multi-participant filter keeps generic label'
+    );
+    assert.strictEqual(
+        logic.resolveCollectionParticipantLabel(samplePlaylist, filtered, 'Aurora', true),
+        'Aurora',
+        'explicit participant mode still wins'
+    );
+})();
+
+// ── Issue #05: generalized end-of-playlist ───────────────────────────────────
+
+(function () {
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, {
+        sign_language: 'lse',
+        edition: null,
+        typology: null,
+    });
+    var plan = logic.planEndOfPlaylist({
+        shuffleMode: true,
+        shuffledSequence: [2, 0, 1],
+        filteredCount: filtered.length,
+        filteredMasterIndices: filtered,
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.shuffleStep, 0);
+    assert.strictEqual(plan.filteredCursor, 2);
+    assert.strictEqual(plan.loadMasterIndex, filtered[2]);
+    assert.strictEqual(plan.shouldAutoplay, false);
+})();
+
+(function () {
+    var filtered = recomputeFilteredMasterIndices(samplePlaylist, {
+        sign_language: null,
+        edition: null,
+        typology: null,
+    });
+    var plan = logic.planEndOfPlaylist({
+        shuffleMode: false,
+        shuffledSequence: [],
+        filteredCount: filtered.length,
+        filteredMasterIndices: filtered,
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.filteredCursor, 0);
+    assert.strictEqual(plan.loadMasterIndex, filtered[0]);
+    assert.strictEqual(plan.shouldAutoplay, false);
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including issues #04–#05)');
+

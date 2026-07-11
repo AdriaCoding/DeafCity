@@ -48,14 +48,12 @@ if (!function_exists('vpc_parse_accept_language')) {
 if (!function_exists('vpc_map_bcp47_to_language_id')) {
     /**
      * Map a single Accept-Language tag to a studio language id, or null when unmapped.
-     * Returns '__arabic_first_ready__' for bare ar / unregioned ar-* (caller picks first ready).
      *
      * @param string $tag
      * @param list<string> $availableIds
-     * @param list<string> $arabicOrder
      * @return string|null
      */
-    function vpc_map_bcp47_to_language_id($tag, array $availableIds, array $arabicOrder)
+    function vpc_map_bcp47_to_language_id($tag, array $availableIds)
     {
         $tag = strtolower(str_replace('_', '-', trim((string) $tag)));
         if ($tag === '') {
@@ -64,22 +62,13 @@ if (!function_exists('vpc_map_bcp47_to_language_id')) {
 
         $segments = explode('-', $tag);
         $primary = $segments[0];
-        $region = isset($segments[1]) ? strtolower($segments[1]) : '';
 
         if ($primary === 'pt') {
             return in_array('pt', $availableIds, true) ? 'pt' : null;
         }
 
-        if ($primary === 'ar' && $region === 'dz') {
-            return in_array('arq', $availableIds, true) ? 'arq' : null;
-        }
-
-        if ($primary === 'ar' && $region === 'tn') {
-            return in_array('aeb', $availableIds, true) ? 'aeb' : null;
-        }
-
         if ($primary === 'ar') {
-            return '__arabic_first_ready__';
+            return in_array('ar', $availableIds, true) ? 'ar' : null;
         }
 
         if (strlen($primary) === 2 && in_array($primary, $availableIds, true)) {
@@ -96,14 +85,12 @@ if (!function_exists('vpc_resolve_language')) {
      * @param string|null $langOverride  ?lang= value; bypasses completeness gate when valid
      * @param list<string> $availableIds
      * @param array<string, bool> $completeness
-     * @param list<string> $arabicOrder  Arabic-script ids in studio-config order
      */
     function vpc_resolve_language(
         $acceptLanguage,
         $langOverride,
         array $availableIds,
-        array $completeness,
-        array $arabicOrder
+        array $completeness
     ) {
         if ($langOverride !== null && $langOverride !== '') {
             $override = strtolower(trim((string) $langOverride));
@@ -114,20 +101,8 @@ if (!function_exists('vpc_resolve_language')) {
 
         $candidates = vpc_parse_accept_language(is_string($acceptLanguage) ? $acceptLanguage : '');
         foreach ($candidates as $candidate) {
-            $mapped = vpc_map_bcp47_to_language_id($candidate['tag'], $availableIds, $arabicOrder);
+            $mapped = vpc_map_bcp47_to_language_id($candidate['tag'], $availableIds);
             if ($mapped === null) {
-                continue;
-            }
-
-            if ($mapped === '__arabic_first_ready__') {
-                foreach ($arabicOrder as $arId) {
-                    if (!in_array($arId, $availableIds, true)) {
-                        continue;
-                    }
-                    if (!empty($completeness[$arId])) {
-                        return $arId;
-                    }
-                }
                 continue;
             }
 

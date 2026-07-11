@@ -35,29 +35,44 @@ assert_contains('gallery-image', $html, 'gallery images');
 assert_contains('id="about-todo"', $html, 'about text');
 assert_contains('id="trio"', $html, 'trio video');
 assert_contains('id="credits"', $html, 'credits section');
+assert_contains('credits-logos', $html, 'credits logos row');
 assert_contains('ministerio.png', $html, 'sponsor logos');
 assert_contains('Roboto', $html, 'Roboto font');
 assert_not_contains('go back to player', $html, 'no back link on about page');
-assert_contains('vpc-bottom-bar--nav', $html, 'sticky bottom bar on about page');
+assert_contains('vpc-bottom-bar--player', $html, 'unified player chrome on about page');
+assert_not_contains('vpc-bottom-bar--nav', $html, 'no legacy nav-mode bottom bar');
+assert_contains('data-secondary-page="true"', $html, 'secondary page player chrome flag');
+assert_contains('vpc-control-transport-cluster', $html, 'transport cluster on about page');
+assert_contains('vpc-reset-btn__text', $html, 'reset shows visible text');
+assert_not_contains('vpc-shuffle-btn', $html, 'no shuffle button on about page');
+assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 assert_contains('preview-site-nav__btn', $html, 'navbar uses button style');
-assert_contains('href="/preview/"', $html, 'navbar includes Player route');
-assert_contains('href="/preview/about"', $html, 'navbar includes About route');
-assert_contains('href="/preview/participants"', $html, 'navbar includes Participants route');
+assert_contains('/preview/about', $html, 'navbar includes About route');
+assert_contains('/preview/participants', $html, 'navbar includes Participants route');
 assert_contains('aria-current="page"', $html, 'navbar marks current page');
 assert_contains('>About</a>', $html, 'About label in navbar');
-assert_contains('about-map.js?v=13', $html, 'about map script');
-assert_contains('data-picker="language"', $html, 'language picker on about navbar');
-assert_contains('vpc-picker-dropdown', $html, 'language dropup on about navbar');
+assert_not_contains('city-map-section', $html, 'map section removed');
+assert_not_contains('about-map.js', $html, 'about map script removed');
+assert_not_contains('d3.v7.min.js', $html, 'd3 script removed');
+assert_contains('data-picker="language"', $html, 'language picker on about chrome');
+assert_contains('data-picker="typology"', $html, 'typology picker on about chrome');
+assert_contains('secondary_player_chrome.js', $html, 'secondary transport script');
 assert_contains('English</li>', $html, 'English option in language picker');
 
 $aboutCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/about-page.css');
-assert_contains('--inset-width', $aboutCss, 'inset width css variable');
+assert_not_contains('#city-map-section', $aboutCss, 'map css removed');
+assert_not_contains('max-width: 1200px', $aboutCss, 'narrow max-width removed');
 assert_contains('align-items: stretch', $aboutCss, 'clock row stretches children');
 assert_contains('flex: 1 1 calc(50% - 8px)', $aboutCss, 'clock children share row width');
+assert_contains('.credits-logos', $aboutCss, 'credits logos flex layout');
+assert_contains('overflow: hidden', $html, 'non-scrollable body on about page');
+assert_contains('min-height: 0', $aboutCss, 'about scroll area shrinks inside flex column');
 
-$aboutMapJs = file_get_contents(dirname(dirname(dirname(__FILE__))) . '/leaflet/js/about-map.js');
-assert_contains('--inset-width', $aboutMapJs, 'inset width derived from main map');
-assert_contains('INSET_SCALE', $aboutMapJs, 'inset scale factor');
-assert_contains('PAD_LEFT / vbW', $aboutMapJs, 'inset proportional to med map padding');
+$bottomBarCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/bottom-bar.css');
+if (preg_match('~\[data-secondary-page="true"\]\s*\{[^}]*box-shadow~s', $bottomBarCss)) {
+    fwrite(STDERR, "FAIL: secondary page bottom bar must not use box-shadow (horizontal rule)\n");
+    exit(1);
+}
+echo "PASS: no box-shadow on secondary page bottom bar\n";
 
 echo "All tests passed.\n";

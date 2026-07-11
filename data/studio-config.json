@@ -156,15 +156,9 @@
             "vimeo_code": "pt"
         },
         {
-            "id": "arq",
-            "label": "Algerian Darija",
+            "id": "ar",
+            "label": "Arabic",
             "vimeo_code": "ar",
-            "translation_target": true
-        },
-        {
-            "id": "aeb",
-            "label": "Tunisian Arabic",
-            "vimeo_code": "mt",
             "translation_target": true
         }
     ],

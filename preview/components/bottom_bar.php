@@ -1,17 +1,16 @@
 <?php
 /**
- * Unified bottom bar — site nav + language picker (+ transport/filters in player mode).
+ * Unified bottom bar — site nav + language picker + transport/filters (player chrome).
  *
  * Pass configuration as $bottomBar before including:
  *
  *   $bottomBar = array(
- *     'mode' => 'nav',              // 'nav' | 'player'
+ *     'mode' => 'player',
  *     'current_route' => 'about',   // 'home' | 'about' | 'participants'
  *     'lang' => 'en',
  *     'active_collections' => array(), // optional, player participant context
+ *     'player' => array(...),          // see preview/lib/bottom_bar_player_config.php
  *   );
- *
- * Player mode additionally requires keys under $bottomBar['player'] — see vimeo_caption_player.php.
  */
 require_once dirname(__DIR__) . '/lib/site_nav_builder.php';
 
@@ -24,7 +23,6 @@ if (!function_exists('preview_t')) {
     require_once dirname(__DIR__) . '/lib/preview_locale.php';
 }
 
-$mode = isset($bottomBar['mode']) ? (string) $bottomBar['mode'] : 'nav';
 $currentRoute = isset($bottomBar['current_route']) ? (string) $bottomBar['current_route'] : '';
 $navLang = isset($bottomBar['lang'])
     ? (string) $bottomBar['lang']
@@ -49,7 +47,38 @@ $langPickerId = 'preview-lang-picker';
 $langPickerBtnId = 'preview-lang-picker-btn';
 $langDropdownId = 'preview-lang-dropdown';
 
-$barClass = 'vpc-bottom-bar vpc-bottom-bar--' . ($mode === 'player' ? 'player' : 'nav');
+$playerCfg = isset($bottomBar['player']) && is_array($bottomBar['player']) ? $bottomBar['player'] : array();
+$isSecondaryPage = !empty($playerCfg['secondary_page']);
+$barClass = 'vpc-bottom-bar vpc-bottom-bar--player';
+$barAttrs = $isSecondaryPage ? ' data-secondary-page="true"' : '';
+
+$transportId = isset($playerCfg['transport_id']) ? (string) $playerCfg['transport_id'] : '';
+$iframeId = isset($playerCfg['iframe_id']) ? (string) $playerCfg['iframe_id'] : '';
+$navHiddenClass = isset($playerCfg['nav_hidden_class']) ? (string) $playerCfg['nav_hidden_class'] : '';
+$transportPrevDisabled = !empty($playerCfg['transport_prev_disabled']);
+$transportNextDisabled = !empty($playerCfg['transport_next_disabled']);
+$showR2FilterRow = !empty($playerCfg['show_r2_filter_row']);
+$signLangPickerId = isset($playerCfg['sign_lang_picker_id']) ? (string) $playerCfg['sign_lang_picker_id'] : '';
+$signLangDropdownId = isset($playerCfg['sign_lang_dropdown_id']) ? (string) $playerCfg['sign_lang_dropdown_id'] : '';
+$signLangPickerBtnId = isset($playerCfg['sign_lang_picker_btn_id']) ? (string) $playerCfg['sign_lang_picker_btn_id'] : '';
+$editionPickerId = isset($playerCfg['edition_picker_id']) ? (string) $playerCfg['edition_picker_id'] : '';
+$editionDropdownId = isset($playerCfg['edition_dropdown_id']) ? (string) $playerCfg['edition_dropdown_id'] : '';
+$editionPickerBtnId = isset($playerCfg['edition_picker_btn_id']) ? (string) $playerCfg['edition_picker_btn_id'] : '';
+$typologyPickerId = isset($playerCfg['typology_picker_id']) ? (string) $playerCfg['typology_picker_id'] : '';
+$typologyDropdownId = isset($playerCfg['typology_dropdown_id']) ? (string) $playerCfg['typology_dropdown_id'] : '';
+$typologyPickerBtnId = isset($playerCfg['typology_picker_btn_id']) ? (string) $playerCfg['typology_picker_btn_id'] : '';
+$useSignLanguageFilter = !empty($playerCfg['use_sign_language_filter']);
+$useEditionFilter = !empty($playerCfg['use_edition_filter']);
+$useTypologyFilter = !empty($playerCfg['use_typology_filter']);
+$signLangOptionsList = isset($playerCfg['sign_lang_options']) && is_array($playerCfg['sign_lang_options'])
+    ? $playerCfg['sign_lang_options'] : array();
+$editionOptionsList = isset($playerCfg['edition_options']) && is_array($playerCfg['edition_options'])
+    ? $playerCfg['edition_options'] : array();
+$typologyOptionsList = isset($playerCfg['typology_options']) && is_array($playerCfg['typology_options'])
+    ? $playerCfg['typology_options'] : array();
+$initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout']) ? (string) $playerCfg['initial_sign_lang_readout'] : '';
+$initialEditionReadout = isset($playerCfg['initial_edition_readout']) ? (string) $playerCfg['initial_edition_readout'] : '';
+$initialTypologyReadout = isset($playerCfg['initial_typology_readout']) ? (string) $playerCfg['initial_typology_readout'] : '';
 
 if (!function_exists('preview_render_nav_link')) {
     function preview_render_nav_link($link)
@@ -133,54 +162,11 @@ if (!function_exists('preview_nav_links_for_routes')) {
     }
 }
 
-/**
- * Render nav links + unified language picker (nav mode on About/Participants pages).
- */
-if (!function_exists('preview_render_bottom_bar_nav')) {
-    function preview_render_bottom_bar_nav($links, $langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId)
-    {
-    ?>
-    <nav class="preview-site-nav" aria-label="Site">
-    <?php foreach ($links as $link): ?>
-        <?php preview_render_nav_link($link); ?>
-    <?php endforeach; ?>
-    <?php preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
-    </nav>
-    <?php
-    }
-}
+$leftNavLinks = preview_nav_links_for_routes($links, array('about'));
+$rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
 
-if ($mode === 'player'):
-    $playerCfg = isset($bottomBar['player']) && is_array($bottomBar['player']) ? $bottomBar['player'] : array();
-    $transportId = isset($playerCfg['transport_id']) ? (string) $playerCfg['transport_id'] : '';
-    $iframeId = isset($playerCfg['iframe_id']) ? (string) $playerCfg['iframe_id'] : '';
-    $navHiddenClass = isset($playerCfg['nav_hidden_class']) ? (string) $playerCfg['nav_hidden_class'] : '';
-    $showR2FilterRow = !empty($playerCfg['show_r2_filter_row']);
-    $signLangPickerId = isset($playerCfg['sign_lang_picker_id']) ? (string) $playerCfg['sign_lang_picker_id'] : '';
-    $signLangDropdownId = isset($playerCfg['sign_lang_dropdown_id']) ? (string) $playerCfg['sign_lang_dropdown_id'] : '';
-    $signLangPickerBtnId = isset($playerCfg['sign_lang_picker_btn_id']) ? (string) $playerCfg['sign_lang_picker_btn_id'] : '';
-    $editionPickerId = isset($playerCfg['edition_picker_id']) ? (string) $playerCfg['edition_picker_id'] : '';
-    $editionDropdownId = isset($playerCfg['edition_dropdown_id']) ? (string) $playerCfg['edition_dropdown_id'] : '';
-    $editionPickerBtnId = isset($playerCfg['edition_picker_btn_id']) ? (string) $playerCfg['edition_picker_btn_id'] : '';
-    $typologyPickerId = isset($playerCfg['typology_picker_id']) ? (string) $playerCfg['typology_picker_id'] : '';
-    $typologyDropdownId = isset($playerCfg['typology_dropdown_id']) ? (string) $playerCfg['typology_dropdown_id'] : '';
-    $typologyPickerBtnId = isset($playerCfg['typology_picker_btn_id']) ? (string) $playerCfg['typology_picker_btn_id'] : '';
-    $useSignLanguageFilter = !empty($playerCfg['use_sign_language_filter']);
-    $useEditionFilter = !empty($playerCfg['use_edition_filter']);
-    $useTypologyFilter = !empty($playerCfg['use_typology_filter']);
-    $signLangOptionsList = isset($playerCfg['sign_lang_options']) && is_array($playerCfg['sign_lang_options'])
-        ? $playerCfg['sign_lang_options'] : array();
-    $editionOptionsList = isset($playerCfg['edition_options']) && is_array($playerCfg['edition_options'])
-        ? $playerCfg['edition_options'] : array();
-    $typologyOptionsList = isset($playerCfg['typology_options']) && is_array($playerCfg['typology_options'])
-        ? $playerCfg['typology_options'] : array();
-    $initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout']) ? (string) $playerCfg['initial_sign_lang_readout'] : '';
-    $initialEditionReadout = isset($playerCfg['initial_edition_readout']) ? (string) $playerCfg['initial_edition_readout'] : '';
-    $initialTypologyReadout = isset($playerCfg['initial_typology_readout']) ? (string) $playerCfg['initial_typology_readout'] : '';
-    $leftNavLinks = preview_nav_links_for_routes($links, array('about', 'home'));
-    $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
-    ?>
-<div class="<?= htmlspecialchars($barClass, ENT_QUOTES, 'UTF-8') ?>">
+?>
+<div class="<?= htmlspecialchars($barClass, ENT_QUOTES, 'UTF-8') ?>"<?= $barAttrs ?>>
     <div
         id="<?= htmlspecialchars($transportId, ENT_QUOTES, 'UTF-8') ?>"
         class="vpc-control-row"
@@ -336,16 +322,10 @@ if ($mode === 'player'):
         >
             <button
                 type="button"
-                class="vpc-shuffle-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
-                aria-pressed="true"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.shuffle'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">shuffle</span></button>
-            <button
-                type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.prev'), ENT_QUOTES, 'UTF-8') ?>"
+                <?= $transportPrevDisabled ? 'disabled' : '' ?>
             ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
             <div class="vpc-control-center">
                 <button
@@ -360,24 +340,18 @@ if ($mode === 'player'):
                 class="vpc-next-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.next'), ENT_QUOTES, 'UTF-8') ?>"
+                <?= $transportNextDisabled ? 'disabled' : '' ?>
             ><span class="material-icons" aria-hidden="true">skip_next</span></button>
             <button
                 type="button"
                 class="vpc-reset-btn"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="material-icons" aria-hidden="true">replay</span></button>
+            ><span class="vpc-reset-btn__text"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
         </div>
     </div>
 </div>
-    <?php
-else:
-    ?>
-<div class="<?= htmlspecialchars($barClass, ENT_QUOTES, 'UTF-8') ?>">
-    <?php preview_render_bottom_bar_nav($links, $langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
-</div>
-    <?php
-endif;
+<?php
 
 if (count($langOptions) > 1):
 ?>
@@ -412,7 +386,14 @@ if (count($langOptions) > 1):
         if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) { return; }
         e.stopPropagation();
         var href = target.getAttribute('data-href');
-        if (href) { window.location.href = href; }
+        if (!href) { return; }
+        if (typeof window.__vpcSavePlaybackSession === 'function') {
+            window.__vpcSavePlaybackSession(function () {
+                window.location.href = href;
+            });
+            return;
+        }
+        window.location.href = href;
     });
 
     dropdown.addEventListener('keydown', function (e) {
@@ -426,3 +407,4 @@ if (count($langOptions) > 1):
 }());
 </script>
 <?php endif; ?>
+<script src="/preview/js/chrome_button_widths.js?v=1"></script>
