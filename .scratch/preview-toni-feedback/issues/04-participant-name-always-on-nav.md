@@ -1,6 +1,6 @@
-Status: ready-for-agent
+Status: done
 
-# Participant name always on Participants nav button
+# Participant name on Participants nav button
 
 ## Parent
 
@@ -8,20 +8,32 @@ Status: ready-for-agent
 
 ## What to build
 
-The Participants nav button must show the **participant name** (green active state) whenever the current playback context is a single participant — not only when entered via `?participant=Name`.
+Two distinct behaviours for the Participants nav button:
 
-Today, narrowing via Cities or Sign Language filters clears participant mode and reverts the button to the generic label. Extend detection so that when the active filtered playlist contains exactly one distinct participant (or the current video's participant is unambiguous), the nav button shows that name.
+### Participant playlist selected (`?participant=` or equivalent session)
 
-Name must remain visible during **Play** mode (not only when paused).
+- Button is **green** (`is-active`) whenever a participant-specific playlist is active.
+- Button label is always the **participant name** — playing or paused, on player / about / participants pages.
+
+### Neutral playlist (not participant-specific)
+
+- Button is always **gray** (default).
+- Default label: **"Participants"**.
+- On the **player page only**, while the video is **playing**, show the current video's participant name instead of "Participants" (still gray, not green).
+
+Filter narrowing to a single participant (e.g. via Cities or Sign Language) does **not** enter participant-playlist mode; it follows the neutral rules above.
 
 ## Acceptance criteria
 
-- [ ] Enter via Participants grid → name on button (existing behaviour preserved)
-- [ ] Enter via filter narrowing to one participant's videos → name on button
-- [ ] Name visible while video is playing
-- [ ] Multiple participants in playlist → generic "Participants" label
-- [ ] Reset clears name back to generic
-- [ ] Tests in `site_nav_test.php` or JS logic tests cover filter-entry path
+- [x] Enter via Participants grid → green + name on button (all pages)
+- [x] Participant playlist: name visible while playing and while paused
+- [x] Participant playlist: name + green on About / Participants pages (from session)
+- [x] Neutral playlist paused on player → gray "Participants"
+- [x] Neutral playlist playing on player → gray + current participant name
+- [x] Single-participant filter without participant mode → gray; name only while playing on player
+- [x] Multiple participants in playlist → generic "Participants" label (neutral rules)
+- [x] Reset clears green + name back to generic
+- [x] Tests in `site_nav_test.php` and `vimeo_playlist_logic.test.js`
 
 ## Blocked by
 

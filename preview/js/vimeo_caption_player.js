@@ -455,9 +455,14 @@
                     session: parsedSession,
                     navIntent: navIntentRaw,
                     fullPlaylistItems: fullPlaylistItems,
+                    explicitParticipantName: participantName,
                 });
 
-                if (navPlan && navPlan.kind === 'reset' && navPlan.plan) {
+                if (participantName !== '') {
+                    try {
+                        sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
+                    } catch (e) {}
+                } else if (navPlan && navPlan.kind === 'reset' && navPlan.plan) {
                     sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
                     filterState = navPlan.plan.filterState;
                     isParticipantMode = false;
@@ -677,6 +682,7 @@
             }
 
             var playBtn = root.querySelector('.vpc-play-pause-btn');
+            var transportPlaying = false;
 
             /** Persist playback context for About/Participants transport (issue #02). */
             function savePlaybackSession(done) {
@@ -716,6 +722,7 @@
                 if (!playBtn) return;
                 var icon = playBtn.querySelector('.material-icons');
                 if (playBtn.getAttribute('data-loading') === 'true') return;
+                transportPlaying = !!isPlaying;
                 if (isPlaying) {
                     if (icon) icon.textContent = 'pause';
                     playBtn.setAttribute('aria-label', vpcString('player.transport.pause', 'Pause video'));
@@ -723,6 +730,7 @@
                     if (icon) icon.textContent = 'play_arrow';
                     playBtn.setAttribute('aria-label', vpcString('player.transport.play', 'Play video'));
                 }
+                syncCollectionNavButtons();
             }
 
             function setTransportLoading(isLoading) {
@@ -1122,23 +1130,28 @@
             // ── R2 custom pickers (D15, D17, D18) ──────────────────────────────────
 
             /**
-             * Active label for an R3 collection nav button (D21). Empty = neutral.
+             * Nav state for an R3 collection button (D21). label empty = use generic.
              * @param {string} collectionKey  e.g. "participants", "tags"
-             * @returns {string}
+             * @returns {{ label: string, isActive: boolean }}
              */
-            function getActiveCollectionLabel(collectionKey) {
+            function getCollectionNavState(collectionKey) {
                 if (collectionKey === 'participants') {
-                    return L.resolveCollectionParticipantLabel(
-                        fullPlaylistItems,
-                        filteredMasterIndices,
-                        participantName,
-                        isParticipantMode
-                    );
+                    var item = fullPlaylistItems[playlistIndex];
+                    var currentVideoParticipant = item && typeof item.participant === 'string'
+                        ? item.participant.trim()
+                        : '';
+                    return L.resolveParticipantsNavState({
+                        isParticipantMode: isParticipantMode,
+                        participantName: participantName,
+                        onPlayerPage: true,
+                        isPlaying: transportPlaying,
+                        currentVideoParticipant: currentVideoParticipant,
+                    });
                 }
                 if (collectionKey === 'tags') {
-                    return '';
+                    return { label: '', isActive: false };
                 }
-                return '';
+                return { label: '', isActive: false };
             }
 
             function chromeBtnLabelEl(btn) {
@@ -1171,18 +1184,17 @@
             function syncCollectionNavButtons() {
                 root.querySelectorAll('.preview-site-nav__btn[data-collection]').forEach(function (btn) {
                     var key = btn.getAttribute('data-collection') || '';
-                    var activeLabel = getActiveCollectionLabel(key);
+                    var navState = getCollectionNavState(key);
                     var genericLabel = btn.getAttribute('data-generic-label');
                     if (!genericLabel) {
                         genericLabel = getChromeBtnLabel(btn);
                         btn.setAttribute('data-generic-label', genericLabel);
                     }
-                    if (activeLabel) {
-                        setChromeBtnLabel(btn, activeLabel);
+                    setChromeBtnLabel(btn, navState.label || genericLabel);
+                    if (navState.isActive) {
                         btn.classList.add('is-active');
                         btn.setAttribute('aria-current', 'true');
                     } else {
-                        setChromeBtnLabel(btn, genericLabel);
                         btn.classList.remove('is-active');
                         btn.removeAttribute('aria-current');
                     }

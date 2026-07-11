@@ -835,6 +835,13 @@
      * } | null}
      */
     function planSecondaryNavRestore(opts) {
+        var explicitParticipantName = typeof opts.explicitParticipantName === 'string'
+            ? opts.explicitParticipantName.trim()
+            : '';
+        if (explicitParticipantName !== '') {
+            return null;
+        }
+
         var session = opts.session;
         var navIntent = opts.navIntent ? String(opts.navIntent) : '';
         var items = opts.fullPlaylistItems;
@@ -969,27 +976,31 @@
     }
 
     /**
-     * Participants nav label: explicit mode or exactly one participant in filtered set (issue #04).
-     * @param {Array<{ participant?: string }>} fullPlaylistItems
-     * @param {number[]} masterIndices
-     * @param {string} participantName
-     * @param {boolean} isParticipantMode
-     * @returns {string}
+     * Participants nav button: green + name only in participant-playlist mode; otherwise gray
+     * with name shown on player page while video is playing (issue #04).
+     * @param {{
+     *   isParticipantMode: boolean,
+     *   participantName: string,
+     *   onPlayerPage: boolean,
+     *   isPlaying: boolean,
+     *   currentVideoParticipant: string
+     * }} opts
+     * @returns {{ label: string, isActive: boolean }}
      */
-    function resolveCollectionParticipantLabel(
-        fullPlaylistItems,
-        masterIndices,
-        participantName,
-        isParticipantMode
-    ) {
-        if (isParticipantMode && participantName) {
-            return participantName;
+    function resolveParticipantsNavState(opts) {
+        var participantName = typeof opts.participantName === 'string'
+            ? opts.participantName.trim()
+            : '';
+        if (opts.isParticipantMode && participantName) {
+            return { label: participantName, isActive: true };
         }
-        var names = distinctParticipantsInSubset(fullPlaylistItems, masterIndices);
-        if (names.length === 1) {
-            return names[0];
+        var currentVideoParticipant = typeof opts.currentVideoParticipant === 'string'
+            ? opts.currentVideoParticipant.trim()
+            : '';
+        if (opts.onPlayerPage && opts.isPlaying && currentVideoParticipant) {
+            return { label: currentVideoParticipant, isActive: false };
         }
-        return '';
+        return { label: '', isActive: false };
     }
 
     /**
@@ -1122,7 +1133,7 @@
         applyTransportStep: applyTransportStep,
         planSecondaryNavRestore: planSecondaryNavRestore,
         distinctParticipantsInSubset: distinctParticipantsInSubset,
-        resolveCollectionParticipantLabel: resolveCollectionParticipantLabel,
+        resolveParticipantsNavState: resolveParticipantsNavState,
         planEndOfPlaylist: planEndOfPlaylist,
     };
 }));

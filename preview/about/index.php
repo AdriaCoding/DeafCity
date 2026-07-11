@@ -75,6 +75,7 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/leaflet/js/gallery.js"></script>
-<script src="/preview/js/secondary_player_chrome.js?v=1"></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=10"></script>
+<script src="/preview/js/secondary_player_chrome.js?v=2"></script>
 </body>
 </html>
