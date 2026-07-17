@@ -592,21 +592,21 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: mobile maketa flattens wing wrappers\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-area:\s*help~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-column:\s*2~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: mobile maketa should place help on transport row (grid-area: help)\n");
+        fwrite(STDERR, "FAIL: mobile maketa should align help with left filter column\n");
         exit(1);
     }
-    echo "PASS: mobile maketa places help on transport row\n";
+    echo "PASS: mobile maketa help aligns with left filter column\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-area:\s*reset~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-column:\s*4~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: mobile maketa should place reset on transport row (grid-area: reset)\n");
+        fwrite(STDERR, "FAIL: mobile maketa should align reset with right filter column\n");
         exit(1);
     }
-    echo "PASS: mobile maketa places reset on transport row\n";
+    echo "PASS: mobile maketa reset aligns with right filter column\n";
     if (!preg_match(
         '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*max-width:\s*var\(--vpc-square-btn-w\)~s',
         $playerCss
@@ -616,29 +616,29 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: mobile maketa Participants cell matches square chrome width\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-picker\[data-picker="language"\][^}]*justify-self:\s*start~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{[^}]*--vpc-mobile-col-gap:\s*0\.5rem~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: mobile maketa left column should flush start\n");
+        fwrite(STDERR, "FAIL: mobile maketa should define a fixed center gutter between columns\n");
         exit(1);
     }
-    echo "PASS: mobile maketa left column flush start\n";
+    echo "PASS: mobile maketa center column gutter\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-picker\[data-picker="sign_language"\][^}]*justify-self:\s*end~s',
+        '~grid-template-columns:\s*1fr var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\) var\(--vpc-square-btn-w\) 1fr~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: mobile maketa right column should flush end\n");
+        fwrite(STDERR, "FAIL: mobile maketa should center the button pair with 1fr side spacers\n");
         exit(1);
     }
-    echo "PASS: mobile maketa right column flush end\n";
+    echo "PASS: mobile maketa centered button pair columns\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?grid-template-areas:\s*["\']help\s+transport\s+transport\s+reset["\'].*?["\']lang\s+lang\s+signs\s+signs["\'].*?["\']cities\s+cities\s+participants\s+participants["\'].*?["\']deaf\s+deaf\s+typology\s+typology["\']~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?grid-template-areas:\s*["\']icons icons icons icons icons["\'].*?["\']\. lang \. signs \.["\'].*?["\']\. cities \. participants \.["\'].*?["\']\. deaf \. typology \.["\']~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: mobile maketa grid-template-areas should match LANGUAGES|SIGNS / CITIES|PARTICIPANTS / DEAF+HEARING|TYPOLOGIES\n");
+        fwrite(STDERR, "FAIL: mobile maketa grid-template-areas should match centered L|R pairs\n");
         exit(1);
     }
-    echo "PASS: mobile maketa grid areas match filter button order\n";
+    echo "PASS: mobile maketa grid areas match centered filter pairs\n";
 }
 
 // Reset is after Participants in the right wing (not inside transport)
