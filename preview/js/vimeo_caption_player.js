@@ -784,14 +784,20 @@
 
             function setTransportPlaying(isPlaying) {
                 if (!playBtn) return;
-                var icon = playBtn.querySelector('.material-icons');
+                var icon = playBtn.querySelector('.vpc-chrome-icon');
                 if (playBtn.getAttribute('data-loading') === 'true') return;
                 transportPlaying = !!isPlaying;
                 if (isPlaying) {
-                    if (icon) icon.textContent = 'pause';
+                    if (icon) {
+                        icon.src = playBtn.getAttribute('data-icon-pause')
+                            || '/preview/img/pause_circle_80dp_007800.svg';
+                    }
                     playBtn.setAttribute('aria-label', vpcString('player.transport.pause', 'Pause video'));
                 } else {
-                    if (icon) icon.textContent = 'play_arrow';
+                    if (icon) {
+                        icon.src = playBtn.getAttribute('data-icon-play')
+                            || '/preview/img/play_circle_80dp_007800.svg';
+                    }
                     playBtn.setAttribute('aria-label', vpcString('player.transport.play', 'Play video'));
                 }
                 syncCollectionNavButtons();
@@ -799,11 +805,9 @@
 
             function setTransportLoading(isLoading) {
                 if (!playBtn) return;
-                var icon = playBtn.querySelector('.material-icons');
                 if (isLoading) {
                     playBtn.setAttribute('data-loading', 'true');
                     playBtn.disabled = true;
-                    if (icon) icon.textContent = 'hourglass_empty';
                 } else {
                     playBtn.removeAttribute('data-loading');
                     playBtn.disabled = false;

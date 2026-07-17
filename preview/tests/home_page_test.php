@@ -90,8 +90,11 @@ if (!preg_match('~<div[^>]*vpc-control-transport-cluster[^>]*>.*?vpc-play-pause-
 echo "PASS: play button in transport cluster center cell\n";
 
 assert_contains('/preview/about', $html, 'about nav link');
+assert_contains('vpc-deaf-hearing-btn', $html, 'DEAF+HEARING placeholder in chrome');
 
+// Maketa desktop DOM wings: ? · DEAF+HEARING · TYPOLOGIES · LANGUAGES | transport | SIGNS · CITIES · PARTICIPANTS · reset
 $aboutPos = strpos($html, '/preview/about');
+$deafPos = strpos($html, 'vpc-deaf-hearing-btn');
 $typPos = strpos($html, 'data-picker="typology"');
 $langPos = strpos($html, 'data-picker="language"');
 $signPos = strpos($html, 'data-picker="sign_language"');
@@ -100,20 +103,24 @@ $partPos = strpos($html, '/preview/participants');
 $prevPos = strpos($html, 'vpc-prev-btn');
 $nextPos = strpos($html, 'vpc-next-btn');
 $resetPos = strpos($html, 'vpc-reset-btn');
-if ($aboutPos === false || $typPos === false || $langPos === false
+if ($aboutPos === false || $deafPos === false || $typPos === false || $langPos === false
     || $signPos === false || $edPos === false || $partPos === false
     || $prevPos === false || $nextPos === false || $resetPos === false) {
     fwrite(STDERR, "FAIL: missing control-row markers for player wing order check\n");
     exit(1);
 }
-if (!($aboutPos < $typPos && $typPos < $langPos
+if (!($aboutPos < $deafPos && $deafPos < $typPos && $typPos < $langPos
     && $langPos < $signPos && $signPos < $edPos && $edPos < $partPos
-    && $partPos < $clusterPos && $clusterPos < $prevPos
-    && $prevPos < $centerPos && $centerPos < $nextPos && $nextPos < $resetPos)) {
-    fwrite(STDERR, "FAIL: player wings should be About → Typology → Language → Sign lang → Edition → Participants → transport (prev → play → next → reset)\n");
+    && $partPos < $resetPos
+    && $clusterPos < $prevPos && $prevPos < $centerPos && $centerPos < $nextPos)) {
+    fwrite(STDERR, "FAIL: desktop maketa order should be ? → DEAF+HEARING → Typology → Language → Sign → Edition → Participants → reset; transport prev → play → next\n");
     exit(1);
 }
-echo "PASS: player wing order About → Typology → Language | Sign lang → Edition → Participants\n";
+if (preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-reset-btn~s', $html)) {
+    fwrite(STDERR, "FAIL: reset must not live inside transport cluster (maketa: right of Participants / mobile flank)\n");
+    exit(1);
+}
+echo "PASS: desktop maketa wing order ? → DEAF+HEARING → Typology → Language | Sign → Edition → Participants → reset\n";
 
 assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 
@@ -457,8 +464,16 @@ echo "PASS: language picker neutral when English is active\n";
 
 assert_not_contains('vpc-shuffle-btn', $html, 'shuffle button removed from transport');
 assert_contains('chrome_button_widths.js', $html, 'uniform chrome width sync script');
-assert_contains('vpc-reset-btn__text', $html, 'reset button shows visible text');
+assert_contains('vpc-reset-btn__text', $html, 'reset keeps accessible text for screen readers');
 assert_contains('aria-label="Reset filters and playlist"', $html, 'reset retains aria-label');
+assert_contains('/preview/img/help_80dp_007800.svg', $html, 'help uses filled circle SVG');
+assert_contains('/preview/img/skip_previous_80dp_007800.svg', $html, 'prev uses borderless skip SVG');
+assert_contains('/preview/img/play_circle_80dp_007800.svg', $html, 'play uses filled circle SVG');
+assert_contains('/preview/img/skip_next_80dp_007800.svg', $html, 'next uses borderless skip SVG');
+assert_contains('/preview/img/replay_circle_filled_80dp_007800.svg', $html, 'reset uses filled replay SVG');
+assert_contains('pause_circle_80dp_007800.svg', $html, 'pause circle SVG path available to player JS');
+assert_contains('vpc-play-pause-btn__hourglass', $html, 'play button contains sandclock for loading state');
+assert_contains('hourglass_empty', $html, 'loading sandclock uses Material hourglass icon');
 
 $playerJsPath = dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js';
 if (is_file($playerJsPath)) {
@@ -500,49 +515,81 @@ if (is_file($playerCssPath)) {
         'loading cover reveals without exposing Vimeo through a fade'
     );
     assert_contains('vpc-transport-spin', $playerCss, 'transport loading spinner animation');
+    if (!preg_match(
+        '~\[data-loading="true"\][^{]*\.vpc-play-pause-btn__hourglass[^}]*animation:\s*vpc-transport-spin~s',
+        $playerCss
+    ) && !preg_match(
+        '~\.vpc-play-pause-btn__hourglass[^}]*vpc-transport-spin~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: sandclock should spin inside play button while loading\n");
+        exit(1);
+    }
+    echo "PASS: sandclock spins inside play button while loading\n";
+    if (!preg_match(
+        '~\[data-loading="true"\][^{]*\.vpc-chrome-icon[^}]*display:\s*none~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: play/pause SVG should hide while sandclock loading state is active\n");
+        exit(1);
+    }
+    echo "PASS: play SVG hidden during sandclock loading\n";
     assert_contains('vpc-chrome-btn__label', $html, 'chrome button labels wrapped for ellipsis');
     if (!preg_match('~\.vpc-chrome-btn__label[^}]*text-overflow:\s*ellipsis~s', $playerCss)) {
         fwrite(STDERR, "FAIL: chrome button label span should ellipsis overflow\n");
         exit(1);
     }
     echo "PASS: chrome button label span ellipsis overflow\n";
+    // Maketa mobile (≤1024): ? + transport + reset on row 1; 2-col text grid
+    // LANGUAGES|SIGNS / CITIES|PARTICIPANTS / DEAF+HEARING|TYPOLOGIES
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary\s*\{[^}]*width:\s*100%[^}]*\}.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r\s*\{[^}]*display:\s*contents~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r,.*?display:\s*contents~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: stacked control row should stretch secondary chrome across full width\n");
+        fwrite(STDERR, "FAIL: mobile maketa should flatten wing wrappers with display:contents\n");
         exit(1);
     }
-    echo "PASS: stacked secondary chrome stretches full width\n";
+    echo "PASS: mobile maketa flattens wing wrappers\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-row \.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*flex:\s*0\.65 1 0[^}]*\}.*?\.vpc-control-row \.vpc-control-secondary-l > \.vpc-picker\s*\{[^}]*flex:\s*1 1 0[^}]*\}.*?\.vpc-control-row \.vpc-control-secondary-r > \.vpc-r2-filters\s*\{[^}]*flex:\s*1\.7 1 0[^}]*\}.*?\.vpc-control-row \.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*flex:\s*1\.3 1 0[^}]*max-width:\s*none~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-area:\s*help~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: stacked chrome should reserve enough width for Participants\n");
+        fwrite(STDERR, "FAIL: mobile maketa should place help on transport row (grid-area: help)\n");
         exit(1);
     }
-    echo "PASS: stacked chrome reserves enough width for Participants\n";
+    echo "PASS: mobile maketa places help on transport row\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 700px\)\s*\{.*?\.vpc-control-secondary\s*\{[^}]*flex-direction:\s*column[^}]*\}.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r\s*\{[^}]*display:\s*flex[^}]*width:\s*100%~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-area:\s*reset~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: narrow screens should split chrome into three rows\n");
+        fwrite(STDERR, "FAIL: mobile maketa should place reset on transport row (grid-area: reset)\n");
         exit(1);
     }
-    echo "PASS: narrow screens split chrome into three rows\n";
-    if (!preg_match('~--vpc-chrome-reset-max:\s*8rem~', $playerCss)) {
-        fwrite(STDERR, "FAIL: reset button max width should fit longest locale label\n");
+    echo "PASS: mobile maketa places reset on transport row\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*max-width:\s*none~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: mobile maketa Participants cell should drop desktop max-width\n");
         exit(1);
     }
-    echo "PASS: reset button max width fits longest locale label\n";
+    echo "PASS: mobile maketa Participants cell is full-width\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?grid-template-areas:\s*["\']help\s+transport\s+transport\s+reset["\'].*?["\']lang\s+lang\s+signs\s+signs["\'].*?["\']cities\s+cities\s+participants\s+participants["\'].*?["\']deaf\s+deaf\s+typology\s+typology["\']~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: mobile maketa grid-template-areas should match LANGUAGES|SIGNS / CITIES|PARTICIPANTS / DEAF+HEARING|TYPOLOGIES\n");
+        exit(1);
+    }
+    echo "PASS: mobile maketa grid areas match filter button order\n";
 }
 
-// Reset lives in the transport cluster (after next)
-if (!preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-next-btn.*?vpc-reset-btn~s', $html)) {
-    fwrite(STDERR, "FAIL: reset button should appear in transport cluster after next\n");
+// Reset is after Participants in the right wing (not inside transport)
+if (!preg_match('~vpc-control-secondary-r[^>]*>.*?vpc-reset-btn~s', $html)) {
+    fwrite(STDERR, "FAIL: reset button should appear in right secondary wing after Participants\n");
     exit(1);
 }
-echo "PASS: reset button in transport cluster after next\n";
+echo "PASS: reset button in right wing after Participants\n";
 
 // ── Issue #7: R3 Participants nav button ──────────────────────────────────────
 assert_contains('/preview/participants', $html, 'Participants nav button in R3');

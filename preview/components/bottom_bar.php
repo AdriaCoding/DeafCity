@@ -106,6 +106,27 @@ if (!function_exists('preview_render_nav_link')) {
     }
 }
 
+if (!function_exists('preview_render_icon_nav_link')) {
+    function preview_render_icon_nav_link($link, $svgSrc)
+    {
+        $collectionAttr = '';
+        if ($link['data_collection'] !== '') {
+            $collectionAttr = ' data-collection="' . htmlspecialchars($link['data_collection'], ENT_QUOTES, 'UTF-8') . '"'
+                . ' data-generic-label="' . htmlspecialchars($link['data_generic_label'], ENT_QUOTES, 'UTF-8') . '"';
+        }
+        $ariaCurrent = $link['aria_current'] !== ''
+            ? ' aria-current="' . htmlspecialchars($link['aria_current'], ENT_QUOTES, 'UTF-8') . '"'
+            : '';
+        $label = htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8');
+        ?>
+        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?> preview-site-nav__btn--icon"<?= $collectionAttr ?><?= $ariaCurrent ?> aria-label="<?= $label ?>">
+            <img class="vpc-chrome-icon" src="<?= htmlspecialchars($svgSrc, ENT_QUOTES, 'UTF-8') ?>" alt="" width="44" height="44" aria-hidden="true">
+            <span class="vpc-chrome-btn__label"><?= $label ?></span>
+        </a>
+        <?php
+    }
+}
+
 if (!function_exists('preview_render_lang_picker')) {
     function preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId)
     {
@@ -184,9 +205,16 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
             <div class="vpc-control-secondary-l">
                 <nav class="preview-site-nav vpc-site-nav-wrap vpc-control-zone vpc-control-zone--nav" aria-label="Site">
                 <?php foreach ($leftNavLinks as $link): ?>
-                    <?php preview_render_nav_link($link); ?>
+                    <?php if ($link['route'] === 'about'): ?>
+                        <?php preview_render_icon_nav_link($link, '/preview/img/help_80dp_007800.svg'); ?>
+                    <?php else: ?>
+                        <?php preview_render_nav_link($link); ?>
+                    <?php endif; ?>
                 <?php endforeach; ?>
                 </nav>
+                <button type="button" class="vpc-chrome-btn vpc-deaf-hearing-btn is-active" disabled aria-label="DEAF+HEARING">
+                    <span class="vpc-chrome-btn__label">DEAF+HEARING</span>
+                </button>
                 <?php if ($useTypologyFilter): ?>
                 <div
                     class="vpc-picker"
@@ -322,6 +350,12 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     <?php preview_render_nav_link($link); ?>
                 <?php endforeach; ?>
             </nav>
+            <button
+                type="button"
+                class="vpc-reset-btn"
+                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
+            ><img class="vpc-chrome-icon" src="/preview/img/replay_circle_filled_80dp_007800.svg" alt="" width="44" height="44" aria-hidden="true"><span class="vpc-reset-btn__text"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
             </div>
         </div>
         <div
@@ -335,14 +369,16 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.prev'), ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportPrevDisabled ? 'disabled' : '' ?>
-            ><span class="material-icons" aria-hidden="true">skip_previous</span></button>
+            ><img class="vpc-chrome-icon" src="/preview/img/skip_previous_80dp_007800.svg?v=2" alt="" width="44" height="44" aria-hidden="true"></button>
             <div class="vpc-control-center">
                 <button
                     type="button"
                     class="vpc-play-pause-btn"
                     aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                     aria-label="<?= htmlspecialchars(preview_t('player.transport.play'), ENT_QUOTES, 'UTF-8') ?>"
-                ><span class="material-icons" aria-hidden="true">play_arrow</span></button>
+                    data-icon-play="/preview/img/play_circle_80dp_007800.svg"
+                    data-icon-pause="/preview/img/pause_circle_80dp_007800.svg"
+                ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><span class="material-icons vpc-play-pause-btn__hourglass" aria-hidden="true">hourglass_empty</span></button>
             </div>
             <button
                 type="button"
@@ -350,13 +386,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars(preview_t('player.transport.next'), ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportNextDisabled ? 'disabled' : '' ?>
-            ><span class="material-icons" aria-hidden="true">skip_next</span></button>
-            <button
-                type="button"
-                class="vpc-reset-btn"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
-            ><span class="vpc-reset-btn__text"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
+            ><img class="vpc-chrome-icon" src="/preview/img/skip_next_80dp_007800.svg?v=3" alt="" width="44" height="44" aria-hidden="true"></button>
         </div>
     </div>
 </div>

@@ -145,8 +145,8 @@
     gap: 0.5rem;
     --vpc-chrome-filter-flex: 1.55;
     --vpc-chrome-nav-flex: 0.9;
-    --vpc-chrome-participants-flex: 0.62;
-    --vpc-chrome-participants-max: 7.25rem;
+    --vpc-chrome-participants-flex: 1.1;
+    --vpc-chrome-participants-max: 12rem;
     --vpc-chrome-reset-max: 8rem; /* fits longest reset_short label (Restablecer) */
     --vpc-chrome-reset-min: 3.5rem;
 }
@@ -224,19 +224,21 @@
 .vpc-control-row .vpc-prev-btn,
 .vpc-control-row .vpc-next-btn,
 .vpc-control-row .vpc-reset-btn,
+.vpc-control-row .vpc-chrome-btn,
 .vpc-control-row .preview-site-nav__btn {
     font-family: 'Roboto', sans-serif;
     font-size: 0.9375rem;
-    font-weight: 400;
+    font-weight: 700;
+    text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 2.75rem;
     padding: 0.45em 0.85em;
-    border: 1px solid #ccc;
+    border: 2px solid rgb(0, 120, 0);
     border-radius: 8px;
-    background: #fafafa;
-    color: #444;
+    background: #fff;
+    color: rgb(0, 120, 0);
     cursor: pointer;
     white-space: nowrap;
     user-select: none;
@@ -249,17 +251,94 @@
 .vpc-control-row .vpc-prev-btn:hover:not(:disabled),
 .vpc-control-row .vpc-next-btn:hover:not(:disabled),
 .vpc-control-row .vpc-reset-btn:hover,
+.vpc-control-row .vpc-chrome-btn:hover,
 .vpc-control-row a.preview-site-nav__btn:hover {
-    background: #efefef;
-    border-color: #bbb;
+    background: #f0f0f0;
+    border-color: rgb(0, 100, 0);
 }
 .vpc-control-row .vpc-picker-btn:focus-visible,
 .vpc-control-row .vpc-prev-btn:focus-visible,
 .vpc-control-row .vpc-next-btn:focus-visible,
 .vpc-control-row .vpc-reset-btn:focus-visible,
+.vpc-control-row .vpc-chrome-btn:focus-visible,
 .vpc-control-row a.preview-site-nav__btn:focus-visible {
     outline: 2px solid rgb(0, 120, 0);
     outline-offset: 2px;
+}
+
+/* Active/current state: inverted green polarity (D26+) */
+.vpc-control-row .preview-site-nav__btn.is-active,
+.vpc-control-row .preview-site-nav__btn.is-current,
+.vpc-control-row .preview-site-nav__btn[aria-current="page"],
+.vpc-control-row .vpc-picker[data-active="true"] .vpc-picker-btn,
+.vpc-control-row .vpc-deaf-hearing-btn.is-active {
+    background: rgb(0, 120, 0);
+    border-color: rgb(0, 120, 0);
+    color: #fff;
+    font-weight: 700;
+}
+.vpc-control-row .preview-site-nav__btn.is-active:hover,
+.vpc-control-row .preview-site-nav__btn.is-current:hover,
+.vpc-control-row .preview-site-nav__btn[aria-current="page"]:hover,
+.vpc-control-row .vpc-picker[data-active="true"] .vpc-picker-btn:hover,
+.vpc-control-row .vpc-deaf-hearing-btn.is-active:hover {
+    background: rgb(0, 100, 0);
+    border-color: rgb(0, 100, 0);
+}
+.vpc-control-row .vpc-picker[data-active="true"] .vpc-picker-btn::after {
+    color: #fff;
+    opacity: 1;
+}
+
+/* SVG chrome icons: circle-filled assets (help/play/reset) or bare glyphs (prev/next) */
+.vpc-control-row .preview-site-nav__btn.preview-site-nav__btn--icon,
+.vpc-control-row .vpc-reset-btn,
+.vpc-control-row .vpc-prev-btn,
+.vpc-control-row .vpc-next-btn,
+.vpc-control-row .vpc-play-pause-btn {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: none;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    box-shadow: none;
+    overflow: visible;
+}
+.vpc-control-row .preview-site-nav__btn.preview-site-nav__btn--icon:hover,
+.vpc-control-row .vpc-reset-btn:hover,
+.vpc-control-row .vpc-prev-btn:hover:not(:disabled),
+.vpc-control-row .vpc-next-btn:hover:not(:disabled),
+.vpc-control-row .vpc-play-pause-btn:hover:not(:disabled) {
+    background: transparent;
+    border: none;
+    opacity: 0.85;
+}
+.vpc-chrome-icon {
+    display: block;
+    width: 2.75rem;
+    height: 2.75rem;
+    pointer-events: none;
+}
+.vpc-play-pause-btn .vpc-chrome-icon {
+    width: 3rem;
+    height: 3rem;
+}
+.preview-site-nav__btn--icon .vpc-chrome-btn__label,
+.vpc-reset-btn .vpc-reset-btn__text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* Picker button: dropup caret */
@@ -359,136 +438,43 @@
     font-weight: 400;
 }
 
-/* Stacked: transport cluster row 1; nav, language, filters row 2 (D15″) */
-@media screen and (max-width: 1024px) {
-    .vpc-control-row {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        width: 100vw;
-        max-width: 100vw;
-        margin-left: calc(50% - 50vw);
-        padding: 0.35rem 1rem 0.5rem;
-        gap: 0.35rem 0.5rem;
-    }
-    .vpc-control-transport-cluster {
-        order: 1;
-        flex: 0 0 100%;
-        flex-wrap: nowrap;
-        justify-content: center;
-    }
-    .vpc-control-secondary {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: stretch;
-        align-items: stretch;
-        width: 100%;
-        min-width: 0;
-        gap: 0.5rem;
-        order: 2;
-        flex: 0 0 100%;
-    }
-    .vpc-control-secondary-l,
-    .vpc-control-secondary-r {
-        display: contents;
-    }
-    .vpc-control-row .vpc-control-secondary-l > .preview-site-nav {
-        flex: 0.65 1 0;
-    }
-    .vpc-control-row .vpc-control-secondary-l > .vpc-picker {
-        flex: 1 1 0;
-    }
-    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters {
-        flex: 1.7 1 0;
-        flex-wrap: nowrap;
-        min-width: 0;
-    }
-    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters > .vpc-picker {
-        flex: 1 1 auto;
-    }
-    .vpc-control-row .vpc-control-secondary-r > .preview-site-nav {
-        flex: 1.3 1 0;
-        max-width: none;
-    }
-}
-
-@media screen and (max-width: 700px) {
-    .vpc-control-secondary {
-        flex-direction: column;
-        flex-wrap: nowrap;
-        gap: 0.35rem;
-    }
-    .vpc-control-secondary-l,
-    .vpc-control-secondary-r {
-        display: flex;
-        flex-wrap: nowrap;
-        width: 100%;
-        min-width: 0;
-        gap: 0.5rem;
-    }
-    .vpc-control-row .vpc-control-secondary-l > .preview-site-nav,
-    .vpc-control-row .vpc-control-secondary-l > .vpc-picker {
-        flex: 1 1 0;
-    }
-    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters {
-        flex: 2 1 0;
-        flex-wrap: nowrap;
-        min-width: 0;
-    }
-    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters > .vpc-picker {
-        flex: 1 1 0;
-    }
-    .vpc-control-row .vpc-control-secondary-r > .preview-site-nav {
-        flex: 1 1 0;
-        max-width: none;
-    }
-    .vpc-control-row .vpc-picker-btn {
-        font-size: 0.875rem;
-        padding: 0.4em 0.7em;
-    }
-    .vpc-picker-dropdown {
-        font-size: 0.875rem;
-        max-width: 90vw;
-    }
-}
-
-.vpc-control-row .material-icons {
-    font-size: 1.5rem;
-    line-height: 1;
-}
 .vpc-play-pause-btn {
-    font-family: 'Roboto', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
-    padding: 0.5rem;
-    border: 1px solid #006000;
-    border-radius: 8px;
-    background: #007800;
-    color: #fff;
     cursor: pointer;
-}
-.vpc-play-pause-btn:hover {
-    background: #006600;
-    border-color: #004400;
 }
 .vpc-play-pause-btn:focus-visible {
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
-.vpc-play-pause-btn[data-loading="true"] .material-icons {
+.vpc-play-pause-btn__hourglass {
+    display: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: #fff;
+}
+.vpc-play-pause-btn[data-loading="true"] {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: #007800;
+}
+.vpc-play-pause-btn[data-loading="true"] .vpc-chrome-icon {
+    display: none;
+}
+.vpc-play-pause-btn[data-loading="true"] .vpc-play-pause-btn__hourglass {
+    display: block;
     animation: vpc-transport-spin 0.8s linear infinite;
 }
 @keyframes vpc-transport-spin {
     to { transform: rotate(360deg); }
 }
-.vpc-control-secondary-l > .preview-site-nav {
-    flex: var(--vpc-chrome-nav-flex) 1 0;
+.vpc-control-secondary-l > .preview-site-nav,
+.vpc-control-secondary-l > .vpc-deaf-hearing-btn,
+.vpc-control-secondary-r > .vpc-reset-btn {
+    flex: 0 0 auto;
     min-width: 0;
 }
 .vpc-control-secondary-l > .vpc-picker,
@@ -497,9 +483,9 @@
     min-width: 0;
 }
 .vpc-control-secondary-r > .preview-site-nav {
-    flex: var(--vpc-chrome-participants-flex) 1 0;
+    flex: 0 0 auto;
     min-width: 0;
-    max-width: var(--vpc-chrome-participants-max);
+    max-width: none;
 }
 .vpc-control-secondary-l .preview-site-nav__btn,
 .vpc-control-secondary-l .vpc-picker-btn,
@@ -513,11 +499,10 @@
     overflow: hidden;
 }
 .vpc-control-row .vpc-reset-btn {
-    width: auto;
     flex: 0 0 auto;
-    overflow: hidden;
-    min-width: var(--vpc-chrome-reset-min);
-    max-width: var(--vpc-chrome-reset-max);
+    overflow: visible;
+    min-width: 2.75rem;
+    max-width: none;
 }
 .vpc-control-secondary-l > .preview-site-nav {
     display: flex;
@@ -531,19 +516,11 @@
     min-width: 0;
 }
 
-.vpc-control-row .vpc-shuffle-btn,
-.vpc-control-row .vpc-prev-btn,
-.vpc-control-row .vpc-next-btn {
+.vpc-control-row .vpc-shuffle-btn {
     min-width: 2.75rem;
     padding: 0.5rem;
-    color: #222;
+    color: rgb(0, 120, 0);
     width: auto;
-}
-.vpc-control-row .vpc-reset-btn {
-    padding: 0.45em 0.85em;
-    border-color: #999;
-    background: #f5f5f5;
-    color: #222;
 }
 .vpc-reset-btn__text {
     font-size: 0.9375rem;
@@ -605,11 +582,94 @@
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
-.vpc-reset-btn:hover {
-    background: #eaeaea;
-    border-color: #888;
-}
-.vpc-reset-btn:focus-visible {
-    outline: 2px solid #007800;
-    outline-offset: 2px;
+/* Reset icon hover/focus are handled by the shared icon button rules. */
+
+/*
+ * Maketa mobile (≤1024):
+ *   row 1: ? · [prev play next] · reset
+ *   then 2-col: LANGUAGES|SIGNS / CITIES|PARTICIPANTS / DEAF+HEARING|TYPOLOGIES
+ * Placed after desktop flex rules so grid areas win on specificity/order.
+ */
+@media screen and (max-width: 1024px) {
+    .vpc-control-row {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr auto;
+        grid-template-areas:
+            "help transport transport reset"
+            "lang lang signs signs"
+            "cities cities participants participants"
+            "deaf deaf typology typology";
+        align-items: center;
+        width: 100vw;
+        max-width: 100vw;
+        margin-left: calc(50% - 50vw);
+        padding: 0.35rem 1rem 0.5rem;
+        gap: 0.35rem 0.5rem;
+    }
+    .vpc-control-secondary,
+    .vpc-control-secondary-l,
+    .vpc-control-secondary-r,
+    .vpc-control-row .vpc-r2-filters,
+    .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters {
+        display: contents;
+    }
+    .vpc-control-secondary-l > .preview-site-nav {
+        grid-area: help;
+        justify-self: start;
+    }
+    .vpc-control-transport-cluster {
+        grid-area: transport;
+        justify-self: center;
+        flex-wrap: nowrap;
+    }
+    .vpc-control-row .vpc-reset-btn {
+        grid-area: reset;
+        justify-self: end;
+        max-width: none;
+    }
+    .vpc-control-row .vpc-picker[data-picker="language"] {
+        grid-area: lang;
+        min-width: 0;
+        width: 100%;
+    }
+    .vpc-control-row .vpc-picker[data-picker="sign_language"] {
+        grid-area: signs;
+        min-width: 0;
+        width: 100%;
+    }
+    .vpc-control-row .vpc-picker[data-picker="edition"] {
+        grid-area: cities;
+        min-width: 0;
+        width: 100%;
+    }
+    .vpc-control-row .vpc-control-secondary-r > .preview-site-nav {
+        grid-area: participants;
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+    }
+    .vpc-control-row .vpc-deaf-hearing-btn {
+        grid-area: deaf;
+        min-width: 0;
+        width: 100%;
+    }
+    .vpc-control-row .vpc-picker[data-picker="typology"] {
+        grid-area: typology;
+        min-width: 0;
+        width: 100%;
+    }
+    .vpc-control-row .vpc-picker-btn,
+    .vpc-control-row .vpc-control-secondary-r > .preview-site-nav .preview-site-nav__btn,
+    .vpc-control-row .vpc-deaf-hearing-btn {
+        width: 100%;
+    }
+    .vpc-control-row .vpc-picker-btn {
+        font-size: 0.875rem;
+        padding: 0.4em 0.7em;
+    }
+    .vpc-picker-dropdown {
+        font-size: 0.875rem;
+        max-width: 90vw;
+    }
 }

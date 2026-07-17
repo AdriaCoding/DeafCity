@@ -11,16 +11,17 @@
 a.preview-site-nav__btn {
     font-family: Roboto, Arial, sans-serif;
     font-size: 0.9375rem;
-    font-weight: 400;
+    font-weight: 700;
+    text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 2.75rem;
     padding: 0.45em 0.85em;
-    border: 1px solid #ccc;
+    border: 2px solid rgb(0, 120, 0);
     border-radius: 8px;
-    background: #fafafa;
-    color: #444;
+    background: #fff;
+    color: rgb(0, 120, 0);
     cursor: pointer;
     white-space: nowrap;
     user-select: none;
@@ -31,8 +32,8 @@ a.preview-site-nav__btn {
 }
 
 a.preview-site-nav__btn:hover {
-    background: #efefef;
-    border-color: #bbb;
+    background: #f0f0f0;
+    border-color: rgb(0, 100, 0);
 }
 
 a.preview-site-nav__btn:focus-visible {
@@ -40,16 +41,30 @@ a.preview-site-nav__btn:focus-visible {
     outline-offset: 2px;
 }
 
-/* D21: green when a participant/tag collection is active — matches fixed-filter picker */
+/* D21: inverted green active state for participant/tag collections */
 a.preview-site-nav__btn.is-active {
+    background: rgb(0, 120, 0);
     border-color: rgb(0, 120, 0);
-    color: rgb(0, 100, 0);
-    background: #e8f5e9;
-    font-weight: 500;
+    color: #fff;
+    font-weight: 700;
 }
 
 a.preview-site-nav__btn.is-active:hover {
-    background: #dff0e0;
+    background: rgb(0, 100, 0);
+    border-color: rgb(0, 100, 0);
+}
+
+a.preview-site-nav__btn.is-current,
+a.preview-site-nav__btn[aria-current="page"] {
+    background: rgb(0, 120, 0);
+    border-color: rgb(0, 120, 0);
+    color: #fff;
+    font-weight: 700;
+}
+
+a.preview-site-nav__btn.is-current:hover,
+a.preview-site-nav__btn[aria-current="page"]:hover {
+    background: rgb(0, 100, 0);
     border-color: rgb(0, 100, 0);
 }
 
@@ -97,17 +112,18 @@ a.preview-site-nav__btn.is-current:hover,
 .preview-site-nav--navbar .vpc-picker-btn {
     font-family: Roboto, Arial, sans-serif;
     font-size: 0.9375rem;
-    font-weight: 400;
+    font-weight: 700;
+    text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.3em;
     min-height: 2.75rem;
     padding: 0.45em 0.85em;
-    border: 1px solid #ccc;
+    border: 2px solid rgb(0, 120, 0);
     border-radius: 8px;
-    background: #fafafa;
-    color: #444;
+    background: #fff;
+    color: rgb(0, 120, 0);
     cursor: pointer;
     white-space: nowrap;
     user-select: none;
@@ -124,8 +140,8 @@ a.preview-site-nav__btn.is-current:hover,
 }
 
 .preview-site-nav--navbar .vpc-picker-btn:hover {
-    background: #efefef;
-    border-color: #bbb;
+    background: #f0f0f0;
+    border-color: rgb(0, 100, 0);
 }
 
 .preview-site-nav--navbar .vpc-picker-btn:focus-visible {
@@ -134,15 +150,15 @@ a.preview-site-nav__btn.is-current:hover,
 }
 
 .preview-site-nav--navbar .vpc-picker[data-active="true"] .vpc-picker-btn {
+    background: rgb(0, 120, 0);
     border-color: rgb(0, 120, 0);
-    color: rgb(0, 100, 0);
-    background: #e8f5e9;
-    font-weight: 500;
+    color: #fff;
+    font-weight: 700;
 }
 
 .preview-site-nav--navbar .vpc-picker[data-active="true"] .vpc-picker-btn::after {
     opacity: 1;
-    color: rgb(0, 120, 0);
+    color: #fff;
 }
 
 .preview-site-nav--navbar .vpc-picker-dropdown {
