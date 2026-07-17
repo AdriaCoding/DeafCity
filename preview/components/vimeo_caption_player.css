@@ -608,21 +608,16 @@
 /* Reset icon hover/focus are handled by the shared icon button rules. */
 
 /*
- * Maketa mobile (≤1024):
- *   row 1: ? · [prev play next] · reset
- *   rows 2–4: centered L|R pairs with fixed gutter (see maketa_mobil.png)
+ * Maketa narrow (≤1024):
+ *   Shared chrome flattening + square button sizing.
+ *   Phone (≤720): 2-col × 3-row (maketa_mobil.png).
+ *   Mid (721–1024): 3-col × 2-row, same gutters / centering.
  * Placed after desktop flex rules so grid areas win on specificity/order.
  */
 @media screen and (max-width: 1024px) {
     .vpc-control-row {
         --vpc-mobile-col-gap: 0.5rem;
         display: grid;
-        grid-template-columns: 1fr var(--vpc-square-btn-w) var(--vpc-mobile-col-gap) var(--vpc-square-btn-w) 1fr;
-        grid-template-areas:
-            "icons icons icons icons icons"
-            ". lang . signs ."
-            ". cities . participants ."
-            ". deaf . typology .";
         align-items: center;
         width: 100vw;
         max-width: 100vw;
@@ -638,13 +633,6 @@
     .vpc-control-row .vpc-control-secondary-r > .vpc-r2-filters {
         display: contents;
     }
-    /* Row 1: ? and reset align with the filter columns; transport centers on the row */
-    .vpc-control-secondary-l > .preview-site-nav {
-        grid-row: 1;
-        grid-column: 2;
-        justify-self: start;
-        z-index: 1;
-    }
     .vpc-control-transport-cluster {
         grid-row: 1;
         grid-column: 1 / -1;
@@ -652,10 +640,10 @@
         flex-wrap: nowrap;
     }
     .vpc-control-row .vpc-reset-btn {
-        grid-row: 1;
-        grid-column: 4;
-        justify-self: end;
         max-width: none;
+        z-index: 1;
+    }
+    .vpc-control-secondary-l > .preview-site-nav {
         z-index: 1;
     }
     .vpc-control-row .vpc-picker[data-picker="language"] {
@@ -706,5 +694,53 @@
     .vpc-picker-dropdown {
         font-size: 0.875rem;
         max-width: 90vw;
+    }
+}
+
+/* Phone: 2 columns × 3 rows; ?/reset align with outer filter columns */
+@media screen and (max-width: 720px) {
+    .vpc-control-row {
+        grid-template-columns: 1fr var(--vpc-square-btn-w) var(--vpc-mobile-col-gap) var(--vpc-square-btn-w) 1fr;
+        grid-template-areas:
+            "icons icons icons icons icons"
+            ". lang . signs ."
+            ". cities . participants ."
+            ". deaf . typology .";
+    }
+    .vpc-control-secondary-l > .preview-site-nav {
+        grid-row: 1;
+        grid-column: 2;
+        justify-self: start;
+    }
+    .vpc-control-row .vpc-reset-btn {
+        grid-row: 1;
+        grid-column: 4;
+        justify-self: end;
+    }
+}
+
+/* Mid / tablet: 3 columns × 2 rows; ?/reset align with outer filter columns */
+@media screen and (min-width: 721px) and (max-width: 1024px) {
+    .vpc-control-row {
+        grid-template-columns:
+            1fr
+            var(--vpc-square-btn-w) var(--vpc-mobile-col-gap)
+            var(--vpc-square-btn-w) var(--vpc-mobile-col-gap)
+            var(--vpc-square-btn-w)
+            1fr;
+        grid-template-areas:
+            "icons icons icons icons icons icons icons"
+            ". lang . signs . cities ."
+            ". participants . deaf . typology .";
+    }
+    .vpc-control-secondary-l > .preview-site-nav {
+        grid-row: 1;
+        grid-column: 2;
+        justify-self: start;
+    }
+    .vpc-control-row .vpc-reset-btn {
+        grid-row: 1;
+        grid-column: 6;
+        justify-self: end;
     }
 }

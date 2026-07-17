@@ -986,6 +986,55 @@
             };
         }
 
+        // Secondary R2 filter handoff: `filter:<facet>:<value>` — replace with a single
+        // fresh pin, clear participant + other pins, rebuild and autoplay the filtered set.
+        var filterMatch = /^filter:(sign_language|edition|typology):(.*)$/.exec(navIntent);
+        if (filterMatch) {
+            var fFacet = filterMatch[1];
+            var fValue = '';
+            try {
+                fValue = decodeURIComponent(filterMatch[2]);
+            } catch (e) {
+                fValue = filterMatch[2];
+            }
+            if (fValue === '') {
+                return { kind: 'fresh' };
+            }
+            var fState = {
+                sign_language: null,
+                edition: null,
+                typology: null,
+                tag: null,
+            };
+            fState[fFacet] = fValue;
+            var fRebuild = planFilterPlaylistRebuild({
+                fullPlaylistItems: items,
+                filterState: fState,
+                currentMasterIndex: session && typeof session.masterIndex === 'number'
+                    ? session.masterIndex
+                    : 0,
+                shuffleMode: true,
+                randomFn: randomFn,
+            });
+            if (!fRebuild) {
+                return { kind: 'fresh' };
+            }
+            return {
+                kind: 'filter',
+                filterState: fState,
+                participantName: '',
+                isParticipantMode: false,
+                filteredMasterIndices: fRebuild.filteredMasterIndices,
+                filteredCursor: fRebuild.filteredCursor,
+                shuffleStep: fRebuild.shuffleStep,
+                shuffledSequence: fRebuild.shuffledSequence,
+                shuffleMode: fRebuild.shuffleMode,
+                loadMasterIndex: fRebuild.loadMasterIndex,
+                shouldAutoplay: true,
+                playbackTimeSec: 0,
+            };
+        }
+
         if (!session) {
             if (navIntent === 'play' || navIntent === 'prev' || navIntent === 'next') {
                 return { kind: 'fresh' };

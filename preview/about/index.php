@@ -29,7 +29,7 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="page-url" content="/preview/about">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=60">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=61">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
     <link rel="stylesheet" href="/preview/css/about-page.css?v=13">
     <style>
@@ -75,7 +75,7 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/leaflet/js/gallery.js"></script>
-<script src="/preview/js/vimeo_playlist_logic.js?v=12"></script>
-<script src="/preview/js/secondary_player_chrome.js?v=3"></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=13"></script>
+<script src="/preview/js/secondary_player_chrome.js?v=4"></script>
 </body>
 </html>

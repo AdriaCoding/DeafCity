@@ -78,7 +78,7 @@ if ($vpc !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=60">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=61">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -103,7 +103,7 @@ if ($vpc !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=12"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=51" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=13"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=52" defer></script>
 </body>
 </html>

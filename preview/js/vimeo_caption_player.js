@@ -479,7 +479,7 @@
                     serverShuffled = false;
                 } else if (navPlan && navPlan.kind === 'fresh') {
                     sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
-                } else if (navPlan && (navPlan.kind === 'restore' || navPlan.kind === 'deaf-hearing')) {
+                } else if (navPlan && (navPlan.kind === 'restore' || navPlan.kind === 'deaf-hearing' || navPlan.kind === 'filter')) {
                     filterState = {
                         sign_language: navPlan.filterState.sign_language !== undefined
                             ? navPlan.filterState.sign_language

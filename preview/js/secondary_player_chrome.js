@@ -132,4 +132,63 @@
     if (deafBtn && !deafBtn.disabled) {
         bind(deafBtn, 'deaf-hearing');
     }
+
+    // R2 filter pickers (Sign language / City–Edition / Typology): on secondary pages the
+    // player engine is not loaded, so wire the dropup open/close here and hand off to the
+    // player on selection — `filter:<facet>:<value>` intent, applied by planSecondaryNavRestore.
+    var r2Closers = [];
+    function closeAllR2Dropups() {
+        r2Closers.forEach(function (close) { close(); });
+    }
+    function wireR2Picker(picker) {
+        var facet = picker.getAttribute('data-picker');
+        var btn = picker.querySelector('.vpc-picker-btn');
+        var dropdown = picker.querySelector('.vpc-picker-dropdown');
+        if (!facet || !btn || !dropdown) {
+            return;
+        }
+        function close() {
+            dropdown.hidden = true;
+            btn.setAttribute('aria-expanded', 'false');
+        }
+        r2Closers.push(close);
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var wasOpen = !dropdown.hidden;
+            closeAllR2Dropups();
+            if (!wasOpen) {
+                dropdown.hidden = false;
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+        dropdown.addEventListener('click', function (e) {
+            var target = e.target;
+            if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) {
+                return;
+            }
+            e.stopPropagation();
+            close();
+            var value = target.getAttribute('data-value') || '';
+            // "All X" (clear) option → neutral player handoff, no filter pin.
+            if (value === '') {
+                window.location.href = playerUrl('play');
+                return;
+            }
+            window.location.href = playerUrl('filter:' + facet + ':' + encodeURIComponent(value));
+        });
+        dropdown.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                close();
+                btn.focus();
+            }
+        });
+    }
+    bar.querySelectorAll(
+        '.vpc-picker[data-picker="sign_language"],'
+        + '.vpc-picker[data-picker="edition"],'
+        + '.vpc-picker[data-picker="typology"]'
+    ).forEach(wireR2Picker);
+    if (r2Closers.length) {
+        document.addEventListener('click', closeAllR2Dropups);
+    }
 }());

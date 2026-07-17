@@ -1541,3 +1541,84 @@ console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING me
 
 console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING session/nav)');
 
+// ── Secondary R2 filter handoff: `filter:<facet>:<value>` ─────────────────────
+// Replace with a single fresh pin, clear participant + other pins, autoplay filtered set.
+(function () {
+    // Sign language pin, no prior session → filtered to LSA videos, autoplay.
+    var plan = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'filter:sign_language:' + encodeURIComponent('LSA'),
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan, 'filter intent yields a plan without a session');
+    assert.strictEqual(plan.kind, 'filter');
+    assert.strictEqual(plan.filterState.sign_language, 'LSA');
+    assert.strictEqual(plan.filterState.edition, null);
+    assert.strictEqual(plan.filterState.typology, null);
+    assert.strictEqual(plan.filterState.tag, null);
+    assert.strictEqual(plan.isParticipantMode, false);
+    assert.strictEqual(plan.participantName, '');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [2, 3]);
+    assert.strictEqual(plan.shouldAutoplay, true, 'filtered set autoplays');
+})();
+
+(function () {
+    // Edition pin filters correctly.
+    var plan = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'filter:edition:BCN',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'filter');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [0, 1, 5]);
+})();
+
+(function () {
+    // Replace semantics: an existing session (participant + other pins) is discarded.
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 4,
+        filterState: { sign_language: 'LSC', edition: 'ALG', typology: null, tag: T },
+        participantName: 'Someone',
+        shuffleMode: true,
+        shuffledSequence: [0],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 9,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'filter:edition:ALG',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'filter');
+    assert.strictEqual(plan.filterState.edition, 'ALG');
+    assert.strictEqual(plan.filterState.sign_language, null, 'other pins cleared');
+    assert.strictEqual(plan.filterState.tag, null, 'tag cleared');
+    assert.strictEqual(plan.participantName, '', 'participant mode cleared');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [2, 3, 4]);
+})();
+
+(function () {
+    // "All X" (empty value) → neutral handoff, not a filter pin.
+    var fresh = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'filter:sign_language:',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(fresh.kind, 'fresh', 'clear option yields neutral handoff');
+    // Unknown facet is not a filter intent (falls through; no session → null).
+    var unknown = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'filter:bogus:x',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(unknown, null, 'unknown facet is not treated as a filter handoff');
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including secondary R2 filter handoff)');
+
