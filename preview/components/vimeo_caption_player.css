@@ -143,12 +143,10 @@
     padding: 0.35rem 1rem 0.5rem;
     box-sizing: border-box;
     gap: 0.5rem;
-    --vpc-chrome-filter-flex: 1.55;
-    --vpc-chrome-nav-flex: 0.9;
-    --vpc-chrome-participants-flex: 1.1;
-    --vpc-chrome-participants-max: 12rem;
-    --vpc-chrome-reset-max: 8rem; /* fits longest reset_short label (Restablecer) */
-    --vpc-chrome-reset-min: 3.5rem;
+    /* Shared fixed width for the six square chrome buttons (Verbal language, Sign
+       language, City, Participants, DEAF+HEARING, Typology). Equal length by design
+       (Toni): they don't grow to fill the row, so the video reads as if on a pedestal. */
+    --vpc-square-btn-w: 9.5rem;
 }
 .vpc-control-secondary {
     display: contents;
@@ -471,21 +469,27 @@
 @keyframes vpc-transport-spin {
     to { transform: rotate(360deg); }
 }
+/* Help (?) and reset are icon buttons — content-width, never part of the square set. */
 .vpc-control-secondary-l > .preview-site-nav,
-.vpc-control-secondary-l > .vpc-deaf-hearing-btn,
 .vpc-control-secondary-r > .vpc-reset-btn {
     flex: 0 0 auto;
     min-width: 0;
 }
+/* The six square buttons all share one fixed width. grow:0 = don't stretch the row;
+   shrink:1 + equal basis = they narrow together, staying equal to each other. */
+.vpc-control-secondary-l > .vpc-deaf-hearing-btn,
 .vpc-control-secondary-l > .vpc-picker,
-.vpc-control-secondary-r > .vpc-r2-filters {
-    flex: var(--vpc-chrome-filter-flex) 1 0;
+.vpc-control-secondary-r > .vpc-r2-filters > .vpc-picker,
+.vpc-control-secondary-r > .preview-site-nav {
+    flex: 0 1 var(--vpc-square-btn-w);
+    width: var(--vpc-square-btn-w);
+    max-width: var(--vpc-square-btn-w);
     min-width: 0;
 }
-.vpc-control-secondary-r > .preview-site-nav {
-    flex: 0 0 auto;
+/* The sign/city filter group hugs its two square children rather than stretching. */
+.vpc-control-secondary-r > .vpc-r2-filters {
+    flex: 0 1 auto;
     min-width: 0;
-    max-width: none;
 }
 .vpc-control-secondary-l .preview-site-nav__btn,
 .vpc-control-secondary-l .vpc-picker-btn,
@@ -512,7 +516,9 @@
     gap: 0.5rem;
 }
 .vpc-control-secondary-r > .vpc-r2-filters > .vpc-picker {
-    flex: 1 1 0;
+    flex: 0 1 var(--vpc-square-btn-w);
+    width: var(--vpc-square-btn-w);
+    max-width: var(--vpc-square-btn-w);
     min-width: 0;
 }
 

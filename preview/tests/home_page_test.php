@@ -505,9 +505,16 @@ $playerCssPath = dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.
 if (is_file($playerCssPath)) {
     $playerCss = file_get_contents($playerCssPath);
     assert_contains('text-overflow: ellipsis', $playerCss, 'chrome buttons crop overflowing labels');
-    assert_contains('--vpc-chrome-filter-flex', $playerCss, 'filter chrome flex weight vars');
-    assert_contains('--vpc-chrome-participants-max', $playerCss, 'participants chrome max width var');
-    assert_contains('--vpc-chrome-reset-max', $playerCss, 'reset chrome max width var');
+    // Six square buttons share one fixed width (Toni: equal length, no stretch).
+    assert_contains('--vpc-square-btn-w', $playerCss, 'square chrome buttons share one fixed-width var');
+    if (!preg_match(
+        '~\.vpc-control-secondary-l > \.vpc-deaf-hearing-btn,\s*\.vpc-control-secondary-l > \.vpc-picker,\s*\.vpc-control-secondary-r > \.vpc-r2-filters > \.vpc-picker,\s*\.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*flex:\s*0 1 var\(--vpc-square-btn-w\)~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: the six square chrome buttons should share --vpc-square-btn-w with flex-grow 0\n");
+        exit(1);
+    }
+    echo "PASS: square chrome buttons share one fixed width (no stretch)\n";
     assert_contains('vpc-poster-cover', $playerCss, 'loading cover CSS');
     assert_not_contains(
         'transition: opacity',
