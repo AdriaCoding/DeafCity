@@ -31,7 +31,7 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
     <meta name="page-url" content="/preview/about">
     <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=56">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
-    <link rel="stylesheet" href="/preview/css/about-page.css?v=12">
+    <link rel="stylesheet" href="/preview/css/about-page.css?v=13">
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; }
         body {
