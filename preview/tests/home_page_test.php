@@ -581,7 +581,7 @@ if (is_file($playerCssPath)) {
         exit(1);
     }
     echo "PASS: chrome button label span ellipsis overflow\n";
-    // Maketa narrow (≤1024): shared flatten; phone ≤720 = 2×3; mid 721–1024 = 3×2
+    // Maketa narrow (≤1024): shared flatten; phone ≤500 = 2×3; mid 501–1024 = 3×2
     if (!preg_match(
         '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r,.*?display:\s*contents~s',
         $playerCss
@@ -606,9 +606,9 @@ if (is_file($playerCssPath)) {
         exit(1);
     }
     echo "PASS: mobile maketa center column gutter\n";
-    // Phone ≤720: 2-col × 3-row
+    // Phone ≤500: 2-col × 3-row
     if (!preg_match(
-        '~@media screen and \(max-width: 720px\)\s*\{.*?grid-template-columns:\s*1fr var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\) var\(--vpc-square-btn-w\) 1fr~s',
+        '~@media screen and \(max-width: 500px\)\s*\{.*?grid-template-columns:\s*1fr var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\) var\(--vpc-square-btn-w\) 1fr~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: phone maketa should center a 2-col button pair\n");
@@ -616,7 +616,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: phone maketa centered 2-col button pair\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 720px\)\s*\{.*?grid-template-areas:\s*["\']icons icons icons icons icons["\'].*?["\']\. lang \. signs \.["\'].*?["\']\. cities \. participants \.["\'].*?["\']\. deaf \. typology \.["\']~s',
+        '~@media screen and \(max-width: 500px\)\s*\{.*?grid-template-areas:\s*["\']icons icons icons icons icons["\'].*?["\']\. lang \. signs \.["\'].*?["\']\. cities \. participants \.["\'].*?["\']\. deaf \. typology \.["\']~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: phone maketa grid-template-areas should match 2×3 L|R pairs\n");
@@ -624,7 +624,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: phone maketa grid areas match 2×3 filter pairs\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 720px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-column:\s*2~s',
+        '~@media screen and \(max-width: 500px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-column:\s*2~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: phone maketa should align help with left filter column\n");
@@ -632,16 +632,16 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: phone maketa help aligns with left filter column\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 720px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-column:\s*4~s',
+        '~@media screen and \(max-width: 500px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-column:\s*4~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: phone maketa should align reset with right filter column\n");
         exit(1);
     }
     echo "PASS: phone maketa reset aligns with right filter column\n";
-    // Mid 721–1024: 3-col × 2-row
+    // Mid 501–1024: 3-col × 2-row
     if (!preg_match(
-        '~@media screen and \(min-width: 721px\) and \(max-width: 1024px\)\s*\{.*?grid-template-columns:\s*1fr\s+var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\)\s+var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\)\s+var\(--vpc-square-btn-w\)\s+1fr~s',
+        '~@media screen and \(min-width: 501px\) and \(max-width: 1024px\)\s*\{.*?grid-template-columns:\s*1fr\s+var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\)\s+var\(--vpc-square-btn-w\) var\(--vpc-mobile-col-gap\)\s+var\(--vpc-square-btn-w\)\s+1fr~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: mid maketa should center a 3-col button row\n");
@@ -649,7 +649,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: mid maketa centered 3-col button row\n";
     if (!preg_match(
-        '~@media screen and \(min-width: 721px\) and \(max-width: 1024px\)\s*\{.*?grid-template-areas:\s*["\']icons icons icons icons icons icons icons["\'].*?["\']\. lang \. signs \. cities \.["\'].*?["\']\. participants \. deaf \. typology \.["\']~s',
+        '~@media screen and \(min-width: 501px\) and \(max-width: 1024px\)\s*\{.*?grid-template-areas:\s*["\']icons icons icons icons icons icons icons["\'].*?["\']\. lang \. signs \. cities \.["\'].*?["\']\. participants \. deaf \. typology \.["\']~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: mid maketa grid-template-areas should match 3×2 layout\n");
@@ -657,7 +657,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: mid maketa grid areas match 3×2 filter layout\n";
     if (!preg_match(
-        '~@media screen and \(min-width: 721px\) and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-column:\s*2~s',
+        '~@media screen and \(min-width: 501px\) and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l > \.preview-site-nav\s*\{[^}]*grid-column:\s*2~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: mid maketa should align help with left filter column\n");
@@ -665,7 +665,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: mid maketa help aligns with left filter column\n";
     if (!preg_match(
-        '~@media screen and \(min-width: 721px\) and \(max-width: 1024px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-column:\s*6~s',
+        '~@media screen and \(min-width: 501px\) and \(max-width: 1024px\)\s*\{.*?\.vpc-reset-btn\s*\{[^}]*grid-column:\s*6~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: mid maketa should align reset with right filter column\n");

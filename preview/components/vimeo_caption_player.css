@@ -610,8 +610,8 @@
 /*
  * Maketa narrow (≤1024):
  *   Shared chrome flattening + square button sizing.
- *   Phone (≤720): 2-col × 3-row (maketa_mobil.png).
- *   Mid (721–1024): 3-col × 2-row, same gutters / centering.
+ *   Phone (≤500): 2-col × 3-row (maketa_mobil.png).
+ *   Mid (501–1024): 3-col × 2-row, same gutters / centering.
  * Placed after desktop flex rules so grid areas win on specificity/order.
  */
 @media screen and (max-width: 1024px) {
@@ -698,7 +698,7 @@
 }
 
 /* Phone: 2 columns × 3 rows; ?/reset align with outer filter columns */
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 500px) {
     .vpc-control-row {
         grid-template-columns: 1fr var(--vpc-square-btn-w) var(--vpc-mobile-col-gap) var(--vpc-square-btn-w) 1fr;
         grid-template-areas:
@@ -720,7 +720,7 @@
 }
 
 /* Mid / tablet: 3 columns × 2 rows; ?/reset align with outer filter columns */
-@media screen and (min-width: 721px) and (max-width: 1024px) {
+@media screen and (min-width: 501px) and (max-width: 1024px) {
     .vpc-control-row {
         grid-template-columns:
             1fr
