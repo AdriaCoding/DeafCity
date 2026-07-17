@@ -21,6 +21,7 @@ $manifest = [
     ['key' => 'player.filter.sign_language', 'section' => 'player', 'context' => 'Sign language filter generic label', 'en' => 'Sign language'],
     ['key' => 'player.filter.city_edition', 'section' => 'player', 'context' => 'City/Edition filter generic label', 'en' => 'City / Edition'],
     ['key' => 'player.filter.typology', 'section' => 'player', 'context' => 'Typology filter generic label', 'en' => 'Typology'],
+    ['key' => 'player.filter.deaf_hearing', 'section' => 'player', 'context' => 'Accessible name for DEAF+HEARING toggle (not the glyph label)', 'en' => 'Deaf and hearing crossover videos'],
     ['key' => 'player.spoken_language.label', 'section' => 'player', 'context' => 'Spoken Language picker label', 'en' => 'Spoken Language'],
     ['key' => 'player.spoken_language.no_subtitles', 'section' => 'player', 'context' => 'Spoken Language disabled state', 'en' => 'No subtitles'],
     ['key' => 'player.transport.play', 'section' => 'player', 'context' => 'Play button aria-label', 'en' => 'Play video'],

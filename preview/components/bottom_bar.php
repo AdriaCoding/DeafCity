@@ -79,6 +79,8 @@ $typologyOptionsList = isset($playerCfg['typology_options']) && is_array($player
 $initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout']) ? (string) $playerCfg['initial_sign_lang_readout'] : '';
 $initialEditionReadout = isset($playerCfg['initial_edition_readout']) ? (string) $playerCfg['initial_edition_readout'] : '';
 $initialTypologyReadout = isset($playerCfg['initial_typology_readout']) ? (string) $playerCfg['initial_typology_readout'] : '';
+$deafHearingEnabled = !isset($playerCfg['deaf_hearing_enabled']) || !empty($playerCfg['deaf_hearing_enabled']);
+$deafHearingAria = preview_t('player.filter.deaf_hearing');
 
 if (!function_exists('preview_chrome_btn_label')) {
     function preview_chrome_btn_label($text)
@@ -212,7 +214,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     <?php endif; ?>
                 <?php endforeach; ?>
                 </nav>
-                <button type="button" class="vpc-chrome-btn vpc-deaf-hearing-btn is-active" disabled aria-label="DEAF+HEARING">
+                <button
+                    type="button"
+                    class="vpc-chrome-btn vpc-deaf-hearing-btn"
+                    aria-pressed="false"
+                    aria-label="<?= htmlspecialchars($deafHearingAria, ENT_QUOTES, 'UTF-8') ?>"
+                    data-deaf-hearing-tag="<?= htmlspecialchars('DEAF&HEARING', ENT_QUOTES, 'UTF-8') ?>"
+                    <?php if (!$deafHearingEnabled): ?>disabled<?php endif; ?>
+                >
                     <span class="vpc-chrome-btn__label">DEAF+HEARING</span>
                 </button>
                 <?php if ($useTypologyFilter): ?>

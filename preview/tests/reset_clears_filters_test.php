@@ -44,7 +44,11 @@ echo "PASS: reset button in right secondary wing\n";
 $js = file_get_contents($jsPath);
 rcf_assert_not_contains('resetFromBeginning', $js, 'old resetFromBeginning handler removed');
 rcf_assert_contains('resetToNeutralAll', $js, 'resetToNeutralAll handler wired');
-rcf_assert_not_contains('setCurrentTime(0)', $js, 'reset does not seek current video to t=0');
+if (!preg_match('/function resetToNeutralAll\(\) \{([\s\S]*?)\n            \}/', $js, $m)) {
+    fwrite(STDERR, "FAIL: could not locate resetToNeutralAll function body\n");
+    exit(1);
+}
+rcf_assert_not_contains('setCurrentTime(0)', $m[1], 'reset does not seek current video to t=0');
 rcf_assert_contains('planResetToNeutralAll', $js, 'reset uses shared playlist logic plan');
 
 $logic = file_get_contents($logicPath);

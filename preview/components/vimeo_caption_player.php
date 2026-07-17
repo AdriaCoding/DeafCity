@@ -149,6 +149,18 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 $thumbnailMeta = isset($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])
                     ? trim($entry['thumbnail_url'])
                     : '';
+                $tagsMeta = array();
+                if (isset($entry['tags']) && is_array($entry['tags'])) {
+                    foreach ($entry['tags'] as $tag) {
+                        if (!is_string($tag)) {
+                            continue;
+                        }
+                        $tag = trim($tag);
+                        if ($tag !== '' && !in_array($tag, $tagsMeta, true)) {
+                            $tagsMeta[] = $tag;
+                        }
+                    }
+                }
 
                 $out[] = array(
                     'videoId' => $digits,
@@ -160,6 +172,7 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                     'typology' => $typologyMeta,
                     'participant' => $participantMeta,
                     'thumbnail_url' => $thumbnailMeta,
+                    'tags' => $tagsMeta,
                 );
             }
         }
@@ -217,6 +230,7 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 'edition' => $legacyEdition,
                 'typology' => $legacyTypology,
                 'participant' => $legacyParticipant,
+                'tags' => array(),
             ));
         }
 
@@ -423,6 +437,7 @@ foreach ($playlistNormalized as $pe) {
     $tyOut       = isset($pe['typology'])       && is_string($pe['typology'])       ? $pe['typology']       : '';
     $ptOut       = isset($pe['participant'])    && is_string($pe['participant'])    ? $pe['participant']    : '';
     $thumbOut    = isset($pe['thumbnail_url'])   && is_string($pe['thumbnail_url'])   ? $pe['thumbnail_url']   : '';
+    $tagsOut     = isset($pe['tags']) && is_array($pe['tags']) ? array_values($pe['tags']) : array();
     $eParams     = isset($pe['embed_params']) && is_array($pe['embed_params']) ? $pe['embed_params'] : array();
     $embedOut    = '';
     if (!empty($pe['embed_url']) && is_string($pe['embed_url'])) {
@@ -435,6 +450,7 @@ foreach ($playlistNormalized as $pe) {
         'edition'      => $edOut,
         'typology'     => $tyOut,
         'participant'  => $ptOut,
+        'tags'         => $tagsOut,
     );
     if ($embedOut !== '') {
         $row['embedUrl'] = $embedOut;
@@ -468,6 +484,7 @@ if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && cou
                 'edition'      => isset($pe['edition']) ? $pe['edition'] : '',
                 'typology'     => isset($pe['typology']) ? $pe['typology'] : '',
                 'participant'  => isset($pe['participant']) ? $pe['participant'] : '',
+                'tags'         => isset($pe['tags']) && is_array($pe['tags']) ? array_values($pe['tags']) : array(),
             );
             if ($embedOut !== '') {
                 $row['embedUrl'] = $embedOut;
@@ -662,6 +679,7 @@ $navHiddenClass = '';
             'initial_sign_lang_readout' => $initialSignLangReadout,
             'initial_edition_readout' => $initialEditionReadout,
             'initial_typology_readout' => $initialTypologyReadout,
+            'deaf_hearing_enabled' => !empty($vpc['deaf_hearing_enabled']),
         ),
     );
     include dirname(__DIR__) . '/components/bottom_bar.php';

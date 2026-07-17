@@ -30,7 +30,7 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=56">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=58">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
     <link rel="stylesheet" href="/preview/css/participants-page.css?v=12">
     <style>
@@ -91,8 +91,8 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
 
 <?php include __DIR__ . '/../components/bottom_bar.php'; ?>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=10"></script>
-<script src="/preview/js/secondary_player_chrome.js?v=2"></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=12"></script>
+<script src="/preview/js/secondary_player_chrome.js?v=3"></script>
 <script>
 (function () {
     'use strict';

@@ -635,35 +635,45 @@
     }
     .vpc-control-row .vpc-picker[data-picker="language"] {
         grid-area: lang;
+        justify-self: start;
         min-width: 0;
-        width: 100%;
+        width: var(--vpc-square-btn-w);
+        max-width: var(--vpc-square-btn-w);
     }
     .vpc-control-row .vpc-picker[data-picker="sign_language"] {
         grid-area: signs;
+        justify-self: end;
         min-width: 0;
-        width: 100%;
+        width: var(--vpc-square-btn-w);
+        max-width: var(--vpc-square-btn-w);
     }
     .vpc-control-row .vpc-picker[data-picker="edition"] {
         grid-area: cities;
+        justify-self: start;
         min-width: 0;
-        width: 100%;
+        width: var(--vpc-square-btn-w);
+        max-width: var(--vpc-square-btn-w);
     }
     .vpc-control-row .vpc-control-secondary-r > .preview-site-nav {
         grid-area: participants;
-        flex: 1 1 auto;
+        justify-self: end;
         min-width: 0;
-        max-width: none;
-        width: 100%;
+        width: var(--vpc-square-btn-w);
+        max-width: var(--vpc-square-btn-w);
     }
     .vpc-control-row .vpc-deaf-hearing-btn {
         grid-area: deaf;
+        justify-self: start;
         min-width: 0;
-        width: 100%;
+        width: var(--vpc-square-btn-w);
+        max-width: var(--vpc-square-btn-w);
     }
     .vpc-control-row .vpc-picker[data-picker="typology"] {
         grid-area: typology;
+        justify-self: end;
         min-width: 0;
-        width: 100%;
+        width: var(--vpc-square-btn-w);
+        max-width: var(--vpc-square-btn-w);
     }
     .vpc-control-row .vpc-picker-btn,
     .vpc-control-row .vpc-control-secondary-r > .preview-site-nav .preview-site-nav__btn,

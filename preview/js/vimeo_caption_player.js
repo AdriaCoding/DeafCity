@@ -169,12 +169,14 @@
         /**
          * D18 — Composable filter state. null = not active for that facet.
          * All R2 filter pickers read/write this object. Filters compose with AND.
-         * @type {{ sign_language: string|null, edition: string|null, typology: string|null }}
+         * tag is array-membership (DH16), not equality.
+         * @type {{ sign_language: string|null, edition: string|null, typology: string|null, tag: string|null }}
          */
         var filterState = {
             sign_language: null,
             edition: null,
             typology: null,
+            tag: null,
         };
 
         /** Full option catalogs from server (studio-config labels). */
@@ -477,8 +479,21 @@
                     serverShuffled = false;
                 } else if (navPlan && navPlan.kind === 'fresh') {
                     sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
-                } else if (navPlan && navPlan.kind === 'restore') {
-                    filterState = navPlan.filterState;
+                } else if (navPlan && (navPlan.kind === 'restore' || navPlan.kind === 'deaf-hearing')) {
+                    filterState = {
+                        sign_language: navPlan.filterState.sign_language !== undefined
+                            ? navPlan.filterState.sign_language
+                            : null,
+                        edition: navPlan.filterState.edition !== undefined
+                            ? navPlan.filterState.edition
+                            : null,
+                        typology: navPlan.filterState.typology !== undefined
+                            ? navPlan.filterState.typology
+                            : null,
+                        tag: typeof navPlan.filterState.tag === 'string' && navPlan.filterState.tag !== ''
+                            ? navPlan.filterState.tag
+                            : null,
+                    };
                     participantName = navPlan.participantName || '';
                     isParticipantMode = !!navPlan.isParticipantMode;
                     filteredMasterIndices = navPlan.filteredMasterIndices;
@@ -1279,7 +1294,24 @@
                         btn.removeAttribute('aria-current');
                     }
                 });
+                syncDeafHearingButton();
                 syncChromeButtonWidths();
+            }
+
+            /**
+             * DEAF+HEARING toggle chrome: green + aria-pressed when tag facet pinned (DH2/DH13).
+             */
+            function syncDeafHearingButton() {
+                var btn = root.querySelector('.vpc-deaf-hearing-btn');
+                if (!btn) return;
+                var on = L.isTagPinned(filterState);
+                if (on) {
+                    btn.classList.add('is-active');
+                    btn.setAttribute('aria-pressed', 'true');
+                } else {
+                    btn.classList.remove('is-active');
+                    btn.setAttribute('aria-pressed', 'false');
+                }
             }
 
             /**
@@ -1309,6 +1341,7 @@
 
             function updateAllFilterPickerReadouts() {
                 ['sign_language', 'edition', 'typology'].forEach(updateFilterPickerReadout);
+                syncDeafHearingButton();
                 syncChromeButtonWidths();
             }
 
@@ -1365,11 +1398,13 @@
 
             /**
              * Apply a filter change with keep-if-matches playback (D22) and cascade (D17′).
+             * Tag facet uses membership + DH15b empty-AND fallback.
              * @param {string} facet
              * @param {string|null} value
              */
             function applyFilterChange(facet, value) {
                 var newValue = value || null;
+                var previousValue = filterState[facet] !== undefined ? filterState[facet] : null;
 
                 if (L.shouldClearCollectionOnFilterFix(isParticipantMode, newValue)) {
                     isParticipantMode = false;
@@ -1379,6 +1414,10 @@
 
                 filterState[facet] = newValue;
 
+                if (facet === 'tag' && newValue) {
+                    filterState = L.resolveTagToggleOnFilterState(filterState, fullPlaylistItems);
+                }
+
                 var plan = L.planFilterPlaylistRebuild({
                     fullPlaylistItems: fullPlaylistItems,
                     filterState: filterState,
@@ -1387,7 +1426,8 @@
                 });
 
                 if (!plan) {
-                    filterState[facet] = null;
+                    // DH7: revert the R2 pin that emptied the set; keep tag if pinned.
+                    filterState[facet] = previousValue;
                     recomputeFilteredMasterIndices();
                     updateAllFilterPickerReadouts();
                     rebuildAllCascadingDropdowns();
@@ -1402,6 +1442,7 @@
 
                 updateAllFilterPickerReadouts();
                 rebuildAllCascadingDropdowns();
+                savePlaybackSession();
 
                 if (plan.keepCurrentVideo) {
                     updatePlaylistNavButtons();
@@ -1415,6 +1456,15 @@
                     updatePlaylistNavButtons();
                     savePlaybackSession();
                 });
+            }
+
+            function toggleDeafHearingFilter() {
+                markGestureActivation();
+                if (L.isTagPinned(filterState)) {
+                    applyFilterChange('tag', null);
+                    return;
+                }
+                applyFilterChange('tag', L.DEAF_HEARING_TAG);
             }
 
             /**
@@ -1483,6 +1533,13 @@
 
             // Wire up all R2 pickers in this instance
             root.querySelectorAll('.vpc-picker').forEach(initPicker);
+
+            var deafHearingBtn = root.querySelector('.vpc-deaf-hearing-btn');
+            if (deafHearingBtn && !deafHearingBtn.disabled) {
+                deafHearingBtn.addEventListener('click', function () {
+                    toggleDeafHearingFilter();
+                });
+            }
 
             rebuildAllCascadingDropdowns();
             updateAllFilterPickerReadouts();

@@ -90,7 +90,25 @@ if (!preg_match('~<div[^>]*vpc-control-transport-cluster[^>]*>.*?vpc-play-pause-
 echo "PASS: play button in transport cluster center cell\n";
 
 assert_contains('/preview/about', $html, 'about nav link');
-assert_contains('vpc-deaf-hearing-btn', $html, 'DEAF+HEARING placeholder in chrome');
+assert_contains('vpc-deaf-hearing-btn', $html, 'DEAF+HEARING control in chrome');
+if (preg_match('~class="[^"]*vpc-deaf-hearing-btn[^"]*is-active~', $html)) {
+    fwrite(STDERR, "FAIL: DEAF+HEARING should be inactive by default (no is-active)\n");
+    exit(1);
+}
+if (preg_match('~vpc-deaf-hearing-btn[^>]*aria-pressed="false"~', $html) !== 1
+    && preg_match('~vpc-deaf-hearing-btn[^>]*aria-pressed=\'false\'~', $html) !== 1) {
+    // Button attrs may span lines
+    if (!preg_match('~vpc-deaf-hearing-btn[\s\S]{0,400}?aria-pressed="false"~', $html)) {
+        fwrite(STDERR, "FAIL: DEAF+HEARING should expose aria-pressed=\"false\" by default\n");
+        exit(1);
+    }
+}
+assert_contains('Deaf and hearing crossover videos', $html, 'DEAF+HEARING accessible name (DH13)');
+if (preg_match('~vpc-deaf-hearing-btn[\s\S]{0,400}?\bdisabled\b~', $html)) {
+    fwrite(STDERR, "FAIL: DEAF+HEARING should be enabled when catalog has DEAF&HEARING tags (DH27)\n");
+    exit(1);
+}
+echo "PASS: DEAF+HEARING enabled, inactive, aria-pressed=false by default\n";
 
 // Maketa desktop DOM wings: ? · DEAF+HEARING · TYPOLOGIES · LANGUAGES | transport | SIGNS · CITIES · PARTICIPANTS · reset
 $aboutPos = strpos($html, '/preview/about');
@@ -270,15 +288,14 @@ assert_contains('role="option"', $html, 'dropdown options have role=option');
 assert_contains('vpc-picker-clear', $html, 'clear/all option present in dropdown');
 assert_contains('All sign languages', $html, 'clear option says "All sign languages"');
 
-// AC: Dropdown lists sign languages present in catalog — all 4 known IDs must appear
-// (libras, lse, lsm, gss) mapped to their config labels
+// AC: Dropdown lists sign languages present in catalog
 assert_contains('LIBRAS Brazilian Sign Language', $html, 'LIBRAS option in picker');
 assert_contains('LSE Spanish Sign Language', $html, 'LSE option in picker');
 assert_contains('LIS Italian Sign Language', $html, 'LIS option in picker');
 assert_contains('LSF French Sign Language', $html, 'LSF option in picker');
+assert_contains('LSM Mexican Sign Language', $html, 'LSM option in picker (tagged videos visible)');
 
 // Empty facets absent — only sign languages present in catalog
-assert_not_contains('LSM Mexican Sign Language', $html, 'empty facet (LSM) absent from dropdown');
 assert_not_contains('GSS Greek Sign Language', $html, 'empty facet (GSS) absent from dropdown');
 
 // Issue #17: filters live in the single control row (right wing), not a separate stacked row
@@ -290,7 +307,7 @@ if ($r2Pos === false || $controlRowPos === false || $r2Pos < $controlRowPos) {
 }
 echo "PASS: filters inside single control row\n";
 
-// AC: Each playlist item has catalog fields (sign_language, edition, typology, participant)
+// AC: Each playlist item has catalog fields (sign_language, edition, typology, participant, tags)
 $cfg2 = $cfg; // already parsed above
 $playlistItems2 = isset($cfg2['playlist']) && is_array($cfg2['playlist']) ? $cfg2['playlist'] : [];
 if (count($playlistItems2) === 0) {
@@ -298,17 +315,27 @@ if (count($playlistItems2) === 0) {
     exit(1);
 }
 $missingFields = [];
+$taggedCount = 0;
 foreach ($playlistItems2 as $i => $item) {
     if (!array_key_exists('signLanguage', $item)) { $missingFields[] = "playlist[$i].signLanguage"; }
     if (!array_key_exists('edition', $item))      { $missingFields[] = "playlist[$i].edition"; }
     if (!array_key_exists('typology', $item))     { $missingFields[] = "playlist[$i].typology"; }
     if (!array_key_exists('participant', $item))  { $missingFields[] = "playlist[$i].participant"; }
+    if (!array_key_exists('tags', $item) || !is_array($item['tags'])) {
+        $missingFields[] = "playlist[$i].tags";
+    } elseif (in_array('DEAF&HEARING', $item['tags'], true)) {
+        $taggedCount++;
+    }
 }
 if (count($missingFields) > 0) {
     fwrite(STDERR, "FAIL: Missing catalog fields in playlist JSON: " . implode(', ', $missingFields) . "\n");
     exit(1);
 }
-echo "PASS: all playlist items have signLanguage, edition, typology, participant fields\n";
+if ($taggedCount < 1) {
+    fwrite(STDERR, "FAIL: expected at least one playlist item with DEAF&HEARING tag\n");
+    exit(1);
+}
+echo "PASS: all playlist items have signLanguage, edition, typology, participant, tags fields ($taggedCount tagged)\n";
 
 // AC: signLanguageFilter config in vpc-config carries options array (D17)
 if (!isset($cfg2['signLanguageFilter']) || !is_array($cfg2['signLanguageFilter'])) {
@@ -380,7 +407,6 @@ foreach ($editionOpts as $edOpt) {
 }
 
 // AC: Empty editions absent when not in catalog
-assert_not_contains('2021 Mexico City', $html, 'empty edition (Mexico City) absent from dropdown');
 assert_not_contains('Salamanca 2028', $html, 'empty edition (Salamanca) absent from dropdown');
 
 // AC: Typology picker lists typologies present in catalog (localized labels on render)
@@ -574,13 +600,29 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: mobile maketa places reset on transport row\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*max-width:\s*none~s',
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*max-width:\s*var\(--vpc-square-btn-w\)~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: mobile maketa Participants cell should drop desktop max-width\n");
+        fwrite(STDERR, "FAIL: mobile maketa Participants cell should share square chrome max-width\n");
         exit(1);
     }
-    echo "PASS: mobile maketa Participants cell is full-width\n";
+    echo "PASS: mobile maketa Participants cell matches square chrome width\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-picker\[data-picker="language"\][^}]*justify-self:\s*start~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: mobile maketa left column should flush start\n");
+        exit(1);
+    }
+    echo "PASS: mobile maketa left column flush start\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-picker\[data-picker="sign_language"\][^}]*justify-self:\s*end~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: mobile maketa right column should flush end\n");
+        exit(1);
+    }
+    echo "PASS: mobile maketa right column flush end\n";
     if (!preg_match(
         '~@media screen and \(max-width: 1024px\)\s*\{.*?grid-template-areas:\s*["\']help\s+transport\s+transport\s+reset["\'].*?["\']lang\s+lang\s+signs\s+signs["\'].*?["\']cities\s+cities\s+participants\s+participants["\'].*?["\']deaf\s+deaf\s+typology\s+typology["\']~s',
         $playerCss

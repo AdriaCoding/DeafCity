@@ -2,6 +2,7 @@
  * Transport controls on About / Participants (no in-page player).
  * Reset navigates to neutral /preview/; other transport opens the player (issue 01 / 02).
  * Syncs Participants nav from saved playback session (issue #04).
+ * DEAF+HEARING force-ON handoff (DH10/DH11) + session chrome mirror (DH9).
  */
 (function () {
     'use strict';
@@ -13,6 +14,18 @@
 
     var L = typeof window.VpcPlaylistLogic !== 'undefined' ? window.VpcPlaylistLogic : null;
 
+    function readSession() {
+        if (!L || typeof L.parsePlaybackSession !== 'function') {
+            return null;
+        }
+        try {
+            var sessionRaw = sessionStorage.getItem(L.PLAYBACK_SESSION_KEY);
+            return sessionRaw ? L.parsePlaybackSession(sessionRaw) : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
     function syncParticipantsNavFromSession() {
         if (!L || typeof L.resolveParticipantsNavState !== 'function') {
             return;
@@ -22,14 +35,10 @@
             return;
         }
         var genericLabel = btn.getAttribute('data-generic-label') || 'Participants';
-        var participantName = '';
-        try {
-            var sessionRaw = sessionStorage.getItem(L.PLAYBACK_SESSION_KEY);
-            var session = sessionRaw ? L.parsePlaybackSession(sessionRaw) : null;
-            participantName = session && typeof session.participantName === 'string'
-                ? session.participantName.trim()
-                : '';
-        } catch (e) {}
+        var session = readSession();
+        var participantName = session && typeof session.participantName === 'string'
+            ? session.participantName.trim()
+            : '';
         var navState = L.resolveParticipantsNavState({
             isParticipantMode: participantName !== '',
             participantName: participantName,
@@ -54,7 +63,32 @@
         }
     }
 
+    function syncDeafHearingFromSession() {
+        var btn = bar.querySelector('.vpc-deaf-hearing-btn');
+        if (!btn) {
+            return;
+        }
+        var session = readSession();
+        var tagOn = !!(
+            session
+            && session.filterState
+            && typeof session.filterState.tag === 'string'
+            && session.filterState.tag !== ''
+        );
+        if (tagOn) {
+            btn.classList.add('is-active');
+            btn.setAttribute('aria-pressed', 'true');
+        } else {
+            btn.classList.remove('is-active');
+            btn.setAttribute('aria-pressed', 'false');
+        }
+        if (typeof window.vpcSyncChromeButtonWidths === 'function') {
+            window.vpcSyncChromeButtonWidths();
+        }
+    }
+
     syncParticipantsNavFromSession();
+    syncDeafHearingFromSession();
 
     function playerUrl(intent) {
         var path = '/preview/';
@@ -93,4 +127,9 @@
     bind(bar.querySelector('.vpc-play-pause-btn'), 'play');
     bind(bar.querySelector('.vpc-prev-btn'), 'prev');
     bind(bar.querySelector('.vpc-next-btn'), 'next');
+
+    var deafBtn = bar.querySelector('.vpc-deaf-hearing-btn');
+    if (deafBtn && !deafBtn.disabled) {
+        bind(deafBtn, 'deaf-hearing');
+    }
 }());

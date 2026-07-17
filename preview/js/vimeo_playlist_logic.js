@@ -283,9 +283,34 @@
         return typeof item[field] === 'string' ? item[field] : '';
     }
 
+    /** Canonical Catalog Tag for the DEAF+HEARING chrome control (DH1). */
+    var DEAF_HEARING_TAG = 'DEAF&HEARING';
+
+    /**
+     * Whether filterState.tag is pinned (array-membership facet).
+     * @param {VpcFilterState} filterState
+     * @returns {boolean}
+     */
+    function isTagPinned(filterState) {
+        return !!(filterState && typeof filterState.tag === 'string' && filterState.tag !== '');
+    }
+
+    /**
+     * Tag facet match: item.tags array membership (DH16).
+     * @param {{ tags?: string[] }} item
+     * @param {string} tag
+     * @returns {boolean}
+     */
+    function itemHasTag(item, tag) {
+        if (!item || !Array.isArray(item.tags) || typeof tag !== 'string' || tag === '') {
+            return false;
+        }
+        return item.tags.indexOf(tag) >= 0;
+    }
+
     /**
      * Recompute master-playlist indices matching filterState (AND composition).
-     * @param {Array<{ signLanguage?: string, edition?: string, typology?: string }>} fullPlaylistItems
+     * @param {Array<{ signLanguage?: string, edition?: string, typology?: string, tags?: string[] }>} fullPlaylistItems
      * @param {VpcFilterState} filterState
      * @returns {number[]}
      */
@@ -293,7 +318,8 @@
         var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
         var hasFilter = filterState.sign_language !== null
             || filterState.edition !== null
-            || filterState.typology !== null;
+            || filterState.typology !== null
+            || isTagPinned(filterState);
         if (!hasFilter || items.length === 0) {
             return items.map(function (_, ix) { return ix; });
         }
@@ -311,6 +337,9 @@
                     && itemFacetValue(item, 'typology') !== filterState.typology) {
                     return -1;
                 }
+                if (isTagPinned(filterState) && !itemHasTag(item, filterState.tag)) {
+                    return -1;
+                }
                 return ix;
             })
             .filter(function (ix) { return ix >= 0; });
@@ -318,7 +347,7 @@
 
     /**
      * Whether a video satisfies every fixed facet in filterState.
-     * @param {{ signLanguage?: string, edition?: string, typology?: string }} item
+     * @param {{ signLanguage?: string, edition?: string, typology?: string, tags?: string[] }} item
      * @param {VpcFilterState} filterState
      * @returns {boolean}
      */
@@ -333,6 +362,9 @@
         }
         if (filterState.typology !== null
             && itemFacetValue(item, 'typology') !== filterState.typology) {
+            return false;
+        }
+        if (isTagPinned(filterState) && !itemHasTag(item, filterState.tag)) {
             return false;
         }
         return true;
@@ -496,6 +528,7 @@
                 sign_language: filterState.sign_language,
                 edition: filterState.edition,
                 typology: filterState.typology,
+                tag: isTagPinned(filterState) ? filterState.tag : null,
             };
             relaxed[facet] = null;
             var subset = recomputeFilteredMasterIndices(fullPlaylistItems, relaxed);
@@ -652,7 +685,46 @@
             sign_language: null,
             edition: null,
             typology: null,
+            tag: null,
         };
+    }
+
+    /**
+     * Resolve filter state when turning the tag facet on (DH15b).
+     * If tag ∧ current R2 is empty, clear all R2 pins and keep the tag.
+     * @param {VpcFilterState} filterState  proposed state with tag already pinned
+     * @param {Array<{ tags?: string[] }>} fullPlaylistItems
+     * @returns {VpcFilterState}
+     */
+    function resolveTagToggleOnFilterState(filterState, fullPlaylistItems) {
+        var proposed = {
+            sign_language: filterState.sign_language !== undefined ? filterState.sign_language : null,
+            edition: filterState.edition !== undefined ? filterState.edition : null,
+            typology: filterState.typology !== undefined ? filterState.typology : null,
+            tag: filterState.tag !== undefined ? filterState.tag : null,
+        };
+        if (!isTagPinned(proposed)) {
+            return proposed;
+        }
+        var indices = recomputeFilteredMasterIndices(fullPlaylistItems, proposed);
+        if (indices.length > 0) {
+            return proposed;
+        }
+        return {
+            sign_language: null,
+            edition: null,
+            typology: null,
+            tag: proposed.tag,
+        };
+    }
+
+    /**
+     * Filter state after entering participant collection mode (clears R2 + tag).
+     * @param {VpcFilterState} [_filterState]
+     * @returns {VpcFilterState}
+     */
+    function filterStateAfterParticipantPick(_filterState) {
+        return emptyFilterState();
     }
 
     /**
@@ -723,12 +795,13 @@
      */
     function buildPlaybackSessionSnapshot(opts) {
         return {
-            v: 1,
+            v: 2,
             masterIndex: typeof opts.masterIndex === 'number' ? opts.masterIndex : 0,
             filterState: {
                 sign_language: opts.filterState.sign_language,
                 edition: opts.filterState.edition,
                 typology: opts.filterState.typology,
+                tag: isTagPinned(opts.filterState) ? opts.filterState.tag : null,
             },
             participantName: typeof opts.participantName === 'string' ? opts.participantName : '',
             shuffleMode: !!opts.shuffleMode,
@@ -742,7 +815,24 @@
     }
 
     /**
+     * Normalize filterState from a session snapshot (v1→v2 migration for tag).
+     * @param {object} rawFilter
+     * @param {boolean} allowTag  DH14: only apply stored tag when authorized by nav-intent
+     * @returns {VpcFilterState}
+     */
+    function filterStateFromSession(rawFilter, allowTag) {
+        var fs = rawFilter && typeof rawFilter === 'object' ? rawFilter : {};
+        return {
+            sign_language: fs.sign_language !== undefined ? fs.sign_language : null,
+            edition: fs.edition !== undefined ? fs.edition : null,
+            typology: fs.typology !== undefined ? fs.typology : null,
+            tag: allowTag && typeof fs.tag === 'string' && fs.tag !== '' ? fs.tag : null,
+        };
+    }
+
+    /**
      * Parse a playback session JSON string, or null when invalid.
+     * Accepts v:1 (migrates tag:null) and v:2 (DH17).
      * @param {string} raw
      * @returns {object|null}
      */
@@ -750,9 +840,13 @@
         if (!raw || typeof raw !== 'string') return null;
         try {
             var data = JSON.parse(raw);
-            if (!data || typeof data !== 'object' || data.v !== 1) return null;
+            if (!data || typeof data !== 'object') return null;
+            if (data.v !== 1 && data.v !== 2) return null;
             if (typeof data.masterIndex !== 'number') return null;
             if (!data.filterState || typeof data.filterState !== 'object') return null;
+            if (data.v === 1 || data.filterState.tag === undefined) {
+                data.filterState.tag = null;
+            }
             return data;
         } catch (e) {
             return null;
@@ -856,6 +950,42 @@
             return { kind: 'reset', plan: resetPlan };
         }
 
+        // DH10 / DH11: secondary force-ON — pure tagged Playlist, clear R2 + participant.
+        if (navIntent === 'deaf-hearing') {
+            var dhState = {
+                sign_language: null,
+                edition: null,
+                typology: null,
+                tag: DEAF_HEARING_TAG,
+            };
+            var dhRebuild = planFilterPlaylistRebuild({
+                fullPlaylistItems: items,
+                filterState: dhState,
+                currentMasterIndex: session && typeof session.masterIndex === 'number'
+                    ? session.masterIndex
+                    : 0,
+                shuffleMode: true,
+                randomFn: randomFn,
+            });
+            if (!dhRebuild) {
+                return { kind: 'fresh' };
+            }
+            return {
+                kind: 'deaf-hearing',
+                filterState: dhState,
+                participantName: '',
+                isParticipantMode: false,
+                filteredMasterIndices: dhRebuild.filteredMasterIndices,
+                filteredCursor: dhRebuild.filteredCursor,
+                shuffleStep: dhRebuild.shuffleStep,
+                shuffledSequence: dhRebuild.shuffledSequence,
+                shuffleMode: dhRebuild.shuffleMode,
+                loadMasterIndex: dhRebuild.loadMasterIndex,
+                shouldAutoplay: true,
+                playbackTimeSec: 0,
+            };
+        }
+
         if (!session) {
             if (navIntent === 'play' || navIntent === 'prev' || navIntent === 'next') {
                 return { kind: 'fresh' };
@@ -863,17 +993,9 @@
             return null;
         }
 
-        var filterState = {
-            sign_language: session.filterState.sign_language !== undefined
-                ? session.filterState.sign_language
-                : null,
-            edition: session.filterState.edition !== undefined
-                ? session.filterState.edition
-                : null,
-            typology: session.filterState.typology !== undefined
-                ? session.filterState.typology
-                : null,
-        };
+        // DH14: stored tag applies only when booting via a nav-intent handoff.
+        var allowTag = navIntent === 'play' || navIntent === 'prev' || navIntent === 'next';
+        var filterState = filterStateFromSession(session.filterState, allowTag);
         var participantName = typeof session.participantName === 'string'
             ? session.participantName.trim()
             : '';
@@ -1113,6 +1235,9 @@
         resolveActiveCaptionTrackIndex: resolveActiveCaptionTrackIndex,
         facetItemField: facetItemField,
         itemFacetValue: itemFacetValue,
+        DEAF_HEARING_TAG: DEAF_HEARING_TAG,
+        isTagPinned: isTagPinned,
+        itemHasTag: itemHasTag,
         recomputeFilteredMasterIndices: recomputeFilteredMasterIndices,
         videoMatchesFilterState: videoMatchesFilterState,
         labelForFacetValue: labelForFacetValue,
@@ -1124,6 +1249,8 @@
         planFilterPlaylistRebuild: planFilterPlaylistRebuild,
         shouldClearCollectionOnFilterFix: shouldClearCollectionOnFilterFix,
         emptyFilterState: emptyFilterState,
+        resolveTagToggleOnFilterState: resolveTagToggleOnFilterState,
+        filterStateAfterParticipantPick: filterStateAfterParticipantPick,
         planResetToNeutralAll: planResetToNeutralAll,
         PLAYBACK_SESSION_KEY: PLAYBACK_SESSION_KEY,
         NAV_INTENT_KEY: NAV_INTENT_KEY,

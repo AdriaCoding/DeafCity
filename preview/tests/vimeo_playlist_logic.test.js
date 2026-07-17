@@ -905,6 +905,7 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(plan.filterState.sign_language, null, 'clears sign_language filter');
     assert.strictEqual(plan.filterState.edition, null, 'clears edition filter');
     assert.strictEqual(plan.filterState.typology, null, 'clears typology filter');
+    assert.strictEqual(plan.filterState.tag, null, 'clears tag filter');
     assert.strictEqual(plan.isParticipantMode, false, 'clears participant mode');
     assert.strictEqual(plan.participantName, '', 'clears participant name');
     assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'unfiltered ALL catalog');
@@ -938,6 +939,7 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(empty.sign_language, null);
     assert.strictEqual(empty.edition, null);
     assert.strictEqual(empty.typology, null);
+    assert.strictEqual(empty.tag, null);
     var filtered = recomputeFilteredMasterIndices(samplePlaylist, empty);
     assert.strictEqual(filtered.length, samplePlaylist.length);
 })();
@@ -1211,4 +1213,331 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
 })();
 
 console.log('vimeo_playlist_logic.test.js: all passed (including issues #04–#05)');
+
+// ── DEAF+HEARING tag facet (DH1–DH17) ─────────────────────────────────────────
+
+var T = 'DEAF&HEARING';
+var dhFixture = [
+    { videoId: '0', tags: [T],          signLanguage: 'LSC', edition: 'BCN', typology: '', participant: '' },
+    { videoId: '1', tags: [],           signLanguage: 'LSC', edition: 'BCN', typology: '', participant: '' },
+    { videoId: '2', tags: [T, 'IDEA!'], signLanguage: 'LSA', edition: 'ALG', typology: '', participant: '' },
+    { videoId: '3', tags: [T],          signLanguage: 'LSA', edition: 'ALG', typology: '', participant: '' },
+    { videoId: '4', tags: [],           signLanguage: 'LSC', edition: 'ALG', typology: '', participant: '' },
+    { videoId: '5', tags: [T],          signLanguage: 'LSC', edition: 'BCN', typology: '', participant: '' },
+];
+
+assert.strictEqual(logic.DEAF_HEARING_TAG, 'DEAF&HEARING');
+
+// Tag membership: contains, not equals; extra tags still match
+(function () {
+    var result = recomputeFilteredMasterIndices(dhFixture, {
+        sign_language: null, edition: null, typology: null, tag: T,
+    });
+    assert.deepStrictEqual(result, [0, 2, 3, 5], 'tag membership returns tagged indices');
+    assert.ok(logic.videoMatchesFilterState(dhFixture[2], {
+        sign_language: null, edition: null, typology: null, tag: T,
+    }), 'item with extra tags still matches');
+    assert.strictEqual(logic.videoMatchesFilterState(dhFixture[1], {
+        sign_language: null, edition: null, typology: null, tag: T,
+    }), false, 'untagged item does not match');
+})();
+
+// Neutral state (tag null) ignores tags arrays
+(function () {
+    var result = recomputeFilteredMasterIndices(dhFixture, {
+        sign_language: null, edition: null, typology: null, tag: null,
+    });
+    assert.strictEqual(result.length, dhFixture.length);
+})();
+
+// AND of tag with R2 facets
+(function () {
+    var withLsc = recomputeFilteredMasterIndices(dhFixture, {
+        sign_language: 'LSC', edition: null, typology: null, tag: T,
+    });
+    assert.deepStrictEqual(withLsc, [0, 5], 'tag ∧ LSC');
+    var withAlg = recomputeFilteredMasterIndices(dhFixture, {
+        sign_language: null, edition: 'ALG', typology: null, tag: T,
+    });
+    assert.deepStrictEqual(withAlg, [2, 3], 'tag ∧ ALG');
+})();
+
+// Cascade options constrained by tag when pinned
+(function () {
+    var cascade = logic.buildCascadingFilterOptions(
+        dhFixture,
+        { sign_language: null, edition: null, typology: null, tag: T },
+        {
+            sign_language: [
+                { value: 'LSC', label: 'LSC' },
+                { value: 'LSA', label: 'LSA' },
+            ],
+            edition: [
+                { value: 'BCN', label: 'BCN' },
+                { value: 'ALG', label: 'ALG' },
+            ],
+            typology: [],
+        }
+    );
+    var slValues = cascade.sign_language.map(function (o) { return o.value; }).sort();
+    var edValues = cascade.edition.map(function (o) { return o.value; }).sort();
+    assert.deepStrictEqual(slValues, ['LSA', 'LSC'], 'cascade sign languages only from tagged set');
+    assert.deepStrictEqual(edValues, ['ALG', 'BCN'], 'cascade editions only from tagged set');
+})();
+
+// Toggle-on: current index not in set → jump (acceptance fixture)
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: dhFixture,
+        filterState: { sign_language: null, edition: null, typology: null, tag: T },
+        currentMasterIndex: 1,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.keepCurrentVideo, false, 'toggle-on jumps when current lacks tag');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [0, 2, 3, 5]);
+    assert.ok(plan.filteredMasterIndices.indexOf(plan.loadMasterIndex) >= 0);
+})();
+
+// Toggle-on: current already tagged → keep
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: dhFixture,
+        filterState: { sign_language: null, edition: null, typology: null, tag: T },
+        currentMasterIndex: 0,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.keepCurrentVideo, true);
+    assert.strictEqual(plan.loadMasterIndex, 0);
+})();
+
+// Toggle-off never jumps (DH6b): widening keeps current
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: dhFixture,
+        filterState: { sign_language: null, edition: null, typology: null, tag: null },
+        currentMasterIndex: 0,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.keepCurrentVideo, true, 'toggle-off keeps current video');
+    assert.strictEqual(plan.loadMasterIndex, 0);
+    assert.strictEqual(plan.filteredMasterIndices.length, dhFixture.length);
+})();
+
+// DH15b: toggle-on with empty AND clears R2, keeps tag, lands on pure set
+(function () {
+    var resolved = logic.resolveTagToggleOnFilterState({
+        sign_language: 'LSC',
+        edition: 'ALG',
+        typology: null,
+        tag: T,
+    }, dhFixture);
+    assert.strictEqual(resolved.tag, T, 'keeps tag on');
+    assert.strictEqual(resolved.sign_language, null, 'clears R2 when AND empty');
+    assert.strictEqual(resolved.edition, null);
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: dhFixture,
+        filterState: resolved,
+        currentMasterIndex: 4,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.deepStrictEqual(plan.filteredMasterIndices, [0, 2, 3, 5]);
+})();
+
+// Non-empty AND on toggle-on keeps R2 pins
+(function () {
+    var resolved = logic.resolveTagToggleOnFilterState({
+        sign_language: 'LSA',
+        edition: null,
+        typology: null,
+        tag: T,
+    }, dhFixture);
+    assert.strictEqual(resolved.sign_language, 'LSA');
+    assert.strictEqual(resolved.tag, T);
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: dhFixture,
+        filterState: resolved,
+        currentMasterIndex: 4,
+        shuffleMode: false,
+    });
+    assert.ok(plan);
+    assert.deepStrictEqual(plan.filteredMasterIndices, [2, 3]);
+    assert.strictEqual(plan.keepCurrentVideo, false);
+})();
+
+// Empty R2 change while tag on: plan null → caller reverts that R2 (DH7)
+(function () {
+    var emptyPlan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: dhFixture,
+        filterState: { sign_language: 'LSC', edition: 'ALG', typology: null, tag: T },
+        currentMasterIndex: 0,
+        shuffleMode: false,
+    });
+    assert.strictEqual(emptyPlan, null, 'empty AND returns null for R2 revert');
+})();
+
+// Mutual exclusion: tag pin clears participant; participant pick clears tag
+assert.strictEqual(logic.shouldClearCollectionOnFilterFix(true, T), true, 'tag-on clears participant');
+(function () {
+    var cleared = logic.filterStateAfterParticipantPick({
+        sign_language: 'LSC', edition: null, typology: null, tag: T,
+    });
+    assert.strictEqual(cleared.tag, null, 'participant pick clears tag');
+    assert.strictEqual(cleared.sign_language, null, 'participant pick clears R2 (existing reset)');
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING membership)');
+
+// Session v2 includes tag; v1 migrates to tag:null (DH17)
+(function () {
+    var snap = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 0,
+        filterState: { sign_language: null, edition: null, typology: null, tag: T },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [0, 1],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 0,
+    });
+    assert.strictEqual(snap.v, 2);
+    assert.strictEqual(snap.filterState.tag, T);
+    var parsed = logic.parsePlaybackSession(JSON.stringify(snap));
+    assert.ok(parsed);
+    assert.strictEqual(parsed.filterState.tag, T);
+
+    var v1raw = JSON.stringify({
+        v: 1,
+        masterIndex: 0,
+        filterState: { sign_language: 'LSC', edition: null, typology: null },
+        participantName: '',
+        shuffleMode: false,
+        shuffledSequence: [],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 0,
+    });
+    var v1 = logic.parsePlaybackSession(v1raw);
+    assert.ok(v1, 'v1 snapshot still parses');
+    assert.strictEqual(v1.filterState.tag, null, 'v1 migrates tag:null');
+    assert.strictEqual(v1.filterState.sign_language, 'LSC');
+})();
+
+// Secondary force-ON: deaf-hearing intent clears R2 + participant, sets tag (DH10)
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 4,
+        filterState: { sign_language: 'LSC', edition: 'ALG', typology: null, tag: null },
+        participantName: 'Someone',
+        shuffleMode: true,
+        shuffledSequence: [0],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 5,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'deaf-hearing',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.kind, 'deaf-hearing');
+    assert.strictEqual(plan.filterState.tag, T);
+    assert.strictEqual(plan.filterState.sign_language, null);
+    assert.strictEqual(plan.filterState.edition, null);
+    assert.strictEqual(plan.isParticipantMode, false);
+    assert.strictEqual(plan.participantName, '');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [0, 2, 3, 5]);
+    assert.strictEqual(plan.shouldAutoplay, true);
+})();
+
+// Force-ON works without prior session
+(function () {
+    var plan = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'deaf-hearing',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.kind, 'deaf-hearing');
+    assert.strictEqual(plan.filterState.tag, T);
+    assert.strictEqual(plan.shouldAutoplay, true);
+})();
+
+// DH14: transport intent applies stored tag; cold load (no intent) strips tag
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 0,
+        filterState: { sign_language: null, edition: null, typology: null, tag: T },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [0, 1, 2, 3],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 10,
+    });
+
+    var withPlay = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'play',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(withPlay.kind, 'restore');
+    assert.strictEqual(withPlay.filterState.tag, T, 'play intent restores tag');
+
+    var cold = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: '',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    // Cold load with session: either null (no restore) or restore with tag stripped.
+    // DH14: tag inactive on cold load.
+    if (cold && cold.kind === 'restore') {
+        assert.strictEqual(cold.filterState.tag, null, 'cold load strips tag flag');
+    } else {
+        assert.strictEqual(cold, null, 'cold load may skip session restore entirely');
+    }
+})();
+
+// Bootstrap seam: deaf-hearing intent is one-shot (consumed by caller; planner is pure)
+(function () {
+    var plan1 = logic.planSecondaryNavRestore({
+        session: null,
+        navIntent: 'deaf-hearing',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan1.kind, 'deaf-hearing');
+    var plan2 = logic.planSecondaryNavRestore({
+        session: logic.buildPlaybackSessionSnapshot({
+            masterIndex: plan1.loadMasterIndex,
+            filterState: plan1.filterState,
+            participantName: '',
+            shuffleMode: plan1.shuffleMode,
+            shuffledSequence: plan1.shuffledSequence,
+            shuffleStep: plan1.shuffleStep,
+            filteredCursor: plan1.filteredCursor,
+            playbackTimeSec: 0,
+        }),
+        navIntent: '',
+        fullPlaylistItems: dhFixture,
+        randomFn: function () { return 0; },
+    });
+    if (plan2 && plan2.kind === 'restore') {
+        assert.strictEqual(plan2.filterState.tag, null, 'reload without intent does not re-force tag');
+    }
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING session/nav)');
 

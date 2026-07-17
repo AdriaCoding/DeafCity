@@ -68,6 +68,7 @@ if (!function_exists('preview_build_bottom_bar_player_config')) {
 
         $playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog($catalog)) : array();
         $initialEntry = count($playlist) > 0 ? $playlist[0] : array();
+        $deafHearingEnabled = $catalog ? vpc_catalog_deaf_hearing_tag_count($catalog) > 0 : false;
 
         $idBase = 'preview-secondary-' . preg_replace('/[^a-z0-9_-]/i', '', (string) $instanceSuffix);
         $transportId = $idBase . '__transport';
@@ -117,6 +118,7 @@ if (!function_exists('preview_build_bottom_bar_player_config')) {
                 'initial_sign_lang_readout' => $initialSignLangReadout,
                 'initial_edition_readout' => $initialEditionReadout,
                 'initial_typology_readout' => $initialTypologyReadout,
+                'deaf_hearing_enabled' => $deafHearingEnabled,
                 'secondary_page' => true,
             ),
         );

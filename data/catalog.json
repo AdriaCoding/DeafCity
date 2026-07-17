@@ -14,7 +14,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/2078535510-f3211c725a6bc4323ea2c4434bbff9df2c18ed8f34119be7a1a45f3743438fc7-d_960x540?&r=pad&region=us",
             "typology": "acudits",
             "participant": "Edinho",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "libras_1128773138",
@@ -83,7 +83,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/2078537167-93f2d8a3fa051e224eac3f34c65a1a72c154a44cb373a15fdd3f960274842eec-d_960x540?&r=pad&region=us",
             "typology": "acudits",
             "participant": "Vitoria",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "libras_1128897395",
@@ -100,7 +100,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/2078538593-071364f3d514d985f94e9569b2455de0fb39014589fd32ed0cb285055162e50c-d_960x540?&r=pad&region=us",
             "typology": "anecdotes",
             "participant": "Minho",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "libras_1128880262",
@@ -284,7 +284,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/1285943446-5e7b39ce0d0ebd3e831dd4ad3cd656e62e5ca0e06c5aeacf9_960x540?&r=pad&region=us",
             "typology": "memories",
             "participant": "Beto",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "lsm_643488966",
@@ -309,7 +309,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/1294684357-13599e0bd0a86aad63260ea2f966a1e67d32ae99524aa1a0e_960x540?&r=pad&region=us",
             "typology": "acudits",
             "participant": "Ole",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "lse_503427673",
@@ -347,7 +347,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/1041557879-35ab1cb1f3a1096b6a6b3b7c9c41ed9cdf07c64fb77d9f4f2b39f28114123df5-d_960x540?&r=pad&region=us",
             "typology": "anecdotes",
             "participant": "Aurora",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "lse_506004144",
@@ -535,7 +535,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/2077680972-5e0b9488cdbac0feed6efd413d1651651557f0a5c66710adf8ec5771d80e4809-d_960x540?&r=pad&region=us",
             "typology": "anecdotes",
             "participant": "Sony",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "lse_1129135464",
@@ -572,7 +572,7 @@
             "thumbnail_url": "https://i.vimeocdn.com/video/2077686551-392de8851267461930679cd703e192a65a113dc1be5a10ec2f3a79260e5539b2-d_960x540?&r=pad&region=us",
             "typology": "endevinalles",
             "participant": "Aitor",
-            "invisible": true
+            "invisible": false
         },
         {
             "id": "lse_1201722064",

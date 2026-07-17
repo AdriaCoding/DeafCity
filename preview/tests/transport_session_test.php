@@ -33,6 +33,12 @@ ts_assert_contains("sessionStorage.setItem('vpc-nav-intent'", $secondaryJs, 'sec
 ts_assert_contains("sessionStorage.removeItem('vpc-playback-session')", $secondaryJs, 'reset clears playback session');
 ts_assert_contains('syncParticipantsNavFromSession', $secondaryJs, 'secondary chrome syncs participants nav from session');
 ts_assert_contains('resolveParticipantsNavState', $secondaryJs, 'secondary chrome uses participants nav state');
+ts_assert_contains("bind(deafBtn, 'deaf-hearing')", $secondaryJs, 'secondary DEAF+HEARING sets deaf-hearing intent');
+ts_assert_contains('syncDeafHearingFromSession', $secondaryJs, 'secondary chrome mirrors DEAF+HEARING from session');
+ts_assert_contains("navIntent === 'deaf-hearing'", $logicJs, 'planner handles deaf-hearing force-ON');
+ts_assert_contains('kind === \'deaf-hearing\'', $playerJs, 'player consumes deaf-hearing restore kind');
+ts_assert_contains('resolveTagToggleOnFilterState', $playerJs, 'player applies DH15b tag toggle resolve');
+ts_assert_contains('toggleDeafHearingFilter', $playerJs, 'player wires DEAF+HEARING toggle');
 
 if (strpos($secondaryJs, "match[1] !== 'en'") !== false) {
     fwrite(STDERR, "FAIL: secondary chrome still skips lang=en\n");

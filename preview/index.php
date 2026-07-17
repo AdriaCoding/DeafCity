@@ -63,6 +63,11 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
         // Participant playlists are not server-shuffled (use client-side shuffle)
     }
 }
+
+$deafHearingEnabled = $catalog ? vpc_catalog_deaf_hearing_tag_count($catalog) > 0 : false;
+if ($vpc !== null) {
+    $vpc['deaf_hearing_enabled'] = $deafHearingEnabled;
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($preview_lang, ENT_QUOTES, 'UTF-8') ?>" dir="<?= htmlspecialchars($preview_dir, ENT_QUOTES, 'UTF-8') ?>">
@@ -73,7 +78,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=56">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=58">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +103,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=11"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=50" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=12"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=51" defer></script>
 </body>
 </html>

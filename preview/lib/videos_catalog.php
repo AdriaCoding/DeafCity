@@ -410,6 +410,20 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
                 $entry['participant'] = $participant;
             }
 
+            $tagsOut = array();
+            if (isset($v['tags']) && is_array($v['tags'])) {
+                foreach ($v['tags'] as $tag) {
+                    if (!is_string($tag)) {
+                        continue;
+                    }
+                    $tag = trim($tag);
+                    if ($tag !== '' && !in_array($tag, $tagsOut, true)) {
+                        $tagsOut[] = $tag;
+                    }
+                }
+            }
+            $entry['tags'] = $tagsOut;
+
             // Filterable catalog fields — passed to JS for client-side composable filtering (D17, D18).
             $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
             if ($edition !== '') {
@@ -610,6 +624,20 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
                 $entry['participant'] = $participant;
             }
 
+            $tagsOut = array();
+            if (isset($v['tags']) && is_array($v['tags'])) {
+                foreach ($v['tags'] as $tag) {
+                    if (!is_string($tag)) {
+                        continue;
+                    }
+                    $tag = trim($tag);
+                    if ($tag !== '' && !in_array($tag, $tagsOut, true)) {
+                        $tagsOut[] = $tag;
+                    }
+                }
+            }
+            $entry['tags'] = $tagsOut;
+
             if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
                 $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
             }
@@ -628,6 +656,36 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
             $playlist[] = $entry;
         }
         return $playlist;
+    }
+}
+
+if (!function_exists('vpc_catalog_deaf_hearing_tag_count')) {
+    /**
+     * Count visible catalog videos tagged DEAF&HEARING (DH27 chrome guard).
+     *
+     * @param array<string, mixed> $catalog
+     * @return int
+     */
+    function vpc_catalog_deaf_hearing_tag_count(array $catalog) {
+        if (!isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            return 0;
+        }
+        $count = 0;
+        foreach ($catalog['videos'] as $v) {
+            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
+                continue;
+            }
+            if (!isset($v['tags']) || !is_array($v['tags'])) {
+                continue;
+            }
+            foreach ($v['tags'] as $tag) {
+                if (is_string($tag) && trim($tag) === 'DEAF&HEARING') {
+                    $count++;
+                    break;
+                }
+            }
+        }
+        return $count;
     }
 }
 
