@@ -743,10 +743,17 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "1201741833.en.vtt"
+                }
+            ],
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2169154889-3f2203bd8326eae8d0d7e168fa3df43262760f8e8a392b2bc5173013a7acd952-d_960x540?&r=pad&region=us",
             "participant": "Hassen",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1201741833?h=37d6e5deb4"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1201741833?h=37d6e5deb4",
+            "master_caption_lang": "en"
         },
         {
             "id": "algerian-sl_1201741835",

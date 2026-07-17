@@ -143,6 +143,8 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
     /**
      * Derive sign language filter options from distinct sign_language IDs in the catalog,
      * resolved to labels via studio-config.json.
+     * Ordered alphabetically by the second word of the label (e.g. "Spanish" in
+     * "LSE Spanish Sign Language"), with full-label tie-break.
      *
      * @param array<string, mixed> $catalog
      * @return array<int, array{value: string, label: string}>
@@ -188,9 +190,36 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
             $opts[] = $opt;
         }
         usort($opts, function ($a, $b) {
+            $wordA = vpc_sign_language_sort_key($a['label']);
+            $wordB = vpc_sign_language_sort_key($b['label']);
+            $cmp = strcasecmp($wordA, $wordB);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
             return strcasecmp($a['label'], $b['label']);
         });
         return $opts;
+    }
+}
+
+if (!function_exists('vpc_sign_language_sort_key')) {
+    /**
+     * Sort key for sign language labels: second whitespace-separated word,
+     * falling back to the full label when only one word is present.
+     *
+     * @param string $label
+     * @return string
+     */
+    function vpc_sign_language_sort_key($label) {
+        $label = trim((string) $label);
+        if ($label === '') {
+            return '';
+        }
+        $parts = preg_split('/\s+/', $label);
+        if (!is_array($parts) || count($parts) < 2) {
+            return $label;
+        }
+        return $parts[1];
     }
 }
 

@@ -523,7 +523,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: stacked chrome reserves enough width for Participants\n";
     if (!preg_match(
-        '~@media screen and \(max-width: 500px\)\s*\{.*?\.vpc-control-secondary\s*\{[^}]*flex-direction:\s*column[^}]*\}.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r\s*\{[^}]*display:\s*flex[^}]*width:\s*100%~s',
+        '~@media screen and \(max-width: 700px\)\s*\{.*?\.vpc-control-secondary\s*\{[^}]*flex-direction:\s*column[^}]*\}.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r\s*\{[^}]*display:\s*flex[^}]*width:\s*100%~s',
         $playerCss
     )) {
         fwrite(STDERR, "FAIL: narrow screens should split chrome into three rows\n");

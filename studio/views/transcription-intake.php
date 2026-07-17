@@ -117,7 +117,7 @@
 
         <form method="POST" action="?action=transcription-intake" enctype="multipart/form-data" id="intake-form">
             <div class="field" id="single-language-field">
-                <label for="subtitle_language">Llengua dels subtítols</label>
+                <label for="subtitle_language">Llengua d'entrada</label>
                 <select id="subtitle_language" name="subtitle_language" required>
                     <option value="">Seleccioneu…</option>
                     <?php foreach ($subtitleLanguages as $option): ?>

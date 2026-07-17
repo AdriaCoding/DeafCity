@@ -37,27 +37,28 @@ class VideosCatalogVisibilityTest extends TestCase
         $this->assertSame('111', $playlist[0]['video_id']);
     }
 
-    public function test_sign_language_options_are_sorted_alphabetically_by_label(): void
+    public function test_sign_language_options_are_sorted_alphabetically_by_second_word(): void
     {
         $catalog = [
             'videos' => [
-                ['id' => 'z_111', 'vimeo_id' => '111', 'sign_language' => 'zsl', 'captions' => []],
-                ['id' => 'a_222', 'vimeo_id' => '222', 'sign_language' => 'asl', 'captions' => []],
+                ['id' => 'libras_111', 'vimeo_id' => '111', 'sign_language' => 'libras', 'captions' => []],
+                ['id' => 'lsa_222', 'vimeo_id' => '222', 'sign_language' => 'lsa', 'captions' => []],
             ],
         ];
 
         $configPath = sys_get_temp_dir() . '/studio-config-sl-sort-' . uniqid() . '.json';
         file_put_contents($configPath, json_encode([
             'sign_languages' => [
-                ['id' => 'zsl', 'label' => 'Zulu Sign Language'],
-                ['id' => 'asl', 'label' => 'Alpha Sign Language'],
+                // Full-label A–Z would be LIBRAS then LSA; second-word A–Z is Algerian then Brazilian.
+                ['id' => 'libras', 'label' => 'LIBRAS Brazilian Sign Language'],
+                ['id' => 'lsa', 'label' => 'LSA Algerian Sign Language'],
             ],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
 
         try {
             $opts = vpc_sign_language_options_from_catalog($catalog, $configPath);
 
-            $this->assertSame(['asl', 'zsl'], array_column($opts, 'value'));
+            $this->assertSame(['lsa', 'libras'], array_column($opts, 'value'));
         } finally {
             if (is_file($configPath)) {
                 unlink($configPath);

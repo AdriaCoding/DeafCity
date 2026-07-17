@@ -413,7 +413,7 @@
     }
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 700px) {
     .vpc-control-secondary {
         flex-direction: column;
         flex-wrap: nowrap;

@@ -7,13 +7,14 @@ use Studio\StudioConfig;
 
 class StudioConfigTest extends TestCase
 {
-    public function test_language_lists_are_sorted_alphabetically_by_label(): void
+    public function test_sign_languages_are_sorted_alphabetically_by_second_word(): void
     {
         $configPath = sys_get_temp_dir() . '/studio-config-sort-' . uniqid() . '.json';
         file_put_contents($configPath, json_encode([
             'sign_languages' => [
-                ['id' => 'z', 'label' => 'Zulu Sign Language'],
-                ['id' => 'a', 'label' => 'Alpha Sign Language'],
+                // Full-label A–Z would be LIBRAS then LSA; second-word A–Z is Algerian then Brazilian.
+                ['id' => 'libras', 'label' => 'LIBRAS Brazilian Sign Language'],
+                ['id' => 'lsa', 'label' => 'LSA Algerian Sign Language'],
             ],
             'subtitle_languages' => [
                 ['id' => 'es', 'label' => 'Spanish', 'vimeo_code' => 'es'],
@@ -24,7 +25,7 @@ class StudioConfigTest extends TestCase
         try {
             $config = new StudioConfig($configPath);
 
-            $this->assertSame(['a', 'z'], array_column($config->getSignLanguages(), 'id'));
+            $this->assertSame(['lsa', 'libras'], array_column($config->getSignLanguages(), 'id'));
             $this->assertSame(['en', 'es'], array_column($config->getSubtitleLanguages(), 'id'));
         } finally {
             if (is_file($configPath)) {

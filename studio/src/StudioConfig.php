@@ -381,7 +381,25 @@ class StudioConfig
 
     public function getSignLanguages(): array
     {
-        return $this->listSortedByLabel('sign_languages');
+        $entries = $this->list('sign_languages');
+        usort(
+            $entries,
+            function (array $a, array $b): int {
+                $labelA = (string) ($a['label'] ?? '');
+                $labelB = (string) ($b['label'] ?? '');
+                $cmp = strcasecmp(
+                    self::secondWordSortKey($labelA),
+                    self::secondWordSortKey($labelB),
+                );
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+
+                return strcasecmp($labelA, $labelB);
+            },
+        );
+
+        return $entries;
     }
 
     public function getEditions(): array
@@ -503,5 +521,20 @@ class StudioConfig
         );
 
         return $entries;
+    }
+
+    /** Second whitespace-separated word, or the full label if only one word. */
+    private static function secondWordSortKey(string $label): string
+    {
+        $label = trim($label);
+        if ($label === '') {
+            return '';
+        }
+        $parts = preg_split('/\s+/', $label);
+        if (!is_array($parts) || count($parts) < 2) {
+            return $label;
+        }
+
+        return $parts[1];
     }
 }
