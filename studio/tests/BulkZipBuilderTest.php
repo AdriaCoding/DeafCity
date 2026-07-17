@@ -15,7 +15,7 @@ class BulkZipBuilderTest extends TestCase
         $this->builder = new BulkZipBuilder(new StudioConfig(__DIR__ . '/fixtures/studio-config.json'));
     }
 
-    public function test_non_english_source_produces_source_and_en_srt(): void
+    public function test_non_english_source_produces_only_en_srt(): void
     {
         $entries = [
             [
@@ -32,14 +32,14 @@ class BulkZipBuilderTest extends TestCase
         file_put_contents($tmp, $zipBinary);
         $zip = new \ZipArchive();
         $this->assertTrue($zip->open($tmp));
-        $this->assertSame(2, $zip->numFiles);
-        $this->assertStringContainsString('Hola', (string) $zip->getFromName('BCN_Raquel_3_CA.srt'));
+        $this->assertSame(1, $zip->numFiles);
+        $this->assertFalse($zip->getFromName('BCN_Raquel_3_CA.srt'));
         $this->assertStringContainsString('Hello', (string) $zip->getFromName('BCN_Raquel_3_EN.srt'));
         $zip->close();
         unlink($tmp);
     }
 
-    public function test_italian_source_uses_expected_names(): void
+    public function test_italian_source_uses_expected_en_name(): void
     {
         $entries = [
             [
@@ -56,7 +56,8 @@ class BulkZipBuilderTest extends TestCase
         file_put_contents($tmp, $zipBinary);
         $zip = new \ZipArchive();
         $this->assertTrue($zip->open($tmp));
-        $this->assertNotFalse($zip->getFromName('Roma_Serena_3_IT.srt'));
+        $this->assertSame(1, $zip->numFiles);
+        $this->assertFalse($zip->getFromName('Roma_Serena_3_IT.srt'));
         $this->assertNotFalse($zip->getFromName('Roma_Serena_3_EN.srt'));
         $zip->close();
         unlink($tmp);

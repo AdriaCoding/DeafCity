@@ -48,13 +48,6 @@ class ShellAction
 
         $pipelineStatus = (new TranscriptionPipelineStatus($c->jobManager))->getState();
         $originalFilename = $job['original_filename'] ?? 'transcripció';
-        $subtitleLanguageLabel = $job['subtitle_language'] ?? '';
-        foreach ($c->studioConfig->getSubtitleLanguages() as $lang) {
-            if (($lang['id'] ?? '') === ($job['subtitle_language'] ?? '')) {
-                $subtitleLanguageLabel = $lang['label'] ?? $subtitleLanguageLabel;
-                break;
-            }
-        }
         $englishTranslationSkipped = ($job['subtitle_language'] ?? '') === 'en';
         require $this->view('transcription-loading.php');
         exit;

@@ -115,16 +115,6 @@
             gap: 0.5rem;
             font-size: 0.95rem;
         }
-        .badge-original {
-            font-size: 0.68rem;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            padding: 0.2rem 0.5rem;
-            border-radius: 999px;
-            border: 1px solid #333;
-            color: #666;
-            background: #141414;
-        }
         .file-download-btns {
             display: flex;
             gap: 0.4rem;
@@ -294,24 +284,17 @@
         <p class="done-msg">Subtítols generats</p>
         <div class="file-cards">
             <div class="file-card">
-                <span class="file-card-lang">
-                    <?= htmlspecialchars($subtitleLanguageLabel) ?>
-                    <span class="badge-original">Original</span>
-                </span>
-                <div class="file-download-btns">
-                    <a class="file-download-btn" href="?action=download-vtt"><span class="material-icons">download</span>VTT</a>
-                    <a class="file-download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
-                </div>
-            </div>
-            <?php if (empty($englishTranslationSkipped)): ?>
-            <div class="file-card">
                 <span class="file-card-lang">Anglès</span>
                 <div class="file-download-btns">
+                    <?php if (!empty($englishTranslationSkipped)): ?>
+                    <a class="file-download-btn" href="?action=download-vtt"><span class="material-icons">download</span>VTT</a>
+                    <a class="file-download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
+                    <?php else: ?>
                     <a class="file-download-btn" href="?action=download-vtt&amp;lang=en"><span class="material-icons">download</span>VTT</a>
                     <a class="file-download-btn" href="?action=download-srt&amp;lang=en"><span class="material-icons">download</span>SRT</a>
+                    <?php endif; ?>
                 </div>
             </div>
-            <?php endif; ?>
         </div>
         <form method="POST" action="?action=cancel" id="finish-form">
             <button type="submit" class="btn-finish">Finalitza</button>

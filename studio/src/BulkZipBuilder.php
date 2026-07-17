@@ -31,17 +31,6 @@ class BulkZipBuilder
 
         foreach ($entries as $entry) {
             try {
-                if ($entry['language'] !== 'en') {
-                    $zip->addFromString(
-                        $this->basename->transcriptionDownloadFilename(
-                            $entry['originalFilename'],
-                            $entry['language'],
-                            $entry['language'],
-                            'srt',
-                        ),
-                        $this->converter->convert($entry['srcVttPath']),
-                    );
-                }
                 $zip->addFromString(
                     $this->basename->transcriptionDownloadFilename(
                         $entry['originalFilename'],

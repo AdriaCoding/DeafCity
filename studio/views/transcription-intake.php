@@ -109,7 +109,7 @@
     <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Nova transcripció</h2>
-        <p class="lead">Pugeu l'àudio de l'intèrpret o un esborrany de subtítols (.vtt / .srt). El sistema transcriurà o revisarà el fitxer amb IA, el traduirà a l'anglès si cal, i descarregarà els fitxers de subtítols quan estigui llest.</p>
+        <p class="lead">Pugeu l'àudio de l'intèrpret o un esborrany de subtítols (.vtt / .srt). El sistema transcriurà o revisarà el fitxer amb IA, el traduirà a l'anglès si cal, i descarregarà els subtítols en anglès quan estigui llest.</p>
 
         <?php if (!empty($errors['_form'])): ?>
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
