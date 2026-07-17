@@ -132,6 +132,18 @@
                 <?php endif; ?>
             </div>
 
+            <div class="field" id="output-language-field">
+                <label for="output_language">Llengua de sortida</label>
+                <select id="output_language" name="output_language">
+                    <option value="">Seleccioneu…</option>
+                    <?php foreach ($subtitleLanguages as $option): ?>
+                        <option value="<?= htmlspecialchars($option['id']) ?>">
+                            <?= htmlspecialchars($option['label']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
             <div class="field">
                 <label for="intake_file">Fitxer d'entrada</label>
                 <input type="file" id="intake_file" name="intake_file[]" multiple
