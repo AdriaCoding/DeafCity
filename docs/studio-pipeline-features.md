@@ -23,7 +23,7 @@ Producer-facing Studio capabilities as of **June 2026**.
 - Upload new tracks (SRT/VTT/audio)
 - Replace, delete, set master
 - Cue-level editor (embed of `translation-review.php` via `?action=continguts-caption-review`)
-- Translate to languages flagged as translation targets (`?action=continguts-caption-translate-*`)
+- Translate to all other configured subtitle languages (`?action=continguts-caption-translate-*`)
 
 **Config tabs** — Ciutats, Llengues de signes, Tipologies, Llengues orals: inline label edit, add, delete (when unreferenced). Add-panel UI is inline in `continguts.php`.
 

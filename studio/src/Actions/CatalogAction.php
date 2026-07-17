@@ -12,7 +12,6 @@ use Studio\Container;
 use Studio\EditionAddHandler;
 use Studio\SignLanguageAddHandler;
 use Studio\SubtitleLanguageAddHandler;
-use Studio\SubtitleLanguageTranslationTargetHandler;
 use Studio\StudioHeader;
 use Studio\TypologyAddHandler;
 use Studio\VideoEditHandler;
@@ -87,7 +86,6 @@ class CatalogAction
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
             'continguts-save-typology-label'         => $this->saveLabel('typology'),
-            'continguts-set-subtitle-language-translation-target' => $this->setSubtitleLanguageTranslationTarget(),
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
@@ -443,19 +441,6 @@ class CatalogAction
         exit;
     }
 
-    private function setSubtitleLanguageTranslationTarget(): never
-    {
-        header('Content-Type: application/json; charset=utf-8');
-        $id = trim((string) ($_POST['id'] ?? ''));
-        $value = filter_var($_POST['translation_target'] ?? false, FILTER_VALIDATE_BOOLEAN);
-        $result = (new SubtitleLanguageTranslationTargetHandler($this->c->studioConfig))->handle($id, $value);
-        if (!$result['ok']) {
-            http_response_code(422);
-        }
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
     private function saveLabel(string $type): never
     {
         header('Content-Type: application/json; charset=utf-8');
@@ -733,7 +718,7 @@ class CatalogAction
 
         $existingLangs = array_column($video['captions'] ?? [], 'lang');
         $targets = [];
-        foreach ($this->c->studioConfig->getTranslationTargetLanguages() as $lang) {
+        foreach ($this->c->studioConfig->getSubtitleLanguages() as $lang) {
             $id = (string) ($lang['id'] ?? '');
             if ($id !== '' && $id !== $masterLang && !in_array($id, $existingLangs, true)) {
                 $targets[] = $id;
@@ -953,7 +938,7 @@ class CatalogAction
         $masterLang    = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
         $existingLangs = array_column($video['captions'] ?? [], 'lang');
         $missing = [];
-        foreach ($this->c->studioConfig->getTranslationTargetLanguages() as $lang) {
+        foreach ($this->c->studioConfig->getSubtitleLanguages() as $lang) {
             $id = (string) ($lang['id'] ?? '');
             if ($id !== '' && $id !== $masterLang && !in_array($id, $existingLangs, true)) {
                 $missing[] = ['id' => $id, 'label' => (string) ($lang['label'] ?? $id)];

@@ -46,7 +46,14 @@ class SubtitleLanguageAddHandlerTest extends TestCase
             fn($e) => $e['id'] === 'de',
         ))[0];
         $this->assertSame('de', $entry['vimeo_code']);
-        $this->assertFalse($entry['translation_target']);
+        $this->assertArrayNotHasKey('translation_target', $entry);
+
+        $raw = json_decode((string) file_get_contents($this->configPath), true);
+        $rawEntry = array_values(array_filter(
+            $raw['subtitle_languages'] ?? [],
+            fn($e) => ($e['id'] ?? '') === 'de',
+        ))[0];
+        $this->assertArrayNotHasKey('translation_target', $rawEntry);
     }
 
     public function test_rejects_duplicate_subtitle_language_id(): void

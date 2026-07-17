@@ -366,20 +366,9 @@
         .subtitle-lang-table .col-name { width: 36%; }
         .subtitle-lang-table .col-code { width: 5rem; }
         .subtitle-lang-table .col-vimeo { width: 8rem; }
-        .subtitle-lang-table .col-target { width: 10rem; text-align: center; }
         .subtitle-lang-table .col-actions { width: 3rem; text-align: right; }
-        .subtitle-lang-table td.translation-target-cell { text-align: center; }
         .subtitle-lang-table td.actions-cell { text-align: right; white-space: nowrap; }
         .subtitle-lang-table .vimeo-empty { color: var(--studio-text-placeholder); font-family: monospace; }
-        .translation-target-cell label {
-            display: inline-flex;
-            justify-content: center;
-        }
-        .translation-target-checkbox {
-            width: 1rem;
-            height: 1rem;
-            cursor: pointer;
-        }
         .language-picker { position: relative; }
         .language-search-input {
             width: 100%;
@@ -849,7 +838,6 @@
                     <th class="col-name">Llengua</th>
                     <th class="col-code">Codi</th>
                     <th class="col-vimeo">Locale Vimeo</th>
-                    <th class="col-target">Objectiu de traducció</th>
                     <th class="col-actions" aria-label="Accions"></th>
                 </tr>
             </thead>
@@ -859,7 +847,6 @@
             <?php
             $vimeoCode = (string) ($sl['vimeo_code'] ?? $sl['id']);
             $showVimeoBadge = $vimeoCode !== $sl['id'];
-            $isTranslationTarget = !empty($sl['translation_target']);
             ?>
             <tr class="config-entry" data-id="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>" data-type="subtitle-language">
                 <td class="config-entry-label"><?= htmlspecialchars($sl['label']) ?></td>
@@ -870,11 +857,6 @@
                     <?php else: ?>
                     <span class="vimeo-empty" aria-hidden="true">—</span>
                     <?php endif; ?>
-                </td>
-                <td class="translation-target-cell">
-                    <label>
-                        <input type="checkbox" class="translation-target-checkbox"<?= $isTranslationTarget ? ' checked' : '' ?> aria-label="Objectiu de traducció per a <?= htmlspecialchars($sl['label'], ENT_QUOTES) ?>">
-                    </label>
                 </td>
                 <td class="actions-cell">
                     <?php if (!$isRef): ?>
@@ -1792,30 +1774,6 @@
                     .catch(function () { alert('Error de connexió.'); });
             });
         }
-
-        var targetCheckbox = entry.querySelector('.translation-target-checkbox');
-        if (targetCheckbox) {
-            targetCheckbox.addEventListener('change', function () {
-                var checked = targetCheckbox.checked;
-                var body = new FormData();
-                body.append('id', id);
-                body.append('translation_target', checked ? '1' : '0');
-                targetCheckbox.disabled = true;
-                fetch('?action=continguts-set-subtitle-language-translation-target', { method: 'POST', body: body })
-                    .then(function (r) { return r.json(); })
-                    .then(function (data) {
-                        if (!data.ok) {
-                            targetCheckbox.checked = !checked;
-                            alert('Error: ' + ((data.errors && data.errors[0]) || 'No s\'ha pogut desar.'));
-                        }
-                    })
-                    .catch(function () {
-                        targetCheckbox.checked = !checked;
-                        alert('Error de connexió.');
-                    })
-                    .finally(function () { targetCheckbox.disabled = false; });
-            });
-        }
     }
 
     document.querySelectorAll('.config-entry').forEach(attachConfigEntryListeners);
@@ -2312,9 +2270,6 @@
                 row.innerHTML = '<td class="config-entry-label">' + escHtml(data.label) + '</td>' +
                     '<td class="config-id">' + escHtml(data.id) + '</td>' +
                     '<td class="vimeo-cell">' + vimeoCell + '</td>' +
-                    '<td class="translation-target-cell">' +
-                    '<label><input type="checkbox" class="translation-target-checkbox" aria-label="Objectiu de traducció per a ' + escHtml(data.label) + '"></label>' +
-                    '</td>' +
                     '<td class="actions-cell">' +
                     '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>' +
                     '</td>';

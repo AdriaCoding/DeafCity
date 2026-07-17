@@ -51,12 +51,8 @@ A closed, enumerable classification of the kind of humorous performance in a Vid
 _Avoid_: Tag, category, type (alone)
 
 **Subtitle language**:
-The language a Subtitle is written in (e.g. Spanish, English, Italian). Distinct from Sign language — what is signed on camera vs what is written for the audience. A Subtitle language may exist in Studio config without being a Translation target — it can still be chosen at Intake as the Master language and published to Vimeo; it is simply excluded from automatic translation generation.
-_Avoid_: Idioma alone, spoken language, locale code alone
-
-**Translation target**:
-A Subtitle language that the Studio auto-translates when a Producer saves the Master subtitle. Only a subset of configured Subtitle languages are Translation targets; the rest remain available for Intake, manual caption upload, and Publication but are never spawned by the translation pipeline.
-_Avoid_: Target language (alone — say Translation target), locale, output language
+The language a Subtitle is written in (e.g. Spanish, English, Italian). Distinct from Sign language — what is signed on camera vs what is written for the audience. Every configured Subtitle language is eligible for automatic translation when a Producer saves the Master subtitle (except the Master itself and languages that already have a caption). The same list is used at Intake, for manual caption upload, and at Publication.
+_Avoid_: Idioma alone, spoken language, locale code alone, Translation target (removed — all Subtitle languages are auto-translated)
 
 **Playlist**:
 A curated, ordered list of Videos grouped for browsing on the Website (today: one Playlist per Sign language).

@@ -88,7 +88,6 @@ match ($action) {
     'continguts-save-edition-label',
     'continguts-save-sign-language-label',
     'continguts-save-typology-label',
-    'continguts-set-subtitle-language-translation-target',
     'continguts-delete-edition',
     'continguts-delete-sign-language',
     'continguts-delete-subtitle-language',

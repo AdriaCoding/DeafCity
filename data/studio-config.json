@@ -133,8 +133,7 @@
         {
             "id": "en",
             "label": "English",
-            "vimeo_code": "en",
-            "translation_target": false
+            "vimeo_code": "en"
         },
         {
             "id": "it",
@@ -159,14 +158,12 @@
         {
             "id": "ar",
             "label": "Arabic",
-            "vimeo_code": "ar",
-            "translation_target": true
+            "vimeo_code": "ar"
         },
         {
             "id": "eu",
             "label": "Basque",
-            "vimeo_code": "eu",
-            "translation_target": false
+            "vimeo_code": "eu"
         }
     ],
     "typologies": [
