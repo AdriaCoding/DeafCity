@@ -24,7 +24,7 @@ class StudioHeaderTest extends TestCase
     {
         $msg = StudioHeader::syncStatusMessage(['status' => 'done', 'synced' => 12, 'total' => 26]);
 
-        $this->assertSame('Sincronitzat (12/26 vídeos)', $msg);
+        $this->assertSame('Última sincronització: 12 enviats de 26', $msg);
     }
 
     public function test_resolve_active_nav_from_action(): void

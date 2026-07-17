@@ -82,7 +82,7 @@ $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
                         btn.disabled = false;
                         btn.innerHTML = 'Sincronitzar a Vimeo';
                         msg.className = 'studio-sync-status is-done';
-                        msg.textContent = 'Sincronitzat (' + synced + '/' + total + ' vídeos)';
+                        msg.textContent = 'Última sincronització: ' + synced + ' enviats de ' + total;
                     } else if (data.status === 'error') {
                         btn.disabled = false;
                         btn.innerHTML = 'Sincronitzar a Vimeo';

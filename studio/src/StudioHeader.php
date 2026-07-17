@@ -22,7 +22,7 @@ final class StudioHeader
             $n = (int) ($syncStatus['synced'] ?? 0);
             $t = (int) ($syncStatus['total'] ?? 0);
 
-            return "Sincronitzat ($n/$t vídeos)";
+            return "Última sincronització: $n enviats de $t";
         }
 
         return '';
