@@ -12,9 +12,9 @@
             overflow: hidden;
         }
         body {
-            background: #0a0a0a;
-            font-family: system-ui, sans-serif;
-            color: #e0e0e0;
+            background: var(--studio-bg);
+            font-family: var(--studio-font);
+            color: var(--studio-text);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -24,28 +24,28 @@
             align-items: center;
             gap: 1rem;
             padding: 0.75rem 1.5rem;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid var(--studio-border-subtle);
             flex-shrink: 0;
-            background: #0d0d0d;
+            background: var(--studio-surface-raised);
         }
         #save-btn {
             padding: 0.55rem 1.25rem;
-            background: #e0e0e0;
-            color: #0a0a0a;
+            background: var(--studio-btn-solid-bg);
+            color: var(--studio-btn-solid-text);
             border: none;
             border-radius: 4px;
             font-size: 0.88rem;
             font-weight: 600;
             cursor: pointer;
         }
-        #save-btn:hover:not(:disabled) { background: #fff; }
+        #save-btn:hover:not(:disabled) { background: var(--studio-btn-solid-bg-hover); }
         #save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
         #save-error {
             font-size: 0.82rem;
-            color: #e05555;
+            color: var(--studio-danger);
             white-space: pre-line;
-            background: #1a1010;
-            border: 1px solid #3a2020;
+            background: var(--studio-danger-bg);
+            border: 1px solid var(--studio-danger-border);
             border-radius: 4px;
             padding: 0.4rem 0.65rem;
         }
@@ -56,17 +56,17 @@
             gap: 0.25rem;
             padding: 0.55rem 1rem;
             background: transparent;
-            color: #555;
-            border: 1px solid #2a2a2a;
+            color: var(--studio-text-muted);
+            border: 1px solid var(--studio-border);
             border-radius: 4px;
             font-size: 0.82rem;
             cursor: pointer;
         }
-        #download-vtt-btn:hover, #download-srt-btn:hover { color: #aaa; border-color: #555; }
+        #download-vtt-btn:hover, #download-srt-btn:hover { color: var(--studio-text-secondary); border-color: var(--studio-text-muted); }
         #download-vtt-btn .material-icons, #download-srt-btn .material-icons { font-size: 1rem; }
         .cue-count {
             font-size: 0.78rem;
-            color: #444;
+            color: var(--studio-text-secondary);
             margin-left: auto;
         }
 
@@ -90,18 +90,18 @@
             z-index: 1;
             padding-top: 1rem;
             padding-bottom: 0.75rem;
-            background: #0a0a0a;
-            border-bottom: 1px solid #1e1e1e;
+            background: var(--studio-bg);
+            border-bottom: 1px solid var(--studio-border-subtle);
         }
         .col-header {
             font-size: 0.72rem;
             font-weight: 600;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #999;
+            color: var(--studio-text-muted);
         }
         .col-header-trans {
-            border-left: 1px solid #1e1e1e;
+            border-left: 1px solid var(--studio-border-subtle);
             padding-left: 1.25rem;
         }
         #cue-list {
@@ -112,16 +112,16 @@
         /* ── Pair row ──────────────────────────────────────────────── */
         .pair-card {
             padding: 0.75rem 1.5rem;
-            border-bottom: 1px solid #181818;
+            border-bottom: 1px solid var(--studio-border-subtle);
             transition: background 0.15s, border-color 0.15s;
         }
-        .pair-card:hover { background: #0f0f0f; }
-        .pair-card.cue-overlap { background: #1a1111; border-color: #7c4a4a; }
-        .pair-card.cue-error   { background: #1a0d0d; border-color: #e05555; }
+        .pair-card:hover { background: var(--studio-hover); }
+        .pair-card.cue-overlap { background: var(--studio-danger-bg); border-color: var(--studio-danger-border); }
+        .pair-card.cue-error   { background: var(--studio-danger-bg); border-color: var(--studio-danger); }
 
         .pair-index {
             font-size: 0.72rem;
-            color: #999;
+            color: var(--studio-text-muted);
             text-align: right;
             padding-top: 0.15rem;
         }
@@ -134,18 +134,18 @@
             display: block;
             font-size: 0.72rem;
             font-family: monospace;
-            color: #aaa;
+            color: var(--studio-text-muted);
             margin-bottom: 0.3rem;
         }
         .orig-text {
             font-size: 0.88rem;
-            color: #e0e0e0;
+            color: var(--studio-text);
             line-height: 1.45;
             white-space: pre-wrap;
         }
         .orig-empty {
             font-size: 0.88rem;
-            color: #888;
+            color: var(--studio-text-muted);
         }
 
         /* ── Translated block (editable) ───────────────────────────── */
@@ -154,7 +154,7 @@
             flex-direction: column;
             gap: 0.4rem;
             min-width: 0;
-            border-left: 1px solid #1e1e1e;
+            border-left: 1px solid var(--studio-border-subtle);
             padding-left: 1.25rem;
         }
         .ts-row {
@@ -169,30 +169,30 @@
         .cue-ts {
             width: 9rem;
             padding: 0.3rem 0.4rem;
-            background: #1e1e1e;
-            border: 1px solid #333;
+            background: var(--studio-border-subtle);
+            border: 1px solid var(--studio-border);
             border-radius: 3px;
-            color: #e0e0e0;
+            color: var(--studio-text);
             font-size: 0.8rem;
             font-family: monospace;
         }
-        .cue-ts:focus { outline: none; border-color: #555; }
+        .cue-ts:focus { outline: none; border-color: var(--studio-text-muted); }
         .cue-arrow {
             font-size: 0.75rem;
-            color: #888;
+            color: var(--studio-text-muted);
         }
         .cue-text {
             width: 100%;
             padding: 0.4rem 0.5rem;
-            background: #1e1e1e;
-            border: 1px solid #333;
+            background: var(--studio-border-subtle);
+            border: 1px solid var(--studio-border);
             border-radius: 3px;
-            color: #e0e0e0;
+            color: var(--studio-text);
             font-size: 0.9rem;
             resize: vertical;
             font-family: inherit;
         }
-        .cue-text:focus { outline: none; border-color: #555; }
+        .cue-text:focus { outline: none; border-color: var(--studio-text-muted); }
     </style>
 </head>
 <body>

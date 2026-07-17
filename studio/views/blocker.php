@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
+<?php
+$colorsPath = __DIR__ . '/../css/colors.css';
+$colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
+?>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/colors.css?v=<?= htmlspecialchars($colorsVersion, ENT_QUOTES) ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio — DEAF.city</title>
@@ -11,9 +19,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #0a0a0a;
-            font-family: system-ui, sans-serif;
-            color: #e0e0e0;
+            background: var(--studio-bg);
+            font-family: var(--studio-font);
+            color: var(--studio-text);
         }
         .gate {
             width: 100%;
@@ -26,32 +34,32 @@
             letter-spacing: 0.15em;
             text-transform: uppercase;
             margin-bottom: 2rem;
-            color: #888;
+            color: var(--studio-text-muted);
         }
         .error {
             font-size: 0.85rem;
-            color: #e05555;
+            color: var(--studio-danger);
             margin-bottom: 1rem;
         }
         input[type="password"] {
             display: block;
             width: 100%;
             padding: 0.65rem 0.75rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: var(--studio-input-bg);
+            border: 1px solid var(--studio-border);
             border-radius: 4px;
-            color: #e0e0e0;
+            color: var(--studio-text);
             font-size: 1rem;
             margin-bottom: 0.75rem;
             outline: none;
         }
-        input[type="password"]:focus { border-color: #555; }
+        input[type="password"]:focus { border-color: var(--studio-text-muted); }
         button {
             display: block;
             width: 100%;
             padding: 0.65rem;
-            background: #e0e0e0;
-            color: #0a0a0a;
+            background: var(--studio-btn-solid-bg);
+            color: var(--studio-btn-solid-text);
             border: none;
             border-radius: 4px;
             font-size: 0.9rem;
@@ -59,7 +67,7 @@
             cursor: pointer;
             letter-spacing: 0.05em;
         }
-        button:hover { background: #fff; }
+        button:hover { background: var(--studio-btn-solid-bg-hover); }
     </style>
 </head>
 <body>

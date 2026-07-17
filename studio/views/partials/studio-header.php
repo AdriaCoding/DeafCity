@@ -16,9 +16,16 @@ $syncStatusClass = match ($syncStatus['status'] ?? 'idle') {
     default => '',
 };
 
-$cssPath = dirname(__DIR__, 2) . '/css/studio-header.css';
+$cssDir = dirname(__DIR__, 2) . '/css';
+$colorsPath = $cssDir . '/colors.css';
+$cssPath = $cssDir . '/studio-header.css';
+$colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
 $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
 ?>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/colors.css?v=<?= htmlspecialchars($colorsVersion, ENT_QUOTES) ?>">
 <link rel="stylesheet" href="css/studio-header.css?v=<?= htmlspecialchars($cssVersion, ENT_QUOTES) ?>">
 <header class="studio-header">
     <div class="studio-header-row">

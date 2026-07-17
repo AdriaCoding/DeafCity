@@ -1,0 +1,73 @@
+:root {
+    --studio-bg: #ffffff;
+    --studio-surface: #ffffff;
+    --studio-surface-raised: #f7f7f7;
+    --studio-input-bg: #ffffff;
+    --studio-hover: #e8e8e8;
+    --studio-text: #000000;
+    --studio-text-secondary: #1a1a1a;
+    --studio-text-muted: #333333;
+    --studio-text-placeholder: #666666;
+    --studio-border: #999999;
+    --studio-border-subtle: #b3b3b3;
+
+    /* Blue primary buttons (original #1a3a6e / #9ab8ff) */
+    --studio-btn-blue-bg: #1a3a6e;
+    --studio-btn-blue-bg-hover: #1f4580;
+    --studio-btn-blue-text: #9ab8ff;
+    --studio-btn-blue-border: #2a5090;
+    --studio-btn-blue-link: #6a8fc4;
+
+    /* Green action buttons (original #2a6040 / #7ed87e / generate #1a4a1a) */
+    --studio-btn-green-bg: #2a6040;
+    --studio-btn-green-bg-hover: #336b49;
+    --studio-btn-green-text: #7ed87e;
+    --studio-btn-green-border: #3a8050;
+    --studio-btn-green-alt-bg: #1a4a1a;
+    --studio-btn-green-alt-bg-hover: #1f5a1f;
+    --studio-btn-green-alt-border: #2a6a2a;
+    --studio-btn-green-soft-bg: #e8f5e9;
+    --studio-btn-green-soft-bg-hover: #dff0e0;
+
+    /* Solid CTA — was #e0e0e0 on dark; on light use dark fill for the same role */
+    --studio-btn-solid-bg: #111111;
+    --studio-btn-solid-bg-hover: #000000;
+    --studio-btn-solid-text: #ffffff;
+
+    /* Accent aliases → blue primary (default interactive chrome) */
+    --studio-accent: var(--studio-btn-blue-bg);
+    --studio-accent-text: var(--studio-btn-blue-text);
+    --studio-accent-bg: var(--studio-btn-blue-bg);
+    --studio-accent-bg-hover: var(--studio-btn-blue-bg-hover);
+    --studio-accent-border: var(--studio-btn-blue-border);
+    --studio-focus: #1a3a6e;
+
+    --studio-danger: #c62828;
+    --studio-danger-bg: #fdecea;
+    --studio-danger-border: #e57373;
+    --studio-success: #1b5e20;
+    --studio-success-text: #1b5e20;
+    --studio-success-bg: #e8f5e9;
+    --studio-success-border: #66bb6a;
+    --studio-success-muted: #2e7d32;
+    --studio-scrim: rgba(0, 0, 0, 0.45);
+    --studio-scrim-heavy: rgba(0, 0, 0, 0.88);
+    --studio-font: Roboto, Arial, sans-serif;
+    --studio-shadow: rgba(0, 0, 0, 0.18);
+
+    /* Chips — original blue chip (#2a3a5a / #9ab8ff) */
+    --studio-chip-bg: #2a3a5a;
+    --studio-chip-text: #9ab8ff;
+    --studio-chip-remove: #6080c0;
+
+    --studio-thumb-bg: #e0e0e0;
+    --studio-pipeline-bg: #eeeeee;
+    --studio-job-banner-bg: #d8efda;
+    --studio-job-banner-border: #66bb6a;
+    --studio-job-banner-text: #1b4332;
+    --studio-job-banner-strong: #0d2818;
+    --studio-job-banner-detail: #1b5e20;
+    --studio-warn: #8a5a00;
+    --studio-warn-bg: #fff3cd;
+    --studio-warn-border: #c9a227;
+}

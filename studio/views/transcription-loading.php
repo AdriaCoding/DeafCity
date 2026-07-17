@@ -9,9 +9,9 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             min-height: 100vh;
-            background: #0a0a0a;
-            font-family: system-ui, sans-serif;
-            color: #e0e0e0;
+            background: var(--studio-bg);
+            font-family: var(--studio-font);
+            color: var(--studio-text);
             display: flex;
             flex-direction: column;
         }
@@ -27,30 +27,30 @@
         }
         .filename {
             font-size: 1rem;
-            color: #555;
+            color: var(--studio-text-muted);
             font-weight: 400;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner {
             width: 36px;
             height: 36px;
-            border: 2px solid #222;
-            border-top-color: #5a9a5a;
+            border: 2px solid var(--studio-border-subtle);
+            border-top-color: var(--studio-success-muted);
             border-radius: 50%;
             animation: spin 0.9s linear infinite;
         }
         .status-label {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--studio-text-muted);
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
         .error-panel {
-            background: #1a1010;
-            border: 1px solid #3a2020;
+            background: var(--studio-danger-bg);
+            border: 1px solid var(--studio-danger-border);
             border-radius: 6px;
             padding: 1.25rem 1.5rem;
-            color: #e05555;
+            color: var(--studio-danger);
             font-size: 0.875rem;
             max-width: 400px;
             text-align: left;
@@ -59,23 +59,23 @@
         button.btn-danger {
             padding: 0.65rem 1.25rem;
             background: transparent;
-            color: #a55;
-            border: 1px solid #533;
+            color: var(--studio-danger);
+            border: 1px solid var(--studio-danger-border);
             border-radius: 4px;
             font-size: 0.85rem;
             cursor: pointer;
         }
-        button.btn-danger:hover { color: #e88; border-color: #844; }
+        button.btn-danger:hover { color: var(--studio-danger); border-color: var(--studio-danger); }
         button.btn-retry {
             padding: 0.65rem 1.25rem;
-            background: #1a2a1a;
-            color: #7ed87e;
-            border: 1px solid #2a6040;
+            background: var(--studio-btn-green-alt-bg);
+            color: var(--studio-btn-green-text);
+            border: 1px solid var(--studio-btn-green-border);
             border-radius: 4px;
             font-size: 0.85rem;
             cursor: pointer;
         }
-        button.btn-retry:hover { background: #1e3320; }
+        button.btn-retry:hover { background: var(--studio-btn-green-alt-bg-hover); }
         .btn-row {
             display: flex;
             gap: 0.75rem;
@@ -84,11 +84,11 @@
         }
         .download-msg {
             font-size: 0.9rem;
-            color: #5a9a5a;
+            color: var(--studio-success-muted);
         }
         .done-msg {
             font-size: 0.85rem;
-            color: #5a9a5a;
+            color: var(--studio-success-muted);
             letter-spacing: 0.08em;
             text-transform: uppercase;
         }
@@ -104,8 +104,8 @@
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            background: #141414;
-            border: 1px solid #222;
+            background: var(--studio-hover);
+            border: 1px solid var(--studio-border-subtle);
             border-radius: 6px;
             padding: 0.85rem 1.1rem;
         }
@@ -126,26 +126,26 @@
             gap: 0.2rem;
             padding: 0.28rem 0.6rem;
             background: transparent;
-            color: #555;
-            border: 1px solid #2a2a2a;
+            color: var(--studio-text-muted);
+            border: 1px solid var(--studio-border);
             border-radius: 4px;
             font-size: 0.75rem;
             text-decoration: none;
             letter-spacing: 0.04em;
         }
-        a.file-download-btn:hover { color: #aaa; border-color: #555; }
+        a.file-download-btn:hover { color: var(--studio-text-muted); border-color: var(--studio-text-muted); }
         a.file-download-btn .material-icons { font-size: 0.9rem; }
         button.btn-finish {
             margin-top: 0.5rem;
             padding: 0.65rem 1.5rem;
-            background: #141414;
-            color: #888;
-            border: 1px solid #333;
+            background: var(--studio-hover);
+            color: var(--studio-text-muted);
+            border: 1px solid var(--studio-border);
             border-radius: 4px;
             font-size: 0.85rem;
             cursor: pointer;
         }
-        button.btn-finish:hover { color: #ccc; border-color: #555; }
+        button.btn-finish:hover { color: var(--studio-text-secondary); border-color: var(--studio-text-muted); }
     </style>
 </head>
 <body>

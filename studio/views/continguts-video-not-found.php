@@ -8,16 +8,16 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             min-height: 100vh;
-            background: #0a0a0a;
-            font-family: system-ui, sans-serif;
-            color: #e0e0e0;
+            background: var(--studio-bg);
+            font-family: var(--studio-font);
+            color: var(--studio-text);
         }
         main {
             max-width: 42rem;
             padding: 3rem 2rem;
         }
         p {
-            color: #888;
+            color: var(--studio-text-muted);
             font-size: 0.95rem;
         }
     </style>

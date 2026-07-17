@@ -8,9 +8,9 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             min-height: 100vh;
-            background: #0a0a0a;
-            font-family: system-ui, sans-serif;
-            color: #e0e0e0;
+            background: var(--studio-bg);
+            font-family: var(--studio-font);
+            color: var(--studio-text);
         }
         main {
             max-width: 520px;
@@ -22,7 +22,7 @@
             margin-bottom: 0.5rem;
         }
         p.lead {
-            color: #666;
+            color: var(--studio-text-muted);
             font-size: 0.9rem;
             margin-bottom: 2rem;
             line-height: 1.5;
@@ -30,7 +30,7 @@
         label {
             display: block;
             font-size: 0.8rem;
-            color: #888;
+            color: var(--studio-text-muted);
             margin-bottom: 0.35rem;
             letter-spacing: 0.03em;
         }
@@ -40,14 +40,14 @@
             display: block;
             width: 100%;
             padding: 0.65rem 0.75rem;
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: var(--studio-input-bg);
+            border: 1px solid var(--studio-border);
             border-radius: 4px;
-            color: #e0e0e0;
+            color: var(--studio-text);
             font-size: 0.95rem;
             outline: none;
         }
-        select:focus, input:focus { border-color: #555; }
+        select:focus, input:focus { border-color: var(--studio-text-muted); }
         .bulk-table {
             width: 100%;
             border-collapse: collapse;
@@ -57,10 +57,10 @@
         .bulk-table th, .bulk-table td {
             text-align: left;
             padding: 0.55rem 0.35rem;
-            border-bottom: 1px solid #1e1e1e;
+            border-bottom: 1px solid var(--studio-border-subtle);
         }
         .bulk-table th {
-            color: #666;
+            color: var(--studio-text-muted);
             font-size: 0.72rem;
             letter-spacing: 0.06em;
             text-transform: uppercase;
@@ -73,36 +73,36 @@
         }
         .error {
             font-size: 0.82rem;
-            color: #e05555;
+            color: var(--studio-danger);
             margin-top: 0.35rem;
         }
         .field-hint {
             font-size: 0.78rem;
-            color: #555;
+            color: var(--studio-text-muted);
             margin-top: 0.35rem;
             line-height: 1.45;
         }
         .form-error {
             margin-bottom: 1.25rem;
             padding: 0.75rem;
-            background: #1a1010;
-            border: 1px solid #3a2020;
+            background: var(--studio-danger-bg);
+            border: 1px solid var(--studio-danger-border);
             border-radius: 4px;
-            color: #e05555;
+            color: var(--studio-danger);
             font-size: 0.85rem;
         }
         main button[type="submit"] {
             margin-top: 0.5rem;
             padding: 0.7rem 1.5rem;
-            background: #2a6040;
-            color: #7ed87e;
-            border: 1px solid #3a8050;
+            background: var(--studio-btn-green-bg);
+            color: var(--studio-btn-green-text);
+            border: 1px solid var(--studio-btn-green-border);
             border-radius: 4px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
         }
-        main button[type="submit"]:hover { background: #336b49; }
+        main button[type="submit"]:hover { background: var(--studio-btn-green-bg-hover); }
     </style>
 </head>
 <body>

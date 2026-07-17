@@ -8,9 +8,9 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             min-height: 100vh;
-            background: #0a0a0a;
-            font-family: system-ui, sans-serif;
-            color: #e0e0e0;
+            background: var(--studio-bg);
+            font-family: var(--studio-font);
+            color: var(--studio-text);
         }
         main {
             max-width: 720px;
@@ -22,7 +22,7 @@
             margin-bottom: 0.5rem;
         }
         p.lead {
-            color: #666;
+            color: var(--studio-text-muted);
             font-size: 0.9rem;
             margin-bottom: 2rem;
             line-height: 1.5;
@@ -35,34 +35,34 @@
         th, td {
             text-align: left;
             padding: 0.75rem 0.5rem;
-            border-bottom: 1px solid #1e1e1e;
+            border-bottom: 1px solid var(--studio-border-subtle);
         }
         th {
-            color: #666;
+            color: var(--studio-text-muted);
             font-size: 0.75rem;
             letter-spacing: 0.06em;
             text-transform: uppercase;
             font-weight: 500;
         }
-        .status-pending { color: #666; }
-        .status-processing { color: #7ed87e; }
-        .status-done { color: #5a9a5a; }
-        .status-failed { color: #e05555; }
+        .status-pending { color: var(--studio-text-muted); }
+        .status-processing { color: var(--studio-btn-green-text); }
+        .status-done { color: var(--studio-success-muted); }
+        .status-failed { color: var(--studio-danger); }
         a.back {
             font-size: 0.8rem;
-            color: #555;
+            color: var(--studio-text-muted);
             text-decoration: none;
         }
-        a.back:hover { color: #999; }
+        a.back:hover { color: var(--studio-text-muted); }
         .reason {
             display: block;
             font-size: 0.78rem;
-            color: #a55;
+            color: var(--studio-danger);
             margin-top: 0.25rem;
         }
         .download-msg {
             margin-top: 1.5rem;
-            color: #5a9a5a;
+            color: var(--studio-success-muted);
             font-size: 0.9rem;
         }
     </style>
@@ -103,9 +103,9 @@
 
         <div id="completed-actions" style="display:none; margin-top:1.5rem;">
             <p class="download-msg">Descàrrega iniciada.</p>
-            <p style="margin-top:0.6rem; font-size:0.85rem; color:#666;">
+            <p style="margin-top:0.6rem; font-size:0.85rem; color:var(--studio-text-muted);">
                 Si la descàrrega no s'inicia automàticament,
-                <a href="?action=bulk-download" id="manual-download-link" style="color:#7ed87e;">feu clic aquí</a>.
+                <a href="?action=bulk-download" id="manual-download-link" style="color:var(--studio-success-text);">feu clic aquí</a>.
             </p>
         </div>
     </main>

@@ -642,7 +642,9 @@ class CatalogAction
     {
         http_response_code(404);
         echo '<!DOCTYPE html><html lang="ca"><head><meta charset="UTF-8"><title>Error</title>';
-        echo '<style>body{background:#0a0a0a;color:#e05555;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:2rem;text-align:center;}</style>';
+        echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>';
+        echo '<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">';
+        echo '<link rel="stylesheet" href="css/colors.css"><style>body{background:var(--studio-bg);color:var(--studio-danger);font-family:var(--studio-font);display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:2rem;text-align:center;}</style>';
         echo '</head><body><p>' . htmlspecialchars($message, ENT_QUOTES) . '</p></body></html>';
         exit;
     }
