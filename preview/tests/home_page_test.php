@@ -567,6 +567,14 @@ if (is_file($playerCssPath)) {
         exit(1);
     }
     echo "PASS: play SVG hidden during sandclock loading\n";
+    if (!preg_match(
+        '~\[data-loading="true"\]::before[^}]*width:\s*80%~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: loading circle should be 80% of play icon box to match SVG optical size\n");
+        exit(1);
+    }
+    echo "PASS: loading circle matches play SVG optical size\n";
     assert_contains('vpc-chrome-btn__label', $html, 'chrome button labels wrapped for ellipsis');
     if (!preg_match('~\.vpc-chrome-btn__label[^}]*text-overflow:\s*ellipsis~s', $playerCss)) {
         fwrite(STDERR, "FAIL: chrome button label span should ellipsis overflow\n");

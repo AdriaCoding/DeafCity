@@ -78,7 +78,7 @@ if ($vpc !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=58">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=59">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
