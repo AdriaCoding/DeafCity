@@ -1,0 +1,24 @@
+---
+description: Keep data/ writable by www-data (PHP-FPM / Studio)
+alwaysApply: true
+---
+
+# `data/` ownership for Studio
+
+Studio (PHP-FPM) runs as `www-data` and must write files under `data/` (`ui-localizations.json`, `studio-config.json`, `jobs/`, `captions/`, etc.).
+
+## Required after any root write under `data/`
+
+If you create or overwrite files under `data/` while running as root (Write tool, shell redirect, Python, etc.), immediately restore ownership:
+
+```bash
+chown www-data:www-data -- path/to/file
+# or for multiple paths / dirs:
+chown -R www-data:www-data -- data/ui-localizations.json data/studio-config.json
+```
+
+Prefer `sudo -u www-data …` when writing those files so ownership never flips.
+
+## Why
+
+Root-owned `644` files break Studio saves and auto-translate (`Could not open … for writing`). Default ACLs on `data/` are a safety net; ownership fix is still mandatory.

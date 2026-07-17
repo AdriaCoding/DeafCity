@@ -34,4 +34,13 @@ You may test the Studio webapp at `https://deaf.city/studio` (password: `hola`).
 
 When you need a catalog video for manual testing, use **2020_VALENCIA_Aurora_1_HD** (`vimeo_id` `1201722064`, edition Valencia 2020). Details page: `?action=continguts-video&vimeo_id=1201722064`.
 
+### `data/` file ownership (Studio writes as `www-data`)
+
+PHP-FPM runs as `www-data`. Studio must be able to write JSON under `data/` (e.g. `ui-localizations.json`, `studio-config.json`, jobs, captions).
+
+- **Do not leave new/edited `data/` files owned by root.** After creating or overwriting anything under `data/` as root, run:
+  `chown -R www-data:www-data -- <paths you touched>`
+- Prefer writing as `www-data` when practical (`sudo -u www-data …`).
+- Default ACLs on `data/` give `www-data` write access even on root-created files; still fix ownership so listings and backups stay consistent.
+
 The design of the website should be MINIMALISTIC.
