@@ -45,7 +45,7 @@ class SubtitleLanguageAddHandler
             if (($language['id'] ?? '') === $id) {
                 return [
                     'ok' => false,
-                    'errors' => ['Aquesta llengua oral ja existeix a la llista.'],
+                    'errors' => ['Aquesta llengua verbal ja existeix a la llista.'],
                 ];
             }
         }
@@ -53,7 +53,7 @@ class SubtitleLanguageAddHandler
         if (in_array($vimeoCode, $this->studioConfig->getUsedVimeoCodes(), true)) {
             return [
                 'ok' => false,
-                'errors' => ['Aquest codi de locale Vimeo ja està assignat a una altra llengua oral.'],
+                'errors' => ['Aquest codi de locale Vimeo ja està assignat a una altra llengua verbal.'],
             ];
         }
 
@@ -62,7 +62,7 @@ class SubtitleLanguageAddHandler
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,
-                'errors' => ['No s\'ha pogut desar la nova llengua oral.'],
+                'errors' => ['No s\'ha pogut desar la nova llengua verbal.'],
             ];
         }
 

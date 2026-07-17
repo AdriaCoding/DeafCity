@@ -38,7 +38,7 @@ Nav tabs (client-side, no page reload per tab):
 - **Ciutats** — inline-edit edition labels; add or delete editions when no catalog video references them.
 - **Llengues de signes** — same pattern for sign languages.
 - **Tipologies** — manage video typology labels.
-- **Llengues orals** — manage subtitle languages (all are auto-translation destinations).
+- **Llengues verbals** — manage subtitle languages (all are auto-translation destinations).
 
 Adding a new catalog video uses the **Afegir vídeo** modal (`CatalogIntakeAddHandler`): Vimeo URL/ID, sign language, edition, typology, tags, optional caption uploads — writes directly to `catalog.json` and `data/captions/` without a pipeline Job.
 

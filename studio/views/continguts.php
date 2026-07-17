@@ -614,7 +614,7 @@
         <button class="tab-btn active" data-tab="videos">Vídeos</button>
         <button class="tab-btn" data-tab="editions">Ciutats</button>
         <button class="tab-btn" data-tab="languages">Llengues de signes</button>
-        <button class="tab-btn" data-tab="subtitle-languages">Llengues orals</button>
+        <button class="tab-btn" data-tab="subtitle-languages">Llengues verbals</button>
         <button class="tab-btn" data-tab="typologies">Tipologies</button>
     </div>
 
@@ -830,7 +830,7 @@
         </div>
     </div>
 
-    <!-- ══ Llengues orals ═════════════════════════════════════════════════ -->
+    <!-- ══ Llengues verbals ═════════════════════════════════════════════════ -->
     <div class="tab-panel" id="tab-subtitle-languages">
         <table class="subtitle-lang-table">
             <thead>
@@ -869,9 +869,9 @@
         </table>
 
         <!-- Add subtitle language -->
-        <button class="add-trigger-btn" id="subtitle-lang-add-trigger">+ Afegir llengua oral…</button>
+        <button class="add-trigger-btn" id="subtitle-lang-add-trigger">+ Afegir llengua verbal…</button>
         <div class="config-new-panel" id="subtitle-lang-new-panel">
-            <h3>Nova llengua oral</h3>
+            <h3>Nova llengua verbal</h3>
             <p class="config-add-error" id="subtitle-lang-add-error" role="alert"></p>
 
             <div class="language-picker" id="oral-lang-picker">
@@ -2251,7 +2251,7 @@
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 if (!data.ok) {
-                    subtitleLangAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la llengua oral.';
+                    subtitleLangAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la llengua verbal.';
                     return;
                 }
                 usedVimeoCodes.push(data.vimeo_code);

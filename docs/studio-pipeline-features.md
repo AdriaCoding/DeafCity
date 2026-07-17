@@ -25,7 +25,7 @@ Producer-facing Studio capabilities as of **June 2026**.
 - Cue-level editor (embed of `translation-review.php` via `?action=continguts-caption-review`)
 - Translate to all other configured subtitle languages (`?action=continguts-caption-translate-*`)
 
-**Config tabs** — Ciutats, Llengues de signes, Tipologies, Llengues orals: inline label edit, add, delete (when unreferenced). Add-panel UI is inline in `continguts.php`.
+**Config tabs** — Ciutats, Llengues de signes, Tipologies, Llengues verbals: inline label edit, add, delete (when unreferenced). Add-panel UI is inline in `continguts.php`.
 
 **Vimeo sync** — explicit **Sincronitzar a Vimeo** (header) or `php studio/scripts/sync_to_vimeo.php`. Caption changes on Continguts are local-first; Vimeo is updated on sync or per-action best-effort where implemented.
 

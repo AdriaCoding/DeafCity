@@ -51,8 +51,8 @@ A closed, enumerable classification of the kind of humorous performance in a Vid
 _Avoid_: Tag, category, type (alone)
 
 **Subtitle language**:
-The language a Subtitle is written in (e.g. Spanish, English, Italian). Distinct from Sign language — what is signed on camera vs what is written for the audience. Every configured Subtitle language is eligible for automatic translation when a Producer saves the Master subtitle (except the Master itself and languages that already have a caption). The same list is used at Intake, for manual caption upload, and at Publication.
-_Avoid_: Idioma alone, spoken language, locale code alone, Translation target (removed — all Subtitle languages are auto-translated)
+The language a Subtitle is written in (e.g. Spanish, English, Italian). Distinct from Sign language — what is signed on camera vs what is written for the audience. Every configured Subtitle language is eligible for automatic translation when a Producer saves the Master subtitle (except the Master itself and languages that already have a caption). The same list is used at Intake, for manual caption upload, and at Publication. UI label in Catalan: "Llengua verbal" / "Llengues verbals" (English: verbal language).
+_Avoid_: Idioma alone, spoken language, oral language, locale code alone, Translation target (removed — all Subtitle languages are auto-translated)
 
 **Playlist**:
 A curated, ordered list of Videos grouped for browsing on the Website (today: one Playlist per Sign language).

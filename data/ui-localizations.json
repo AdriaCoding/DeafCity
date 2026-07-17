@@ -9,7 +9,8 @@
             "es": "DEAF.city utiliza el humor visual-gestual para desafiar la indiferencia oyente, celebrar la cultura Sorda y conectar comunidades. Los participantes comparten historias y chistes, transformando los malentendidos cotidianos en momentos de risa y reflexión. El humor se convierte en un puente entre el público Sordo y oyente, empoderando a los narradores para recuperar la visibilidad y promover la inclusión.",
             "it": "DEAF.city usa l'umorismo visivo-gestuale per sfidare l'indifferenza udente, celebrare la cultura Sorda e connettere le comunità. I partecipanti condividono storie e battute, trasformando i malintesi quotidiani in momenti di risate e riflessione. L'umorismo diventa un ponte tra il pubblico Sordo e udente, dando potere ai narratori di rivendicare visibilità e promuovere l'inclusione.",
             "pt": "DEAF.city usa o humor visual-gestual para desafiar a indiferença auditiva, celebrar a cultura surda e conectar comunidades. Os participantes partilham histórias e anedotas, transformando mal-entendidos quotidianos em momentos de riso e reflexão. O humor torna-se uma ponte entre as audiências surdas e ouvintes, capacitando os contadores de histórias a recuperar a visibilidade e a promover a inclusão.",
-            "ar": "DEAF.city تستعمل الفكاهة البصرية-الحركية باش تتحدى اللامبالاة تاع السامعين، باش تحتفل بالثقافة تاع الصم وتربط المجتمعات. المشاركين يشاركو قصص ونكت، ويحولو سوء التفاهم اليومي للحظات ضحك وتفكير. الفكاهة تولي جسر بين جمهور الصم والسامعين، وتقوي رواة القصص باش يسترجعو رؤيتهم ويدعمو الإدماج."
+            "ar": "DEAF.city تستعمل الفكاهة البصرية-الحركية باش تتحدى اللامبالاة تاع السامعين، باش تحتفل بالثقافة تاع الصم وتربط المجتمعات. المشاركين يشاركو قصص ونكت، ويحولو سوء التفاهم اليومي للحظات ضحك وتفكير. الفكاهة تولي جسر بين جمهور الصم والسامعين، وتقوي رواة القصص باش يسترجعو رؤيتهم ويدعمو الإدماج.",
+            "eu": "DEAF.city-k umore bisual-keinuzkoa erabiltzen du entzuleen axolagabekeriaren aurka, Gor kultura ospatuz eta komunitateak lotuz. Parte-hartzaileek istorioak eta txisteak partekatzen dituzte, eguneroko gaizki-ulertuak barre eta hausnarketa une bihurtuz. Umorea zubi bihurtzen da Gor eta entzule publikoen artean, kontalariei ikusgarritasuna berreskuratzeko eta inklusioa sustatzeko ahalmena emanez."
         },
         "seeded": {
             "fr": true,
@@ -17,7 +18,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.breaking_silence.title": {
@@ -30,7 +32,8 @@
             "es": "Rompiendo el silencio",
             "it": "Rompere il Silenzio",
             "pt": "Quebrando o Silêncio",
-            "ar": "كسر الصمت"
+            "ar": "كسر الصمت",
+            "eu": "Isiltasuna hausten"
         },
         "seeded": {
             "fr": true,
@@ -38,7 +41,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.deaf_city.p1": {
@@ -51,7 +55,8 @@
             "es": "La comunidad Sorda vive en un mundo que a menudo ignora su forma natural de comunicación: la lengua de signos. Aunque muchas personas Sordas dependen de la lectura de labios, la mayoría de los oyentes no entienden las lenguas de signos, lo que resulta en aislamiento e invisibilidad. Para muchos, la rara aparición de un intérprete de lengua de signos en televisión es el único reconocimiento de la existencia Sorda.",
             "it": "La comunità Sorda vive in un mondo che spesso trascura il suo modo naturale di comunicare: la lingua dei segni. Mentre molti Sordi si affidano alla lettura labiale, la maggior parte degli udenti non comprende le lingue dei segni, il che porta a isolamento e invisibilità. Per molti, la rara apparizione di un interprete di lingua dei segni in televisione è l'unico riconoscimento dell'esistenza Sorda.",
             "pt": "A comunidade surda vive num mundo que muitas vezes ignora a sua forma natural de comunicação: a língua gestual. Enquanto muitos surdos dependem da leitura labial, a maioria dos ouvintes não compreende as línguas gestuais, resultando em isolamento e invisibilidade. Para muitos, a rara aparição de um intérprete de língua gestual na televisão é o único reconhecimento da existência surda.",
-            "ar": "مجتمع الصم يعيش في عالم غالبا ما يتجاهل طريقة التواصل الطبيعية ديالو: لغة الإشارة. في حين أن بزاف من الصم يعتمدو على قراءة الشفاه، معظم الناس السامعين ما يفهموش لغات الإشارة، وهذا يؤدي للعزلة وعدم الظهور. بالنسبة للكثيرين، الظهور النادر لمترجم لغة الإشارة في التلفزيون هو الاعتراف الوحيد بوجود الصم."
+            "ar": "مجتمع الصم يعيش في عالم غالبا ما يتجاهل طريقة التواصل الطبيعية ديالو: لغة الإشارة. في حين أن بزاف من الصم يعتمدو على قراءة الشفاه، معظم الناس السامعين ما يفهموش لغات الإشارة، وهذا يؤدي للعزلة وعدم الظهور. بالنسبة للكثيرين، الظهور النادر لمترجم لغة الإشارة في التلفزيون هو الاعتراف الوحيد بوجود الصم.",
+            "eu": "Gor komunitatea komunikatzeko duen era naturala —zeinu-hizkuntza— maiz alde batera uzten duen mundu batean bizi da. Gor askok ezpain-irakurtzearen menpe bizi diren bitartean, entzule gehienek ez dituzte zeinu-hizkuntzak ulertzen; horrek bakardadea eta ikusezintasuna dakar. Askorentzat, telebistan zeinu-hizkuntzako interprete baten agerpen urria da Gor existentziaren aitorpen bakarra."
         },
         "seeded": {
             "fr": true,
@@ -59,7 +64,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.deaf_city.title": {
@@ -72,7 +78,8 @@
             "es": "DEAF.city",
             "it": "DEAF.city",
             "pt": "DEAF.city",
-            "ar": "DEAF.city"
+            "ar": "DEAF.city",
+            "eu": "DEAF.city"
         },
         "seeded": {
             "fr": true,
@@ -80,7 +87,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.dissemination.p1": {
@@ -93,7 +101,8 @@
             "es": "El proyecto se extiende a través de un repositorio de videos de acceso abierto con instalaciones multipantalla en museos, centros de arte y espacios públicos, utilizando televisores, paneles LED o proyecciones. Los videos —emparejados con sonidos generados por los participantes, como vocalizaciones, aplausos y chasquidos de dedos— crean un paisaje sonoro rico y cautivador.",
             "it": "Il progetto si estende attraverso un archivio video ad accesso aperto con installazioni multi-schermo in musei, centri d'arte e spazi pubblici, utilizzando TV, pannelli LED o proiezioni. I video—abbinati a suoni generati dai partecipanti come vocalizzazioni, battiti di mani e schiocchi di dita—creano un paesaggio sonoro ricco e coinvolgente.",
             "pt": "O projeto estende-se por um repositório de vídeo de acesso aberto com instalações multi-ecrã em museus, centros de arte e espaços públicos, utilizando televisores, painéis LED ou projeções. Os vídeos – combinados com sons gerados pelos participantes, como vocalizações, palmas e estalar de dedos – criam uma paisagem sonora rica e envolvente.",
-            "ar": "المشروع ينتشر عبر مستودع فيديوهات مفتوح الوصول مع منشآت متعددة الشاشات في المتاحف، مراكز الفن والأماكن العامة، باستخدام أجهزة تلفزيون، لوحات LED، أو عروض. الفيديوهات—مقترنة بأصوات يولدها المشاركون مثل أصواتهم، التصفيقات، ونقرات الأصابع—تخلق مشهد صوتي غني وجذاب."
+            "ar": "المشروع ينتشر عبر مستودع فيديوهات مفتوح الوصول مع منشآت متعددة الشاشات في المتاحف، مراكز الفن والأماكن العامة، باستخدام أجهزة تلفزيون، لوحات LED، أو عروض. الفيديوهات—مقترنة بأصوات يولدها المشاركون مثل أصواتهم، التصفيقات، ونقرات الأصابع—تخلق مشهد صوتي غني وجذاب.",
+            "eu": "Proiektua sarbide irekiko bideo biltegi batean zabaltzen da, museo, arte-zentro eta espazio publikoetan pantaila anitzeko instalazioekin, telebistak, LED panelak edo proiekzioak erabiliz. Bideoek —parte-hartzaileek sortutako soinuekin (ahoskatzeak, txaloak eta hatz-kliskak) batera— soinu-paisaia aberats eta erakargarria sortzen dute."
         },
         "seeded": {
             "fr": true,
@@ -101,7 +110,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.dissemination.title": {
@@ -114,7 +124,8 @@
             "es": "Difusión",
             "it": "Diffusione",
             "pt": "Disseminação",
-            "ar": "الانتشار"
+            "ar": "الانتشار",
+            "eu": "Zabalkundea"
         },
         "seeded": {
             "fr": true,
@@ -122,7 +133,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.silent_eloquence.p1": {
@@ -135,7 +147,8 @@
             "es": "Al combinar humor, arte y activismo, DEAF.city visibiliza la cultura Sorda, fomenta la comprensión y construye puentes entre las comunidades Sordas y oyentes de todo el mundo.",
             "it": "Unendo umorismo, arte e attivismo, DEAF.city rende visibile la cultura Sorda, favorisce la comprensione e costruisce ponti tra le comunità Sorde e udenti in tutto il mondo.",
             "pt": "Ao misturar humor, arte e ativismo, DEAF.city torna a cultura surda visível, fomenta a compreensão e constrói pontes entre as comunidades surdas e ouvintes em todo o mundo.",
-            "ar": "من خلال دمج الفكاهة، الفن، والنشاط، DEAF.city تخلي ثقافة الصم مرئية، تعزز التفاهم، وتبني جسور بين مجتمعات الصم والسامعين في جميع أنحاء العالم."
+            "ar": "من خلال دمج الفكاهة، الفن، والنشاط، DEAF.city تخلي ثقافة الصم مرئية، تعزز التفاهم، وتبني جسور بين مجتمعات الصم والسامعين في جميع أنحاء العالم.",
+            "eu": "Umorea, artea eta aktibismoa uztartuz, DEAF.city-k Gor kultura ikusgai egiten du, ulermena sustatzen du eta mundu osoko Gor eta entzule komunitateen arteko zubiak eraikitzen ditu."
         },
         "seeded": {
             "fr": true,
@@ -143,7 +156,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.silent_eloquence.title": {
@@ -156,7 +170,8 @@
             "es": "Elocuencia silenciosa",
             "it": "Eloquenza Silenziosa",
             "pt": "Eloquência Silenciosa",
-            "ar": "بلاغة صامتة"
+            "ar": "بلاغة صامتة",
+            "eu": "Elokuentzia isila"
         },
         "seeded": {
             "fr": true,
@@ -164,7 +179,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.timeline.p1": {
@@ -177,7 +193,8 @@
             "es": "Desde su lanzamiento en Valencia en 2020, DEAF.city se ha expandido a Ciudad de México en 2021, y en 2023 a Bilbao y São Paulo. Veintiséis participantes han compartido monólogos humorísticos en Lengua de Signos Española, Mexicana y Brasileña. En 2026, el proyecto crecerá a Marsella, Roma, Atenas, Estambul, Túnez, Argel y Barcelona, incorporando las lenguas de signos francesa, italiana, griega, turca, tunecina, argelina y catalana.",
             "it": "Dal suo lancio a Valencia nel 2020, DEAF.city si è espanso a Città del Messico nel 2021 e nel 2023 a Bilbao e San Paolo. Ventisei partecipanti hanno condiviso monologhi umoristici in Lingua dei Segni Spagnola, Messicana e Brasiliana. Nel 2026, il progetto si estenderà a Marsiglia, Roma, Atene, Istanbul, Tunisi, Algeri e Barcellona, incorporando le lingue dei segni Francese, Italiana, Greca, Turca, Tunisina, Algerina e Catalana.",
             "pt": "Desde o seu lançamento em Valência em 2020, DEAF.city expandiu-se para a Cidade do México em 2021 e, em 2023, para Bilbau e São Paulo. Vinte e seis participantes partilharam monólogos humorísticos em Língua Gestual Espanhola, Mexicana e Brasileira. Em 2026, o projeto irá expandir-se para Marselha, Roma, Atenas, Istambul, Tunes, Argel e Barcelona, incorporando as línguas gestuais Francesa, Italiana, Grega, Turca, Tunisina, Argelina e Catalã.",
-            "ar": "منذ إطلاقه في فالنسيا في عام 2020، DEAF.city توسع لمدينة مكسيكو في عام 2021، وفي عام 2023 لبلباو وساو باولو. ستة وعشرين مشاركًا شاركو مونولوجات فكاهية بلغات الإشارة الإسبانية، المكسيكية، والبرازيلية. في عام 2026، المشروع سيتوسع لمرسيليا، روما، أثينا، إسطنبول، تونس، الجزائر، وبرشلونة، وسيضم لغات الإشارة الفرنسية، الإيطالية، اليونانية، التركية، التونسية، الجزائرية، والكاتالونية."
+            "ar": "منذ إطلاقه في فالنسيا في عام 2020، DEAF.city توسع لمدينة مكسيكو في عام 2021، وفي عام 2023 لبلباو وساو باولو. ستة وعشرين مشاركًا شاركو مونولوجات فكاهية بلغات الإشارة الإسبانية، المكسيكية، والبرازيلية. في عام 2026، المشروع سيتوسع لمرسيليا، روما، أثينا، إسطنبول، تونس، الجزائر، وبرشلونة، وسيضم لغات الإشارة الفرنسية، الإيطالية، اليونانية، التركية، التونسية، الجزائرية، والكاتالونية.",
+            "eu": "2020an Valentzian abiatu zenetik, DEAF.city Mexiko Hirira zabaldu zen 2021ean, eta 2023an Bilbora eta São Paulora. Hogeita sei parte-hartzailek monologo umoretsuak partekatu dituzte Espainiako, Mexikoko eta Brasilgo zeinu-hizkuntzetan. 2026an, proiektua Marseillara, Erromara, Atenasera, Istanbulera, Tunisera, Aljerera eta Bartzelonara hedatuko da, Frantziako, Italiako, Greziako, Turkiako, Tunisiako, Aljeriako eta Kataluniako zeinu-hizkuntzak txertatuz."
         },
         "seeded": {
             "fr": true,
@@ -185,7 +202,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.block.timeline.title": {
@@ -198,7 +216,8 @@
             "es": "Cronología",
             "it": "Cronologia",
             "pt": "Cronologia",
-            "ar": "الجدول الزمني"
+            "ar": "الجدول الزمني",
+            "eu": "Denbora-lerroa"
         },
         "seeded": {
             "fr": true,
@@ -206,7 +225,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.contact": {
@@ -219,7 +239,8 @@
             "it": "Contatti",
             "pt": "Contacto",
             "es": "Contacto",
-            "ar": "اتصال"
+            "ar": "اتصال",
+            "eu": "Kontaktua"
         },
         "seeded": {
             "ca": true,
@@ -227,7 +248,8 @@
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.collaboration": {
@@ -240,14 +262,16 @@
             "it": "_COLLABORAZIONE",
             "pt": "_COLABORAÇÃO",
             "es": "_COLABORACIÓN",
-            "ar": "_تعاون"
+            "ar": "_تعاون",
+            "eu": "_ELKARLANA"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.coordination": {
@@ -260,14 +284,16 @@
             "it": "_COORDINAMENTO",
             "pt": "_COORDENAÇÃO",
             "es": "_COORDINACIÓN",
-            "ar": "_تنسيق"
+            "ar": "_تنسيق",
+            "eu": "_KOORDINAZIOA"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.interpreter": {
@@ -280,14 +306,16 @@
             "it": "_INTERPRETE",
             "pt": "_INTÉRPRETE",
             "es": "_INTÉRPRETE",
-            "ar": "_مترجم"
+            "ar": "_مترجم",
+            "eu": "_INTERPRETEA"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.interpreters": {
@@ -300,14 +328,16 @@
             "it": "_INTERPRETI",
             "pt": "_INTÉRPRETES",
             "es": "_INTÉRPRETES",
-            "ar": "_مترجمون"
+            "ar": "_مترجمون",
+            "eu": "_INTERPRETEAK"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.participants": {
@@ -320,14 +350,16 @@
             "it": "_PARTECIPANTI",
             "pt": "_PARTICIPANTES",
             "es": "_PARTICIPANTES",
-            "ar": "_مشاركون"
+            "ar": "_مشاركون",
+            "eu": "_PARTE-HARTZAILEAK"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.supported_by": {
@@ -340,14 +372,16 @@
             "it": "_SOSTENUTO DA",
             "pt": "_APOIADO POR",
             "es": "_CON EL APOYO DE",
-            "ar": "_مدعوم من طرف"
+            "ar": "_مدعوم من طرف",
+            "eu": "_HONEN LAGUNTZAREKIN"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.label.thanks_to": {
@@ -360,14 +394,16 @@
             "it": "_GRAZIE A",
             "pt": "_AGRADECIMENTOS A",
             "es": "_GRACIAS A",
-            "ar": "_شكراً لـ"
+            "ar": "_شكراً لـ",
+            "eu": "_ESKERRAK"
         },
         "seeded": {
             "fr": true,
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.credits.project_by": {
@@ -380,7 +416,8 @@
             "it": "DEAF.city è un progetto di",
             "pt": "DEAF.city é um projeto de",
             "es": "DEAF.city es un proyecto de",
-            "ar": "DEAF.city مشروع من طرف"
+            "ar": "DEAF.city مشروع من طرف",
+            "eu": "DEAF.city honakoaren proiektua da"
         },
         "seeded": {
             "ca": true,
@@ -388,7 +425,8 @@
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "about.page_title": {
@@ -401,7 +439,8 @@
             "es": "Acerca de — DEAF.city",
             "it": "Info — DEAF.city",
             "pt": "Sobre — DEAF.city",
-            "ar": "حول — DEAF.city"
+            "ar": "حول — DEAF.city",
+            "eu": "Honi buruz — DEAF.city"
         },
         "seeded": {
             "fr": true,
@@ -409,7 +448,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2020-valencia": {
@@ -422,7 +462,8 @@
             "es": "Valencia",
             "it": "València",
             "pt": "Valência",
-            "ar": "فالنسيا"
+            "ar": "فالنسيا",
+            "eu": "Valentzia"
         },
         "seeded": {
             "fr": true,
@@ -430,7 +471,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2021-mexico": {
@@ -443,7 +485,8 @@
             "es": "Ciudad de México",
             "it": "Città del Messico",
             "pt": "Cidade do México",
-            "ar": "مدينة مكسيكو"
+            "ar": "مدينة مكسيكو",
+            "eu": "Mexiko Hiria"
         },
         "seeded": {
             "fr": true,
@@ -451,7 +494,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2023-bilbao": {
@@ -464,7 +508,8 @@
             "es": "Bilbao",
             "it": "Bilbao",
             "pt": "Bilbau",
-            "ar": "بلباو"
+            "ar": "بلباو",
+            "eu": "Bilbo"
         },
         "seeded": {
             "fr": true,
@@ -472,7 +517,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2023-sao-paulo": {
@@ -485,7 +531,8 @@
             "es": "São Paulo",
             "it": "San Paolo",
             "pt": "São Paulo",
-            "ar": "ساو باولو"
+            "ar": "ساو باولو",
+            "eu": "São Paulo"
         },
         "seeded": {
             "fr": true,
@@ -493,7 +540,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2026-algiers": {
@@ -506,7 +554,8 @@
             "es": "Argel",
             "it": "Algeri",
             "pt": "Argel",
-            "ar": "الجزائر"
+            "ar": "الجزائر",
+            "eu": "Aljer"
         },
         "seeded": {
             "fr": true,
@@ -514,7 +563,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2026-barcelona": {
@@ -527,7 +577,8 @@
             "es": "Barcelona",
             "it": "Barcellona",
             "pt": "Barcelona",
-            "ar": "برشلونة"
+            "ar": "برشلونة",
+            "eu": "Bartzelona"
         },
         "seeded": {
             "fr": true,
@@ -535,7 +586,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2026-marseille": {
@@ -548,7 +600,8 @@
             "es": "Marsella",
             "it": "Marsiglia",
             "pt": "Marselha",
-            "ar": "مرسيليا"
+            "ar": "مرسيليا",
+            "eu": "Marsella"
         },
         "seeded": {
             "fr": true,
@@ -556,7 +609,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2026-rome": {
@@ -569,7 +623,8 @@
             "es": "Roma",
             "it": "Roma",
             "pt": "Roma",
-            "ar": "روما"
+            "ar": "روما",
+            "eu": "Erroma"
         },
         "seeded": {
             "fr": true,
@@ -577,7 +632,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.edition.2026-tunis": {
@@ -590,7 +646,8 @@
             "es": "Túnez",
             "it": "Tunisi",
             "pt": "Tunes",
-            "ar": "تونس"
+            "ar": "تونس",
+            "eu": "Tunis"
         },
         "seeded": {
             "fr": true,
@@ -598,7 +655,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.algerian-sl.label": {
@@ -611,7 +669,8 @@
             "es": "LSA Lengua de Signos Argelina",
             "it": "LSA Lingua dei Segni Algerina",
             "pt": "LSA Língua Gestual Argelina",
-            "ar": "لغة الإشارة الجزائرية LSA"
+            "ar": "لغة الإشارة الجزائرية LSA",
+            "eu": "LSA Aljeriako Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
@@ -619,7 +678,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.algerian-sl.short_label": {
@@ -632,7 +692,8 @@
             "es": "LSA",
             "it": "LSA",
             "pt": "LSA",
-            "ar": "LSA"
+            "ar": "LSA",
+            "eu": "LSA"
         },
         "seeded": {
             "fr": true,
@@ -640,7 +701,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.libras.label": {
@@ -653,7 +715,8 @@
             "es": "LIBRAS Lengua de Signos Brasileña",
             "it": "LIBRAS Lingua dei Segni Brasiliana",
             "pt": "LIBRAS Língua Gestual Brasileira",
-            "ar": "لغة الإشارة البرازيلية LIBRAS"
+            "ar": "لغة الإشارة البرازيلية LIBRAS",
+            "eu": "LIBRAS Brasilgo Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
@@ -661,7 +724,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.libras.short_label": {
@@ -674,7 +738,8 @@
             "es": "LIBRAS",
             "it": "LIBRAS",
             "pt": "LIBRAS",
-            "ar": "LIBRAS"
+            "ar": "LIBRAS",
+            "eu": "LIBRAS"
         },
         "seeded": {
             "fr": true,
@@ -682,7 +747,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lis.label": {
@@ -695,7 +761,8 @@
             "es": "LIS Lengua de Signos Italiana",
             "it": "LIS Lingua dei Segni Italiana",
             "pt": "LIS Língua Gestual Italiana",
-            "ar": "لغة الإشارة الإيطالية LIS"
+            "ar": "لغة الإشارة الإيطالية LIS",
+            "eu": "LIS Italiako Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
@@ -703,7 +770,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lis.short_label": {
@@ -716,7 +784,8 @@
             "es": "LIS",
             "it": "LIS",
             "pt": "LIS",
-            "ar": "LIS"
+            "ar": "LIS",
+            "eu": "LIS"
         },
         "seeded": {
             "fr": true,
@@ -724,7 +793,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lsc.label": {
@@ -737,7 +807,8 @@
             "es": "LSC Lengua de Signos Catalana",
             "it": "LSC Lingua dei Segni Catalana",
             "pt": "LSC Língua Gestual Catalã",
-            "ar": "لغة الإشارة الكاتالونية LSC"
+            "ar": "لغة الإشارة الكاتالونية LSC",
+            "eu": "LSC Kataluniako Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
@@ -745,7 +816,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lsc.short_label": {
@@ -758,7 +830,8 @@
             "es": "LSC",
             "it": "LSC",
             "pt": "LSC",
-            "ar": "LSC"
+            "ar": "LSC",
+            "eu": "LSC"
         },
         "seeded": {
             "fr": true,
@@ -766,7 +839,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lse.label": {
@@ -779,14 +853,16 @@
             "es": "LSE Lengua de Signos Española",
             "it": "LSE Lingua dei Segni Spagnola",
             "pt": "LSE Língua de Sinais Espanhola",
-            "ar": "لغة الإشارة الإسبانية LSE"
+            "ar": "لغة الإشارة الإسبانية LSE",
+            "eu": "LSE Espainiako Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
             "it": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lse.short_label": {
@@ -799,7 +875,8 @@
             "es": "LSE",
             "it": "LSE",
             "pt": "LSE",
-            "ar": "LSE"
+            "ar": "LSE",
+            "eu": "LSE"
         },
         "seeded": {
             "fr": true,
@@ -807,7 +884,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lsf.label": {
@@ -820,14 +898,16 @@
             "es": "LSF Lengua de Signos Francesa",
             "it": "LSF Lingua dei Segni Francese",
             "pt": "LSF Língua  de Sinais Francesa",
-            "ar": "لغة الإشارة الفرنسية LSF"
+            "ar": "لغة الإشارة الفرنسية LSF",
+            "eu": "LSF Frantziako Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
             "it": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lsf.short_label": {
@@ -840,7 +920,8 @@
             "es": "LSF",
             "it": "LSF",
             "pt": "LSF",
-            "ar": "LSF"
+            "ar": "LSF",
+            "eu": "LSF"
         },
         "seeded": {
             "fr": true,
@@ -848,7 +929,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lsm.label": {
@@ -861,14 +943,16 @@
             "es": "LSM Lengua de Señas Mexicana",
             "it": "LSM Lingua dei Segni Messicana",
             "pt": "LSM Língua de Sinais Mexicana",
-            "ar": "لغة الإشارة المكسيكية LSM"
+            "ar": "لغة الإشارة المكسيكية LSM",
+            "eu": "LSM Mexikoko Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
             "it": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.lsm.short_label": {
@@ -881,7 +965,8 @@
             "es": "LSM",
             "it": "LSM",
             "pt": "LSM",
-            "ar": "LSM"
+            "ar": "LSM",
+            "eu": "LSM"
         },
         "seeded": {
             "fr": true,
@@ -889,7 +974,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.tunisian-sl.label": {
@@ -902,14 +988,16 @@
             "es": "LST Lengua de Signos Tunecina",
             "it": "LST Lingua dei Segni Tunisina",
             "pt": "LST Língua de Sinais Tunisina",
-            "ar": "لغة الإشارة التونسية LST"
+            "ar": "لغة الإشارة التونسية LST",
+            "eu": "LST Tunisiako Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
             "ca": true,
             "es": true,
             "it": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.sign_language.tunisian-sl.short_label": {
@@ -922,7 +1010,8 @@
             "es": "LST",
             "it": "LST",
             "pt": "LST",
-            "ar": "LST"
+            "ar": "LST",
+            "eu": "LST"
         },
         "seeded": {
             "fr": true,
@@ -930,7 +1019,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.typology.acudits": {
@@ -943,7 +1033,8 @@
             "es": "Chistes",
             "it": "Battute",
             "pt": "Piadas",
-            "ar": "نكت"
+            "ar": "نكت",
+            "eu": "Txisteak"
         },
         "seeded": {
             "fr": true,
@@ -951,7 +1042,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.typology.anecdotes": {
@@ -964,7 +1056,8 @@
             "es": "Anécdotas",
             "it": "Aneddoti",
             "pt": "Anedotas",
-            "ar": "حكايات"
+            "ar": "حكايات",
+            "eu": "Anekdotak"
         },
         "seeded": {
             "fr": true,
@@ -972,7 +1065,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.typology.endevinalles": {
@@ -985,7 +1079,8 @@
             "es": "Adivinanzas",
             "it": "Indovinelli",
             "pt": "Adivinhas",
-            "ar": "ألغاز"
+            "ar": "ألغاز",
+            "eu": "Igarkizunak"
         },
         "seeded": {
             "fr": true,
@@ -993,7 +1088,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.typology.malentesos": {
@@ -1006,7 +1102,8 @@
             "es": "Malentendidos",
             "it": "Malintesi",
             "pt": "Mal-entendidos",
-            "ar": "سوء تفاهم"
+            "ar": "سوء تفاهم",
+            "eu": "Gaizki-ulertuak"
         },
         "seeded": {
             "fr": true,
@@ -1014,7 +1111,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "content.typology.memories": {
@@ -1027,7 +1125,8 @@
             "es": "Memorias",
             "it": "Memorie",
             "pt": "Memórias",
-            "ar": "ذكريات"
+            "ar": "ذكريات",
+            "eu": "Oroitzapenak"
         },
         "seeded": {
             "fr": true,
@@ -1035,49 +1134,86 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "gallery.caption.01": {
         "section": "about",
         "context": "Gallery image 1 caption",
         "translations": {
-            "en": "Double-sided display of 10 Sign Languages on TVs"
+            "en": "Double-sided display of 10 Sign Languages on TVs",
+            "ar": "عرض مزدوج الجوانب لـ 10 لغات إشارة على شاشات التلفاز",
+            "eu": "Hamar zeinu-hizkuntzaren bi aldeko erakusketa telebistetan"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true
         }
     },
     "gallery.caption.02": {
         "section": "about",
         "context": "Gallery image 2 caption",
         "translations": {
-            "en": "Double-sided display of 10 Sign Languages on TVs"
+            "en": "Double-sided display of 10 Sign Languages on TVs",
+            "ar": "عرض مزدوج الجوانب لـ 10 لغات إشارة على شاشات التلفاز",
+            "eu": "Hamar zeinu-hizkuntzaren bi aldeko erakusketa telebistetan"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true
         }
     },
     "gallery.caption.03": {
         "section": "about",
         "context": "Gallery image 3 caption",
         "translations": {
-            "en": "Double-sided display of 10 Sign Languages on TVs"
+            "en": "Double-sided display of 10 Sign Languages on TVs",
+            "ar": "عرض مزدوج الجوانب لـ 10 لغات إشارة على شاشات التلفاز",
+            "eu": "Hamar zeinu-hizkuntzaren bi aldeko erakusketa telebistetan"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true
         }
     },
     "gallery.caption.04": {
         "section": "about",
         "context": "Gallery image 4 caption",
         "translations": {
-            "en": "TVs on the wall displaying 8 Sign Languages"
+            "en": "TVs on the wall displaying 8 Sign Languages",
+            "ar": "أجهزة تلفاز على الحائط تعرض 8 لغات إشارة",
+            "eu": "Zortzi zeinu-hizkuntza erakusten dituzten hormako telebistak"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true
         }
     },
     "gallery.caption.05": {
         "section": "about",
         "context": "Gallery image 5 caption",
         "translations": {
-            "en": "Projections displaying 4 Sign Languages"
+            "en": "Projections displaying 4 Sign Languages",
+            "ar": "عروض إسقاطية تعرض 4 لغات إشارة",
+            "eu": "Lau zeinu-hizkuntza erakusten dituzten proiekzioak"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true
         }
     },
     "gallery.caption.06": {
         "section": "about",
         "context": "Gallery image 6 caption",
         "translations": {
-            "en": "TVs on the wall displaying 15 Sign Languages"
+            "en": "TVs on the wall displaying 15 Sign Languages",
+            "ar": "أجهزة تلفاز على الحائط تعرض 15 لغة إشارة",
+            "eu": "Hamabost zeinu-hizkuntza erakusten dituzten hormako telebistak"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true
         }
     },
     "participants.heading": {
@@ -1090,7 +1226,8 @@
             "es": "Participantes",
             "it": "Partecipanti",
             "pt": "Participantes",
-            "ar": "مشاركون"
+            "ar": "مشاركون",
+            "eu": "Parte-hartzaileak"
         },
         "seeded": {
             "fr": true,
@@ -1098,7 +1235,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "participants.page_title": {
@@ -1111,7 +1249,8 @@
             "es": "Participantes — DEAF.city",
             "it": "Partecipanti — DEAF.city",
             "pt": "Participantes — DEAF.city",
-            "ar": "مشاركون — DEAF.city"
+            "ar": "مشاركون — DEAF.city",
+            "eu": "Parte-hartzaileak — DEAF.city"
         },
         "seeded": {
             "fr": true,
@@ -1119,7 +1258,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.aria.filters": {
@@ -1132,7 +1272,8 @@
             "es": "Filtros",
             "it": "Filtri",
             "pt": "Filtros",
-            "ar": "فلاتر"
+            "ar": "فلاتر",
+            "eu": "Iragazkiak"
         },
         "seeded": {
             "fr": true,
@@ -1140,7 +1281,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.aria.playback": {
@@ -1153,7 +1295,8 @@
             "es": "Reproducción",
             "it": "Riproduzione",
             "pt": "Reprodução",
-            "ar": "تشغيل"
+            "ar": "تشغيل",
+            "eu": "Erreprodukzioa"
         },
         "seeded": {
             "fr": true,
@@ -1161,20 +1304,22 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.error.no_playlist": {
         "section": "player",
         "context": "Empty catalog message",
         "translations": {
-            "en": "No playlist loaded. Check that data\/catalog.json exists.",
-            "fr": "Aucune playlist chargée. Vérifiez que data\/catalog.json existe.",
-            "ca": "No s'ha carregat cap llista de reproducció. Comprova que data\/catalog.json existeix.",
-            "es": "No se ha cargado ninguna lista de reproducción. Compruebe que data\/catalog.json existe.",
-            "it": "Nessuna playlist caricata. Verifica che data\/catalog.json esista.",
-            "pt": "Nenhuma lista de reprodução carregada. Verifique se data\/catalog.json existe.",
-            "ar": "لم يتم تحميل قائمة التشغيل. تأكد من وجود data\/catalog.json."
+            "en": "No playlist loaded. Check that data/catalog.json exists.",
+            "fr": "Aucune playlist chargée. Vérifiez que data/catalog.json existe.",
+            "ca": "No s'ha carregat cap llista de reproducció. Comprova que data/catalog.json existeix.",
+            "es": "No se ha cargado ninguna lista de reproducción. Compruebe que data/catalog.json existe.",
+            "it": "Nessuna playlist caricata. Verifica che data/catalog.json esista.",
+            "pt": "Nenhuma lista de reprodução carregada. Verifique se data/catalog.json existe.",
+            "ar": "لم يتم تحميل قائمة التشغيل. تأكد من وجود data/catalog.json.",
+            "eu": "Ez da erreprodukzio-zerrendarik kargatu. Egiaztatu data/catalog.json existitzen dela."
         },
         "seeded": {
             "fr": true,
@@ -1182,12 +1327,13 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.filter.all_cities": {
         "section": "player",
-        "context": "Default option in City\/Edition dropdown",
+        "context": "Default option in City/Edition dropdown",
         "translations": {
             "en": "All cities",
             "fr": "Toutes les villes",
@@ -1195,7 +1341,8 @@
             "es": "Todas las ciudades",
             "it": "Tutte le città",
             "pt": "Todas as cidades",
-            "ar": "جميع المدن"
+            "ar": "جميع المدن",
+            "eu": "Hiri guztiak"
         },
         "seeded": {
             "fr": true,
@@ -1203,7 +1350,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.filter.all_sign_languages": {
@@ -1216,7 +1364,8 @@
             "es": "Todos los lenguajes de signos",
             "it": "Tutte le lingue dei segni",
             "pt": "Todas as línguas de sinais",
-            "ar": "جميع لغات الإشارة"
+            "ar": "جميع لغات الإشارة",
+            "eu": "Zeinu-hizkuntza guztiak"
         },
         "seeded": {
             "fr": true,
@@ -1224,7 +1373,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.filter.all_typologies": {
@@ -1237,7 +1387,8 @@
             "es": "Todas las tipologías",
             "it": "Tutte le tipologie",
             "pt": "Todas as tipologias",
-            "ar": "جميع الأنواع"
+            "ar": "جميع الأنواع",
+            "eu": "Tipologia guztiak"
         },
         "seeded": {
             "fr": true,
@@ -1245,20 +1396,22 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.filter.city_edition": {
         "section": "player",
-        "context": "City\/Edition filter generic label",
+        "context": "City/Edition filter generic label",
         "translations": {
-            "en": "City \/ Edition",
-            "fr": "Ville \/ Édition",
-            "ca": "Ciutat \/ Edició",
-            "es": "Ciudad \/ Edición",
-            "it": "Città \/ Edizione",
-            "pt": "Cidade \/ Edição",
-            "ar": "مدينة \/ إصدار"
+            "en": "City / Edition",
+            "fr": "Ville / Édition",
+            "ca": "Ciutat / Edició",
+            "es": "Ciudad / Edición",
+            "it": "Città / Edizione",
+            "pt": "Cidade / Edição",
+            "ar": "مدينة / إصدار",
+            "eu": "Hiria / Edizioa"
         },
         "seeded": {
             "fr": true,
@@ -1266,7 +1419,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.filter.sign_language": {
@@ -1279,7 +1433,8 @@
             "es": "Lengua de signos",
             "it": "Lingua dei segni",
             "pt": "Língua gestual",
-            "ar": "لغة الإشارة"
+            "ar": "لغة الإشارة",
+            "eu": "Zeinu-hizkuntza"
         },
         "seeded": {
             "fr": true,
@@ -1287,7 +1442,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.filter.typology": {
@@ -1300,7 +1456,8 @@
             "es": "Tipología",
             "it": "Tipologia",
             "pt": "Tipologia",
-            "ar": "النوع"
+            "ar": "النوع",
+            "eu": "Tipologia"
         },
         "seeded": {
             "fr": true,
@@ -1308,7 +1465,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.nav.about": {
@@ -1321,7 +1479,8 @@
             "es": "?",
             "it": "?",
             "pt": "?",
-            "ar": "?"
+            "ar": "?",
+            "eu": "?"
         },
         "seeded": {
             "fr": true,
@@ -1329,12 +1488,13 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.nav.language": {
         "section": "player",
-        "context": "Language switcher aria-label on About\/Participants navbar",
+        "context": "Language switcher aria-label on About/Participants navbar",
         "translations": {
             "en": "Language",
             "ca": "Idioma",
@@ -1342,7 +1502,8 @@
             "it": "Lingua",
             "pt": "Linguagem",
             "es": "Idioma",
-            "ar": "لغة"
+            "ar": "لغة",
+            "eu": "Hizkuntza"
         },
         "seeded": {
             "ca": true,
@@ -1350,7 +1511,8 @@
             "it": true,
             "pt": true,
             "es": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.nav.participants": {
@@ -1363,7 +1525,8 @@
             "es": "Participantes",
             "it": "Partecipanti",
             "pt": "Participantes",
-            "ar": "مشاركون"
+            "ar": "مشاركون",
+            "eu": "Parte-hartzaileak"
         },
         "seeded": {
             "fr": true,
@@ -1371,7 +1534,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.nav.player": {
@@ -1384,7 +1548,8 @@
             "es": "Reproductor",
             "it": "Lettore",
             "pt": "Leitor",
-            "ar": "المشغل"
+            "ar": "المشغل",
+            "eu": "Erreproduzitzailea"
         },
         "seeded": {
             "fr": true,
@@ -1392,7 +1557,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.spoken_language.label": {
@@ -1405,7 +1571,8 @@
             "es": "Idioma hablado",
             "it": "Lingua Parlata",
             "pt": "Idioma Falado",
-            "ar": "اللغة المنطوقة"
+            "ar": "اللغة المنطوقة",
+            "eu": "Ahozko hizkuntza"
         },
         "seeded": {
             "fr": true,
@@ -1413,7 +1580,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.spoken_language.no_subtitles": {
@@ -1426,7 +1594,8 @@
             "es": "Sin subtítulos",
             "it": "Nessun sottotitolo",
             "pt": "Sem legendas",
-            "ar": "لا توجد ترجمة"
+            "ar": "لا توجد ترجمة",
+            "eu": "Azpititulurik gabe"
         },
         "seeded": {
             "fr": true,
@@ -1434,7 +1603,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.next": {
@@ -1447,7 +1617,8 @@
             "es": "Siguiente video en la lista de reproducción",
             "it": "Prossimo video nella playlist",
             "pt": "Próximo vídeo na lista de reprodução",
-            "ar": "الفيديو التالي في قائمة التشغيل"
+            "ar": "الفيديو التالي في قائمة التشغيل",
+            "eu": "Hurrengo bideoa zerrendan"
         },
         "seeded": {
             "fr": true,
@@ -1455,7 +1626,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.pause": {
@@ -1468,7 +1640,8 @@
             "es": "Pausar video",
             "it": "Pausa video",
             "pt": "Pausar vídeo",
-            "ar": "إيقاف الفيديو مؤقتًا"
+            "ar": "إيقاف الفيديو مؤقتًا",
+            "eu": "Bideoa pausatu"
         },
         "seeded": {
             "fr": true,
@@ -1476,7 +1649,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.play": {
@@ -1489,7 +1663,8 @@
             "es": "Reproducir video",
             "it": "Avvia video",
             "pt": "Reproduzir vídeo",
-            "ar": "تشغيل الفيديو"
+            "ar": "تشغيل الفيديو",
+            "eu": "Bideoa erreproduzitu"
         },
         "seeded": {
             "fr": true,
@@ -1497,7 +1672,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.play_or_pause": {
@@ -1508,9 +1684,10 @@
             "fr": "Lire ou mettre en pause la vidéo",
             "ca": "Reproduir o pausar vídeo",
             "es": "Reproducir o pausar video",
-            "it": "Riproduci\/Pausa video",
+            "it": "Riproduci/Pausa video",
             "pt": "Reproduzir ou pausar vídeo",
-            "ar": "تشغيل أو إيقاف الفيديو مؤقتًا"
+            "ar": "تشغيل أو إيقاف الفيديو مؤقتًا",
+            "eu": "Bideoa erreproduzitu edo pausatu"
         },
         "seeded": {
             "fr": true,
@@ -1518,7 +1695,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.prev": {
@@ -1531,7 +1709,8 @@
             "es": "Video anterior en la lista de reproducción",
             "it": "Video precedente nella playlist",
             "pt": "Vídeo anterior na lista de reprodução",
-            "ar": "الفيديو السابق في قائمة التشغيل"
+            "ar": "الفيديو السابق في قائمة التشغيل",
+            "eu": "Aurreko bideoa zerrendan"
         },
         "seeded": {
             "fr": true,
@@ -1539,7 +1718,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.reset": {
@@ -1552,7 +1732,8 @@
             "es": "Restablecer filtros y lista de reproducción",
             "it": "Reimposta filtri e playlist",
             "pt": "Redefinir filtros e lista de reprodução",
-            "ar": "إعادة تعيين الفلاتر وقائمة التشغيل"
+            "ar": "إعادة تعيين الفلاتر وقائمة التشغيل",
+            "eu": "Iragazkiak eta erreprodukzio-zerrenda berrezarri"
         },
         "seeded": {
             "fr": true,
@@ -1560,7 +1741,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.reset_short": {
@@ -1573,7 +1755,8 @@
             "es": "Restablecer",
             "it": "Reimposta",
             "pt": "Redefinir",
-            "ar": "إعادة"
+            "ar": "إعادة",
+            "eu": "Berrezarri"
         },
         "seeded": {
             "fr": true,
@@ -1581,7 +1764,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     },
     "player.transport.shuffle": {
@@ -1594,7 +1778,8 @@
             "es": "Mezclar lista de reproducción",
             "it": "Mescola playlist",
             "pt": "Aleatorizar lista de reprodução",
-            "ar": "تشغيل عشوائي"
+            "ar": "تشغيل عشوائي",
+            "eu": "Erreprodukzio-zerrenda ausaz nahasi"
         },
         "seeded": {
             "fr": true,
@@ -1602,7 +1787,8 @@
             "es": true,
             "it": true,
             "pt": true,
-            "ar": true
+            "ar": true,
+            "eu": true
         }
     }
 }
