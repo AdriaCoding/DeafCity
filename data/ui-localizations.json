@@ -709,7 +709,7 @@
         "section": "content",
         "context": "Sign language label (libras)",
         "translations": {
-            "en": "LIBRAS Brazilian Sign Language",
+            "en": "LIBRAS Brazilian",
             "fr": "LIBRAS Langue des Signes Brésilienne",
             "ca": "LIBRAS Llengua de Signes Brasilera",
             "es": "LIBRAS Lengua de Signos Brasileña",
@@ -894,7 +894,7 @@
         "translations": {
             "en": "LSF French Sign Language",
             "fr": "LSF Langue des Signes Française",
-            "ca": "LSF Llengua de Signes Francesa",
+            "ca": "LSF Francesa",
             "es": "LSF Lengua de Signos Francesa",
             "it": "LSF Lingua dei Segni Francese",
             "pt": "LSF Língua  de Sinais Francesa",
@@ -903,7 +903,6 @@
         },
         "seeded": {
             "fr": true,
-            "ca": true,
             "es": true,
             "it": true,
             "ar": true,
@@ -1324,14 +1323,14 @@
         "section": "player",
         "context": "Empty catalog message",
         "translations": {
-            "en": "No playlist loaded. Check that data/catalog.json exists.",
-            "fr": "Aucune playlist chargée. Vérifiez que data/catalog.json existe.",
-            "ca": "No s'ha carregat cap llista de reproducció. Comprova que data/catalog.json existeix.",
-            "es": "No se ha cargado ninguna lista de reproducción. Compruebe que data/catalog.json existe.",
-            "it": "Nessuna playlist caricata. Verifica che data/catalog.json esista.",
-            "pt": "Nenhuma lista de reprodução carregada. Verifique se data/catalog.json existe.",
-            "ar": "لم يتم تحميل قائمة التشغيل. تأكد من وجود data/catalog.json.",
-            "eu": "Ez da erreprodukzio-zerrendarik kargatu. Egiaztatu data/catalog.json existitzen dela."
+            "en": "No playlist loaded. Check that data\/catalog.json exists.",
+            "fr": "Aucune playlist chargée. Vérifiez que data\/catalog.json existe.",
+            "ca": "No s'ha carregat cap llista de reproducció. Comprova que data\/catalog.json existeix.",
+            "es": "No se ha cargado ninguna lista de reproducción. Compruebe que data\/catalog.json existe.",
+            "it": "Nessuna playlist caricata. Verifica che data\/catalog.json esista.",
+            "pt": "Nenhuma lista de reprodução carregada. Verifique se data\/catalog.json existe.",
+            "ar": "لم يتم تحميل قائمة التشغيل. تأكد من وجود data\/catalog.json.",
+            "eu": "Ez da erreprodukzio-zerrendarik kargatu. Egiaztatu data\/catalog.json existitzen dela."
         },
         "seeded": {
             "fr": true,
@@ -1345,7 +1344,7 @@
     },
     "player.filter.all_cities": {
         "section": "player",
-        "context": "Default option in City/Edition dropdown",
+        "context": "Default option in City\/Edition dropdown",
         "translations": {
             "en": "All cities",
             "fr": "Toutes les villes",
@@ -1414,16 +1413,16 @@
     },
     "player.filter.city_edition": {
         "section": "player",
-        "context": "City/Edition filter generic label",
+        "context": "City\/Edition filter generic label",
         "translations": {
-            "en": "City / Edition",
-            "fr": "Ville / Édition",
-            "ca": "Ciutat / Edició",
-            "es": "Ciudad / Edición",
-            "it": "Città / Edizione",
-            "pt": "Cidade / Edição",
-            "ar": "مدينة / إصدار",
-            "eu": "Hiria / Edizioa"
+            "en": "City \/ Edition",
+            "fr": "Ville \/ Édition",
+            "ca": "Ciutat \/ Edició",
+            "es": "Ciudad \/ Edición",
+            "it": "Città \/ Edizione",
+            "pt": "Cidade \/ Edição",
+            "ar": "مدينة \/ إصدار",
+            "eu": "Hiria \/ Edizioa"
         },
         "seeded": {
             "fr": true,
@@ -1494,7 +1493,7 @@
             "ar": "",
             "eu": ""
         },
-        "seeded": {}
+        "seeded": []
     },
     "player.nav.about": {
         "section": "player",
@@ -1521,7 +1520,7 @@
     },
     "player.nav.language": {
         "section": "player",
-        "context": "Language switcher aria-label on About/Participants navbar",
+        "context": "Language switcher aria-label on About\/Participants navbar",
         "translations": {
             "en": "Language",
             "ca": "Idioma",
@@ -1711,7 +1710,7 @@
             "fr": "Lire ou mettre en pause la vidéo",
             "ca": "Reproduir o pausar vídeo",
             "es": "Reproducir o pausar video",
-            "it": "Riproduci/Pausa video",
+            "it": "Riproduci\/Pausa video",
             "pt": "Reproduzir ou pausar vídeo",
             "ar": "تشغيل أو إيقاف الفيديو مؤقتًا",
             "eu": "Bideoa erreproduzitu edo pausatu"
