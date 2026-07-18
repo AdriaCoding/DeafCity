@@ -105,7 +105,7 @@
         }
 
         for (var j = 0; j < files.length; j++) {
-            if (isSubtitleFile(files[j].name)) {
+            if (!isAudioFile(files[j].name) && !isSubtitleFile(files[j].name)) {
                 singleField.style.display = '';
                 bulkContainer.style.display = '';
                 if (templateSelect) {
@@ -113,19 +113,7 @@
                 }
                 showBulkError(
                     bulkContainer,
-                    'La transcripció en massa només accepta fitxers d\'àudio. Pugeu un sol fitxer .vtt o .srt.'
-                );
-                return 'bulk-error';
-            }
-            if (!isAudioFile(files[j].name)) {
-                singleField.style.display = '';
-                bulkContainer.style.display = '';
-                if (templateSelect) {
-                    templateSelect.required = true;
-                }
-                showBulkError(
-                    bulkContainer,
-                    'Format no reconegut. En mode massa, només s\'accepten fitxers d\'àudio.'
+                    'Format no reconegut. En mode massa, només s\'accepten fitxers d\'àudio o subtítols.'
                 );
                 return 'bulk-error';
             }
@@ -200,7 +188,7 @@
                     return;
                 }
                 for (var i = 0; i < files.length; i++) {
-                    if (isSubtitleFile(files[i].name) || !isAudioFile(files[i].name)) {
+                    if (!isAudioFile(files[i].name) && !isSubtitleFile(files[i].name)) {
                         event.preventDefault();
                         renderBulkTable(fileInput, languages, singleField, bulkContainer, languageSelect);
                         return;

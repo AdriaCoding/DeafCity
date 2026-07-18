@@ -32,13 +32,13 @@ class BulkIntakeHandler
 
         $upload = $files['intake_file'] ?? null;
         if (!$upload || !is_array($upload['name'] ?? null)) {
-            $errors['intake_file'] = 'Pugeu almenys dos fitxers d\'àudio.';
+            $errors['intake_file'] = 'Pugeu almenys dos fitxers.';
             return ['errors' => $errors, 'values' => $values];
         }
 
         $count = count($upload['name']);
         if ($count < 2) {
-            $errors['intake_file'] = 'Pugeu almenys dos fitxers d\'àudio.';
+            $errors['intake_file'] = 'Pugeu almenys dos fitxers.';
             return ['errors' => $errors, 'values' => $values];
         }
 
@@ -58,7 +58,7 @@ class BulkIntakeHandler
 
             $fileError = (int) ($upload['error'][$i] ?? UPLOAD_ERR_NO_FILE);
             if ($fileError === UPLOAD_ERR_NO_FILE) {
-                $errors['intake_file'] = 'Pugeu un fitxer d\'àudio per a cada fila.';
+                $errors['intake_file'] = 'Pugeu un fitxer per a cada fila.';
                 return ['errors' => $errors, 'values' => $values];
             }
             if ($fileError !== UPLOAD_ERR_OK) {
@@ -67,8 +67,9 @@ class BulkIntakeHandler
             }
 
             $originalName = (string) ($upload['name'][$i] ?? 'audio');
-            if (TranscriptionIntakeFileKind::fromFilename($originalName) !== 'audio') {
-                $errors['intake_file'] = 'La transcripció en massa només accepta fitxers d\'àudio.';
+            $kind = TranscriptionIntakeFileKind::fromFilename($originalName);
+            if ($kind !== 'audio' && $kind !== 'subtitle') {
+                $errors['intake_file'] = 'La transcripció en massa només accepta fitxers d\'àudio o subtítols.';
                 return ['errors' => $errors, 'values' => $values];
             }
 
@@ -76,6 +77,7 @@ class BulkIntakeHandler
                 'index' => $i,
                 'language' => $lang,
                 'originalName' => $originalName,
+                'kind' => $kind,
                 'tmpPath' => (string) ($upload['tmp_name'][$i] ?? ''),
             ];
         }
@@ -98,7 +100,7 @@ class BulkIntakeHandler
 
             if (!move_uploaded_file($item['tmpPath'], $dest)) {
                 if (!rename($item['tmpPath'], $dest)) {
-                    $errors['_form'] = 'No s\'ha pogut desar un dels fitxers d\'àudio.';
+                    $errors['_form'] = 'No s\'ha pogut desar un dels fitxers.';
                     return ['errors' => $errors, 'values' => $values];
                 }
             }
@@ -107,6 +109,7 @@ class BulkIntakeHandler
                 'id' => $id,
                 'originalFilename' => pathinfo($item['originalName'], PATHINFO_FILENAME),
                 'language' => $item['language'],
+                'kind' => $item['kind'],
                 'tmpAudioPath' => $dest,
             ];
         }

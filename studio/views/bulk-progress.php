@@ -71,7 +71,7 @@
     <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Transcripció en massa</h2>
-        <p class="lead">Processant els fitxers d'àudio. Quan acabi, es descarregarà un ZIP amb tots els subtítols.</p>
+        <p class="lead">Processant els fitxers. Quan acabi, es descarregarà un ZIP amb tots els subtítols.</p>
 
         <table>
             <thead>

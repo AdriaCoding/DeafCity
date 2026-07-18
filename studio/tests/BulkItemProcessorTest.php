@@ -140,4 +140,101 @@ class BulkItemProcessorTest extends TestCase
         $this->assertSame('failed', $snap['items'][0]['status']);
         $this->assertFalse(is_file($this->jobsDir . '/bulk-output/item-1_EN.vtt'));
     }
+
+    public function test_subtitle_item_skips_orchestrator_and_saves_both_vtts(): void
+    {
+        $id = 'item-sub';
+        $vttPath = $this->jobsDir . "/bulk-tmp/$id.vtt";
+        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+        $this->bulkQueue->create([[
+            'id' => $id,
+            'originalFilename' => 'talk_ca',
+            'language' => 'ca',
+            'kind' => 'subtitle',
+            'tmpAudioPath' => $vttPath,
+        ]]);
+
+        $fakeOrchestrator = new class {
+            public int $calls = 0;
+            public function run(): array
+            {
+                $this->calls++;
+                return ['result' => 'error', 'message' => 'should not run'];
+            }
+        };
+
+        $launched = [];
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'test-key', function (string $cmd) use (&$launched): void {
+            $launched[] = $cmd;
+        });
+
+        $processor = new BulkItemProcessor(
+            bulkQueue: $this->bulkQueue,
+            jobManager: $this->jobManager,
+            orchestrator: $fakeOrchestrator,
+            launcher: $launcher,
+            translationState: new TranslationJobState($this->jobManager),
+            waitForCompletion: function (): array {
+                file_put_contents($this->jobManager->draftVttPath(), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+                file_put_contents($this->jobManager->draftVttPathForLang('en'), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
+                return ['success' => true];
+            },
+        );
+
+        $processor->processNext();
+
+        $this->assertSame(0, $fakeOrchestrator->calls);
+        $snap = $this->bulkQueue->statusSnapshot();
+        $this->assertSame('done', $snap['items'][0]['status']);
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_EN.vtt"));
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_SRC.vtt"));
+        $this->assertFalse($this->jobManager->exists());
+        $this->assertNotEmpty($launched);
+        $this->assertStringContainsString('run_revise.sh', $launched[0]);
+    }
+
+    public function test_srt_subtitle_item_converts_and_marks_done(): void
+    {
+        $id = 'item-srt';
+        $srtPath = $this->jobsDir . "/bulk-tmp/$id.srt";
+        file_put_contents($srtPath, "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
+        $this->bulkQueue->create([[
+            'id' => $id,
+            'originalFilename' => 'talk_ca',
+            'language' => 'ca',
+            'kind' => 'subtitle',
+            'tmpAudioPath' => $srtPath,
+        ]]);
+
+        $fakeOrchestrator = new class {
+            public function run(): array
+            {
+                return ['result' => 'error', 'message' => 'should not run'];
+            }
+        };
+
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'test-key', function () {});
+
+        $processor = new BulkItemProcessor(
+            bulkQueue: $this->bulkQueue,
+            jobManager: $this->jobManager,
+            orchestrator: $fakeOrchestrator,
+            launcher: $launcher,
+            translationState: new TranslationJobState($this->jobManager),
+            waitForCompletion: function (): array {
+                file_put_contents($this->jobManager->draftVttPathForLang('en'), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
+                return ['success' => true];
+            },
+        );
+
+        $processor->processNext();
+
+        $snap = $this->bulkQueue->statusSnapshot();
+        $this->assertSame('done', $snap['items'][0]['status']);
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_EN.vtt"));
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_SRC.vtt"));
+        $src = file_get_contents($this->jobsDir . "/bulk-output/{$id}_SRC.vtt");
+        $this->assertStringContainsString('WEBVTT', $src);
+        $this->assertStringContainsString('Hola', $src);
+    }
 }

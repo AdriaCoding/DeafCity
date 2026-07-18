@@ -8,8 +8,8 @@ Producer-facing Studio capabilities as of **June 2026**.
 |---------|-------------|---------|
 | **Auth gate** | `/studio/` | Password prompt, session management |
 | **Continguts (Catàleg)** | `/studio/` (default) | Catalog management: videos, captions, metadata, config |
-| **Standalone transcription** | `?action=transcription-intake` | Audio → downloadable VTT/SRT (no Vimeo) |
-| **Bulk transcription** | same form, 2+ files | Sequential batch transcription with ZIP download |
+| **Standalone transcription** | `?action=transcription-intake` | Audio or VTT/SRT → downloadable VTT/SRT (no Vimeo) |
+| **Bulk transcription** | same form, 2+ files | Sequential batch (audio and/or VTT/SRT) with ZIP download |
 | **Catalog sync** | header **Sincronitzar a Vimeo** | Push catalog titles, tags, and captions to Vimeo |
 
 ### Continguts — primary workflow
@@ -56,7 +56,7 @@ PRDs: `docs/prd-continguts.md`, `docs/prd-caption-track-management.md`, `docs/pr
 
 Polls `?action=transcription-status` or `?action=translation-status` every 3 s. Retry posts to `?action=translation-retry` with `lang=en`. **Finalitza** calls `?action=cancel`.
 
-**Bulk path:** 2+ files → `BulkIntakeHandler` + `BulkIntakeQueue`; progress at `?action=bulk-progress`.
+**Bulk path:** 2+ audio and/or VTT/SRT files → `BulkIntakeHandler` + `BulkIntakeQueue`; subtitle items skip transcription and run revise + English translation; progress at `?action=bulk-progress`.
 
 PHPUnit: `TranscriptionIntakeHandlerTest`, `TranscriptionPipelineStatusTest`, `BulkIntakeHandlerTest`.
 

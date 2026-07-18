@@ -168,9 +168,32 @@ assert.strictEqual(TI.isSubtitleFile('talk_ca.srt'), true);
 assert.strictEqual(TI.isAudioFile('talk_ca.mp3'), true);
 assert.strictEqual(TI.isSubtitleFile('talk_ca.mp3'), false);
 
+// Mixed audio + subtitle selection is allowed in bulk
 {
     const dom = makeDom();
     dom.fileInput.files = makeFileList(['a.mp3', 'b.vtt']);
+    const mode = TI.renderBulkTable(dom.fileInput, languages, dom.singleField, dom.bulkContainer, dom.templateSelect);
+    assert.strictEqual(mode, 'bulk');
+    assert.strictEqual(dom.singleField.style.display, 'none');
+    const table = dom.bulkContainer.lastChild;
+    assert.strictEqual(table.tagName, 'TABLE');
+}
+
+// Subtitle-only selection is allowed in bulk
+{
+    const dom = makeDom();
+    dom.fileInput.files = makeFileList(['talk_ca.srt', 'session_es.vtt']);
+    const mode = TI.renderBulkTable(dom.fileInput, languages, dom.singleField, dom.bulkContainer, dom.templateSelect);
+    assert.strictEqual(mode, 'bulk');
+    const table = dom.bulkContainer.lastChild;
+    const tbody = table.children.find(function (c) { return c.tagName === 'TBODY'; });
+    assert.strictEqual(tbody.children.length, 2);
+}
+
+// Unknown extension is still rejected in bulk
+{
+    const dom = makeDom();
+    dom.fileInput.files = makeFileList(['a.mp3', 'notes.txt']);
     const mode = TI.renderBulkTable(dom.fileInput, languages, dom.singleField, dom.bulkContainer, dom.templateSelect);
     assert.strictEqual(mode, 'bulk-error');
     assert.strictEqual(dom.bulkContainer.style.display, '');

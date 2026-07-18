@@ -50,13 +50,13 @@ Continguts is **not** blocked by an active transcription Job (only transcription
 
 ## Standalone transcription
 
-The **Nova transcripció** entry point (`?action=transcription-intake`) transcribes interpreter audio and delivers downloadable caption files. No Vimeo or catalog involvement.
+The **Nova transcripció** entry point (`?action=transcription-intake`) accepts interpreter audio or VTT/SRT drafts and delivers downloadable caption files. No Vimeo or catalog involvement.
 
 Flow:
 
-1. Producer uploads an audio file and selects the source language (or submits a bulk batch of 2+ files).
-2. `TranscriptionIntakeHandler` (or `BulkIntakeHandler` for multi-file) creates a Job with `job_type: transcription` and runs `TranscriptionOrchestrator` (Groq-first / local-faster-whisper fallback; see [ADR-0006](../docs/adr/0006-groq-primary-faster-whisper-fallback-transcription.md)).
-3. On success, translation to English is chained automatically via `scripts/run_transcription_pipeline.sh`.
+1. Producer uploads an audio or subtitle file and selects the source language (or submits a bulk batch of 2+ audio and/or VTT/SRT files).
+2. `TranscriptionIntakeHandler` (or `BulkIntakeHandler` for multi-file) creates a Job with `job_type: transcription`. Audio runs `TranscriptionOrchestrator` (Groq-first / local-faster-whisper fallback; see [ADR-0006](../docs/adr/0006-groq-primary-faster-whisper-fallback-transcription.md)); subtitle uploads skip transcription and go straight to revise + translate.
+3. On success, translation to English is chained automatically via `scripts/run_transcription_pipeline.sh` (or `run_revise.sh` for subtitle intake).
 4. `views/transcription-loading.php` (`?action=resume-job`) cycles through four states polled every 3 s:
    - `transcribing` — waiting for `transcription.json` to reach `done`
    - `translating` — waiting for `translation.json` English entry to reach `done`

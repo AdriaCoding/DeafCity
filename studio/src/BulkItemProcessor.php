@@ -7,6 +7,10 @@ class BulkItemProcessor
     /** @var callable(): array{success: bool, reason?: string} */
     private $waitForCompletion;
 
+    private readonly IntakeSourceDetector $sourceDetector;
+    private readonly SrtToVttConverter $srtConverter;
+    private readonly WebVttValidator $vttValidator;
+
     /**
      * @param callable(): array{success: bool, reason?: string}|null $waitForCompletion
      */
@@ -18,8 +22,14 @@ class BulkItemProcessor
         private readonly TranslationJobState $translationState,
         ?callable $waitForCompletion = null,
         private readonly ?GeminiReviser $reviser = null,
+        ?IntakeSourceDetector $sourceDetector = null,
+        ?SrtToVttConverter $srtConverter = null,
+        ?WebVttValidator $vttValidator = null,
     ) {
         $this->waitForCompletion = $waitForCompletion ?? fn (): array => $this->pollUntilReady();
+        $this->sourceDetector = $sourceDetector ?? new IntakeSourceDetector();
+        $this->srtConverter = $srtConverter ?? new SrtToVttConverter();
+        $this->vttValidator = $vttValidator ?? new WebVttValidator();
     }
 
     public function processNext(): bool
@@ -33,38 +43,14 @@ class BulkItemProcessor
 
         try {
             if (!is_file($item['tmpAudioPath'])) {
-                throw new \RuntimeException('No s\'ha trobat el fitxer d\'àudio.');
+                throw new \RuntimeException('No s\'ha trobat el fitxer d\'entrada.');
             }
 
-            $ext = pathinfo($item['tmpAudioPath'], PATHINFO_EXTENSION);
-            $originalName = $item['originalFilename'] . ($ext !== '' ? ".$ext" : '');
-
-            $this->jobManager->createWithAudio(
-                [
-                    'job_type' => 'transcription',
-                    'subtitle_language' => $item['language'],
-                    'original_filename' => $item['originalFilename'],
-                    'intake_mode' => 'generate',
-                ],
-                new UploadedFile($item['tmpAudioPath'], $originalName),
-            );
-
-            $outcome = $this->orchestrator->run();
-
-            if ($outcome['result'] === 'error') {
-                throw new \RuntimeException($outcome['message'] ?? 'Error en la transcripció.');
-            }
-
-            if ($outcome['result'] === 'pipeline_transcribed') {
-                if ($this->reviser !== null) {
-                    $draftPath = $this->jobManager->draftVttPath();
-                    $revised = $this->reviser->revise(
-                        (string) file_get_contents($draftPath),
-                        $item['language'],
-                    );
-                    file_put_contents($draftPath, $revised);
-                }
-                $this->startTranslationIfNeeded($item['language']);
+            $kind = $item['kind'] ?? 'audio';
+            if ($kind === 'subtitle') {
+                $this->processSubtitleItem($item);
+            } else {
+                $this->processAudioItem($item);
             }
 
             $wait = ($this->waitForCompletion)();
@@ -104,6 +90,112 @@ class BulkItemProcessor
         }
 
         return true;
+    }
+
+    /** @param array<string, mixed> $item */
+    private function processAudioItem(array $item): void
+    {
+        $ext = pathinfo($item['tmpAudioPath'], PATHINFO_EXTENSION);
+        $originalName = $item['originalFilename'] . ($ext !== '' ? ".$ext" : '');
+
+        $this->jobManager->createWithAudio(
+            [
+                'job_type' => 'transcription',
+                'subtitle_language' => $item['language'],
+                'original_filename' => $item['originalFilename'],
+                'intake_mode' => 'generate',
+            ],
+            new UploadedFile($item['tmpAudioPath'], $originalName),
+        );
+
+        $outcome = $this->orchestrator->run();
+
+        if ($outcome['result'] === 'error') {
+            throw new \RuntimeException($outcome['message'] ?? 'Error en la transcripció.');
+        }
+
+        if ($outcome['result'] === 'pipeline_transcribed') {
+            if ($this->reviser !== null) {
+                $draftPath = $this->jobManager->draftVttPath();
+                $revised = $this->reviser->revise(
+                    (string) file_get_contents($draftPath),
+                    $item['language'],
+                );
+                file_put_contents($draftPath, $revised);
+            }
+            $this->startTranslationIfNeeded($item['language']);
+        }
+    }
+
+    /** @param array<string, mixed> $item */
+    private function processSubtitleItem(array $item): void
+    {
+        $ext = pathinfo($item['tmpAudioPath'], PATHINFO_EXTENSION);
+        $originalName = $item['originalFilename'] . ($ext !== '' ? ".$ext" : '');
+        $meta = [
+            'job_type' => 'transcription',
+            'subtitle_language' => $item['language'],
+            'original_filename' => $item['originalFilename'],
+            'intake_mode' => 'upload',
+        ];
+
+        try {
+            if ($this->sourceDetector->isSubRip($item['tmpAudioPath'], $originalName)) {
+                $vttContent = $this->srtConverter->convert($item['tmpAudioPath']);
+                $vttLabel = $item['originalFilename'] . '.vtt';
+                $this->validateVttContent($vttContent, $vttLabel);
+                $this->jobManager->createWithContent($meta, $vttContent);
+            } else {
+                $this->vttValidator->validate($item['tmpAudioPath'], $originalName);
+                $this->jobManager->create($meta, new UploadedFile($item['tmpAudioPath'], $originalName));
+            }
+        } catch (\InvalidArgumentException $e) {
+            throw new \RuntimeException($e->getMessage(), 0, $e);
+        }
+
+        $this->startRevisionPipeline($item['language']);
+    }
+
+    private function startRevisionPipeline(string $sourceLang): void
+    {
+        $revisionPath = $this->jobManager->revisionStatePath();
+        file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
+
+        if ($sourceLang === 'en') {
+            $this->translationState->initiate([]);
+            $targetLangs = [];
+        } else {
+            $this->translationState->initiate(['en']);
+            $targetLangs = ['en'];
+        }
+
+        $this->launcher->launchRevisionAndTranslation(
+            $this->jobManager->draftVttPath(),
+            $revisionPath,
+            $this->jobManager->translationStatePath(),
+            $sourceLang,
+            dirname($this->jobManager->draftVttPath()),
+            $targetLangs,
+        );
+    }
+
+    private function validateVttContent(string $vttContent, string $label): void
+    {
+        $tmpPath = tempnam(sys_get_temp_dir(), 'studio-bulk-vtt-');
+        if ($tmpPath === false) {
+            throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
+        }
+
+        try {
+            if (file_put_contents($tmpPath, $vttContent) === false) {
+                throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
+            }
+            $this->vttValidator->validate($tmpPath, $label);
+        } finally {
+            if (is_file($tmpPath)) {
+                unlink($tmpPath);
+            }
+        }
     }
 
     private function startTranslationIfNeeded(string $sourceLang): void

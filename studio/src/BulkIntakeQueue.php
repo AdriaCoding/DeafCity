@@ -32,7 +32,7 @@ class BulkIntakeQueue
     }
 
     /**
-     * @param list<array{id: string, originalFilename: string, language: string, tmpAudioPath: string}> $items
+     * @param list<array{id: string, originalFilename: string, language: string, tmpAudioPath: string, kind?: string}> $items
      */
     public function create(array $items): void
     {
@@ -42,6 +42,7 @@ class BulkIntakeQueue
                 'id' => $item['id'],
                 'originalFilename' => $item['originalFilename'],
                 'language' => $item['language'],
+                'kind' => $item['kind'] ?? 'audio',
                 'tmpAudioPath' => $item['tmpAudioPath'],
                 'status' => 'pending',
             ];
@@ -98,6 +99,7 @@ class BulkIntakeQueue
                 'id' => $item['id'],
                 'originalFilename' => $item['originalFilename'],
                 'language' => $item['language'],
+                'kind' => $item['kind'] ?? 'audio',
                 'status' => $item['status'],
             ];
             if (isset($item['reason'])) {

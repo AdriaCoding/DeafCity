@@ -129,13 +129,59 @@ class BulkIntakeHandlerTest extends TestCase
         $this->assertFalse($this->bulkQueue->exists());
     }
 
-    public function test_rejects_bulk_upload_with_subtitle_file(): void
+    public function test_accepts_bulk_upload_with_subtitle_file(): void
     {
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($vtt, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
         $upload = $this->multiFileUpload(['talk_ca.mp3', 'session_es.wav']);
         $upload['name'][1] = 'session_es.vtt';
         $upload['tmp_name'][1] = $vtt;
+
+        $result = $this->handler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $upload],
+        );
+
+        $this->assertTrue($result['created'] ?? false);
+        $this->assertTrue($this->bulkQueue->exists());
+        $snap = $this->bulkQueue->statusSnapshot();
+        $this->assertCount(2, $snap['items']);
+        $kinds = array_column($snap['items'], 'kind');
+        $this->assertContains('audio', $kinds);
+        $this->assertContains('subtitle', $kinds);
+    }
+
+    public function test_accepts_subtitle_only_bulk_upload(): void
+    {
+        $vtt1 = tempnam(sys_get_temp_dir(), 'vtt');
+        $vtt2 = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt1, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nOne\n");
+        file_put_contents($vtt2, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nTwo\n");
+        $upload = [
+            'name' => ['talk_ca.vtt', 'session_es.srt'],
+            'type' => ['text/vtt', 'application/x-subrip'],
+            'tmp_name' => [$vtt1, $vtt2],
+            'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size' => [20, 20],
+        ];
+
+        $result = $this->handler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $upload],
+        );
+
+        $this->assertTrue($result['created'] ?? false);
+        $snap = $this->bulkQueue->statusSnapshot();
+        $this->assertCount(2, $snap['items']);
+        foreach ($snap['items'] as $item) {
+            $this->assertSame('subtitle', $item['kind']);
+        }
+    }
+
+    public function test_rejects_unknown_extension_in_bulk(): void
+    {
+        $upload = $this->multiFileUpload(['talk_ca.mp3', 'notes.txt']);
+        $upload['name'][1] = 'notes.txt';
 
         $result = $this->handler()->handlePost(
             ['bulk_languages' => ['ca', 'es']],

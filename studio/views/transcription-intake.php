@@ -137,7 +137,7 @@
                 <input type="file" id="intake_file" name="intake_file[]" multiple
                     accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac,.webm,.vtt,.srt" required>
                 <p class="field-hint" id="intake-file-hint">
-                    Àudio (.mp3, .wav, .m4a…) o subtítols (.vtt, .srt). Un sol fitxer de subtítols; per a diversos fitxers, només àudio.
+                    Àudio (.mp3, .wav, .m4a…) o subtítols (.vtt, .srt). Un o més fitxers; en massa es processen en sèrie.
                 </p>
                 <div id="bulk-language-table" style="display:none"></div>
                 <?php if (!empty($errors['intake_file'])): ?>
