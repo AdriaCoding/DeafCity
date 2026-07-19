@@ -25,6 +25,7 @@ class BulkItemProcessor
         ?IntakeSourceDetector $sourceDetector = null,
         ?SrtToVttConverter $srtConverter = null,
         ?WebVttValidator $vttValidator = null,
+        private readonly int $pollTimeoutSeconds = 3600,
     ) {
         $this->waitForCompletion = $waitForCompletion ?? fn (): array => $this->pollUntilReady();
         $this->sourceDetector = $sourceDetector ?? new IntakeSourceDetector();
@@ -228,12 +229,15 @@ class BulkItemProcessor
     private function pollUntilReady(): array
     {
         $status = new TranscriptionPipelineStatus($this->jobManager);
-        $deadline = time() + 3600;
+        $deadline = time() + $this->pollTimeoutSeconds;
 
         while (time() < $deadline) {
             $state = $status->getState();
             if ($state === 'download_ready') {
                 return ['success' => true];
+            }
+            if ($state === 'revision_error') {
+                return ['success' => false, 'reason' => 'Error en la revisió.'];
             }
             if ($state === 'translation_error') {
                 return ['success' => false, 'reason' => 'Error en la traducció a l\'anglès.'];

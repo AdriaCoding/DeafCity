@@ -237,4 +237,53 @@ class BulkItemProcessorTest extends TestCase
         $this->assertStringContainsString('WEBVTT', $src);
         $this->assertStringContainsString('Hola', $src);
     }
+
+    public function test_revision_error_marks_item_failed_immediately(): void
+    {
+        $id = 'item-rev-err';
+        $vttPath = $this->jobsDir . "/bulk-tmp/$id.vtt";
+        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+        $this->bulkQueue->create([[
+            'id' => $id,
+            'originalFilename' => 'talk_ca',
+            'language' => 'ca',
+            'kind' => 'subtitle',
+            'tmpAudioPath' => $vttPath,
+        ]]);
+
+        $fakeOrchestrator = new class {
+            public function run(): array
+            {
+                return ['result' => 'error', 'message' => 'should not run'];
+            }
+        };
+
+        $jobManager = $this->jobManager;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'test-key', function () use ($jobManager): void {
+            file_put_contents($jobManager->revisionStatePath(), json_encode([
+                'status' => 'error',
+                'message' => 'Gemini bad JSON',
+            ]) . "\n");
+        });
+
+        $processor = new BulkItemProcessor(
+            bulkQueue: $this->bulkQueue,
+            jobManager: $this->jobManager,
+            orchestrator: $fakeOrchestrator,
+            launcher: $launcher,
+            translationState: new TranslationJobState($this->jobManager),
+            waitForCompletion: null,
+            pollTimeoutSeconds: 4,
+        );
+
+        $started = time();
+        $processor->processNext();
+        $elapsed = time() - $started;
+
+        $snap = $this->bulkQueue->statusSnapshot();
+        $this->assertSame('failed', $snap['items'][0]['status']);
+        $this->assertStringContainsString('revisió', $snap['items'][0]['reason']);
+        $this->assertLessThan(4, $elapsed);
+        $this->assertFalse($this->jobManager->exists());
+    }
 }
