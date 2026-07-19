@@ -19,12 +19,7 @@
         return AUDIO_EXTENSIONS.indexOf(ext) !== -1;
     }
 
-    function detectSubtitleLanguageFromFilename(filename, languages) {
-        var stem = filename.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '').toLowerCase();
-        if (!stem) {
-            return null;
-        }
-
+    function buildLanguageCodes(languages) {
         var codes = [];
         languages.forEach(function (lang) {
             var id = (lang.id || '').toLowerCase();
@@ -47,15 +42,72 @@
             return 0;
         });
 
+        return codes;
+    }
+
+    function matchCodeAt(stem, start, codes) {
+        for (var i = 0; i < codes.length; i++) {
+            var entry = codes[i];
+            if (stem.substr(start, entry.len) === entry.code) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Filename suffix → initial dropdown value only.
+     * Prefers source→target pairs (e.g. talk_ES_EN / talk_ES-EN → es) over a lone
+     * trailing code, so the English target half does not seed the source dropdown.
+     */
+    function detectSubtitleLanguageFromFilename(filename, languages) {
+        var stem = filename.replace(/^.*[\\/]/, '').replace(/\.[^.]+$/, '').toLowerCase();
+        if (!stem) {
+            return null;
+        }
+
+        var codes = buildLanguageCodes(languages);
+        if (!codes.length) {
+            return null;
+        }
+
+        // Pair suffix: …[_\-.]{src}[_\-]{tgt} → source language
+        for (var srcIdx = 0; srcIdx < codes.length; srcIdx++) {
+            var src = codes[srcIdx];
+            for (var tgtIdx = 0; tgtIdx < codes.length; tgtIdx++) {
+                var tgt = codes[tgtIdx];
+                var pairLen = src.len + 1 + tgt.len;
+                if (stem.length < pairLen + 1) {
+                    continue;
+                }
+                var pairStart = stem.length - pairLen;
+                var sepBefore = stem.charAt(pairStart - 1);
+                if (sepBefore !== '_' && sepBefore !== '-' && sepBefore !== '.') {
+                    continue;
+                }
+                if (stem.substr(pairStart, src.len) !== src.code) {
+                    continue;
+                }
+                var mid = stem.charAt(pairStart + src.len);
+                if (mid !== '_' && mid !== '-') {
+                    continue;
+                }
+                if (stem.substr(pairStart + src.len + 1, tgt.len) !== tgt.code) {
+                    continue;
+                }
+                return src.langId;
+            }
+        }
+
         for (var len = 3; len >= 2; len--) {
             if (stem.length < len) {
                 continue;
             }
-            var suffix = stem.slice(-len);
-            for (var i = 0; i < codes.length; i++) {
-                if (codes[i].len === len && codes[i].code === suffix) {
-                    return codes[i].langId;
-                }
+            var matched = matchCodeAt(stem, stem.length - len, codes.filter(function (c) {
+                return c.len === len;
+            }));
+            if (matched) {
+                return matched.langId;
             }
         }
 
@@ -127,7 +179,7 @@
 
         var table = document.createElement('table');
         table.className = 'bulk-table';
-        table.innerHTML = '<thead><tr><th>Fitxer</th><th>Llengua</th></tr></thead>';
+        table.innerHTML = '<thead><tr><th>Fitxer</th><th>Llengua d\'entrada</th></tr></thead>';
         var tbody = document.createElement('tbody');
 
         for (var i = 0; i < files.length; i++) {

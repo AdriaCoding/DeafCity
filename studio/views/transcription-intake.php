@@ -109,7 +109,7 @@
     <?php require __DIR__ . '/partials/studio-header.php'; ?>
     <main>
         <h2>Nova transcripció</h2>
-        <p class="lead">Pugeu l'àudio de l'intèrpret o un esborrany de subtítols (.vtt / .srt). El sistema transcriurà o revisarà el fitxer amb IA, el traduirà a l'anglès si cal, i descarregarà els subtítols en anglès quan estigui llest.</p>
+        <p class="lead">Pugeu l'àudio de l'intèrpret o un esborrany de subtítols (.vtt / .srt). El sistema transcriurà o revisarà el fitxer amb IA i el traduirà sempre a l'anglès (excepte si la llengua d'entrada ja és l'anglès). El sufix del nom del fitxer només omple el valor inicial del desplegable.</p>
 
         <?php if (!empty($errors['_form'])): ?>
             <p class="form-error"><?= htmlspecialchars($errors['_form']) ?></p>
@@ -117,7 +117,7 @@
 
         <form method="POST" action="?action=transcription-intake" enctype="multipart/form-data" id="intake-form">
             <div class="field" id="single-language-field">
-                <label for="subtitle_language">Llengua d'entrada</label>
+                <label for="subtitle_language">Llengua d'entrada (d'on ve l'àudio o el text)</label>
                 <select id="subtitle_language" name="subtitle_language" required>
                     <option value="">Seleccioneu…</option>
                     <?php foreach ($subtitleLanguages as $option): ?>

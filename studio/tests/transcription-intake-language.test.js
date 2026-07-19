@@ -27,4 +27,10 @@ assert.strictEqual(detect('session_ar.flac', languages), 'arq');
 assert.strictEqual(detect('clip_mt.ogg', languages), 'aeb');
 assert.strictEqual(detect('path/to/day1_ca.mp3', languages), 'ca');
 
+// Source→target pair suffixes: use the source language for the dropdown seed only.
+assert.strictEqual(detect('indy_3_ES_EN.mp3', languages), 'es');
+assert.strictEqual(detect('Indy_4_ES-EN.wav', languages), 'es');
+assert.strictEqual(detect('talk_ca_en.vtt', languages), 'ca');
+assert.strictEqual(detect('talk_en_es.mp3', languages), 'en');
+
 console.log('transcription-intake-language.test.js: ok');
