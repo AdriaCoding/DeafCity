@@ -663,23 +663,19 @@
         "section": "content",
         "context": "Sign language label (algerian-sl)",
         "translations": {
-            "en": "LSA Algerian Sign Language",
-            "fr": "LSA Langue des Signes Algérienne",
-            "ca": "LSA Llengua de Signes Algeriana",
-            "es": "LSA Lengua de Signos Argelina",
-            "it": "LSA Lingua dei Segni Algerina",
-            "pt": "LSA Língua Gestual Argelina",
-            "ar": "لغة الإشارة الجزائرية LSA",
-            "eu": "LSA Aljeriako Zeinu-hizkuntza"
+            "en": "LSA Algerian",
+            "fr": "LSA Algérien",
+            "ca": "LSA Algeriana",
+            "es": "LSA Argelina",
+            "it": "LSA Algerina",
+            "pt": "LSA Argelina",
+            "ar": "LSA لغة الإشارة الجزائرية",
+            "eu": "LSA Aljeriako"
         },
         "seeded": {
-            "fr": true,
             "ca": true,
-            "es": true,
-            "it": true,
-            "pt": true,
-            "ar": true,
-            "eu": true
+            "fr": true,
+            "pt": true
         }
     },
     "content.sign_language.algerian-sl.short_label": {
@@ -710,22 +706,17 @@
         "context": "Sign language label (libras)",
         "translations": {
             "en": "LIBRAS Brazilian",
-            "fr": "LIBRAS Langue des Signes Brésilienne",
-            "ca": "LIBRAS Llengua de Signes Brasilera",
-            "es": "LIBRAS Lengua de Signos Brasileña",
-            "it": "LIBRAS Lingua dei Segni Brasiliana",
-            "pt": "LIBRAS Língua Gestual Brasileira",
-            "ar": "لغة الإشارة البرازيلية LIBRAS",
-            "eu": "LIBRAS Brasilgo Zeinu-hizkuntza"
+            "fr": "LIBRAS Brésilienne",
+            "ca": "LIBRAS Brasilera",
+            "es": "LIBRAS Brasileña",
+            "it": "LIBRAS Brasiliana",
+            "pt": "LIBRAS Brasileira",
+            "ar": "LIBRAS البرازيلية",
+            "eu": "LIBRAS Brasilgo"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
-            "pt": true,
             "ar": true,
-            "eu": true
+            "pt": true
         }
     },
     "content.sign_language.libras.short_label": {
@@ -755,23 +746,18 @@
         "section": "content",
         "context": "Sign language label (lis)",
         "translations": {
-            "en": "LIS Italian Sign Language",
-            "fr": "LIS Langue des Signes Italienne",
-            "ca": "LIS Llengua de Signes Italiana",
-            "es": "LIS Lengua de Signos Italiana",
-            "it": "LIS Lingua dei Segni Italiana",
-            "pt": "LIS Língua Gestual Italiana",
-            "ar": "لغة الإشارة الإيطالية LIS",
-            "eu": "LIS Italiako Zeinu-hizkuntza"
+            "en": "LIS Italian",
+            "fr": "LIS Italienne",
+            "ca": "LIS italiana",
+            "es": "LIS Italiana\r\n",
+            "it": "LIS Italiana",
+            "pt": "LIS Italiana",
+            "ar": "LIS الإيطالية",
+            "eu": "LIS Italiako"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
-            "pt": true,
             "ar": true,
-            "eu": true
+            "pt": true
         }
     },
     "content.sign_language.lis.short_label": {
@@ -801,23 +787,18 @@
         "section": "content",
         "context": "Sign language label (lsc)",
         "translations": {
-            "en": "LSC Catalan Sign Language",
-            "fr": "LSC Langue des Signes Catalane",
-            "ca": "LSC Llengua de Signes Catalana",
-            "es": "LSC Lengua de Signos Catalana",
-            "it": "LSC Lingua dei Segni Catalana",
-            "pt": "LSC Língua Gestual Catalã",
-            "ar": "لغة الإشارة الكاتالونية LSC",
-            "eu": "LSC Kataluniako Zeinu-hizkuntza"
+            "en": "LSC Catalan",
+            "fr": "LSC Catalane",
+            "ca": "LSC Catalana",
+            "es": "LSC Catalana",
+            "it": "LSC Catalana",
+            "pt": "LSC Catalã",
+            "ar": "LSC الكاتالونية",
+            "eu": "LSC Katalana"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
-            "pt": true,
             "ar": true,
-            "eu": true
+            "pt": true
         }
     },
     "content.sign_language.lsc.short_label": {
@@ -847,22 +828,18 @@
         "section": "content",
         "context": "Sign language label (lse)",
         "translations": {
-            "en": "LSE Spanish Sign Language",
-            "fr": "LSE Langue des Signes Espagnole",
-            "ca": "LSE Llengua de Signes Espanyola",
-            "es": "LSE Lengua de Signos Española",
-            "it": "LSE Lingua dei Segni Spagnola",
-            "pt": "LSE Língua de Sinais Espanhola",
-            "ar": "لغة الإشارة الإسبانية LSE",
-            "eu": "LSE Espainiako Zeinu-hizkuntza"
+            "en": "LSE Spanish",
+            "fr": "LSE Espagnole",
+            "ca": "LSE Espanyola",
+            "es": "LSE Española",
+            "it": "LSE Spagnola",
+            "pt": "LSE Espanhola",
+            "ar": "LSE الإسبانية",
+            "eu": "LSE Espainiako"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
             "ar": true,
-            "eu": true
+            "pt": true
         }
     },
     "content.sign_language.lse.short_label": {
@@ -892,21 +869,19 @@
         "section": "content",
         "context": "Sign language label (lsf)",
         "translations": {
-            "en": "LSF French Sign Language",
-            "fr": "LSF Langue des Signes Française",
+            "en": "LSF French",
+            "fr": "LSF Française",
             "ca": "LSF Francesa",
-            "es": "LSF Lengua de Signos Francesa",
-            "it": "LSF Lingua dei Segni Francese",
-            "pt": "LSF Língua  de Sinais Francesa",
-            "ar": "لغة الإشارة الفرنسية LSF",
-            "eu": "LSF Frantziako Zeinu-hizkuntza"
+            "es": "LSF Francesa",
+            "it": "LSF Francese",
+            "pt": "LSF Francesa",
+            "ar": "LSF الفرنسية",
+            "eu": "LSF Frantsesa"
         },
         "seeded": {
-            "fr": true,
-            "es": true,
-            "it": true,
             "ar": true,
-            "eu": true
+            "it": true,
+            "pt": true
         }
     },
     "content.sign_language.lsf.short_label": {
@@ -936,22 +911,18 @@
         "section": "content",
         "context": "Sign language label (lsm)",
         "translations": {
-            "en": "LSM Mexican Sign Language",
-            "fr": "LSM Langue des Signes Mexicaine",
-            "ca": "LSM Llengua de Signes Mexicana",
-            "es": "LSM Lengua de Señas Mexicana",
-            "it": "LSM Lingua dei Segni Messicana",
-            "pt": "LSM Língua de Sinais Mexicana",
-            "ar": "لغة الإشارة المكسيكية LSM",
-            "eu": "LSM Mexikoko Zeinu-hizkuntza"
+            "en": "LSM Mexican",
+            "fr": "LSM Mexicaine",
+            "ca": "LSM Mexicana",
+            "es": "LSM Mexicana",
+            "it": "LSM Messicana",
+            "pt": "LSM Mexicana",
+            "ar": "LSM المكسيكية",
+            "eu": "LSM Mexikoko"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
             "ar": true,
-            "eu": true
+            "pt": true
         }
     },
     "content.sign_language.lsm.short_label": {
@@ -981,22 +952,18 @@
         "section": "content",
         "context": "Sign language label (tunisian-sl)",
         "translations": {
-            "en": "LST Tunisian Sign Language",
-            "fr": "LST Langue des Signes Tunisienne",
-            "ca": "LST Llengua de Signes Tunisiana",
-            "es": "LST Lengua de Signos Tunecina",
-            "it": "LST Lingua dei Segni Tunisina",
-            "pt": "LST Língua de Sinais Tunisina",
-            "ar": "لغة الإشارة التونسية LST",
-            "eu": "LST Tunisiako Zeinu-hizkuntza"
+            "en": "LST Tunisian",
+            "fr": "LST Tunisienne",
+            "ca": "LST Tunisiana",
+            "es": "LST Tunecina",
+            "it": "LST Tunisina",
+            "pt": "LST Tunisiana",
+            "ar": "LST التونسية",
+            "eu": "LST Tunisiako"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
             "ar": true,
-            "eu": true
+            "pt": true
         }
     },
     "content.sign_language.tunisian-sl.short_label": {
@@ -1144,12 +1111,20 @@
             "en": "Double-sided display of 10 Sign Languages on TVs",
             "ar": "عرض مزدوج الجوانب لـ 10 لغات إشارة على شاشات التلفاز",
             "eu": "Hamar zeinu-hizkuntzaren bi aldeko erakusketa telebistetan",
-            "fr": "Affichage recto-verso de 10 Langues des Signes sur TV"
+            "fr": "Affichage recto-verso de 10 Langues des Signes sur TV",
+            "ca": "Pantalla de doble cara amb 10 Llengües de Signes en televisors",
+            "it": "Display a doppia faccia di 10 lingue dei segni su TV",
+            "pt": "Exibição dupla face de 10 Línguas de Sinais em TVs",
+            "es": "Pantalla doble de 10 lenguas de señas en televisores"
         },
         "seeded": {
             "ar": true,
             "eu": true,
-            "fr": true
+            "fr": true,
+            "ca": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "gallery.caption.02": {
@@ -1159,12 +1134,20 @@
             "en": "Double-sided display of 10 Sign Languages on TVs",
             "ar": "عرض مزدوج الجوانب لـ 10 لغات إشارة على شاشات التلفاز",
             "eu": "Hamar zeinu-hizkuntzaren bi aldeko erakusketa telebistetan",
-            "fr": "Affichage recto-verso de 10 Langues des Signes sur TV"
+            "fr": "Affichage recto-verso de 10 Langues des Signes sur TV",
+            "ca": "Pantalla de doble cara amb 10 Llengües de Signes en televisors",
+            "it": "Display a doppia faccia di 10 lingue dei segni su TV",
+            "pt": "Exibição dupla face de 10 Línguas de Sinais em TVs",
+            "es": "Pantalla doble de 10 lenguas de señas en televisores"
         },
         "seeded": {
             "ar": true,
             "eu": true,
-            "fr": true
+            "fr": true,
+            "ca": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "gallery.caption.03": {
@@ -1174,12 +1157,20 @@
             "en": "Double-sided display of 10 Sign Languages on TVs",
             "ar": "عرض مزدوج الجوانب لـ 10 لغات إشارة على شاشات التلفاز",
             "eu": "Hamar zeinu-hizkuntzaren bi aldeko erakusketa telebistetan",
-            "fr": "Affichage recto-verso de 10 Langues des Signes sur TV"
+            "fr": "Affichage recto-verso de 10 Langues des Signes sur TV",
+            "ca": "Pantalla de doble cara amb 10 Llengües de Signes en televisors",
+            "it": "Display a doppia faccia di 10 lingue dei segni su TV",
+            "pt": "Exibição dupla face de 10 Línguas de Sinais em TVs",
+            "es": "Pantalla doble de 10 lenguas de señas en televisores"
         },
         "seeded": {
             "ar": true,
             "eu": true,
-            "fr": true
+            "fr": true,
+            "ca": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "gallery.caption.04": {
@@ -1189,12 +1180,20 @@
             "en": "TVs on the wall displaying 8 Sign Languages",
             "ar": "أجهزة تلفاز على الحائط تعرض 8 لغات إشارة",
             "eu": "Zortzi zeinu-hizkuntza erakusten dituzten hormako telebistak",
-            "fr": "TV murales affichant 8 Langues des Signes"
+            "fr": "TV murales affichant 8 Langues des Signes",
+            "ca": "Televisors a la paret mostrant 8 Llengües de Signes",
+            "it": "TV a parete che mostrano 8 lingue dei segni",
+            "pt": "TVs na parede exibindo 8 Línguas de Sinais",
+            "es": "Televisores en la pared mostrando 8 lenguas de señas"
         },
         "seeded": {
             "ar": true,
             "eu": true,
-            "fr": true
+            "fr": true,
+            "ca": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "gallery.caption.05": {
@@ -1204,12 +1203,20 @@
             "en": "Projections displaying 4 Sign Languages",
             "ar": "عروض إسقاطية تعرض 4 لغات إشارة",
             "eu": "Lau zeinu-hizkuntza erakusten dituzten proiekzioak",
-            "fr": "Projections affichant 4 Langues des Signes"
+            "fr": "Projections affichant 4 Langues des Signes",
+            "ca": "Projeccions mostrant 4 Llengües de Signes",
+            "it": "Proiezioni che mostrano 4 lingue dei segni",
+            "pt": "Projeções exibindo 4 Línguas de Sinais",
+            "es": "Proyecciones mostrando 4 lenguas de señas"
         },
         "seeded": {
             "ar": true,
             "eu": true,
-            "fr": true
+            "fr": true,
+            "ca": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "gallery.caption.06": {
@@ -1219,12 +1226,20 @@
             "en": "TVs on the wall displaying 15 Sign Languages",
             "ar": "أجهزة تلفاز على الحائط تعرض 15 لغة إشارة",
             "eu": "Hamabost zeinu-hizkuntza erakusten dituzten hormako telebistak",
-            "fr": "TV murales affichant 15 Langues des Signes"
+            "fr": "TV murales affichant 15 Langues des Signes",
+            "ca": "Televisors a la paret mostrant 15 Llengües de Signes",
+            "it": "TV a parete che mostrano 15 lingue dei segni",
+            "pt": "TVs na parede exibindo 15 Línguas de Sinais",
+            "es": "Televisores en la pared mostrando 15 lenguas de señas"
         },
         "seeded": {
             "ar": true,
             "eu": true,
-            "fr": true
+            "fr": true,
+            "ca": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "participants.heading": {
@@ -1346,44 +1361,39 @@
         "section": "player",
         "context": "Default option in City\/Edition dropdown",
         "translations": {
-            "en": "All cities",
-            "fr": "Toutes les villes",
-            "ca": "Totes les ciutats",
-            "es": "Todas las ciudades",
-            "it": "Tutte le città",
-            "pt": "Todas as cidades",
-            "ar": "جميع المدن",
-            "eu": "Hiri guztiak"
+            "en": "Cities",
+            "fr": "Villes",
+            "ca": "Ciutats",
+            "es": "Ciudades",
+            "it": "Città",
+            "pt": "Cidades",
+            "ar": "مدن",
+            "eu": "Hiriak"
         },
         "seeded": {
-            "fr": true,
+            "ar": true,
+            "eu": true,
             "ca": true,
-            "es": true,
+            "fr": true,
             "it": true,
             "pt": true,
-            "ar": true,
-            "eu": true
+            "es": true
         }
     },
     "player.filter.all_sign_languages": {
         "section": "player",
         "context": "Default option in Sign language dropdown",
         "translations": {
-            "en": "All sign languages",
-            "fr": "Toutes les langues des signes",
-            "ca": "Totes les llengües de signes",
-            "es": "Todos los lenguajes de signos",
-            "it": "Tutte le lingue dei segni",
-            "pt": "Todas as línguas de sinais",
-            "ar": "جميع لغات الإشارة",
-            "eu": "Zeinu-hizkuntza guztiak"
+            "en": "Sign Languages",
+            "fr": "Langues des Signes",
+            "ca": "Llengües de Signes",
+            "es": "Lenguas de Signos",
+            "it": "Lingue dei Segni",
+            "pt": "Línguas de Sinais",
+            "ar": "لغات الإشارة",
+            "eu": "Zeinu-hizkuntzak"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
-            "pt": true,
             "ar": true,
             "eu": true
         }
@@ -1392,23 +1402,23 @@
         "section": "player",
         "context": "Default option in Typology dropdown",
         "translations": {
-            "en": "All typologies",
-            "fr": "Toutes les typologies",
-            "ca": "Totes les tipologies",
-            "es": "Todas las tipologías",
-            "it": "Tutte le tipologie",
-            "pt": "Todas as tipologias",
-            "ar": "جميع الأنواع",
-            "eu": "Tipologia guztiak"
+            "en": "Typologies",
+            "fr": "Typologies",
+            "ca": "Tipologies",
+            "es": "Tipologías",
+            "it": "Tipologie",
+            "pt": "Tipologias",
+            "ar": "تصنيفات",
+            "eu": "Tipologiak"
         },
         "seeded": {
-            "fr": true,
+            "ar": true,
+            "eu": true,
             "ca": true,
-            "es": true,
+            "fr": true,
             "it": true,
             "pt": true,
-            "ar": true,
-            "eu": true
+            "es": true
         }
     },
     "player.filter.city_edition": {
@@ -1438,23 +1448,19 @@
         "section": "player",
         "context": "Sign language filter generic label",
         "translations": {
-            "en": "Sign language",
-            "fr": "Langue des signes",
-            "ca": "Llengua de signes",
-            "es": "Lengua de signos",
-            "it": "Lingua dei segni",
-            "pt": "Língua gestual",
+            "en": "Sign Language",
+            "fr": "Langue des Signes",
+            "ca": "Llengua de Signes",
+            "es": "Lengua de Signos",
+            "it": "Lingua dei Segni",
+            "pt": "Língua de Sinais",
             "ar": "لغة الإشارة",
-            "eu": "Zeinu-hizkuntza"
+            "eu": "Zeinu Hizkuntza"
         },
         "seeded": {
-            "fr": true,
-            "ca": true,
-            "es": true,
-            "it": true,
-            "pt": true,
             "ar": true,
-            "eu": true
+            "eu": true,
+            "pt": true
         }
     },
     "player.filter.typology": {
@@ -1484,16 +1490,24 @@
         "section": "player",
         "context": "Accessible name for DEAF+HEARING toggle (not the glyph label)",
         "translations": {
-            "en": "Deaf and hearing crossover videos",
-            "fr": "",
-            "ca": "",
-            "es": "",
-            "it": "",
-            "pt": "",
-            "ar": "",
-            "eu": ""
+            "en": "Deaf & Hearing interactions",
+            "fr": "Interactions Sourds et Entendants",
+            "ca": "Interaccions de sords i oïdors",
+            "es": "Interacciones entre Sordos y Oyentes",
+            "it": "Interazioni tra Sordi e Udenti",
+            "pt": "Interações entre Surdos e Ouvintes",
+            "ar": "تفاعلات الصم والسامعين",
+            "eu": "Gorren eta entzuleen harremanak"
         },
-        "seeded": []
+        "seeded": {
+            "ar": true,
+            "eu": true,
+            "ca": true,
+            "fr": true,
+            "it": true,
+            "pt": true,
+            "es": true
+        }
     },
     "player.nav.about": {
         "section": "player",
@@ -1637,23 +1651,22 @@
         "section": "player",
         "context": "Next button aria-label",
         "translations": {
-            "en": "Next video in playlist",
-            "fr": "Vidéo suivante dans la playlist",
-            "ca": "Següent vídeo de la llista",
-            "es": "Siguiente video en la lista de reproducción",
-            "it": "Prossimo video nella playlist",
-            "pt": "Próximo vídeo na lista de reprodução",
-            "ar": "الفيديو التالي في قائمة التشغيل",
-            "eu": "Hurrengo bideoa zerrendan"
+            "en": "Next video",
+            "fr": "Vidéo suivante",
+            "ca": "Següent vídeo",
+            "es": "Siguiente video",
+            "it": "Prossimo video",
+            "pt": "Próximo vídeo",
+            "ar": "الفيديو التالي",
+            "eu": "Hurrengo bideoa"
         },
         "seeded": {
+            "ar": true,
+            "eu": true,
             "fr": true,
-            "ca": true,
-            "es": true,
             "it": true,
             "pt": true,
-            "ar": true,
-            "eu": true
+            "es": true
         }
     },
     "player.transport.pause": {
@@ -1798,23 +1811,23 @@
         "section": "player",
         "context": "Shuffle button aria-label",
         "translations": {
-            "en": "Shuffle playlist",
-            "fr": "Lecture aléatoire de la playlist",
-            "ca": "Reproducció aleatòria de la llista",
-            "es": "Mezclar lista de reproducción",
-            "it": "Mescola playlist",
-            "pt": "Aleatorizar lista de reprodução",
-            "ar": "تشغيل عشوائي",
-            "eu": "Erreprodukzio-zerrenda ausaz nahasi"
+            "en": "Shuffle",
+            "fr": "Mélanger",
+            "ca": "Aleatori",
+            "es": "Barajar",
+            "it": "Casuale",
+            "pt": "Aleatório",
+            "ar": "خلط",
+            "eu": "Nahastu"
         },
         "seeded": {
-            "fr": true,
+            "ar": true,
+            "eu": true,
             "ca": true,
-            "es": true,
+            "fr": true,
             "it": true,
             "pt": true,
-            "ar": true,
-            "eu": true
+            "es": true
         }
     }
 }
