@@ -29,6 +29,24 @@ class Container
         return $this->catalogEditor ??= new CatalogEditor($this->dataDir . '/catalog.json');
     }
 
+    public function catalogSheetSync(): CatalogSheetSync
+    {
+        if (!defined('SPREADSHEET_ID') || SPREADSHEET_ID === '') {
+            throw new \RuntimeException('SPREADSHEET_ID is not configured.');
+        }
+        $serviceAccountPath = dirname($this->dataDir) . '/config/google-sheets-service-account.json';
+        if (!is_readable($serviceAccountPath)) {
+            throw new \RuntimeException('Google Sheets service-account JSON not readable.');
+        }
+
+        return new CatalogSheetSync(
+            new GoogleSheetsClient($serviceAccountPath, SPREADSHEET_ID),
+            $this->vimeoClient(),
+            $this->catalogEditor(),
+            new SheetCatalogParser(),
+        );
+    }
+
     public function bulkIntakeQueue(): BulkIntakeQueue
     {
         return new BulkIntakeQueue($this->dataDir . '/jobs');

@@ -42,6 +42,8 @@
             display: flex;
             justify-content: flex-end;
             align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
             margin-bottom: 1.25rem;
         }
         .btn-add-video {
@@ -54,6 +56,36 @@
             padding: 0.5rem 1rem;
         }
         .btn-add-video:hover { background: var(--studio-accent-bg-hover); }
+        .tab-panel-toolbar .studio-sync-btn {
+            padding: 0.5rem 1rem;
+            background: var(--studio-btn-solid-bg);
+            color: var(--studio-btn-solid-text);
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+        .tab-panel-toolbar .studio-sync-btn:hover:not(:disabled) {
+            background: var(--studio-btn-solid-bg-hover);
+            color: var(--studio-btn-solid-text);
+        }
+        .tab-panel-toolbar .studio-sync-btn:disabled {
+            opacity: 0.55;
+            cursor: default;
+        }
+        .sheet-sync-status {
+            color: var(--studio-text-muted);
+            font-size: 0.85rem;
+            max-width: 36rem;
+        }
+        .sheet-sync-status.is-error { color: var(--studio-danger); }
+        .sheet-sync-status.is-ok { color: var(--studio-text-secondary); }
 
         /* ── Modal ── */
         .modal-overlay {
@@ -622,6 +654,8 @@
     <div class="tab-panel active" id="tab-videos">
         <div class="tab-panel-toolbar">
             <button type="button" class="btn-add-video" id="video-add-trigger">+ Afegir vídeo</button>
+            <button type="button" class="studio-sync-btn" id="sheet-sync-trigger">Sincronitza desde Google Sheet</button>
+            <span id="sheet-sync-status" class="sheet-sync-status" aria-live="polite"></span>
         </div>
         <p id="videos-empty-msg" style="color:var(--studio-text-muted);font-size:0.9rem;<?= empty($catalogVideos) ? '' : ' display:none;' ?>">El catàleg no conté cap vídeo publicat.</p>
         <div id="videos-catalog">
@@ -1115,6 +1149,8 @@
     // ── Add video modal ───────────────────────────────────────────────────────
     var videoModal = document.getElementById('video-add-modal');
     var videoAddTrigger = document.getElementById('video-add-trigger');
+    var sheetSyncTrigger = document.getElementById('sheet-sync-trigger');
+    var sheetSyncStatus = document.getElementById('sheet-sync-status');
     var videoAddCancel = document.getElementById('video-add-cancel');
     var videoAddClose = document.getElementById('video-add-close');
     var videoAddSubmit = document.getElementById('video-add-submit');
@@ -1285,6 +1321,48 @@
     }
 
     videoAddTrigger.addEventListener('click', openVideoModal);
+
+    if (sheetSyncTrigger) {
+        sheetSyncTrigger.addEventListener('click', function () {
+            if (sheetSyncTrigger.disabled) {
+                return;
+            }
+            if (!window.confirm('Sincronitzar el catàleg des de Google Sheet? No s\'esborraran vídeos absents del full.')) {
+                return;
+            }
+            sheetSyncTrigger.disabled = true;
+            sheetSyncStatus.classList.remove('is-error', 'is-ok');
+            sheetSyncStatus.textContent = 'Sincronitzant…';
+            fetch('?action=continguts-sync-from-sheet', { method: 'POST' })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { okHttp: res.ok, data: data };
+                    });
+                })
+                .then(function (result) {
+                    var data = result.data || {};
+                    if (!result.okHttp || !data.ok) {
+                        sheetSyncStatus.classList.add('is-error');
+                        sheetSyncStatus.textContent = data.error || 'Error en sincronitzar el full.';
+                        return;
+                    }
+                    sheetSyncStatus.classList.add('is-ok');
+                    var msg = data.message || 'Sincronització completada.';
+                    if (data.warnings && data.warnings.length) {
+                        msg += ' Avisos: ' + data.warnings.length + '.';
+                    }
+                    sheetSyncStatus.textContent = msg;
+                    window.location.reload();
+                })
+                .catch(function () {
+                    sheetSyncStatus.classList.add('is-error');
+                    sheetSyncStatus.textContent = 'Error de xarxa en sincronitzar el full.';
+                })
+                .finally(function () {
+                    sheetSyncTrigger.disabled = false;
+                });
+        });
+    }
     videoAddCancel.addEventListener('click', closeVideoModal);
     videoAddClose.addEventListener('click', closeVideoModal);
     videoModal.addEventListener('click', function (e) {

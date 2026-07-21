@@ -96,6 +96,7 @@ class CatalogAction
             'continguts-caption-translate-start'     => $this->captionTranslateStart(),
             'continguts-caption-translate-status'    => $this->captionTranslateStatus(),
             'continguts-caption-translate-retry'     => $this->captionTranslateRetry(),
+            'continguts-sync-from-sheet'             => $this->syncFromSheet(),
             default                               => (function () { http_response_code(404); exit; })(),
         };
     }
@@ -221,6 +222,49 @@ class CatalogAction
             http_response_code(422);
         }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function syncFromSheet(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        @set_time_limit(300);
+
+        try {
+            $result = $this->c->catalogSheetSync()->run();
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode([
+                'ok' => false,
+                'error' => $e->getMessage() !== '' ? $e->getMessage() : 'Error desconegut en sincronitzar el full.',
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        if ($result->error !== null) {
+            http_response_code(502);
+            echo json_encode([
+                'ok' => false,
+                'error' => $result->error,
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        echo json_encode([
+            'ok' => true,
+            'added' => $result->added,
+            'updated' => $result->updated,
+            'removed' => $result->removed,
+            'skipped' => $result->skipped,
+            'warnings' => $result->warnings,
+            'message' => sprintf(
+                'Sincronització completada: %d afegits, %d actualitzats, %d omesos, %d avisos.',
+                $result->added,
+                $result->updated,
+                $result->skipped,
+                count($result->warnings),
+            ),
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 

@@ -7,12 +7,14 @@ class VideoTitleMetadata
     /** @var array<string, array{edition: string, sign_language: string}> */
     private const CITY_MAP = [
         'VALENCIA' => ['edition' => '2020-valencia', 'sign_language' => 'lse'],
+        'MEXICO' => ['edition' => '2021-mexico', 'sign_language' => 'lsm'],
         'BILBAO' => ['edition' => '2023-bilbao', 'sign_language' => 'lse'],
         'SAOPAULO' => ['edition' => '2023-sao-paulo', 'sign_language' => 'libras'],
         'ROMA' => ['edition' => '2026-rome', 'sign_language' => 'lis'],
         'MARSEILLE' => ['edition' => '2026-marseille', 'sign_language' => 'lsf'],
         'BARCELONA' => ['edition' => '2026-barcelona', 'sign_language' => 'lsc'],
         'ALGER' => ['edition' => '2026-algiers', 'sign_language' => 'algerian-sl'],
+        'TUNIS' => ['edition' => '2026-tunis', 'sign_language' => 'tunisian-sl'],
     ];
 
     public static function extractParticipant(string $title): ?string

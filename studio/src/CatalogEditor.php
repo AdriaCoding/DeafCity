@@ -470,6 +470,156 @@ class CatalogEditor
         fclose($fp);
     }
 
+    /**
+     * Upsert a Video from sheet sync. Never modifies captions or invisible.
+     * Clears typology when $typology is null. Updates participant when non-empty;
+     * leaves existing participant unchanged when incoming is null/empty.
+     * Tags are fully replaced by $tags.
+     *
+     * @param list<string> $tags
+     * @return 'added'|'updated'
+     */
+    public function upsertFromSheet(
+        string $vimeoId,
+        string $title,
+        string $signLanguage,
+        string $edition,
+        array $tags,
+        ?string $typology,
+        ?string $participant,
+        ?string $thumbnailUrl = null,
+        ?string $embedUrl = null,
+    ): string {
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog)) {
+            $catalog = ['videos' => []];
+        }
+        if (!isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            $catalog['videos'] = [];
+        }
+
+        $index = null;
+        foreach ($catalog['videos'] as $i => $entry) {
+            if (($entry['vimeo_id'] ?? '') === $vimeoId) {
+                $index = $i;
+                break;
+            }
+        }
+
+        if ($index === null) {
+            $entry = [
+                'id' => $signLanguage . '_' . $vimeoId,
+                'vimeo_id' => $vimeoId,
+                'title' => $title,
+                'sign_language' => $signLanguage,
+                'edition' => $edition,
+                'tags' => array_values($tags),
+                'captions' => [],
+            ];
+            if ($typology !== null && $typology !== '') {
+                $entry['typology'] = $typology;
+            }
+            if ($participant !== null && trim($participant) !== '') {
+                $entry['participant'] = trim($participant);
+            }
+            if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
+                $entry['thumbnail_url'] = $thumbnailUrl;
+            }
+            if ($embedUrl !== null && trim($embedUrl) !== '') {
+                $entry['embed_url'] = trim($embedUrl);
+            }
+            $catalog['videos'][] = $entry;
+            $action = 'added';
+        } else {
+            $entry = $catalog['videos'][$index];
+            $entry['title'] = $title;
+            $entry['sign_language'] = $signLanguage;
+            $entry['edition'] = $edition;
+            $entry['id'] = $signLanguage . '_' . $vimeoId;
+            $entry['tags'] = array_values($tags);
+            if ($typology !== null && $typology !== '') {
+                $entry['typology'] = $typology;
+            } else {
+                unset($entry['typology']);
+            }
+            if ($participant !== null && trim($participant) !== '') {
+                $entry['participant'] = trim($participant);
+            }
+            // Empty/null participant: leave existing value (do not clear).
+            if (
+                ($thumbnailUrl !== null && $thumbnailUrl !== '')
+                && (!isset($entry['thumbnail_url']) || $entry['thumbnail_url'] === '')
+            ) {
+                $entry['thumbnail_url'] = $thumbnailUrl;
+            }
+            if (
+                ($embedUrl !== null && trim($embedUrl) !== '')
+                && (!isset($entry['embed_url']) || $entry['embed_url'] === '')
+            ) {
+                $entry['embed_url'] = trim($embedUrl);
+            }
+            // captions + invisible intentionally untouched
+            $catalog['videos'][$index] = $entry;
+            $action = 'updated';
+        }
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return $action;
+    }
+
+    /**
+     * Remove Catalog Videos whose vimeo_id is not in $keepVimeoIds.
+     *
+     * @param list<string> $keepVimeoIds
+     */
+    public function removeVideosNotIn(array $keepVimeoIds): int
+    {
+        $keep = array_fill_keys(array_map('strval', $keepVimeoIds), true);
+
+        $fp = fopen($this->catalogFilePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open catalog for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $catalog = json_decode($raw ?: '', true);
+        if (!is_array($catalog) || !isset($catalog['videos']) || !is_array($catalog['videos'])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            return 0;
+        }
+
+        $before = count($catalog['videos']);
+        $catalog['videos'] = array_values(array_filter(
+            $catalog['videos'],
+            static fn(array $entry): bool => isset($keep[(string) ($entry['vimeo_id'] ?? '')]),
+        ));
+        $removed = $before - count($catalog['videos']);
+
+        ftruncate($fp, 0);
+        fseek($fp, 0);
+        fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        flock($fp, LOCK_UN);
+        fclose($fp);
+
+        return $removed;
+    }
+
     /** @return string[] */
     private function collectField(string $field): array
     {

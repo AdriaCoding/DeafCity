@@ -57,4 +57,12 @@ class VideoTitleMetadataTest extends TestCase
         $this->assertSame('lse', $resolved['sign_language']);
         $this->assertSame('Iñaki', VideoTitleMetadata::extractParticipant('2023_BILBAO_Iñaki_4_HD'));
     }
+
+    public function test_resolves_edition_and_sign_language_for_tunis(): void
+    {
+        $resolved = VideoTitleMetadata::resolveEditionAndSignLanguage('2026_TUNIS_Aya_1_HD');
+
+        $this->assertSame('2026-tunis', $resolved['edition']);
+        $this->assertSame('tunisian-sl', $resolved['sign_language']);
+    }
 }

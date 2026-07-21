@@ -242,6 +242,58 @@ class CatalogEditorTest extends TestCase
         $this->assertSame('Serena', $entry['participant']);
     }
 
+    public function test_upsertFromSheet_preserves_existing_participant_when_incoming_empty(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->addVideo(
+            vimeoId: '111',
+            title: 'Old',
+            signLanguage: 'lse',
+            edition: '2020-valencia',
+            participant: 'Aurora',
+        );
+
+        $editor->upsertFromSheet(
+            vimeoId: '111',
+            title: 'Updated',
+            signLanguage: 'lse',
+            edition: '2020-valencia',
+            tags: ['APPLAUSE'],
+            typology: 'acudits',
+            participant: null,
+        );
+
+        $entry = $editor->findVideoByVimeoId('111');
+        $this->assertSame('Aurora', $entry['participant']);
+    }
+
+    public function test_upsertFromSheet_updates_participant_when_incoming_provided(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->addVideo(
+            vimeoId: '111',
+            title: 'Old',
+            signLanguage: 'lse',
+            edition: '2020-valencia',
+            participant: 'Aurora',
+        );
+
+        $editor->upsertFromSheet(
+            vimeoId: '111',
+            title: 'Updated',
+            signLanguage: 'lse',
+            edition: '2020-valencia',
+            tags: [],
+            typology: null,
+            participant: 'Dani',
+        );
+
+        $entry = $editor->findVideoByVimeoId('111');
+        $this->assertSame('Dani', $entry['participant']);
+    }
+
     public function test_addVideo_throws_when_vimeo_id_already_in_catalog(): void
     {
         $this->writeCatalog(['videos' => [
