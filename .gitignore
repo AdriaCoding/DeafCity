@@ -79,3 +79,4 @@ data/*
 # Studio transcription venv & model cache
 /studio/.venv/
 /studio/models/
+config/google-sheets-service-account.json

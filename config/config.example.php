@@ -84,3 +84,15 @@ define('GROQ_TIMEOUT_SECONDS', 20);
  * studio/models/ in the dedicated studio/.venv. Default: whisper-large-v3-turbo.
  */
 define('STUDIO_LOCAL_TRANSCRIBE_MODEL', 'whisper-large-v3-turbo');
+
+// ─── Google Sheets (Catalog sync) ─────────────────────────────────────────────
+
+/**
+ * Spreadsheet id from the Sheet URL:
+ * https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit
+ *
+ * Service-account JSON lives at config/google-sheets-service-account.json
+ * (gitignored). Share the Sheet with that account's client_email (Viewer).
+ * Read range is hardcoded in code as Full 1!A:H — not a config constant.
+ */
+define('SPREADSHEET_ID', '');
