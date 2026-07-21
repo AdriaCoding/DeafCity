@@ -9,6 +9,9 @@ use Studio\GoogleSheetsClient;
 use Studio\SheetCatalogParser;
 use Studio\VimeoClient;
 use Studio\VimeoNotFoundException;
+use Studio\VimeoRateLimitedException;
+use Studio\VimeoTransientException;
+use Studio\VimeoUnauthorizedException;
 
 class CatalogSheetSyncTest extends TestCase
 {
@@ -53,9 +56,14 @@ class CatalogSheetSyncTest extends TestCase
         ]);
 
         $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->method('getVideo')->with('111')->willReturn('Vimeo Title 111');
-        $vimeo->expects($this->never())->method('getThumbnailUrl');
-        $vimeo->expects($this->never())->method('getPlayerEmbedUrl');
+        $vimeo->method('assertAuthenticated');
+        $vimeo->method('fetchVideoForCatalogSync')
+            ->with('111', false, false)
+            ->willReturn([
+                'title' => 'Vimeo Title 111',
+                'thumbnail_url' => null,
+                'embed_url' => null,
+            ]);
 
         $result = $this->makeSync($sheets, $vimeo, $editor)->run();
 
@@ -95,8 +103,7 @@ class CatalogSheetSyncTest extends TestCase
             ['001', '2020 València', 'Aurora', '111', '1', '', '', ''],
         ]);
 
-        $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->method('getVideo')->willReturn('From Vimeo');
+        $vimeo = $this->vimeoReturningTitle('From Vimeo');
 
         $this->makeSync($sheets, $vimeo, $editor)->run();
 
@@ -119,14 +126,19 @@ class CatalogSheetSyncTest extends TestCase
         ]);
 
         $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->method('getVideo')->willReturnCallback(static function (string $id): string {
-            if ($id === '404') {
-                throw new VimeoNotFoundException('not found');
-            }
-            return "Title $id";
-        });
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
-        $vimeo->method('getPlayerEmbedUrl')->willReturn(null);
+        $vimeo->method('assertAuthenticated');
+        $vimeo->method('fetchVideoForCatalogSync')->willReturnCallback(
+            static function (string $id): array {
+                if ($id === '404') {
+                    throw new VimeoNotFoundException('not found error_code=5000');
+                }
+                return [
+                    'title' => "Title $id",
+                    'thumbnail_url' => null,
+                    'embed_url' => null,
+                ];
+            },
+        );
 
         $result = $this->makeSync($sheets, $vimeo, $editor)->run();
 
@@ -136,6 +148,9 @@ class CatalogSheetSyncTest extends TestCase
         $this->assertNull($editor->findVideoByVimeoId('404'));
         $this->assertNotNull($editor->findVideoByVimeoId('111'));
         $this->assertNotEmpty($result->warnings);
+        $this->assertTrue(
+            (bool) array_filter($result->warnings, static fn(string $w): bool => str_contains(strtolower($w), 'not found')),
+        );
     }
 
     public function test_skips_unknown_city_and_clears_unknown_typology_with_warning(): void
@@ -150,10 +165,7 @@ class CatalogSheetSyncTest extends TestCase
             ['002', '2099 Atlantis', 'X', '222', '1', '#B', 'JOKES', ''],
         ]);
 
-        $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->method('getVideo')->willReturn('Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
-        $vimeo->method('getPlayerEmbedUrl')->willReturn(null);
+        $vimeo = $this->vimeoReturningTitle('Title');
 
         $result = $this->makeSync($sheets, $vimeo, $editor)->run();
 
@@ -186,9 +198,16 @@ class CatalogSheetSyncTest extends TestCase
         ]);
 
         $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->method('getVideo')->willReturnCallback(static fn(string $id): string => "Title $id");
-        $vimeo->method('getThumbnailUrl')->willReturn('https://example.com/t.jpg');
-        $vimeo->method('getPlayerEmbedUrl')->willReturn('https://player.vimeo.com/video/x');
+        $vimeo->method('assertAuthenticated');
+        $vimeo->method('fetchVideoForCatalogSync')->willReturnCallback(
+            static function (string $id, bool $needThumb, bool $needEmbed): array {
+                return [
+                    'title' => "Title $id",
+                    'thumbnail_url' => $needThumb ? 'https://example.com/t.jpg' : null,
+                    'embed_url' => $needEmbed ? 'https://player.vimeo.com/video/x' : null,
+                ];
+            },
+        );
 
         $result = $this->makeSync($sheets, $vimeo, $editor)->run(['replace' => true]);
 
@@ -212,9 +231,16 @@ class CatalogSheetSyncTest extends TestCase
         ]);
 
         $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->method('getVideo')->willReturn('Title 111');
-        $vimeo->method('getThumbnailUrl')->willReturn('https://example.com/t.jpg');
-        $vimeo->method('getPlayerEmbedUrl')->willReturn('https://player.vimeo.com/video/111');
+        $vimeo->method('assertAuthenticated');
+        $vimeo->method('fetchVideoForCatalogSync')->willReturnCallback(
+            static function (string $id, bool $needThumb, bool $needEmbed): array {
+                return [
+                    'title' => 'Title 111',
+                    'thumbnail_url' => $needThumb ? 'https://example.com/t.jpg' : null,
+                    'embed_url' => $needEmbed ? 'https://player.vimeo.com/video/111' : null,
+                ];
+            },
+        );
 
         $sync = $this->makeSync($sheets, $vimeo, $editor);
         $first = $sync->run();
@@ -239,7 +265,8 @@ class CatalogSheetSyncTest extends TestCase
         $sheets->method('fetchRows')->willThrowException(new \RuntimeException('Google Sheets auth failed'));
 
         $vimeo = $this->createMock(VimeoClient::class);
-        $vimeo->expects($this->never())->method('getVideo');
+        $vimeo->expects($this->never())->method('assertAuthenticated');
+        $vimeo->expects($this->never())->method('fetchVideoForCatalogSync');
 
         $result = $this->makeSync($sheets, $vimeo, $editor)->run(['replace' => true]);
 
@@ -248,11 +275,145 @@ class CatalogSheetSyncTest extends TestCase
         $this->assertSame($before, file_get_contents($this->catalogFile));
     }
 
+    public function test_rate_limited_then_success_upserts_video(): void
+    {
+        $editor = new CatalogEditor($this->catalogFile);
+        $slept = [];
+        $calls = 0;
+
+        $sheets = $this->createMock(GoogleSheetsClient::class);
+        $sheets->method('fetchRows')->willReturn([
+            ['', 'Ciutats', 'Participants', 'Vimeo', '', 'TÍTOLS', 'ANECDOTES', 'DEAF+HEARING'],
+            ['001', '2020 València', 'Aurora', '111', '1', '#A', 'JOKES', ''],
+        ]);
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('assertAuthenticated');
+        $vimeo->expects($this->exactly(2))
+            ->method('fetchVideoForCatalogSync')
+            ->with('111', true, true)
+            ->willReturnCallback(function () use (&$calls): array {
+                $calls++;
+                if ($calls === 1) {
+                    throw new VimeoRateLimitedException('rate', time() + 5);
+                }
+                return [
+                    'title' => 'After wait',
+                    'thumbnail_url' => 'https://example.com/t.jpg',
+                    'embed_url' => 'https://player.vimeo.com/video/111',
+                ];
+            });
+
+        $result = $this->makeSync($sheets, $vimeo, $editor, static function (int $seconds) use (&$slept): void {
+            $slept[] = $seconds;
+        })->run();
+
+        $this->assertSame(1, $result->added);
+        $this->assertNull($result->error);
+        $this->assertNotEmpty($slept);
+        $this->assertGreaterThanOrEqual(5, $slept[0]);
+        $video = $editor->findVideoByVimeoId('111');
+        $this->assertSame('After wait', $video['title']);
+        $this->assertFalse(
+            (bool) array_filter($result->warnings, static fn(string $w): bool => str_contains(strtolower($w), 'not found')),
+        );
+    }
+
+    public function test_unauthorized_aborts_before_catalog_writes(): void
+    {
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->addVideo('222', 'Keep', 'lse', '2020-valencia');
+        $before = file_get_contents($this->catalogFile);
+
+        $sheets = $this->createMock(GoogleSheetsClient::class);
+        $sheets->method('fetchRows')->willReturn([
+            ['', 'Ciutats', 'Participants', 'Vimeo', '', 'TÍTOLS', 'ANECDOTES', 'DEAF+HEARING'],
+            ['001', '2020 València', 'Aurora', '111', '1', '#A', 'JOKES', ''],
+        ]);
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('assertAuthenticated')
+            ->willThrowException(new VimeoUnauthorizedException('bad token error_code=8000'));
+        $vimeo->expects($this->never())->method('fetchVideoForCatalogSync');
+
+        $result = $this->makeSync($sheets, $vimeo, $editor)->run(['replace' => true]);
+
+        $this->assertNotNull($result->error);
+        $this->assertStringContainsString('8000', $result->error);
+        $this->assertSame($before, file_get_contents($this->catalogFile));
+        $this->assertNotNull($editor->findVideoByVimeoId('222'));
+    }
+
+    public function test_transient_exhausted_skips_with_non_not_found_warning(): void
+    {
+        $editor = new CatalogEditor($this->catalogFile);
+
+        $sheets = $this->createMock(GoogleSheetsClient::class);
+        $sheets->method('fetchRows')->willReturn([
+            ['', 'Ciutats', 'Participants', 'Vimeo', '', 'TÍTOLS', 'ANECDOTES', 'DEAF+HEARING'],
+            ['001', '2020 València', 'Aurora', '111', '1', '#A', 'JOKES', ''],
+            ['002', '', 'Dani', '222', '1', '#B', 'JOKES', ''],
+        ]);
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('assertAuthenticated');
+        $vimeo->method('fetchVideoForCatalogSync')->willReturnCallback(
+            static function (string $id): array {
+                if ($id === '111') {
+                    throw new VimeoTransientException('HTTP 503');
+                }
+                return [
+                    'title' => 'Ok 222',
+                    'thumbnail_url' => null,
+                    'embed_url' => null,
+                ];
+            },
+        );
+
+        $result = $this->makeSync($sheets, $vimeo, $editor, static function (): void {})->run();
+
+        $this->assertNull($editor->findVideoByVimeoId('111'));
+        $this->assertNotNull($editor->findVideoByVimeoId('222'));
+        $this->assertSame(1, $result->added);
+        $this->assertGreaterThanOrEqual(1, $result->skipped);
+        $this->assertTrue(
+            (bool) array_filter(
+                $result->warnings,
+                static fn(string $w): bool => str_contains($w, '111') && str_contains(strtolower($w), 'transient'),
+            ),
+        );
+        $this->assertFalse(
+            (bool) array_filter(
+                $result->warnings,
+                static fn(string $w): bool => str_contains($w, '111') && str_contains(strtolower($w), 'not found'),
+            ),
+        );
+    }
+
+    private function vimeoReturningTitle(string $title): VimeoClient
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('assertAuthenticated');
+        $vimeo->method('fetchVideoForCatalogSync')->willReturn([
+            'title' => $title,
+            'thumbnail_url' => null,
+            'embed_url' => null,
+        ]);
+        return $vimeo;
+    }
+
     private function makeSync(
         GoogleSheetsClient $sheets,
         VimeoClient $vimeo,
         CatalogEditor $editor,
+        ?callable $sleeper = null,
     ): CatalogSheetSync {
-        return new CatalogSheetSync($sheets, $vimeo, $editor, new SheetCatalogParser());
+        return new CatalogSheetSync(
+            $sheets,
+            $vimeo,
+            $editor,
+            new SheetCatalogParser(),
+            $sleeper ?? static function (int $seconds): void {},
+        );
     }
 }

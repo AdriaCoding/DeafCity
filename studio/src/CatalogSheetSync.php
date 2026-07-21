@@ -4,12 +4,29 @@ namespace Studio;
 
 class CatalogSheetSync
 {
+    private const MAX_TRANSIENT_ATTEMPTS = 3;
+    private const MAX_RATE_LIMIT_WAITS = 5;
+    private const TRANSIENT_BASE_SLEEP_SECONDS = 1;
+
+    /** @var callable(int):void */
+    private $sleeper;
+
+    /**
+     * @param callable(int):void|null $sleeper Injected sleep for tests; defaults to PHP sleep().
+     */
     public function __construct(
         private readonly GoogleSheetsClient $sheets,
         private readonly VimeoClient $vimeo,
         private readonly CatalogEditor $catalog,
         private readonly SheetCatalogParser $parser = new SheetCatalogParser(),
-    ) {}
+        ?callable $sleeper = null,
+    ) {
+        $this->sleeper = $sleeper ?? static function (int $seconds): void {
+            if ($seconds > 0) {
+                sleep($seconds);
+            }
+        };
+    }
 
     /**
      * @param array{replace?: bool, dryRun?: bool} $options
@@ -32,13 +49,25 @@ class CatalogSheetSync
         $sheetRows = $parsed['rows'];
         $skipped = count($parsed['duplicateVimeoIds']);
 
-        // Count unknown-city skips already reflected as warnings with no row.
-        // Empty Vimeo IDs are silent skips in the parser.
+        try {
+            $this->vimeo->assertAuthenticated();
+        } catch (VimeoUnauthorizedException|VimeoForbiddenException $e) {
+            return new CatalogSheetSyncResult(
+                skipped: $skipped,
+                warnings: $warnings,
+                error: $e->getMessage(),
+            );
+        } catch (\Throwable $e) {
+            return new CatalogSheetSyncResult(
+                skipped: $skipped,
+                warnings: $warnings,
+                error: 'Vimeo auth probe failed: ' . $e->getMessage(),
+            );
+        }
 
         $removed = 0;
         if ($replace && !$dryRun) {
             $keepIds = array_map(static fn(SheetVideoRow $r): string => $r->vimeoId, $sheetRows);
-            // Duplicate IDs are in the Sheet even though we skip upserting them.
             $keepIds = array_values(array_unique(array_merge($keepIds, $parsed['duplicateVimeoIds'])));
             $removed = $this->catalog->removeVideosNotIn($keepIds);
         } elseif ($replace && $dryRun) {
@@ -59,25 +88,45 @@ class CatalogSheetSync
 
         $added = 0;
         $updated = 0;
+        $rateLimitWaits = 0;
 
         foreach ($sheetRows as $row) {
-            try {
-                $title = $this->vimeo->getVideo($row->vimeoId);
-            } catch (VimeoNotFoundException $e) {
+            $existing = $this->catalog->findVideoByVimeoId($row->vimeoId);
+            $needsThumb = $existing === null
+                || !isset($existing['thumbnail_url'])
+                || $existing['thumbnail_url'] === '';
+            $needsEmbed = $existing === null
+                || !isset($existing['embed_url'])
+                || $existing['embed_url'] === '';
+
+            $fetch = $this->fetchWithRetries(
+                $row,
+                $needsThumb && !$dryRun,
+                $needsEmbed && !$dryRun,
+                $rateLimitWaits,
+                $warnings,
+            );
+            if ($fetch['abort'] !== null) {
+                return new CatalogSheetSyncResult(
+                    added: $added,
+                    updated: $updated,
+                    removed: $removed,
+                    skipped: $skipped,
+                    warnings: $warnings,
+                    error: $fetch['abort'],
+                );
+            }
+            if ($fetch['skip']) {
                 $skipped++;
-                $warnings[] = "Vimeo ID {$row->vimeoId} not found ({$row->sheetIdentity})";
-                continue;
-            } catch (\Throwable $e) {
-                $skipped++;
-                $warnings[] = "Vimeo error for {$row->vimeoId}: " . $e->getMessage();
                 continue;
             }
+
+            $meta = $fetch['meta'];
+            assert($meta !== null);
 
             if ($row->unknownTypology) {
                 $warnings[] = "Unknown typology \"{$row->rawTypology}\" for Vimeo ID {$row->vimeoId} — typology cleared";
             }
-
-            $existing = $this->catalog->findVideoByVimeoId($row->vimeoId);
 
             if ($dryRun) {
                 if ($existing === null) {
@@ -88,40 +137,16 @@ class CatalogSheetSync
                 continue;
             }
 
-            $thumbnailUrl = null;
-            $embedUrl = null;
-            $needsThumb = $existing === null
-                || !isset($existing['thumbnail_url'])
-                || $existing['thumbnail_url'] === '';
-            $needsEmbed = $existing === null
-                || !isset($existing['embed_url'])
-                || $existing['embed_url'] === '';
-
-            if ($needsThumb) {
-                try {
-                    $thumbnailUrl = $this->vimeo->getThumbnailUrl($row->vimeoId);
-                } catch (\Throwable) {
-                    $thumbnailUrl = null;
-                }
-            }
-            if ($needsEmbed) {
-                try {
-                    $embedUrl = $this->vimeo->getPlayerEmbedUrl($row->vimeoId);
-                } catch (\Throwable) {
-                    $embedUrl = null;
-                }
-            }
-
             $action = $this->catalog->upsertFromSheet(
                 $row->vimeoId,
-                $title,
+                $meta['title'],
                 $row->signLanguage,
                 $row->editionId,
                 $row->tags,
                 $row->typologyId,
                 $row->participant !== '' ? $row->participant : null,
-                $thumbnailUrl,
-                $embedUrl,
+                $meta['thumbnail_url'],
+                $meta['embed_url'],
             );
             if ($action === 'added') {
                 $added++;
@@ -137,5 +162,61 @@ class CatalogSheetSync
             skipped: $skipped,
             warnings: $warnings,
         );
+    }
+
+    /**
+     * @param list<string> $warnings
+     * @return array{
+     *   meta: ?array{title: string, thumbnail_url: ?string, embed_url: ?string},
+     *   skip: bool,
+     *   abort: ?string
+     * }
+     */
+    private function fetchWithRetries(
+        SheetVideoRow $row,
+        bool $needThumbnail,
+        bool $needEmbed,
+        int &$rateLimitWaits,
+        array &$warnings,
+    ): array {
+        $transientAttempt = 0;
+
+        while (true) {
+            try {
+                $meta = $this->vimeo->fetchVideoForCatalogSync($row->vimeoId, $needThumbnail, $needEmbed);
+                return ['meta' => $meta, 'skip' => false, 'abort' => null];
+            } catch (VimeoNotFoundException $e) {
+                $warnings[] = "Vimeo ID {$row->vimeoId} not found ({$row->sheetIdentity}): " . $e->getMessage();
+                return ['meta' => null, 'skip' => true, 'abort' => null];
+            } catch (VimeoUnauthorizedException|VimeoForbiddenException $e) {
+                return ['meta' => null, 'skip' => false, 'abort' => $e->getMessage()];
+            } catch (VimeoRateLimitedException $e) {
+                $rateLimitWaits++;
+                if ($rateLimitWaits > self::MAX_RATE_LIMIT_WAITS) {
+                    return [
+                        'meta' => null,
+                        'skip' => false,
+                        'abort' => 'Vimeo rate limit: exceeded max waits (' . self::MAX_RATE_LIMIT_WAITS . '). ' . $e->getMessage(),
+                    ];
+                }
+                $wait = $e->secondsUntilReset() + 1; // small fixed jitter
+                ($this->sleeper)($wait);
+                continue;
+            } catch (VimeoTransientException $e) {
+                $transientAttempt++;
+                if ($transientAttempt >= self::MAX_TRANSIENT_ATTEMPTS) {
+                    $warnings[] = "Vimeo ID {$row->vimeoId} skipped after transient failures ({$row->sheetIdentity}): " . $e->getMessage();
+                    return ['meta' => null, 'skip' => true, 'abort' => null];
+                }
+                ($this->sleeper)(self::TRANSIENT_BASE_SLEEP_SECONDS * (2 ** ($transientAttempt - 1)));
+                continue;
+            } catch (VimeoRequestException $e) {
+                $warnings[] = "Vimeo ID {$row->vimeoId} skipped (request error) ({$row->sheetIdentity}): " . $e->getMessage();
+                return ['meta' => null, 'skip' => true, 'abort' => null];
+            } catch (\Throwable $e) {
+                $warnings[] = "Vimeo ID {$row->vimeoId} skipped (unexpected error) ({$row->sheetIdentity}): " . $e->getMessage();
+                return ['meta' => null, 'skip' => true, 'abort' => null];
+            }
+        }
     }
 }
