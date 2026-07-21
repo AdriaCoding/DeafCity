@@ -704,6 +704,7 @@ var allOptionsByFacet = {
 };
 
 // D14′: live readout is neutral; green only when fixed
+// Face carries full + short so CSS can swap at the maketa breakpoint (≤1024).
 (function () {
     var item = samplePlaylist[0];
     var readout = logic.resolveFilterPickerReadout(
@@ -714,7 +715,12 @@ var allOptionsByFacet = {
         'Sign language'
     );
     assert.strictEqual(readout.fixed, false, 'passive readout is not fixed');
-    assert.strictEqual(readout.label, 'LIBRAS', 'live readout shows compact face label');
+    assert.strictEqual(
+        readout.label,
+        'LIBRAS Brazilian Sign Language',
+        'live readout full face uses studio label'
+    );
+    assert.strictEqual(readout.short_label, 'LIBRAS', 'live readout short face is compact');
 
     var fixed = logic.resolveFilterPickerReadout(
         item,
@@ -724,7 +730,22 @@ var allOptionsByFacet = {
         'Sign language'
     );
     assert.strictEqual(fixed.fixed, true, 'fixed filter is pinned');
-    assert.strictEqual(fixed.label, 'LIBRAS', 'fixed shows compact face label');
+    assert.strictEqual(
+        fixed.label,
+        'LIBRAS Brazilian Sign Language',
+        'fixed full face uses studio label'
+    );
+    assert.strictEqual(fixed.short_label, 'LIBRAS', 'fixed short face is compact');
+
+    var empty = logic.resolveFilterPickerReadout(
+        { videoId: 'x', signLanguage: '', edition: '', typology: '' },
+        'sign_language',
+        { sign_language: null, edition: null, typology: null },
+        allOptionsByFacet.sign_language,
+        'Sign language'
+    );
+    assert.strictEqual(empty.label, 'Sign language', 'generic full face');
+    assert.strictEqual(empty.short_label, 'Sign language', 'generic short face matches full');
 })();
 
 // Issue #16: compactFacetLabel — explicit short_label wins (D14″)

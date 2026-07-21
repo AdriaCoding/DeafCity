@@ -23,7 +23,7 @@ class SignLanguageFormatter
 
         return [
             'id' => $id,
-            'label' => $code . ' ' . $qualifier . ' Sign Language',
+            'label' => $code . ' ' . $qualifier,
         ];
     }
 

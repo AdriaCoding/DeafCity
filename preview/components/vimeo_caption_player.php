@@ -364,6 +364,27 @@ if (!function_exists('vpc_compact_label_for_filter_option')) {
     }
 }
 
+if (!function_exists('vpc_face_labels_for_filter_option')) {
+    /**
+     * Full + compact face labels for a filter option value (desktop / maketa ≤1024).
+     *
+     * @param string $facet sign_language|edition|typology
+     * @param array<int, array{value?: string, label?: string, short_label?: string}> $optionsList
+     * @param string $value
+     * @param string $fallback
+     * @return array{label: string, short_label: string}
+     */
+    function vpc_face_labels_for_filter_option($facet, array $optionsList, $value, $fallback = '') {
+        $value = (string) $value;
+        if ($value === '') {
+            return array('label' => $fallback, 'short_label' => $fallback);
+        }
+        $full = vpc_label_for_filter_option($optionsList, $value, $fallback);
+        $short = vpc_compact_label_for_filter_option($facet, $optionsList, $value, $fallback);
+        return array('label' => $full, 'short_label' => $short);
+    }
+}
+
 if (!isset($vpc) || !is_array($vpc)) {
     trigger_error('$vpc array is required before including vimeo_caption_player.php', E_USER_WARNING);
     return;
@@ -553,19 +574,19 @@ $initialEntry = $playlistNormalized[$initialPlaylistIndex];
 $initialPosterUrl = isset($initialEntry['thumbnail_url']) && is_string($initialEntry['thumbnail_url'])
     ? vpc_participant_thumbnail_display_url($initialEntry['thumbnail_url'])
     : '';
-$initialSignLangReadout = vpc_compact_label_for_filter_option(
+$initialSignLangReadout = vpc_face_labels_for_filter_option(
     'sign_language',
     $signLangOptionsList,
     isset($initialEntry['sign_language']) ? $initialEntry['sign_language'] : '',
     preview_t('player.filter.sign_language')
 );
-$initialEditionReadout = vpc_compact_label_for_filter_option(
+$initialEditionReadout = vpc_face_labels_for_filter_option(
     'edition',
     $editionOptionsList,
     isset($initialEntry['edition']) ? $initialEntry['edition'] : '',
     preview_t('player.filter.city_edition')
 );
-$initialTypologyReadout = vpc_compact_label_for_filter_option(
+$initialTypologyReadout = vpc_face_labels_for_filter_option(
     'typology',
     $typologyOptionsList,
     isset($initialEntry['typology']) ? $initialEntry['typology'] : '',

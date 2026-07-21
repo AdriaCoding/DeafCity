@@ -103,7 +103,7 @@ if (preg_match('~vpc-deaf-hearing-btn[^>]*aria-pressed="false"~', $html) !== 1
         exit(1);
     }
 }
-assert_contains('Deaf and hearing crossover videos', $html, 'DEAF+HEARING accessible name (DH13)');
+assert_contains('Deaf &amp; Hearing interactions', $html, 'DEAF+HEARING accessible name (DH13)');
 if (preg_match('~vpc-deaf-hearing-btn[\s\S]{0,400}?\bdisabled\b~', $html)) {
     fwrite(STDERR, "FAIL: DEAF+HEARING should be enabled when catalog has DEAF&HEARING tags (DH27)\n");
     exit(1);
@@ -272,7 +272,7 @@ assert_contains('vpc-picker-dropdown', $html, 'custom picker dropdown present');
 assert_contains('data-picker="sign_language"', $html, 'sign_language picker attribute');
 
 // AC: Picker button shows live readout from first video (D14′) — generic label in data-generic-label only
-assert_contains('data-generic-label="Sign language"', $html, 'picker button has generic label attr');
+assert_contains('data-generic-label="Sign Language"', $html, 'picker button has generic label attr');
 assert_not_contains('data-picker="sign_language" data-active="true"', $html, 'sign language picker not green on load');
 if (preg_match('~data-picker="sign_language"[^>]*data-active="false"~', $html) !== 1) {
     fwrite(STDERR, "FAIL: sign language picker should have data-active=\"false\" on cold load\n");
@@ -286,17 +286,17 @@ assert_contains('role="option"', $html, 'dropdown options have role=option');
 
 // AC: Clear/all option present
 assert_contains('vpc-picker-clear', $html, 'clear/all option present in dropdown');
-assert_contains('All sign languages', $html, 'clear option says "All sign languages"');
+assert_contains('Sign Languages', $html, 'clear option says "Sign Languages"');
 
 // AC: Dropdown lists sign languages present in catalog
-assert_contains('LIBRAS Brazilian Sign Language', $html, 'LIBRAS option in picker');
-assert_contains('LSE Spanish Sign Language', $html, 'LSE option in picker');
-assert_contains('LIS Italian Sign Language', $html, 'LIS option in picker');
-assert_contains('LSF French Sign Language', $html, 'LSF option in picker');
-assert_contains('LSM Mexican Sign Language', $html, 'LSM option in picker (tagged videos visible)');
+assert_contains('LIBRAS Brazilian', $html, 'LIBRAS option in picker');
+assert_contains('LSE Spanish', $html, 'LSE option in picker');
+assert_contains('LIS Italian', $html, 'LIS option in picker');
+assert_contains('LSF French', $html, 'LSF option in picker');
+assert_contains('LSM Mexican', $html, 'LSM option in picker (tagged videos visible)');
 
 // Empty facets absent — only sign languages present in catalog
-assert_not_contains('GSS Greek Sign Language', $html, 'empty facet (GSS) absent from dropdown');
+assert_not_contains('GSS Greek', $html, 'empty facet (GSS) absent from dropdown');
 
 // Issue #17: filters live in the single control row (right wing), not a separate stacked row
 $controlRowPos = strpos($html, 'vpc-control-row');
@@ -384,8 +384,8 @@ if (preg_match('~data-picker="typology"[^>]*data-active="false"~', $html) !== 1)
 echo "PASS: typology picker passive readout on load\n";
 
 // AC: Clear options for edition and typology pickers
-assert_contains('All cities', $html, 'edition clear option says "All cities"');
-assert_contains('All typologies', $html, 'typology clear option says "All typologies"');
+assert_contains('Cities', $html, 'edition clear option says "Cities"');
+assert_contains('Typologies', $html, 'typology clear option says "Typologies"');
 
 // AC: Edition picker lists editions present in catalog
 $catalogJsonPathForEditions = dirname(dirname(dirname(__FILE__))) . '/data/catalog.json';
@@ -576,11 +576,20 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: loading circle matches play SVG optical size\n";
     assert_contains('vpc-chrome-btn__label', $html, 'chrome button labels wrapped for ellipsis');
-    if (!preg_match('~\.vpc-chrome-btn__label[^}]*text-overflow:\s*ellipsis~s', $playerCss)) {
-        fwrite(STDERR, "FAIL: chrome button label span should ellipsis overflow\n");
+    assert_contains('vpc-chrome-btn__label-full', $html, 'chrome buttons carry full face label');
+    assert_contains('vpc-chrome-btn__label-short', $html, 'chrome buttons carry short face label');
+    if (!preg_match('~\.vpc-chrome-btn__label-full[^}]*text-overflow:\s*ellipsis~s', $playerCss)) {
+        fwrite(STDERR, "FAIL: chrome button full label span should ellipsis overflow\n");
         exit(1);
     }
-    echo "PASS: chrome button label span ellipsis overflow\n";
+    if (!preg_match(
+        '~@media screen and \(max-width: 1024px\)\s*\{[^}]*\.vpc-chrome-btn__label-full\s*\{[^}]*display:\s*none~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: maketa should hide full face labels at ≤1024\n");
+        exit(1);
+    }
+    echo "PASS: chrome button dual face labels swap at maketa breakpoint\n";
     // Maketa narrow (≤1024): shared flatten; phone ≤500 = 2×3; mid 501–1024 = 3×2
     if (!preg_match(
         '~@media screen and \(max-width: 1024px\)\s*\{.*?\.vpc-control-secondary-l,\s*\.vpc-control-secondary-r,.*?display:\s*contents~s',
@@ -683,6 +692,6 @@ echo "PASS: reset button in right wing after Participants\n";
 
 // ── Issue #7: R3 Participants nav button ──────────────────────────────────────
 assert_contains('/preview/participants', $html, 'Participants nav button in R3');
-assert_contains('vpc-chrome-btn__label">Participants</span>', $html, 'Participants button label text');
+assert_contains('vpc-chrome-btn__label-full">Participants</span>', $html, 'Participants button label text');
 
 echo "\nAll tests passed.\n";

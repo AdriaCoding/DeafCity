@@ -20,7 +20,7 @@ class SignLanguageFormatterTest extends TestCase
 
         $this->assertSame([
             'id' => 'gss',
-            'label' => 'GSS Greek Sign Language',
+            'label' => 'GSS Greek',
         ], $result);
     }
 
@@ -29,7 +29,7 @@ class SignLanguageFormatterTest extends TestCase
         $result = $this->formatter->format('LIBRAS', 'Brazilian');
 
         $this->assertSame('libras', $result['id']);
-        $this->assertSame('LIBRAS Brazilian Sign Language', $result['label']);
+        $this->assertSame('LIBRAS Brazilian', $result['label']);
     }
 
     public function test_slugifies_multi_word_code(): void

@@ -440,30 +440,33 @@
 
     /**
      * Picker button face: fixed filter label when pinned, else live readout (D14′).
-     * Face text uses compact labels (D14″); dropup options keep full studio labels.
+     * Returns both studio `label` (desktop face) and compact `short_label` (maketa ≤1024).
+     * Dropup options keep full studio labels.
      * @param {{ signLanguage?: string, edition?: string, typology?: string }} item
      * @param {string} facet
      * @param {VpcFilterState} filterState
      * @param {Array<{ value?: string, label?: string, short_label?: string }>} options
      * @param {string} genericLabel
-     * @returns {{ label: string, fixed: boolean }}
+     * @returns {{ label: string, short_label: string, fixed: boolean }}
      */
     function resolveFilterPickerReadout(item, facet, filterState, options, genericLabel) {
         var fixedValue = filterState[facet];
         if (fixedValue !== null && fixedValue !== undefined && fixedValue !== '') {
             return {
-                label: compactFacetLabel(facet, fixedValue, options),
+                label: labelForFacetValue(facet, fixedValue, options),
+                short_label: compactFacetLabel(facet, fixedValue, options),
                 fixed: true,
             };
         }
         var liveValue = itemFacetValue(item, facet);
         if (liveValue !== '') {
             return {
-                label: compactFacetLabel(facet, liveValue, options),
+                label: labelForFacetValue(facet, liveValue, options),
+                short_label: compactFacetLabel(facet, liveValue, options),
                 fixed: false,
             };
         }
-        return { label: genericLabel, fixed: false };
+        return { label: genericLabel, short_label: genericLabel, fixed: false };
     }
 
     /**

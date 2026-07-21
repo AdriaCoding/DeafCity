@@ -1253,18 +1253,47 @@
                 return btn.querySelector('.vpc-chrome-btn__label');
             }
 
-            function setChromeBtnLabel(btn, label) {
+            /**
+             * Set chrome face text. Optional shortLabel is shown at maketa ≤1024 via CSS.
+             * @param {HTMLElement} btn
+             * @param {string} label
+             * @param {string} [shortLabel]
+             */
+            function setChromeBtnLabel(btn, label, shortLabel) {
                 var el = chromeBtnLabelEl(btn);
-                if (el) {
-                    el.textContent = label;
+                var short = shortLabel != null ? shortLabel : label;
+                if (!el) {
+                    btn.textContent = label;
                     return;
                 }
-                btn.textContent = label;
+                var fullEl = el.querySelector('.vpc-chrome-btn__label-full');
+                var shortEl = el.querySelector('.vpc-chrome-btn__label-short');
+                if (fullEl && shortEl) {
+                    fullEl.textContent = label;
+                    shortEl.textContent = short;
+                    return;
+                }
+                el.textContent = '';
+                fullEl = document.createElement('span');
+                fullEl.className = 'vpc-chrome-btn__label-full';
+                fullEl.textContent = label;
+                shortEl = document.createElement('span');
+                shortEl.className = 'vpc-chrome-btn__label-short';
+                shortEl.textContent = short;
+                el.appendChild(fullEl);
+                el.appendChild(shortEl);
             }
 
             function getChromeBtnLabel(btn) {
                 var el = chromeBtnLabelEl(btn);
-                return el ? el.textContent.trim() : btn.textContent.trim();
+                if (!el) {
+                    return btn.textContent.trim();
+                }
+                var fullEl = el.querySelector('.vpc-chrome-btn__label-full');
+                if (fullEl) {
+                    return fullEl.textContent.trim();
+                }
+                return el.textContent.trim();
             }
 
             /**
@@ -1335,7 +1364,7 @@
                     genericLabel
                 );
 
-                setChromeBtnLabel(btn, readout.label);
+                setChromeBtnLabel(btn, readout.label, readout.short_label);
                 pickerEl.setAttribute('data-active', readout.fixed ? 'true' : 'false');
             }
 

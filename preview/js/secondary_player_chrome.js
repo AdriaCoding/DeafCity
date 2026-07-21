@@ -49,7 +49,14 @@
         var labelEl = btn.querySelector('.vpc-chrome-btn__label');
         var displayLabel = navState.label || genericLabel;
         if (labelEl) {
-            labelEl.textContent = displayLabel;
+            var fullEl = labelEl.querySelector('.vpc-chrome-btn__label-full');
+            var shortEl = labelEl.querySelector('.vpc-chrome-btn__label-short');
+            if (fullEl && shortEl) {
+                fullEl.textContent = displayLabel;
+                shortEl.textContent = displayLabel;
+            } else {
+                labelEl.textContent = displayLabel;
+            }
         } else {
             btn.textContent = displayLabel;
         }

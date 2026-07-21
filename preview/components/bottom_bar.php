@@ -76,17 +76,56 @@ $editionOptionsList = isset($playerCfg['edition_options']) && is_array($playerCf
     ? $playerCfg['edition_options'] : array();
 $typologyOptionsList = isset($playerCfg['typology_options']) && is_array($playerCfg['typology_options'])
     ? $playerCfg['typology_options'] : array();
-$initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout']) ? (string) $playerCfg['initial_sign_lang_readout'] : '';
-$initialEditionReadout = isset($playerCfg['initial_edition_readout']) ? (string) $playerCfg['initial_edition_readout'] : '';
-$initialTypologyReadout = isset($playerCfg['initial_typology_readout']) ? (string) $playerCfg['initial_typology_readout'] : '';
+$initialSignLangReadout = isset($playerCfg['initial_sign_lang_readout'])
+    ? $playerCfg['initial_sign_lang_readout'] : '';
+$initialEditionReadout = isset($playerCfg['initial_edition_readout'])
+    ? $playerCfg['initial_edition_readout'] : '';
+$initialTypologyReadout = isset($playerCfg['initial_typology_readout'])
+    ? $playerCfg['initial_typology_readout'] : '';
 $deafHearingEnabled = !isset($playerCfg['deaf_hearing_enabled']) || !empty($playerCfg['deaf_hearing_enabled']);
 $deafHearingAria = preview_t('player.filter.deaf_hearing');
 
-if (!function_exists('preview_chrome_btn_label')) {
-    function preview_chrome_btn_label($text)
+if (!function_exists('preview_chrome_btn_face')) {
+    /**
+     * Normalize a chrome face readout to full + short strings.
+     *
+     * @param string|array{label?: string, short_label?: string} $readout
+     * @return array{0: string, 1: string}
+     */
+    function preview_chrome_btn_face($readout)
     {
+        if (is_array($readout)) {
+            $full = isset($readout['label']) ? (string) $readout['label'] : '';
+            $short = isset($readout['short_label']) ? (string) $readout['short_label'] : $full;
+            return array($full, $short);
+        }
+        $text = (string) $readout;
+        return array($text, $text);
+    }
+}
+
+if (!function_exists('preview_chrome_btn_label')) {
+    /**
+     * @param string|array{label?: string, short_label?: string} $text
+     * @param string|null $shortText Optional short face when $text is a plain string
+     */
+    function preview_chrome_btn_label($text, $shortText = null)
+    {
+        if ($shortText !== null && !is_array($text)) {
+            $full = (string) $text;
+            $short = (string) $shortText;
+        } else {
+            $pair = preview_chrome_btn_face($text);
+            $full = $pair[0];
+            $short = $pair[1];
+        }
         return '<span class="vpc-chrome-btn__label">'
-            . htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8')
+            . '<span class="vpc-chrome-btn__label-full">'
+            . htmlspecialchars($full, ENT_QUOTES, 'UTF-8')
+            . '</span>'
+            . '<span class="vpc-chrome-btn__label-short">'
+            . htmlspecialchars($short, ENT_QUOTES, 'UTF-8')
+            . '</span>'
             . '</span>';
     }
 }

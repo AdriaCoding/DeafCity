@@ -2,42 +2,42 @@
     "sign_languages": [
         {
             "id": "lse",
-            "label": "LSE Spanish Sign Language",
+            "label": "LSE Spanish",
             "short_label": "LSE"
         },
         {
             "id": "lsm",
-            "label": "LSM Mexican Sign Language",
+            "label": "LSM Mexican",
             "short_label": "LSM"
         },
         {
             "id": "libras",
-            "label": "LIBRAS Brazilian Sign Language",
+            "label": "LIBRAS Brazilian",
             "short_label": "LIBRAS"
         },
         {
             "id": "lsf",
-            "label": "LSF French Sign Language",
+            "label": "LSF French",
             "short_label": "LSF"
         },
         {
             "id": "lis",
-            "label": "LIS Italian Sign Language",
+            "label": "LIS Italian",
             "short_label": "LIS"
         },
         {
             "id": "tunisian-sl",
-            "label": "LST Tunisian Sign Language",
+            "label": "LST Tunisian",
             "short_label": "LST"
         },
         {
             "id": "algerian-sl",
-            "label": "LSA Algerian Sign Language",
+            "label": "LSA Algerian",
             "short_label": "LSA"
         },
         {
             "id": "lsc",
-            "label": "LSC Catalan Sign Language",
+            "label": "LSC Catalan",
             "short_label": "LSC"
         }
     ],

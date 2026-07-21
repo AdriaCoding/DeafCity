@@ -11,16 +11,18 @@ require_once __DIR__ . '/videos_catalog.php';
 
 if (!function_exists('preview_filter_readout_for_value')) {
     /**
+     * Full + compact face labels for a filter option (desktop / maketa ≤1024).
+     *
      * @param array<int, array<string, mixed>> $optionsList
      * @param string $value
      * @param string $fallback
-     * @return string
+     * @return array{label: string, short_label: string}
      */
     function preview_filter_readout_for_value(array $optionsList, $value, $fallback)
     {
         $value = (string) $value;
         if ($value === '') {
-            return $fallback;
+            return array('label' => $fallback, 'short_label' => $fallback);
         }
         foreach ($optionsList as $opt) {
             if (!is_array($opt) || !isset($opt['value'])) {
@@ -29,15 +31,16 @@ if (!function_exists('preview_filter_readout_for_value')) {
             if ((string) $opt['value'] !== $value) {
                 continue;
             }
-            if (!empty($opt['short_label']) && is_string($opt['short_label'])) {
-                return (string) $opt['short_label'];
-            }
-            if (!empty($opt['label']) && is_string($opt['label'])) {
-                return (string) $opt['label'];
-            }
+            $full = !empty($opt['label']) && is_string($opt['label'])
+                ? (string) $opt['label']
+                : $value;
+            $short = !empty($opt['short_label']) && is_string($opt['short_label'])
+                ? (string) $opt['short_label']
+                : $full;
+            return array('label' => $full, 'short_label' => $short);
         }
 
-        return $fallback;
+        return array('label' => $fallback, 'short_label' => $fallback);
     }
 }
 

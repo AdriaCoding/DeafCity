@@ -357,9 +357,27 @@
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
+    text-align: center;
+}
+/* Desktop: full studio label. Maketa ≤1024: compact short_label (no JS measure). */
+.vpc-chrome-btn__label-full,
+.vpc-chrome-btn__label-short {
+    display: block;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    text-align: center;
+    min-width: 0;
+}
+.vpc-chrome-btn__label-short {
+    display: none;
+}
+@media screen and (max-width: 1024px) {
+    .vpc-chrome-btn__label-full {
+        display: none;
+    }
+    .vpc-chrome-btn__label-short {
+        display: block;
+    }
 }
 .vpc-picker-btn:hover {
     background: #efefef;

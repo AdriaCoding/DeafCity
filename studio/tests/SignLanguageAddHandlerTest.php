@@ -32,7 +32,7 @@ class SignLanguageAddHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertSame('gss', $result['id']);
-        $this->assertSame('GSS Greek Sign Language', $result['label']);
+        $this->assertSame('GSS Greek', $result['label']);
 
         $reloaded = new StudioConfig($this->configPath);
         $ids = array_column($reloaded->getSignLanguages(), 'id');

@@ -1345,7 +1345,7 @@
                 document.getElementById('modal-lang-preview-id').textContent = '—';
                 return;
             }
-            document.getElementById('modal-lang-preview-label').textContent = code + ' ' + qualifier + ' Sign Language';
+            document.getElementById('modal-lang-preview-label').textContent = code + ' ' + qualifier;
             document.getElementById('modal-lang-preview-id').textContent = slugify(code);
         },
         clearInputs: function () {
@@ -1889,7 +1889,7 @@
             return;
         }
         var id = slugify(code);
-        langPreviewLabel.textContent = code + ' ' + qualifier + ' Sign Language';
+        langPreviewLabel.textContent = code + ' ' + qualifier;
         langPreviewId.textContent = id;
     }
     slCode.addEventListener('input', updateLangPreview);

@@ -79,7 +79,7 @@ foreach (array('signLanguageFilter', 'editionFilter', 'typologyFilter') as $key)
 }
 assert_true($hasShortLabel, 'filter options carry short_label from studio-config');
 
-// Issue #16: SSR picker faces show compact labels; dropup options keep full labels
+// Issue #16: SSR picker faces carry full + short; CSS swaps at maketa ≤1024
 require_once dirname(dirname(__FILE__)) . '/lib/videos_catalog.php';
 $dataDir = dirname(dirname(dirname(__FILE__))) . '/data';
 if (!is_readable($dataDir . '/catalog.json')) {
@@ -92,7 +92,7 @@ $editionOpts = vpc_edition_options_from_catalog($catalog, $studioConfigPath);
 $typologyOpts = vpc_typology_options_from_catalog($catalog, $studioConfigPath);
 
 foreach (array(
-    'sign_language' => array('field' => 'signLanguage', 'generic' => 'Sign language', 'opts' => $signOpts),
+    'sign_language' => array('field' => 'signLanguage', 'generic' => 'Sign Language', 'opts' => $signOpts),
     'edition'       => array('field' => 'edition', 'generic' => 'City / Edition', 'opts' => $editionOpts),
     'typology'      => array('field' => 'typology', 'generic' => 'Typology', 'opts' => $typologyOpts),
 ) as $facet => $meta) {
@@ -107,13 +107,16 @@ foreach (array(
 
     if (!preg_match(
         '~data-picker="' . preg_quote($facet, '~') . '"[^>]*>.*?class="vpc-picker-btn"[^>]*>'
-        . '.*?class="vpc-chrome-btn__label">' . preg_quote($compactEsc, '~') . '</span></button>~s',
+        . '.*?class="vpc-chrome-btn__label">'
+        . '<span class="vpc-chrome-btn__label-full">' . preg_quote($fullEsc, '~') . '</span>'
+        . '<span class="vpc-chrome-btn__label-short">' . preg_quote($compactEsc, '~') . '</span>'
+        . '</span></button>~s',
         $html
     )) {
-        fwrite(STDERR, "FAIL: {$facet} picker face should show compact label \"{$compact}\"\n");
+        fwrite(STDERR, "FAIL: {$facet} picker face should carry full \"{$full}\" + short \"{$compact}\"\n");
         exit(1);
     }
-    echo "PASS: {$facet} picker face shows compact label ({$compact})\n";
+    echo "PASS: {$facet} picker face has dual labels ({$full} / {$compact})\n";
 
     if ($full !== $compact) {
         assert_true(strpos($html, $fullEsc) !== false, "{$facet} dropup still shows full label");
