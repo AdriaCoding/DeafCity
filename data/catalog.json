@@ -802,7 +802,7 @@
             "sign_language": "lse",
             "edition": "2023-bilbao",
             "tags": [
-                "FIRE-ALARM",
+                "FIRE",
                 "DEAF&HEARING"
             ],
             "captions": [],
@@ -974,7 +974,7 @@
             "sign_language": "lse",
             "edition": "2023-bilbao",
             "tags": [
-                "NOISE",
+                "WHAT A NOISE!",
                 "DEAF&HEARING"
             ],
             "captions": [],
@@ -1033,7 +1033,7 @@
         {
             "id": "libras_1211648909",
             "vimeo_id": "1211648909",
-            "title": "2023_SaoPAULO_AnaLaura_02_4K",
+            "title": "2023_SaoPAULO_AnaLaura_2_4K",
             "sign_language": "libras",
             "edition": "2023-sao-paulo",
             "tags": [
@@ -1088,7 +1088,7 @@
                 "VIBRATION"
             ],
             "captions": [],
-            "typology": "acudits",
+            "typology": "malentesos",
             "participant": "Edinho",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181889522-3b53174790fafa1a6b9471443805bff7c822623a02c987d4c3dbf64819c4fcd4-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211649060?h=7177d82b22"
@@ -1275,7 +1275,7 @@
                 "DEAF&HEARING"
             ],
             "captions": [],
-            "typology": "anecdotes",
+            "typology": "malentesos",
             "participant": "Minho",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181884199-a81543b6739de73144ea6a1216dcd4ad1c2eac2aba8c38b6f3caf07ebfccdf12-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211649973?h=fca39f1c14"
@@ -1347,7 +1347,7 @@
         {
             "id": "algerian-sl_1211695373",
             "vimeo_id": "1211695373",
-            "title": "2026_Alger_Atifa_02_4K",
+            "title": "2026_Alger_Atifa_2_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1362,7 +1362,7 @@
         {
             "id": "algerian-sl_1211695369",
             "vimeo_id": "1211695369",
-            "title": "2026_Alger_Atifa_03_4K",
+            "title": "2026_Alger_Atifa_3_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1377,7 +1377,7 @@
         {
             "id": "algerian-sl_1211695371",
             "vimeo_id": "1211695371",
-            "title": "2026_Alger_Atifa_04_4K",
+            "title": "2026_Alger_Atifa_4_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1392,7 +1392,7 @@
         {
             "id": "algerian-sl_1211695571",
             "vimeo_id": "1211695571",
-            "title": "2026_Alger_Atifa_05_4K",
+            "title": "2026_Alger_Atifa_5_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1407,7 +1407,7 @@
         {
             "id": "algerian-sl_1211695576",
             "vimeo_id": "1211695576",
-            "title": "2026_Alger_Atifa_06_4K",
+            "title": "2026_Alger_Atifa_6_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1423,7 +1423,7 @@
         {
             "id": "algerian-sl_1211695608",
             "vimeo_id": "1211695608",
-            "title": "2026_ALGER_Hamida_02_4K",
+            "title": "2026_ALGER_Hamida_2_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1438,7 +1438,7 @@
         {
             "id": "algerian-sl_1211695786",
             "vimeo_id": "1211695786",
-            "title": "2026_ALGER_Hamida_03_4K",
+            "title": "2026_ALGER_Hamida_3_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1564,7 +1564,7 @@
         {
             "id": "algerian-sl_1211696303",
             "vimeo_id": "1211696303",
-            "title": "2026_ALGER_Lamine_03_4K",
+            "title": "2026_ALGER_Lamine_3_4K",
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
@@ -1923,11 +1923,15 @@
             "title": "2026_BARCELONA_Pepita_6_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "SIGN LANGUAGE",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895136-42f0ccd722a3a7a25f4a613eea5ffae5c587a5b9e357baf3c838a7be47255146-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666771?h=410f1351f8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666771?h=410f1351f8",
+            "typology": "acudits"
         },
         {
             "id": "lsc_1211666953",
@@ -1935,11 +1939,15 @@
             "title": "2026_BARCELONA_Pepita_7_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "EXAM",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895343-ab1efc94953c4e62436576539e8ad2ae2a75791a26f3395dcfb2e648fe8ce313-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666953?h=ace4a520c5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666953?h=ace4a520c5",
+            "typology": "acudits"
         },
         {
             "id": "lsc_1211667039",
@@ -1947,11 +1955,15 @@
             "title": "2026_BARCELONA_Raquel_1_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "WHAT'S THE TIME?",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895391-69cfbf1f88af0814cf3e2946ecc18cbc3242ccc87743aea1a181bd73b7d309cf-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667039?h=39249b6ae2"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667039?h=39249b6ae2",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211667164",
@@ -1959,11 +1971,15 @@
             "title": "2026_BARCELONA_Raquel_2_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "VIBRATION",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895761-3298d802e5d2fbd906155e003c792e5f19c76206d699f68a6a11aa2ae15d9f18-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667164?h=69829e3d47"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667164?h=69829e3d47",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211667171",
@@ -1971,11 +1987,15 @@
             "title": "2026_BARCELONA_Raquel_3_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "INTERPRETER",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895799-b4fe645465c3c821b2d124aaa0829b6b5ada1833838bd863973f483e3c7f33f3-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667171?h=5c0f29be6b"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667171?h=5c0f29be6b",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211667301",
@@ -1983,11 +2003,15 @@
             "title": "2026_BARCELONA_Raquel_4_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "INTERPRETER",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895807-42656a1f3337d9dfd385e3b7d9874ee65110b1ae93bfedc5b47ca43a10dbdb67-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667301?h=b9fa6def06"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667301?h=b9fa6def06",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211667321",
@@ -1995,7 +2019,9 @@
             "title": "2026_BARCELONA_Raquel_5_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "NO"
+            ],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181896101-7e0f728f40e67511a0f6ccc79af3ca37396468272a357583b702236054eafd8a-d_960x540?&r=pad&region=us",
@@ -2007,11 +2033,14 @@
             "title": "2026_BARCELONA_Raquel_6_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "BOCCA DELLA VERITÀ"
+            ],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181896194-cbdbfa9b049150d41cdd2d17dbb07da877bb85dd353e99d289399d19a5f4a078-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667536?h=33631ae281"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667536?h=33631ae281",
+            "typology": "anecdotes"
         },
         {
             "id": "lsf_1211690992",
@@ -3094,11 +3123,14 @@
             "title": "2026_BARCELONA_Isaac_3_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "TORTOISE"
+            ],
             "captions": [],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893570-4c84e3a11cad6610e888fdfb6c88443ceea2788b42de4414dbfe4daa33acd49f-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665375?h=4ba1080a1a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665375?h=4ba1080a1a",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211665396",
@@ -3106,11 +3138,15 @@
             "title": "2026_BARCELONA_Isaac_4_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "DEAF SPERM",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893725-c84904f01bb338395cc50c957921a43590501dcf308ee62bddbce9136b288f3b-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665396?h=4d591a84aa"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665396?h=4d591a84aa",
+            "typology": "acudits"
         },
         {
             "id": "lsc_1211665551",
@@ -3118,11 +3154,15 @@
             "title": "2026_BARCELONA_Isaac_5_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "ABUSE",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893639-bdc76d7be98d61acb2e40dd25a2891ac16eceeccc994e961fed41bad74429c4d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665551?h=e7e7d19ab6"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665551?h=e7e7d19ab6",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211665601",
@@ -3130,11 +3170,15 @@
             "title": "2026_BARCELONA_Isaac_6_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "SIGN LANGUAGE",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893804-e2d44bf66820f71f799c2a9e1b20165d9bd3c8cd96737172acb1cb701a1d9b7b-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665601?h=0dac73d6b8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665601?h=0dac73d6b8",
+            "typology": "memories"
         },
         {
             "id": "lsc_1211665661",
@@ -3142,11 +3186,15 @@
             "title": "2026_BARCELONA_Isaac_7_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "CALM DOWN",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894116-01f1da4d6aa1235deb6ecd1336b2d6e56c458821099610336c225925c3158efe-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665661?h=92e362acff"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665661?h=92e362acff",
+            "typology": "memories"
         },
         {
             "id": "lsc_1211665716",
@@ -3154,11 +3202,15 @@
             "title": "2026_BARCELONA_Laura_1_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "WHAT A NOISE!",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893982-6ece5a516aea956873f973b8a2f00e8f80fa2c89623c6735d3cb25d308f5b355-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665716?h=2a68ef8e5c"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665716?h=2a68ef8e5c",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211665778",
@@ -3166,11 +3218,15 @@
             "title": "2026_BARCELONA_Laura_2_4K",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "VIBRATION",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894573-df2814046be16294e7b619e94d1cf7cd98d11e3a16ccdb4a01676a9e2c0a41b6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665778?h=cbf36473b8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665778?h=cbf36473b8",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211665838",
@@ -3178,11 +3234,15 @@
             "title": "2026_BARCELONA_Laura_3_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "WHAT A NOISE!",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894002-1a8bf2499d6942fe55940ab3a083e56ac1219fb9e547bce8106461c6f8eecd57-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665838?h=1e50002fa5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665838?h=1e50002fa5",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211666018",
@@ -3190,11 +3250,15 @@
             "title": "2026_BARCELONA_Laura_4_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "WHAT A NOISE!",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894639-a5d0ca217c50f73325889e7b129029e82f314b1b7f39a72f28367cf66e4bbc97-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666018?h=a06cc147e6"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666018?h=a06cc147e6",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211666081",
@@ -3202,11 +3266,15 @@
             "title": "2026_BARCELONA_Laura_5_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "WHAT A NOISE!",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894383-e62e4102eb1f96841aa070c983be5ea3c4710fcacded395b1bf3e95ccd239e9f-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666081?h=155edc62c8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666081?h=155edc62c8",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211666104",
@@ -3214,11 +3282,15 @@
             "title": "2026_BARCELONA_Laura_6_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "FIRE",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894334-bd0d574d621f0c3d6b4467e0c750a02985568af2ad2e626bbb761679a32d3c5e-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666104?h=ed415923a8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666104?h=ed415923a8",
+            "typology": "acudits"
         },
         {
             "id": "lsc_1211666120",
@@ -3226,11 +3298,15 @@
             "title": "2026_BARCELONA_Pepita_1_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "EYEBROWS",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894635-214843057cd8fd951ffaf4286165fa8a2a34943841f9805b50abc8cc50a81051-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666120?h=88926fd452"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666120?h=88926fd452",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211666416",
@@ -3238,11 +3314,15 @@
             "title": "2026_BARCELONA_Pepita_2_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "SWEARING",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894856-b617335fbf2148dfd2b384693f45bca1b87d5d9619254100d4a462cec5e03da2-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666416?h=3393c72432"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666416?h=3393c72432",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211666474",
@@ -3250,11 +3330,15 @@
             "title": "2026_BARCELONA_Pepita_3_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "SUBWAY",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895222-c4734eec4d92614a9be57d5e183387e48e3482906fde0b40ff707124fbc64df7-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666474?h=3210ab7d61"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666474?h=3210ab7d61",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211666657",
@@ -3262,11 +3346,14 @@
             "title": "2026_BARCELONA_Pepita_4_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "CORRECTIONS"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895338-2cc931f1b7fc02af12b30773f3bd6b3cbd53dc3a28064e86501e1a286f197666-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666657?h=be5882d44a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666657?h=be5882d44a",
+            "typology": "malentesos"
         },
         {
             "id": "lsc_1211666728",
@@ -3274,11 +3361,351 @@
             "title": "2026_BARCELONA_Pepita_5_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [],
+            "tags": [
+                "INTERPRETER",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895184-b5f2f7340f2be97dc85637b0f67f6951a6ff4ccf7a4e4081ebb4ad3d1f619b6d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666728?h=62c07c78fc"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211666728?h=62c07c78fc",
+            "typology": "malentesos"
+        },
+        {
+            "id": "lse_1211615289",
+            "vimeo_id": "1211615289",
+            "title": "2020_VALENCIA_Monica_3_4k",
+            "sign_language": "lse",
+            "edition": "2020-valencia",
+            "tags": [
+                "CASUALTY",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "memories",
+            "participant": "Monica",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181853153-6f8b85a80e045abba6d2747ae0644a989101a3b4c6cdc2e19818d543aae0bea4-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211615289?h=d7c3a09d62"
+        },
+        {
+            "id": "lse_1211615290",
+            "vimeo_id": "1211615290",
+            "title": "2020_VALENCIA_Monica_4_4k",
+            "sign_language": "lse",
+            "edition": "2020-valencia",
+            "tags": [
+                "PUZZLED",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "malentesos",
+            "participant": "Monica",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181852764-9cdcd6db25110e39e7d5213f35d91e3acd1898dec03feb5ecc44b8449ddcea1c-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211615290?h=74f3b5cc4c"
+        },
+        {
+            "id": "lse_1211608970",
+            "vimeo_id": "1211608970",
+            "title": "2020_VALENCIA_Sony_1_4k",
+            "sign_language": "lse",
+            "edition": "2020-valencia",
+            "tags": [
+                "PHONE BOOTH",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "anecdotes",
+            "participant": "Sony",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181849266-383e1cb3f9805f8e81bd70868e9df60fad258e64b7cba41c7b6f1f11b7b33211-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211608970?h=99c50036e3"
+        },
+        {
+            "id": "lse_1211608975",
+            "vimeo_id": "1211608975",
+            "title": "2020_VALENCIA_Sony_2_4k",
+            "sign_language": "lse",
+            "edition": "2020-valencia",
+            "tags": [
+                "HELMET",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "anecdotes",
+            "participant": "Sony",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181823875-ac4442a9a55a9c3e297247f1c8d7e1ce40b6b0a6c0af7aa6adaada5f05ee43e9-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211608975?h=c828a7e666"
+        },
+        {
+            "id": "libras_1211649292",
+            "vimeo_id": "1211649292",
+            "title": "2023_SaoPAULO_Fabio_2_4k",
+            "sign_language": "libras",
+            "edition": "2023-sao-paulo",
+            "tags": [
+                "BATHROOM",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "anecdotes",
+            "participant": "Fabio",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181887929-17a9acacd763fc7a55800a48e50ed25d72cc89befc8551b011d9391993209c42-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211649292?h=b4d23f86bc"
+        },
+        {
+            "id": "libras_1211649366",
+            "vimeo_id": "1211649366",
+            "title": "2023_SaoPAULO_Fabio_4_4k",
+            "sign_language": "libras",
+            "edition": "2023-sao-paulo",
+            "tags": [
+                "COCHLEAR IMPLANT",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Fabio",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181887141-fe6ead0bdfad66b9da779df7bca3e5df8d4eb39c6d97bee0d1403860d8811fa2-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211649366?h=d11cd09553"
+        },
+        {
+            "id": "algerian-sl_1211695370",
+            "vimeo_id": "1211695370",
+            "title": "2026_Alger_Atifa_1_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "SEAT BELT"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Atifa",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181929676-4a3d2bddae66250b1372742ba8a6344036edd823afdeb590c9ee41c3bed463b0-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695370?h=e5693c500a"
+        },
+        {
+            "id": "algerian-sl_1211695579",
+            "vimeo_id": "1211695579",
+            "title": "2026_ALGER_Hamida_1_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "SHEEP",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Hamida",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930050-a66bd774230469a3be6362f44d9807c97b319619884ab17147667e917b705b69-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695579?h=64e2715b7b"
+        },
+        {
+            "id": "algerian-sl_1211695790",
+            "vimeo_id": "1211695790",
+            "title": "2026_ALGER_Hamida_4_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "CODA",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "malentesos",
+            "participant": "Hamida",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930053-6bc2dd8a482cf0c92c760785209a08d7341ed73dda0bd0d3a8ee3f5a7df1faf3-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695790?h=70ec3a8dc0"
+        },
+        {
+            "id": "algerian-sl_1211695814",
+            "vimeo_id": "1211695814",
+            "title": "2026_ALGER_Hamida_5_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "GAME",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "malentesos",
+            "participant": "Hamida",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930065-f684d190ef4bf40fb1b2d99dd386af4af55e88dc7d2952af8d905b18dc408ed0-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695814?h=f92ec020a5"
+        },
+        {
+            "id": "algerian-sl_1211695907",
+            "vimeo_id": "1211695907",
+            "title": "2026_ALGER_Hamida_6_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "BANK"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Hamida",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930415-9339fc0ba5a72b15098c9bdf14da18f8c94c6cd5845db371cf0d05a69b876e7a-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695907?h=04cc7d0f25"
+        },
+        {
+            "id": "algerian-sl_1211696207",
+            "vimeo_id": "1211696207",
+            "title": "2026_ALGER_Hassen _6_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "FATHER",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "memories",
+            "participant": "Hassen",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930575-3282ffc7a9c8c3bb999fd05a5b039b77699222f49398cd27b22f1ce435bc7fc5-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696207?h=7db3963eb4"
+        },
+        {
+            "id": "algerian-sl_1211696894",
+            "vimeo_id": "1211696894",
+            "title": "2026_ALGER_Mustapha_5_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "GOLDEN DREAM"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Mustapha",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181931648-d532ce99c9e0c56f32fc78ae2539cbc0481addf0466865bfe62a144c1ace7e3c-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696894?h=b52c5a0068"
+        },
+        {
+            "id": "algerian-sl_1211696927",
+            "vimeo_id": "1211696927",
+            "title": "2026_ALGER_Mustapha_6_4K",
+            "sign_language": "algerian-sl",
+            "edition": "2026-algiers",
+            "tags": [
+                "DONKEY"
+            ],
+            "captions": [],
+            "typology": "anecdotes",
+            "participant": "Mustapha",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181931507-a693f5ef8a5d33deef5901ca85d9fef58edeaeefe1253654e16ec6e87cb8b6db-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696927?h=7a015df316"
+        },
+        {
+            "id": "lsc_1211665292",
+            "vimeo_id": "1211665292",
+            "title": "2026_BARCELONA_Isaac_1_4K",
+            "sign_language": "lsc",
+            "edition": "2026-barcelona",
+            "tags": [
+                "COACH TRIP"
+            ],
+            "captions": [],
+            "participant": "Isaac",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893634-4afbecba26777ad94a247e21bd536207dfb1c46e5aab070180b2003b2645d781-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665292?h=5334e055cd",
+            "typology": "memories"
+        },
+        {
+            "id": "lsc_1211665341",
+            "vimeo_id": "1211665341",
+            "title": "2026_BARCELONA_Isaac_2_4K",
+            "sign_language": "lsc",
+            "edition": "2026-barcelona",
+            "tags": [
+                "VIBRATION",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "participant": "Isaac",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893522-06a07e03befc27c1fc9dbc0bee9f820f236e6c6d47543ba1470600a22f886f44-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665341?h=6a948bfb4f",
+            "typology": "malentesos"
+        },
+        {
+            "id": "lsf_1211691213",
+            "vimeo_id": "1211691213",
+            "title": "2026_MARSEILLE_Alysone_6_4K",
+            "sign_language": "lsf",
+            "edition": "2026-marseille",
+            "tags": [],
+            "captions": [],
+            "participant": "Alysone",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924687-c7991af241c67a51e13aae8eb27bc8c9f79a5f400e3d48313527b7ff18dc0fe4-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691213?h=d8b4312dc0"
+        },
+        {
+            "id": "lsf_1211691765",
+            "vimeo_id": "1211691765",
+            "title": "2026_MARSEILLE_Hugo_6_4K",
+            "sign_language": "lsf",
+            "edition": "2026-marseille",
+            "tags": [],
+            "captions": [],
+            "participant": "Hugo",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181926365-2758c35893960a02c1a1f1c0401581ff2c46c760bb01c147460a22d9ea8eafa0-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691765?h=a7a45fce80"
+        },
+        {
+            "id": "lis_1211703947",
+            "vimeo_id": "1211703947",
+            "title": "2026_ROMA_Lorenzo_5_4K",
+            "sign_language": "lis",
+            "edition": "2026-rome",
+            "tags": [
+                "RABBIT"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Lorenzo",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181940362-c458e86c7048f6f0a2127f8bb5bbe58ca2a668fa055ecb2a608bd06e88cda9d0-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211703947?h=29c55321a0"
+        },
+        {
+            "id": "lis_1211704075",
+            "vimeo_id": "1211704075",
+            "title": "2026_ROMA_Massimo_1_4K",
+            "sign_language": "lis",
+            "edition": "2026-rome",
+            "tags": [
+                "MUSIC",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "malentesos",
+            "participant": "Massimo",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181940574-3ef8aaa3218f11448841d72aa0073f70ce97615f6557f2709f5f3e9c2714412c-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211704075?h=1c9d9889f8"
+        },
+        {
+            "id": "lis_1211704762",
+            "vimeo_id": "1211704762",
+            "title": "2026_ROMA_Olivier_3_4K",
+            "sign_language": "lis",
+            "edition": "2026-rome",
+            "tags": [
+                "CALL OF NATURE"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Olivier",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181941320-691591211072cc8ef59bf67b9079e5376cfc075e0e9e0871c6c8be53ebce7c63-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211704762?h=c92465443c"
+        },
+        {
+            "id": "lis_1211704788",
+            "vimeo_id": "1211704788",
+            "title": "2026_ROMA_Olivier_4_4K",
+            "sign_language": "lis",
+            "edition": "2026-rome",
+            "tags": [
+                "MAGIC VIAGRA"
+            ],
+            "captions": [],
+            "typology": "acudits",
+            "participant": "Olivier",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181941655-af46e54da11e6a20ae02c71d9f85c0bccdde07652e7d25627d3f6f918c0b2d96-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211704788?h=5f4402e36b"
         }
     ]
 }
