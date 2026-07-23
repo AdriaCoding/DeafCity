@@ -22,7 +22,13 @@ $tt  = htmlspecialchars(preview_t('about.credits.label.thanks_to'), ENT_QUOTES, 
 $pby = htmlspecialchars(preview_t('about.credits.project_by'), ENT_QUOTES, 'UTF-8');
 $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8');
 ?>
-<p><b>2026 Marseille, Roma, Tunis, Algiers and Barcelona <?= $sb ?> <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a></b>
+
+<p><b>2026 Tunis<a href="https://en.wikipedia.org/wiki/Tunisian_Sign_Language" target="_blank">*LST Tunisian Sign Language</a></b>
+  <?= $sb ?> <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
+  <?= $pa ?> Aya Dhaou, Ayoub Belhani, Imen Mbarek, Malek Sfar, Nour Al_Islem Sbahi, Nour Ben Neticha
+  <?= $itp ?> Aya Ben Siida, Tasnim Bouchereb<?= $co ?> Creativalue, Hedi Khalil, Aymen  Khelifi
+  <?= $cl ?> <a href="https://africaresearchconnects.com/fr/institution/9005404423/" target="_blank">ICHARA International Research Institute on Sign Language</a>
+  <?= $tt ?> Joana Abad, Xavier de Luca, Mohamed Ali Mesbah (Daly).</p>
 
 <p><b>2026 Alger <a href="https://en.wikipedia.org/wiki/Algerian_Sign_Language" target="_blank">*LSA Algerian Sign Language</a></b>
   <?= $sb ?> <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
@@ -30,6 +36,12 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
   <?= $itp ?> Hamid Fadhel <?= $co ?> Shahinez Guir
   <?= $cl ?> <a href="https://jiser.org/" target="_blank">Jiser Reflexions Mediterrànies</a>
   <?= $tt ?> Association Les Signes d'Or de la Wilaya d'Alger, Xavier de Luca, Walid Aïdoud, Box 24.</p>
+
+<p><b>2026 Barcelona <a href="https://en.wikipedia.org/wiki/Catalan_Sign_Language" target="_blank">*LSC Catalan Sign Language</a></b>
+  <?= $sb ?> <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
+  <?= $pa ?> Carlota Boronat, Francisco Antonio Vidiella, Isaac Colomé, Laura Aymerich, Pepita Cedillo, Raquel Barandiarán
+  <?= $itp ?> Patricia Ruiz <?= $co ?> Inclusivxs
+  <?= $tt ?> Brisa Nebot.</p>
 
 <p><b>2026 Roma <a href="https://en.wikipedia.org/wiki/Italian_Sign_Language" target="_blank">*LIS Lingua dei Segni Italiana</a></b>
   <?= $sb ?> <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
@@ -40,7 +52,7 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
 
 <p><b>2026 Marseille <a href="https://en.wikipedia.org/wiki/French_Sign_Language" target="_blank">*LSF Langue des Signes Française</a></b>
   <?= $sb ?> <a href="https://www.cultura.gob.es/cultura/mc/bellasartes/portada.html" target="_blank">Ministerio de Cultura de España, Dirección General de Patrimonio Cultural y Bellas Artes</a>
-  <?= $pa ?> Alysone Fecil, Hugo GATHIER, Lola Colin
+  <?= $pa ?> Alysone Fecil, Hugo Gathier, Lola Colin
   <?= $itp ?> Julie Klène <?= $co ?> Franca Trovato
   <?= $cl ?> <a href="https://www.beauxartsdemarseille.fr/lecole-ses-engagements/nous-connaitre/pisourde/" target="_blank">Program Pisourd-e/Beaus-Arts Marseille</a>
   <?= $tt ?> Diane Guyot, Frederic Pradeau, Yann Leto, Antoni Muntadas, Sylvia Amar.</p>
@@ -69,7 +81,9 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
   <?= $cl ?> <a href="https://www.fesord.org/val/inicio/" target="_blank">Federació De Persones Sordes CV</a>, <a href="https://www.lasnaves.com/?lang=es" target="_blank">Las Naves</a>
   <?= $pa ?> Aurora López, David Riutort, Daniel Bautista, Josep Antoni Gimeno, Mónica Díez, Pepa Burgal, Sonia Piqueras
   <?= $itp ?> Carmen Tos
-  <?= $tt ?> Matteo Sisti Sette, Roc Parés, Daniel Julià, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.</p>
+  <?= $tt ?> Matteo Sisti Sette, Roc Parés, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.</p>
+
+<p>DEAF.city 1.0 Website and AI code by Adrià Lisa, Video editing by Inma Alcario Westudio, International Sign Clock code by Daniel Julià, English subtitle correction by Inès David</p>
 
 <p><b><?= $pby ?> <a href="https://www.antoniabad.info" target="_blank">Antoni Abad</a> &nbsp; <a href="https://www.instagram.com/antoni__abad/" target="_blank"><?= $ct ?></a></b></p>
 
