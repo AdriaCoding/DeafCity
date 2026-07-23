@@ -807,6 +807,9 @@
                 tag: isTagPinned(opts.filterState) ? opts.filterState.tag : null,
             },
             participantName: typeof opts.participantName === 'string' ? opts.participantName : '',
+            participantSequence: typeof opts.participantSequence === 'string'
+                ? opts.participantSequence
+                : '',
             shuffleMode: !!opts.shuffleMode,
             shuffledSequence: Array.isArray(opts.shuffledSequence)
                 ? opts.shuffledSequence.slice()
@@ -849,6 +852,9 @@
             if (!data.filterState || typeof data.filterState !== 'object') return null;
             if (data.v === 1 || data.filterState.tag === undefined) {
                 data.filterState.tag = null;
+            }
+            if (typeof data.participantSequence !== 'string') {
+                data.participantSequence = '';
             }
             return data;
         } catch (e) {
@@ -1150,14 +1156,48 @@
     }
 
     /**
+     * Sequence index from a Vimeo/catalog title (`…_Name_N_HD|4K`).
+     * @param {unknown} title
+     * @returns {string} Decimal string without leading zeros, or '' when unparseable
+     */
+    function participantSequenceFromTitle(title) {
+        var m = String(title || '').match(/_(\d+)_(?:HD|4K)\b/i);
+        if (!m) {
+            return '';
+        }
+        return String(parseInt(m[1], 10));
+    }
+
+    /**
+     * Participants chrome label: bare name, or "Name N" when sequence is known.
+     * @param {unknown} name
+     * @param {unknown} sequence
+     * @returns {string}
+     */
+    function formatParticipantNavLabel(name, sequence) {
+        var n = typeof name === 'string' ? name.trim() : '';
+        if (n === '') {
+            return '';
+        }
+        var seq = sequence === null || sequence === undefined ? '' : String(sequence).trim();
+        if (seq === '') {
+            return n;
+        }
+        return n + ' ' + seq;
+    }
+
+    /**
      * Participants nav button: green + name only in participant-playlist mode; otherwise gray
      * with name shown on player page while video is playing (issue #04).
+     * When a person name is shown, append title sequence when available.
      * @param {{
      *   isParticipantMode: boolean,
      *   participantName: string,
+     *   participantSequence?: string,
      *   onPlayerPage: boolean,
      *   isPlaying: boolean,
-     *   currentVideoParticipant: string
+     *   currentVideoParticipant: string,
+     *   currentVideoParticipantSequence?: string
      * }} opts
      * @returns {{ label: string, isActive: boolean }}
      */
@@ -1165,14 +1205,28 @@
         var participantName = typeof opts.participantName === 'string'
             ? opts.participantName.trim()
             : '';
-        if (opts.isParticipantMode && participantName) {
-            return { label: participantName, isActive: true };
-        }
+        var participantSequence = typeof opts.participantSequence === 'string'
+            ? opts.participantSequence.trim()
+            : '';
         var currentVideoParticipant = typeof opts.currentVideoParticipant === 'string'
             ? opts.currentVideoParticipant.trim()
             : '';
+        var currentSeq = typeof opts.currentVideoParticipantSequence === 'string'
+            ? opts.currentVideoParticipantSequence.trim()
+            : '';
+        if (opts.isParticipantMode && participantName) {
+            var modeName = currentVideoParticipant || participantName;
+            var modeSeq = currentSeq !== '' ? currentSeq : participantSequence;
+            return {
+                label: formatParticipantNavLabel(modeName, modeSeq),
+                isActive: true,
+            };
+        }
         if (opts.onPlayerPage && opts.isPlaying && currentVideoParticipant) {
-            return { label: currentVideoParticipant, isActive: false };
+            return {
+                label: formatParticipantNavLabel(currentVideoParticipant, currentSeq),
+                isActive: false,
+            };
         }
         return { label: '', isActive: false };
     }
@@ -1312,6 +1366,8 @@
         applyTransportStep: applyTransportStep,
         planSecondaryNavRestore: planSecondaryNavRestore,
         distinctParticipantsInSubset: distinctParticipantsInSubset,
+        participantSequenceFromTitle: participantSequenceFromTitle,
+        formatParticipantNavLabel: formatParticipantNavLabel,
         resolveParticipantsNavState: resolveParticipantsNavState,
         planEndOfPlaylist: planEndOfPlaylist,
     };

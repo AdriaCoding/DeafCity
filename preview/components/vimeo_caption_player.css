@@ -245,6 +245,9 @@
     box-sizing: border-box;
     text-decoration: none;
 }
+.vpc-control-row .preview-site-nav__btn.preview-site-nav__btn--person-name {
+    text-transform: none;
+}
 .vpc-control-row .vpc-picker-btn:hover,
 .vpc-control-row .vpc-prev-btn:hover:not(:disabled),
 .vpc-control-row .vpc-next-btn:hover:not(:disabled),

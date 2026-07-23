@@ -29,8 +29,8 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="page-url" content="/preview/about">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=62">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=6">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=63">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=7">
     <link rel="stylesheet" href="/preview/css/about-page.css?v=13">
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; }

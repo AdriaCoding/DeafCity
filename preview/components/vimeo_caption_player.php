@@ -146,6 +146,10 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 $participantMeta = isset($entry['participant']) && is_string($entry['participant'])
                     ? trim($entry['participant'])
                     : '';
+                $participantSequenceMeta = '';
+                if (isset($entry['participant_sequence']) && (is_string($entry['participant_sequence']) || is_int($entry['participant_sequence']))) {
+                    $participantSequenceMeta = trim((string) $entry['participant_sequence']);
+                }
                 $thumbnailMeta = isset($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])
                     ? trim($entry['thumbnail_url'])
                     : '';
@@ -171,6 +175,7 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                     'edition' => $editionMeta,
                     'typology' => $typologyMeta,
                     'participant' => $participantMeta,
+                    'participant_sequence' => $participantSequenceMeta,
                     'thumbnail_url' => $thumbnailMeta,
                     'tags' => $tagsMeta,
                 );
@@ -230,6 +235,7 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 'edition' => $legacyEdition,
                 'typology' => $legacyTypology,
                 'participant' => $legacyParticipant,
+                'participant_sequence' => '',
                 'tags' => array(),
             ));
         }
@@ -471,6 +477,7 @@ foreach ($playlistNormalized as $pe) {
         'edition'      => $edOut,
         'typology'     => $tyOut,
         'participant'  => $ptOut,
+        'participant_sequence' => isset($pe['participant_sequence']) ? (string) $pe['participant_sequence'] : '',
         'tags'         => $tagsOut,
     );
     if ($embedOut !== '') {
@@ -505,6 +512,7 @@ if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && cou
                 'edition'      => isset($pe['edition']) ? $pe['edition'] : '',
                 'typology'     => isset($pe['typology']) ? $pe['typology'] : '',
                 'participant'  => isset($pe['participant']) ? $pe['participant'] : '',
+                'participant_sequence' => isset($pe['participant_sequence']) ? (string) $pe['participant_sequence'] : '',
                 'tags'         => isset($pe['tags']) && is_array($pe['tags']) ? array_values($pe['tags']) : array(),
             );
             if ($embedOut !== '') {
@@ -668,7 +676,21 @@ $navHiddenClass = '';
     $bottomBarActiveCollections = array();
     $participantNavName = isset($vpc['participant_name']) ? trim((string) $vpc['participant_name']) : '';
     if ($participantNavName !== '') {
-        $bottomBarActiveCollections['participants'] = $participantNavName;
+        $playlistIndexSsr = isset($vpc['playlist_index']) ? (int) $vpc['playlist_index'] : 0;
+        $ssrItem = (isset($vpc['playlist']) && is_array($vpc['playlist']) && isset($vpc['playlist'][$playlistIndexSsr]))
+            ? $vpc['playlist'][$playlistIndexSsr]
+            : null;
+        $ssrName = $participantNavName;
+        $ssrSeq = '';
+        if (is_array($ssrItem)) {
+            if (!empty($ssrItem['participant']) && is_string($ssrItem['participant'])) {
+                $ssrName = trim($ssrItem['participant']);
+            }
+            if (isset($ssrItem['participant_sequence'])) {
+                $ssrSeq = trim((string) $ssrItem['participant_sequence']);
+            }
+        }
+        $bottomBarActiveCollections['participants'] = vpc_format_participant_nav_label($ssrName, $ssrSeq);
     }
     $bottomBar = array(
         'mode' => 'player',

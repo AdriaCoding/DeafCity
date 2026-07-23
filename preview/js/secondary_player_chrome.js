@@ -39,12 +39,17 @@
         var participantName = session && typeof session.participantName === 'string'
             ? session.participantName.trim()
             : '';
+        var participantSequence = session && typeof session.participantSequence === 'string'
+            ? session.participantSequence.trim()
+            : '';
         var navState = L.resolveParticipantsNavState({
             isParticipantMode: participantName !== '',
             participantName: participantName,
+            participantSequence: participantSequence,
             onPlayerPage: false,
             isPlaying: false,
             currentVideoParticipant: '',
+            currentVideoParticipantSequence: '',
         });
         var labelEl = btn.querySelector('.vpc-chrome-btn__label');
         var displayLabel = navState.label || genericLabel;
@@ -64,6 +69,11 @@
             btn.classList.add('is-active');
         } else {
             btn.classList.remove('is-active');
+        }
+        if (navState.label) {
+            btn.classList.add('preview-site-nav__btn--person-name');
+        } else {
+            btn.classList.remove('preview-site-nav__btn--person-name');
         }
         if (typeof window.vpcSyncChromeButtonWidths === 'function') {
             window.vpcSyncChromeButtonWidths();

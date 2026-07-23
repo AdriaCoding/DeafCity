@@ -354,6 +354,72 @@ if (!function_exists('vpc_resolve_track_lang_to_subtitle_id')) {
     }
 }
 
+if (!function_exists('vpc_participant_sequence_from_title')) {
+    /**
+     * Sequence index from a Vimeo/catalog title (`…_Name_N_HD|4K`).
+     *
+     * @param string $title
+     * @return string Decimal without leading zeros, or '' when unparseable
+     */
+    function vpc_participant_sequence_from_title($title)
+    {
+        $title = trim((string) $title);
+        if ($title === '') {
+            return '';
+        }
+        if (!preg_match('/_(\d+)_(?:HD|4K)\b/i', $title, $m)) {
+            return '';
+        }
+
+        return (string) ((int) $m[1]);
+    }
+}
+
+if (!function_exists('vpc_format_participant_nav_label')) {
+    /**
+     * Participants chrome label: bare name, or "Name N" when sequence is known.
+     *
+     * @param string $name
+     * @param string $sequence
+     * @return string
+     */
+    function vpc_format_participant_nav_label($name, $sequence)
+    {
+        $name = trim((string) $name);
+        if ($name === '') {
+            return '';
+        }
+        $sequence = trim((string) $sequence);
+        if ($sequence === '') {
+            return $name;
+        }
+
+        return $name . ' ' . $sequence;
+    }
+}
+
+if (!function_exists('vpc_playlist_entry_apply_participant_fields')) {
+    /**
+     * Copy participant + title sequence onto a playlist entry.
+     *
+     * @param array<string, mixed> $entry
+     * @param array<string, mixed> $v Catalog video row
+     * @return void
+     */
+    function vpc_playlist_entry_apply_participant_fields(array &$entry, array $v)
+    {
+        $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
+        if ($participant !== '') {
+            $entry['participant'] = $participant;
+        }
+        $title = isset($v['title']) ? (string) $v['title'] : '';
+        $seq = vpc_participant_sequence_from_title($title);
+        if ($seq !== '') {
+            $entry['participant_sequence'] = $seq;
+        }
+    }
+}
+
 if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
     /**
      * Build a full $vpc playlist from all catalog entries in array order.
@@ -405,10 +471,7 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
             if ($typology !== '') {
                 $entry['typology'] = $typology;
             }
-            $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
-            if ($participant !== '') {
-                $entry['participant'] = $participant;
-            }
+            vpc_playlist_entry_apply_participant_fields($entry, $v);
 
             $tagsOut = array();
             if (isset($v['tags']) && is_array($v['tags'])) {
@@ -433,10 +496,7 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
             if ($typology !== '') {
                 $entry['typology'] = $typology;
             }
-            $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
-            if ($participant !== '') {
-                $entry['participant'] = $participant;
-            }
+            vpc_playlist_entry_apply_participant_fields($entry, $v);
 
             if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
                 $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
@@ -619,10 +679,7 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
             if ($typology !== '') {
                 $entry['typology'] = $typology;
             }
-            $participant = isset($v['participant']) ? trim((string) $v['participant']) : '';
-            if ($participant !== '') {
-                $entry['participant'] = $participant;
-            }
+            vpc_playlist_entry_apply_participant_fields($entry, $v);
 
             $tagsOut = array();
             if (isset($v['tags']) && is_array($v['tags'])) {

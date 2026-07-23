@@ -32,6 +32,7 @@ ts_assert_contains('sessionStorage.removeItem(L.NAV_INTENT_KEY)', $playerJs, 'na
 ts_assert_contains("sessionStorage.setItem('vpc-nav-intent'", $secondaryJs, 'secondary chrome writes nav intent');
 ts_assert_contains("sessionStorage.removeItem('vpc-playback-session')", $secondaryJs, 'reset clears playback session');
 ts_assert_contains('syncParticipantsNavFromSession', $secondaryJs, 'secondary chrome syncs participants nav from session');
+ts_assert_contains('participantSequence', $secondaryJs, 'secondary chrome reads participant sequence from session');
 ts_assert_contains('resolveParticipantsNavState', $secondaryJs, 'secondary chrome uses participants nav state');
 ts_assert_contains("bind(deafBtn, 'deaf-hearing')", $secondaryJs, 'secondary DEAF+HEARING sets deaf-hearing intent');
 ts_assert_contains('syncDeafHearingFromSession', $secondaryJs, 'secondary chrome mirrors DEAF+HEARING from session');

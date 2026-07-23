@@ -128,6 +128,9 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
         if ($collectionActive) {
             $label = trim((string) $activeCollections[$collectionKey]);
             $class .= ' is-active';
+            if ($collectionKey === 'participants') {
+                $class .= ' preview-site-nav__btn--person-name';
+            }
         }
 
         if ($isCurrent) {

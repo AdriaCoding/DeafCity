@@ -36,7 +36,7 @@ $neutralHtml = ob_get_clean();
 gc_assert_not_contains('data-collection="participants" class="preview-site-nav__btn is-active"', $neutralHtml, 'no SSR green Participants button on neutral home');
 gc_assert_contains('data-collection="participants"', $neutralHtml, 'Participants button has data-collection hook');
 gc_assert_contains('data-generic-label="Participants"', $neutralHtml, 'Participants button stores generic label for JS reset');
-gc_assert_contains('vpc-chrome-btn__label">Participants</span>', $neutralHtml, 'neutral Participants label on home');
+gc_assert_contains('vpc-chrome-btn__label-full">Participants</span>', $neutralHtml, 'neutral Participants label on home');
 
 // ── Active participant collection: SSR green + name ───────────────────────────
 $_GET['participant'] = 'Hamida';
@@ -45,14 +45,16 @@ include $homePage;
 $activeHtml = ob_get_clean();
 
 gc_assert_contains('data-collection="participants"', $activeHtml, 'participant home has collection hook');
-gc_assert_contains('class="preview-site-nav__btn is-active"', $activeHtml, 'SSR is-active on participant collection');
-gc_assert_contains('vpc-chrome-btn__label">Hamida</span>', $activeHtml, 'SSR shows participant name on nav button');
+gc_assert_contains('class="preview-site-nav__btn is-active preview-site-nav__btn--person-name"', $activeHtml, 'SSR is-active + person-name on participant collection');
+gc_assert_contains('vpc-chrome-btn__label-full">Hamida ', $activeHtml, 'SSR shows participant name+sequence on nav button');
 gc_assert_contains('aria-current="true"', $activeHtml, 'SSR aria-current on active collection button');
 
 // ── CSS: brand green matches fixed-filter picker (D21) ───────────────────────
 $navCss = file_get_contents($cssPath);
 $pickerCss = file_get_contents($pickerCssPath);
 
+gc_assert_contains('preview-site-nav__btn--person-name', $pickerCss, 'person-name casing override in player CSS');
+gc_assert_contains('preview-site-nav__btn--person-name', $navCss, 'person-name casing override in bottom-bar CSS');
 gc_assert_contains('.preview-site-nav__btn.is-active', $navCss, 'collection active nav rule present');
 gc_assert_contains('border-color: rgb(0, 120, 0)', $navCss, 'nav active border uses brand green');
 gc_assert_contains('rgb(0, 120, 0)', $pickerCss, 'picker CSS defines brand green');
@@ -69,6 +71,7 @@ gc_assert_not_contains('syncParticipantButtonLabel', $js, 'old participant-only 
 gc_assert_contains('syncCollectionNavButtons()', $js, 'collection sync invoked on init');
 gc_assert_contains("btn.classList.add('is-active')", $js, 'JS toggles is-active class');
 gc_assert_contains("btn.classList.remove('is-active')", $js, 'JS clears is-active on neutral');
+gc_assert_contains("preview-site-nav__btn--person-name", $js, 'JS toggles person-name casing class');
 gc_assert_contains("querySelectorAll('.preview-site-nav__btn[data-collection]')", $js, 'targets all collection nav buttons generically');
 gc_assert_contains('syncCollectionNavButtons();', $js, 'reset clears collection nav styling');
 gc_assert_contains("'participants'", $navPhp, 'participants collection key in site nav');

@@ -774,10 +774,16 @@
                         ? vimeoPlayer.getCurrentTime().catch(function () { return 0; })
                         : Promise.resolve(0);
                 timeP.then(function (sec) {
+                    var curItem = fullPlaylistItems[playlistIndex];
+                    var participantSequence = '';
+                    if (curItem && curItem.participant_sequence !== undefined && curItem.participant_sequence !== null) {
+                        participantSequence = String(curItem.participant_sequence).trim();
+                    }
                     var snap = L.buildPlaybackSessionSnapshot({
                         masterIndex: playlistIndex,
                         filterState: filterState,
                         participantName: participantName,
+                        participantSequence: participantSequence,
                         shuffleMode: shuffleMode,
                         shuffledSequence: shuffledSequence,
                         shuffleStep: shuffleStep,
@@ -1235,12 +1241,17 @@
                     var currentVideoParticipant = item && typeof item.participant === 'string'
                         ? item.participant.trim()
                         : '';
+                    var currentVideoParticipantSequence = '';
+                    if (item && item.participant_sequence !== undefined && item.participant_sequence !== null) {
+                        currentVideoParticipantSequence = String(item.participant_sequence).trim();
+                    }
                     return L.resolveParticipantsNavState({
                         isParticipantMode: isParticipantMode,
                         participantName: participantName,
                         onPlayerPage: true,
                         isPlaying: transportPlaying,
                         currentVideoParticipant: currentVideoParticipant,
+                        currentVideoParticipantSequence: currentVideoParticipantSequence,
                     });
                 }
                 if (collectionKey === 'tags') {
@@ -1321,6 +1332,11 @@
                     } else {
                         btn.classList.remove('is-active');
                         btn.removeAttribute('aria-current');
+                    }
+                    if (key === 'participants' && navState.label) {
+                        btn.classList.add('preview-site-nav__btn--person-name');
+                    } else if (key === 'participants') {
+                        btn.classList.remove('preview-site-nav__btn--person-name');
                     }
                 });
                 syncDeafHearingButton();

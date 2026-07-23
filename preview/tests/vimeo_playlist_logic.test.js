@@ -1122,7 +1122,38 @@ assert.strictEqual(logic.parsePlaybackSession('not-json'), null);
 
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
 
-// ── Issue #04: Participants nav button label + green state ─────────────────
+// ── Issue #04 / participant nav sequence label ─────────────────────────────
+
+assert.strictEqual(
+    logic.participantSequenceFromTitle('2026_ALGER_Hamida_1_4K'),
+    '1',
+    'parse sequence from 4K title'
+);
+assert.strictEqual(
+    logic.participantSequenceFromTitle('2026_ROMA_Serena_3_HD'),
+    '3',
+    'parse sequence from HD title'
+);
+assert.strictEqual(
+    logic.participantSequenceFromTitle('2026_BARCELONA_Carlota_01_HD'),
+    '1',
+    'strip leading zeros from sequence'
+);
+assert.strictEqual(
+    logic.participantSequenceFromTitle('untitled clip'),
+    '',
+    'missing sequence → empty'
+);
+assert.strictEqual(
+    logic.formatParticipantNavLabel('Hamida', '2'),
+    'Hamida 2',
+    'format name + sequence'
+);
+assert.strictEqual(
+    logic.formatParticipantNavLabel('Hamida', ''),
+    'Hamida',
+    'format bare name when sequence missing'
+);
 
 (function () {
     var state = logic.resolveParticipantsNavState({
@@ -1131,8 +1162,9 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
         onPlayerPage: true,
         isPlaying: false,
         currentVideoParticipant: 'Hamida',
+        currentVideoParticipantSequence: '1',
     });
-    assert.strictEqual(state.label, 'Hamida', 'participant playlist: name while paused');
+    assert.strictEqual(state.label, 'Hamida 1', 'participant playlist: name+seq while paused');
     assert.strictEqual(state.isActive, true, 'participant playlist: green while paused');
 })();
 
@@ -1140,11 +1172,13 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
     var state = logic.resolveParticipantsNavState({
         isParticipantMode: true,
         participantName: 'Hamida',
+        participantSequence: '2',
         onPlayerPage: false,
         isPlaying: false,
         currentVideoParticipant: '',
+        currentVideoParticipantSequence: '',
     });
-    assert.strictEqual(state.label, 'Hamida', 'participant playlist: name on about/participants');
+    assert.strictEqual(state.label, 'Hamida 2', 'secondary pages: name+seq from session');
     assert.strictEqual(state.isActive, true, 'participant playlist: green on about/participants');
 })();
 
@@ -1155,6 +1189,7 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
         onPlayerPage: true,
         isPlaying: false,
         currentVideoParticipant: 'Aurora',
+        currentVideoParticipantSequence: '1',
     });
     assert.strictEqual(state.label, '', 'neutral playlist paused: generic label');
     assert.strictEqual(state.isActive, false, 'neutral playlist paused: not green');
@@ -1167,8 +1202,9 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
         onPlayerPage: true,
         isPlaying: true,
         currentVideoParticipant: 'Aurora',
+        currentVideoParticipantSequence: '3',
     });
-    assert.strictEqual(state.label, 'Aurora', 'neutral playlist playing: current participant name');
+    assert.strictEqual(state.label, 'Aurora 3', 'neutral playlist playing: current name+seq');
     assert.strictEqual(state.isActive, false, 'neutral playlist playing: stays gray');
 })();
 
@@ -1189,9 +1225,40 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #02)');
         onPlayerPage: true,
         isPlaying: true,
         currentVideoParticipant: 'Hamida',
+        currentVideoParticipantSequence: '',
     });
-    assert.strictEqual(state.label, 'Hamida', 'single-participant filter: name only while playing');
+    assert.strictEqual(state.label, 'Hamida', 'single-participant filter: bare name when seq missing');
     assert.strictEqual(state.isActive, false, 'single-participant filter: never green without participant mode');
+})();
+
+(function () {
+    var snap = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 0,
+        filterState: { sign_language: null, edition: null, typology: null },
+        participantName: 'Hamida',
+        participantSequence: '4',
+        shuffleMode: false,
+        shuffledSequence: [],
+        shuffleStep: 0,
+        filteredCursor: 0,
+    });
+    assert.strictEqual(snap.participantSequence, '4', 'session stores participant sequence');
+    var parsed = logic.parsePlaybackSession(JSON.stringify(snap));
+    assert.ok(parsed);
+    assert.strictEqual(parsed.participantSequence, '4', 'session round-trip keeps sequence');
+    var legacy = logic.parsePlaybackSession(JSON.stringify({
+        v: 2,
+        masterIndex: 0,
+        filterState: { sign_language: null, edition: null, typology: null, tag: null },
+        participantName: 'Hamida',
+        shuffleMode: false,
+        shuffledSequence: [],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 0,
+    }));
+    assert.ok(legacy);
+    assert.strictEqual(legacy.participantSequence, '', 'legacy session defaults sequence empty');
 })();
 
 // ── Issue #05: generalized end-of-playlist ───────────────────────────────────

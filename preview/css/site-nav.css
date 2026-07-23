@@ -31,6 +31,10 @@ a.preview-site-nav__btn {
     text-decoration: none;
 }
 
+a.preview-site-nav__btn.preview-site-nav__btn--person-name {
+    text-transform: none;
+}
+
 a.preview-site-nav__btn:hover {
     background: #f0f0f0;
     border-color: rgb(0, 100, 0);

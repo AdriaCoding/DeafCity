@@ -58,6 +58,7 @@ $participantsLink = sn_find($homeParticipant, 'participants');
 sn_assert($participantsLink !== null, 'home includes participants link');
 sn_assert($participantsLink['label'] === 'Hamida', 'active collection shows participant name');
 sn_assert(strpos($participantsLink['class'], 'is-active') !== false, 'active collection has is-active');
+sn_assert(strpos($participantsLink['class'], 'preview-site-nav__btn--person-name') !== false, 'active participant has person-name casing class');
 sn_assert($participantsLink['aria_current'] === 'true', 'active collection has aria-current=true');
 
 // participants page shows participant name when collection is active

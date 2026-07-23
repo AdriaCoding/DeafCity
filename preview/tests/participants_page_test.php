@@ -56,7 +56,7 @@ pp_assert_not_contains('vpc-shuffle-btn', $html, 'no shuffle button');
 pp_assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 pp_assert_contains('/preview/participants', $html, 'navbar includes Participants route');
 pp_assert_contains('aria-current="page"', $html, 'navbar marks current page');
-pp_assert_contains('vpc-chrome-btn__label">Participants</span>', $html, 'Participants label in navbar');
+pp_assert_contains('vpc-chrome-btn__label-full">Participants</span>', $html, 'Participants label in navbar');
 pp_assert_contains('/preview/about', $html, 'navbar includes About route');
 pp_assert_contains('data-picker="language"', $html, 'language picker on participants chrome');
 pp_assert_contains('vpc-picker-dropdown', $html, 'language dropup on participants chrome');
@@ -137,11 +137,11 @@ if (!is_array($cfg)) {
 }
 
 $playlistCount = count($cfg['playlist'] ?? []);
-if ($playlistCount !== 1) {
-    fwrite(STDERR, "FAIL: Hamida playlist should have 1 video, got {$playlistCount}\n");
+if ($playlistCount < 2) {
+    fwrite(STDERR, "FAIL: Hamida playlist should have multiple videos, got {$playlistCount}\n");
     exit(1);
 }
-echo "PASS: ?participant=Hamida gives 1-video playlist\n";
+echo "PASS: ?participant=Hamida gives {$playlistCount}-video playlist\n";
 
 if (($cfg['participantName'] ?? '') !== 'Hamida') {
     fwrite(STDERR, "FAIL: participantName in vpc-config should be 'Hamida', got: " . json_encode($cfg['participantName'] ?? null) . "\n");
@@ -149,27 +149,36 @@ if (($cfg['participantName'] ?? '') !== 'Hamida') {
 }
 echo "PASS: participantName=Hamida in vpc-config\n";
 
+$firstSeq = isset($cfg['playlist'][0]['participant_sequence'])
+    ? (string) $cfg['playlist'][0]['participant_sequence']
+    : '';
+if ($firstSeq === '') {
+    fwrite(STDERR, "FAIL: first Hamida playlist item should expose participant_sequence\n");
+    exit(1);
+}
+echo "PASS: playlist items include participant_sequence ({$firstSeq})\n";
+
 if (preg_match('~vpc-prev-btn[^>]*vpc-nav-hidden~', $homeHtml)) {
-    fwrite(STDERR, "FAIL: prev button must not be hidden on single-video participant playlist\n");
+    fwrite(STDERR, "FAIL: prev button must not be hidden on multi-video participant playlist\n");
     exit(1);
 }
 if (preg_match('~vpc-next-btn[^>]*vpc-nav-hidden~', $homeHtml)) {
-    fwrite(STDERR, "FAIL: next button must not be hidden on single-video participant playlist\n");
+    fwrite(STDERR, "FAIL: next button must not be hidden on multi-video participant playlist\n");
     exit(1);
 }
-echo "PASS: prev/next visible on single-video participant playlist\n";
+echo "PASS: prev/next visible on multi-video participant playlist\n";
 
-if (!preg_match('~class="vpc-prev-btn"[^>]*disabled~', $homeHtml)
-    && !preg_match('~disabled[^>]*class="vpc-prev-btn"~', $homeHtml)) {
-    fwrite(STDERR, "FAIL: prev button should be disabled on single-video participant playlist\n");
+if (preg_match('~class="vpc-prev-btn"[^>]*disabled~', $homeHtml)
+    || preg_match('~disabled[^>]*class="vpc-prev-btn"~', $homeHtml)) {
+    fwrite(STDERR, "FAIL: prev button should not be disabled on multi-video participant playlist\n");
     exit(1);
 }
-if (!preg_match('~class="vpc-next-btn"[^>]*disabled~', $homeHtml)
-    && !preg_match('~disabled[^>]*class="vpc-next-btn"~', $homeHtml)) {
-    fwrite(STDERR, "FAIL: next button should be disabled on single-video participant playlist\n");
+if (preg_match('~class="vpc-next-btn"[^>]*disabled~', $homeHtml)
+    || preg_match('~disabled[^>]*class="vpc-next-btn"~', $homeHtml)) {
+    fwrite(STDERR, "FAIL: next button should not be disabled on multi-video participant playlist\n");
     exit(1);
 }
-echo "PASS: prev/next disabled on single-video participant playlist\n";
+echo "PASS: prev/next enabled on multi-video participant playlist\n";
 
 unset($_GET['participant']);
 ob_start();
@@ -196,7 +205,7 @@ if (($cfg2['participantName'] ?? 'NOT_SET') !== '') {
 echo "PASS: participantName empty when no ?participant param\n";
 
 pp_assert_contains('/preview/participants', $homeHtml2, 'Participants nav button on home page');
-pp_assert_contains('vpc-chrome-btn__label">Participants</span>', $homeHtml2, 'Participants button label text');
+pp_assert_contains('vpc-chrome-btn__label-full">Participants</span>', $homeHtml2, 'Participants button label text');
 
 $_GET['participant'] = 'Frank';
 ob_start();
