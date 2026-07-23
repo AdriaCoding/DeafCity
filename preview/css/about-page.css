@@ -130,6 +130,7 @@ a {
     background-color: rgb(0, 120, 0);
     color: #fff;
     padding: 1em;
+    font-size: 1.0625em;
 }
 
 #about-todo > p:last-of-type {
@@ -167,7 +168,7 @@ a {
 
 #credits {
     margin-top: 1.25em;
-    font-size: 83%;
+    font-size: 90%;
 }
 
 #credits .credits-logos {
