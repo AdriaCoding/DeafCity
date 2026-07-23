@@ -864,19 +864,28 @@
 
     /**
      * Rebuild filtered master indices from session filter + optional participant mode.
-     * @param {Array<{ participant?: string }>} fullPlaylistItems
+     * Pure Participant collections use natural sequence order (no catalog order).
+     * @param {Array<{ participant?: string, participant_sequence?: string|number }>} fullPlaylistItems
      * @param {VpcFilterState} filterState
      * @param {string} participantName
      * @returns {number[]}
      */
     function filteredIndicesFromSessionContext(fullPlaylistItems, filterState, participantName) {
-        var indices = recomputeFilteredMasterIndices(fullPlaylistItems, filterState);
         var name = typeof participantName === 'string' ? participantName.trim() : '';
-        if (name === '') return indices;
-        return indices.filter(function (ix) {
-            var item = fullPlaylistItems[ix];
-            return item && (item.participant || '') === name;
-        });
+        if (name !== '') {
+            var natural = participantMasterIndicesInNaturalOrder(fullPlaylistItems, name);
+            var hasFilter = !!(filterState && (
+                filterState.sign_language !== null
+                || filterState.edition !== null
+                || filterState.typology !== null
+                || isTagPinned(filterState)
+            ));
+            if (!hasFilter) return natural;
+            return natural.filter(function (ix) {
+                return videoMatchesFilterState(fullPlaylistItems[ix], filterState);
+            });
+        }
+        return recomputeFilteredMasterIndices(fullPlaylistItems, filterState);
     }
 
     /**
@@ -1064,7 +1073,6 @@
             participantName
         );
         var fc = filteredMasterIndices.length;
-        if (fc === 0) return { kind: 'fresh' };
 
         var shuffleMode = !!session.shuffleMode;
         var shuffledSequence = Array.isArray(session.shuffledSequence)
@@ -1078,6 +1086,41 @@
             ? session.playbackTimeSec
             : 0;
         var shouldAutoplay = false;
+
+        // Pure Participant collections always rebuild natural linear order (no shuffle).
+        if (isParticipantMode) {
+            var pPlan = planParticipantCollectionPlaylist({
+                fullPlaylistItems: items,
+                participantName: participantName,
+                currentMasterIndex: typeof session.masterIndex === 'number'
+                    ? session.masterIndex
+                    : -1,
+            });
+            filteredMasterIndices = pPlan.filteredMasterIndices;
+            fc = filteredMasterIndices.length;
+            shuffleMode = false;
+            shuffledSequence = [];
+            shuffleStep = 0;
+            filteredCursor = pPlan.filteredCursor;
+            if (fc === 0) {
+                return {
+                    kind: 'restore',
+                    filterState: filterState,
+                    participantName: participantName,
+                    isParticipantMode: true,
+                    filteredMasterIndices: [],
+                    filteredCursor: 0,
+                    shuffleStep: 0,
+                    shuffledSequence: [],
+                    shuffleMode: false,
+                    loadMasterIndex: -1,
+                    shouldAutoplay: false,
+                    playbackTimeSec: 0,
+                };
+            }
+        } else if (fc === 0) {
+            return { kind: 'fresh' };
+        }
 
         if (navIntent === 'prev') {
             var prevStep = applyTransportStep({
@@ -1166,6 +1209,110 @@
             return '';
         }
         return String(parseInt(m[1], 10));
+    }
+
+    /**
+     * Master-playlist indices for one Participant, in natural clip order.
+     * Numeric participant_sequence ascending; missing sequences last; master
+     * index as tie-breaker (stable catalog order among equals).
+     * @param {Array<{ participant?: string, participant_sequence?: string|number }>} fullPlaylistItems
+     * @param {string} participantName
+     * @returns {number[]}
+     */
+    function participantMasterIndicesInNaturalOrder(fullPlaylistItems, participantName) {
+        var name = typeof participantName === 'string' ? participantName.trim() : '';
+        if (name === '' || !Array.isArray(fullPlaylistItems)) {
+            return [];
+        }
+        var pairs = [];
+        var i;
+        for (i = 0; i < fullPlaylistItems.length; i++) {
+            var item = fullPlaylistItems[i];
+            var p = item && typeof item.participant === 'string' ? item.participant.trim() : '';
+            if (p !== name) continue;
+            var raw = item && item.participant_sequence !== undefined && item.participant_sequence !== null
+                ? String(item.participant_sequence).trim()
+                : '';
+            var hasSeq = raw !== '' && !isNaN(Number(raw));
+            pairs.push({
+                ix: i,
+                hasSeq: hasSeq,
+                seq: hasSeq ? Number(raw) : 0,
+            });
+        }
+        pairs.sort(function (a, b) {
+            if (a.hasSeq !== b.hasSeq) {
+                return a.hasSeq ? -1 : 1;
+            }
+            if (a.hasSeq && a.seq !== b.seq) {
+                return a.seq - b.seq;
+            }
+            return a.ix - b.ix;
+        });
+        return pairs.map(function (row) { return row.ix; });
+    }
+
+    /**
+     * Plan a pure Participant collection Playlist: natural sequence order, no shuffle.
+     * Cold load (no usable currentMasterIndex): start at sort head.
+     * Restore (current video still in set): keep it and remap cursor.
+     * @param {{
+     *   fullPlaylistItems: Array<{ participant?: string, participant_sequence?: string|number }>,
+     *   participantName: string,
+     *   currentMasterIndex?: number
+     * }} opts
+     * @returns {{
+     *   filteredMasterIndices: number[],
+     *   filteredCursor: number,
+     *   shuffleStep: number,
+     *   shuffledSequence: number[],
+     *   shuffleMode: boolean,
+     *   loadMasterIndex: number,
+     *   keepCurrentVideo: boolean
+     * }}
+     * Always returns a plan (empty indices + loadMasterIndex -1 when no matches).
+     */
+    function planParticipantCollectionPlaylist(opts) {
+        var items = opts && opts.fullPlaylistItems;
+        var name = opts && typeof opts.participantName === 'string' ? opts.participantName.trim() : '';
+        var filteredMasterIndices = participantMasterIndicesInNaturalOrder(items, name);
+        if (filteredMasterIndices.length === 0) {
+            return {
+                filteredMasterIndices: [],
+                filteredCursor: 0,
+                shuffleStep: 0,
+                shuffledSequence: [],
+                shuffleMode: false,
+                loadMasterIndex: -1,
+                keepCurrentVideo: false,
+            };
+        }
+
+        var currentIx = opts && typeof opts.currentMasterIndex === 'number'
+            ? opts.currentMasterIndex
+            : -1;
+        var pos = filteredMasterIndices.indexOf(currentIx);
+        if (pos >= 0) {
+            return {
+                filteredMasterIndices: filteredMasterIndices,
+                filteredCursor: pos,
+                shuffleStep: 0,
+                shuffledSequence: [],
+                shuffleMode: false,
+                loadMasterIndex: currentIx,
+                keepCurrentVideo: true,
+            };
+        }
+
+        return {
+            filteredMasterIndices: filteredMasterIndices,
+            filteredCursor: 0,
+            shuffleStep: 0,
+            shuffledSequence: [],
+            shuffleMode: false,
+            loadMasterIndex: filteredMasterIndices[0],
+            keepCurrentVideo: false,
+        };
     }
 
     /**
@@ -1406,6 +1553,8 @@
         planSecondaryNavRestore: planSecondaryNavRestore,
         distinctParticipantsInSubset: distinctParticipantsInSubset,
         participantSequenceFromTitle: participantSequenceFromTitle,
+        participantMasterIndicesInNaturalOrder: participantMasterIndicesInNaturalOrder,
+        planParticipantCollectionPlaylist: planParticipantCollectionPlaylist,
         formatParticipantNavLabel: formatParticipantNavLabel,
         resolveParticipantsNavState: resolveParticipantsNavState,
         planEndOfPlaylist: planEndOfPlaylist,

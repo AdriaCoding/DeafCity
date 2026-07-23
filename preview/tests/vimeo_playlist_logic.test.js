@@ -1782,3 +1782,178 @@ console.log('vimeo_playlist_logic.test.js: all passed (including load cover plan
 
 console.log('vimeo_playlist_logic.test.js: all passed (including load cover reveal)');
 
+// ── Participant natural-order playlist (no shuffle) ─────────────────────────
+
+// Orderer: numeric participant_sequence ascending (2 before 10)
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '10' },
+        { participant: 'Other', participant_sequence: '1' },
+        { participant: 'Hamida', participant_sequence: '2' },
+        { participant: 'Hamida', participant_sequence: '1' },
+    ];
+    assert.deepStrictEqual(
+        logic.participantMasterIndicesInNaturalOrder(items, 'Hamida'),
+        [3, 2, 0],
+        'Hamida clips ordered 1, 2, 10 by numeric sequence'
+    );
+})();
+
+// Orderer: missing sequences after numbered; catalog order among unnumbered
+(function () {
+    var items = [
+        { participant: 'Hamida' },
+        { participant: 'Hamida', participant_sequence: '2' },
+        { participant: 'Hamida' },
+        { participant: 'Hamida', participant_sequence: '1' },
+    ];
+    assert.deepStrictEqual(
+        logic.participantMasterIndicesInNaturalOrder(items, 'Hamida'),
+        [3, 1, 0, 2],
+        'unnumbered clips follow numbered ones in catalog order'
+    );
+})();
+
+// Planner: cold enter Participant collection — linear, head = sequence 1
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '3' },
+        { participant: 'Hamida', participant_sequence: '1' },
+        { participant: 'Hamida', participant_sequence: '2' },
+    ];
+    var plan = logic.planParticipantCollectionPlaylist({
+        fullPlaylistItems: items,
+        participantName: 'Hamida',
+    });
+    assert.ok(plan, 'plan exists');
+    assert.strictEqual(plan.shuffleMode, false, 'no shuffle in Participant mode');
+    assert.deepStrictEqual(plan.shuffledSequence, [], 'no shuffle sequence');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [1, 2, 0], 'natural order indices');
+    assert.strictEqual(plan.filteredCursor, 0);
+    assert.strictEqual(plan.shuffleStep, 0);
+    assert.strictEqual(plan.loadMasterIndex, 1, 'load sequence 1');
+    assert.strictEqual(plan.keepCurrentVideo, false);
+})();
+
+// Planner: unknown Participant → empty linear plan (never leave caller on full catalog)
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '1' },
+        { participant: 'Hamida', participant_sequence: '2' },
+    ];
+    var plan = logic.planParticipantCollectionPlaylist({
+        fullPlaylistItems: items,
+        participantName: 'Nobody',
+    });
+    assert.ok(plan, 'empty Participant still returns a plan object');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [], 'no matching videos');
+    assert.strictEqual(plan.shuffleMode, false);
+    assert.deepStrictEqual(plan.shuffledSequence, []);
+    assert.strictEqual(plan.filteredCursor, 0);
+    assert.strictEqual(plan.shuffleStep, 0);
+    assert.strictEqual(plan.loadMasterIndex, -1, 'no video to load');
+    assert.strictEqual(plan.keepCurrentVideo, false);
+})();
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '3' },
+        { participant: 'Hamida', participant_sequence: '1' },
+        { participant: 'Hamida', participant_sequence: '2' },
+    ];
+    var plan = logic.planParticipantCollectionPlaylist({
+        fullPlaylistItems: items,
+        participantName: 'Hamida',
+        currentMasterIndex: 0, // sequence 3
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.shuffleMode, false);
+    assert.strictEqual(plan.keepCurrentVideo, true);
+    assert.strictEqual(plan.loadMasterIndex, 0);
+    assert.strictEqual(plan.filteredCursor, 2, 'sequence 3 is last in natural order');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [1, 2, 0]);
+})();
+
+// Session context: Participant name yields natural-order master indices
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '3', signLanguage: 'lsc' },
+        { participant: 'Other', participant_sequence: '1', signLanguage: 'lsc' },
+        { participant: 'Hamida', participant_sequence: '1', signLanguage: 'lsc' },
+        { participant: 'Hamida', participant_sequence: '2', signLanguage: 'lsc' },
+    ];
+    assert.deepStrictEqual(
+        logic.filteredIndicesFromSessionContext(
+            items,
+            { sign_language: null, edition: null, typology: null, tag: null },
+            'Hamida'
+        ),
+        [2, 3, 0],
+        'session Participant indices follow sequence order'
+    );
+})();
+
+// Secondary restore: Participant session rebuilds natural linear queue around current video
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '3' },
+        { participant: 'Hamida', participant_sequence: '1' },
+        { participant: 'Hamida', participant_sequence: '2' },
+    ];
+    var session = {
+        v: 2,
+        masterIndex: 0,
+        filterState: { sign_language: null, edition: null, typology: null, tag: null },
+        participantName: 'Hamida',
+        participantSequence: '3',
+        shuffleMode: true,
+        shuffledSequence: [2, 0, 1],
+        shuffleStep: 1,
+        filteredCursor: 0,
+        playbackTimeSec: 12,
+    };
+    var nav = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: 'play',
+        fullPlaylistItems: items,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(nav && nav.kind === 'restore');
+    assert.strictEqual(nav.shuffleMode, false, 'Participant restore forces linear mode');
+    assert.deepStrictEqual(nav.shuffledSequence, []);
+    assert.deepStrictEqual(nav.filteredMasterIndices, [1, 2, 0]);
+    assert.strictEqual(nav.loadMasterIndex, 0, 'keeps current master video');
+    assert.strictEqual(nav.filteredCursor, 2);
+    assert.strictEqual(nav.playbackTimeSec, 12);
+})();
+
+// Secondary restore: unknown Participant stays empty (does not fall back to ALL)
+(function () {
+    var items = [
+        { participant: 'Hamida', participant_sequence: '1' },
+    ];
+    var nav = logic.planSecondaryNavRestore({
+        session: {
+            v: 2,
+            masterIndex: 0,
+            filterState: { sign_language: null, edition: null, typology: null, tag: null },
+            participantName: 'Nobody',
+            participantSequence: '',
+            shuffleMode: true,
+            shuffledSequence: [0],
+            shuffleStep: 0,
+            filteredCursor: 0,
+            playbackTimeSec: 5,
+        },
+        navIntent: 'play',
+        fullPlaylistItems: items,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(nav && nav.kind === 'restore');
+    assert.strictEqual(nav.isParticipantMode, true);
+    assert.deepStrictEqual(nav.filteredMasterIndices, []);
+    assert.strictEqual(nav.loadMasterIndex, -1);
+    assert.strictEqual(nav.shuffleMode, false);
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including participant natural order)');
+

@@ -225,4 +225,20 @@ if ($multiCount !== $expectedMultiCount) {
 echo "PASS: ?participant=Frank gives {$expectedMultiCount}-video playlist\n";
 unset($_GET['participant']);
 
+$_GET['participant'] = 'DefinitelyNotARealParticipant_XYZ';
+ob_start();
+include $homePage;
+$homeHtmlUnknown = ob_get_clean();
+unset($_GET['participant']);
+if (!preg_match('~<script[^>]+class="vpc-config"[^>]*>(.*?)</script>~s', $homeHtmlUnknown, $mUnk)) {
+    fwrite(STDERR, "FAIL: no vpc-config with unknown ?participant\n");
+    exit(1);
+}
+$cfgUnk = json_decode(html_entity_decode($mUnk[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'), true);
+if (($cfgUnk['participantName'] ?? '') !== 'DefinitelyNotARealParticipant_XYZ') {
+    fwrite(STDERR, "FAIL: unknown participant must still set participantName, got: " . json_encode($cfgUnk['participantName'] ?? null) . "\n");
+    exit(1);
+}
+echo "PASS: unknown ?participant still enters Participant mode (participantName set)\n";
+
 echo "\nAll participants_page tests passed.\n";

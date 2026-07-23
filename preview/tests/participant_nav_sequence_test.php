@@ -42,10 +42,37 @@ pns_assert(
     isset($participantPl[0]['participant_sequence']) && $participantPl[0]['participant_sequence'] !== '',
     'first participant playlist item has sequence'
 );
+pns_assert(
+    (string) $participantPl[0]['participant_sequence'] === '1',
+    'participant playlist starts at sequence 1'
+);
+$prevSeq = 0;
+foreach ($participantPl as $entry) {
+    $raw = isset($entry['participant_sequence']) ? trim((string) $entry['participant_sequence']) : '';
+    if ($raw === '' || !is_numeric($raw)) {
+        continue;
+    }
+    $n = (int) $raw;
+    pns_assert($n >= $prevSeq, 'participant playlist numeric sequences are non-decreasing');
+    $prevSeq = $n;
+}
 $label = vpc_format_participant_nav_label(
     $participantPl[0]['participant'],
     $participantPl[0]['participant_sequence']
 );
 pns_assert(preg_match('/^Hamida \d+$/', $label) === 1, 'SSR-style label is Name N');
+
+// Synthetic: numeric order + unnumbered last (independent of live catalog order)
+$synthetic = array(
+    array('video_id' => 'a', 'participant' => 'X', 'participant_sequence' => '10'),
+    array('video_id' => 'b', 'participant' => 'X'),
+    array('video_id' => 'c', 'participant' => 'X', 'participant_sequence' => '2'),
+    array('video_id' => 'd', 'participant' => 'X', 'participant_sequence' => '1'),
+);
+$sorted = vpc_sort_playlist_by_participant_sequence($synthetic);
+pns_assert($sorted[0]['video_id'] === 'd', 'synthetic sort: sequence 1 first');
+pns_assert($sorted[1]['video_id'] === 'c', 'synthetic sort: sequence 2 second');
+pns_assert($sorted[2]['video_id'] === 'a', 'synthetic sort: sequence 10 third');
+pns_assert($sorted[3]['video_id'] === 'b', 'synthetic sort: unnumbered last');
 
 echo "\nAll participant_nav_sequence tests passed.\n";

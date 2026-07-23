@@ -512,14 +512,17 @@
 
         if (!restoredFromSession) {
             if (isParticipantMode) {
-                filteredMasterIndices = fullPlaylistItems
-                    .map(function (item, ix) {
-                        return (item.participant || '') === participantName ? ix : -1;
-                    })
-                    .filter(function (ix) { return ix >= 0; });
-            }
-
-            if (serverShuffled && filteredCount() > 0 && !isParticipantMode) {
+                var participantPlan = L.planParticipantCollectionPlaylist({
+                    fullPlaylistItems: fullPlaylistItems,
+                    participantName: participantName,
+                });
+                filteredMasterIndices = participantPlan.filteredMasterIndices;
+                filteredCursor = participantPlan.filteredCursor;
+                shuffleStep = participantPlan.shuffleStep;
+                shuffledSequence = participantPlan.shuffledSequence;
+                shuffleMode = participantPlan.shuffleMode;
+                playlistIndex = participantPlan.loadMasterIndex;
+            } else if (serverShuffled && filteredCount() > 0) {
                 shuffleMode = true;
                 shuffledSequence = [];
                 serverPlaylist.forEach(function (entry) {
@@ -538,16 +541,6 @@
                 shuffleStep = startFpos >= 0 ? shuffledSequence.indexOf(startFpos) : 0;
                 if (shuffleStep < 0) shuffleStep = 0;
                 filteredCursor = shuffledSequence[shuffleStep];
-            } else if (serverShuffled && filteredCount() > 0 && isParticipantMode) {
-                shuffleMode = true;
-                shuffledSequence = [];
-                for (var _psi = 0; _psi < filteredCount(); _psi++) {
-                    shuffledSequence.push(_psi);
-                }
-                shuffleStep = 0;
-                filteredCursor = Math.max(0, filteredMasterIndices.indexOf(playlistIndex));
-                if (filteredCursor < 0) filteredCursor = 0;
-                playlistIndex = filteredMasterIndices[filteredCursor];
             } else {
                 var defaultShuffle = L.createDefaultShuffleState(filteredCount());
                 shuffleMode = defaultShuffle.shuffleMode;
@@ -1633,10 +1626,20 @@
                 closeAllPickers();
             });
 
-            loadVideoMaster(playlistIndex, participantGestureCarried || sessionRestoreAutoplay)
-                .then(function () {})
-                .catch(function () {});
-
+            // Unknown/empty Participant collection: stay on empty queue (do not load ALL poster).
+            if (filteredCount() > 0 && playlistIndex >= 0) {
+                loadVideoMaster(playlistIndex, participantGestureCarried || sessionRestoreAutoplay)
+                    .then(function () {})
+                    .catch(function () {});
+            } else {
+                // SSR may still have a technical ALL poster; blank it so we do not show unrelated videos.
+                var emptyIframe = document.getElementById(iframeId);
+                if (emptyIframe) {
+                    emptyIframe.removeAttribute('src');
+                }
+                updatePlaylistNavButtons();
+                syncCollectionNavButtons();
+            }
             p.on('play', function () {
                 if (forcedPauseLoads > 0) {
                     p.pause().catch(function () {});

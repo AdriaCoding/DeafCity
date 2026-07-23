@@ -622,6 +622,52 @@ if (!function_exists('vpc_participants_from_catalog')) {
     }
 }
 
+if (!function_exists('vpc_sort_playlist_by_participant_sequence')) {
+    /**
+     * Sort playlist entries by numeric participant_sequence ascending.
+     * Missing/non-numeric sequences sort last; original order is the tie-breaker.
+     *
+     * @param array<int, array<string, mixed>> $playlist
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_sort_playlist_by_participant_sequence(array $playlist)
+    {
+        $decorated = array();
+        foreach ($playlist as $i => $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $raw = isset($entry['participant_sequence'])
+                ? trim((string) $entry['participant_sequence'])
+                : '';
+            $hasSeq = ($raw !== '' && is_numeric($raw));
+            $decorated[] = array(
+                'i' => (int) $i,
+                'entry' => $entry,
+                'has' => $hasSeq,
+                'seq' => $hasSeq ? (int) $raw : 0,
+            );
+        }
+        usort($decorated, function ($a, $b) {
+            if ($a['has'] !== $b['has']) {
+                return $a['has'] ? -1 : 1;
+            }
+            if ($a['has'] && $a['seq'] !== $b['seq']) {
+                return ($a['seq'] < $b['seq']) ? -1 : 1;
+            }
+            if ($a['i'] === $b['i']) {
+                return 0;
+            }
+            return ($a['i'] < $b['i']) ? -1 : 1;
+        });
+        $out = array();
+        foreach ($decorated as $row) {
+            $out[] = $row['entry'];
+        }
+        return $out;
+    }
+}
+
 if (!function_exists('vpc_participant_playlist_from_catalog')) {
     /**
      * Build a $vpc-compatible playlist from all visible catalog entries where
@@ -712,7 +758,7 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
 
             $playlist[] = $entry;
         }
-        return $playlist;
+        return vpc_sort_playlist_by_participant_sequence($playlist);
     }
 }
 

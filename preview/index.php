@@ -55,13 +55,15 @@ if (count($playlist) > 0) {
 $participantName = isset($_GET['participant']) ? trim((string)$_GET['participant']) : '';
 if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     $participantPlaylist = vpc_participant_playlist_from_catalog($catalog, $participantName);
+    // Always enter Participant mode for the query name (even when unknown / empty).
+    $vpc['participant_name'] = $participantName;
     if (count($participantPlaylist) > 0) {
         $vpc['playlist'] = $participantPlaylist;
         $vpc['catalog_playlist'] = $catalogPlaylist;
         $vpc['playlist_index'] = 0;
-        $vpc['participant_name'] = $participantName;
-        // Participant playlists are not server-shuffled (use client-side shuffle)
+        // Participant playlists are sequence-sorted server-side (natural order, no shuffle)
     }
+    // Empty/unknown: keep catalog master + a technical SSR playlist; JS applies empty filter.
 }
 
 $deafHearingEnabled = $catalog ? vpc_catalog_deaf_hearing_tag_count($catalog) > 0 : false;
@@ -103,7 +105,7 @@ if ($vpc !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=15"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=55" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=17"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=57" defer></script>
 </body>
 </html>
