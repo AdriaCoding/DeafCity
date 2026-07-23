@@ -610,41 +610,65 @@
             var videoShell = root.querySelector('.video-shell');
             var videoStack = root.querySelector('.video-stack');
             var posterCover = root.querySelector('.vpc-poster-cover');
+            var loadScrim = root.querySelector('.vpc-load-scrim');
             var posterRequestToken = 0;
             var posterTargetVideoId = '';
             var posterLoadedVideoId = '';
             var posterPlaybackStarted = false;
+            var coverBuffering = false;
+            var coverUsesScrim = false;
+            /** Epoch ms — re-show white scrim on bufferstart until this time (load + short grace). */
+            var suppressGrayUntil = 0;
 
             /**
-             * Keep Vimeo's internal loading UI covered while the target Video loads.
-             * The existing poster remains visible until the next thumbnail is ready.
+             * Cover Vimeo's internal loading UI while the target Video loads.
+             * Autoplays (running playlist) use a solid white scrim — never the next thumb.
+             * Paused/cold loads may show the target thumbnail poster.
              * @param {any} item
+             * @param {boolean} willAutoplay
              * @returns {number}
              */
-            function beginPosterCoveredLoad(item) {
+            function beginPosterCoveredLoad(item, willAutoplay) {
                 posterRequestToken++;
                 var token = posterRequestToken;
                 posterTargetVideoId = item && item.videoId ? String(item.videoId) : '';
                 posterPlaybackStarted = false;
 
-                if (!posterCover) return token;
-
                 var thumbnailUrl =
                     item && item.thumbnailUrl ? String(item.thumbnailUrl) : '';
-                if (thumbnailUrl === '') {
-                    posterCover.classList.add('is-hidden');
+                var coverPlan = L.planLoadCover({
+                    willAutoplay: !!willAutoplay,
+                    thumbnailUrl: thumbnailUrl,
+                });
+                coverUsesScrim = coverPlan.kind === 'solid-white';
+                coverBuffering = false;
+
+                if (coverPlan.kind === 'solid-white') {
+                    suppressGrayUntil = Date.now() + 120000;
+                    if (posterCover) posterCover.classList.add('is-hidden');
+                    if (loadScrim) loadScrim.classList.remove('is-hidden');
+                    return token;
+                }
+
+                suppressGrayUntil = 0;
+                if (loadScrim) loadScrim.classList.add('is-hidden');
+
+                if (coverPlan.kind === 'none' || !posterCover) {
+                    if (posterCover) posterCover.classList.add('is-hidden');
                     return token;
                 }
 
                 posterCover.classList.remove('is-hidden');
-                if (posterCover.getAttribute('src') === thumbnailUrl) return token;
+                if (posterCover.getAttribute('src') === coverPlan.thumbnailUrl) {
+                    return token;
+                }
 
                 var pendingPoster = new window.Image();
                 pendingPoster.onload = function () {
                     if (token !== posterRequestToken) return;
-                    posterCover.setAttribute('src', thumbnailUrl);
+                    posterCover.setAttribute('src', coverPlan.thumbnailUrl);
                 };
-                pendingPoster.src = thumbnailUrl;
+                pendingPoster.src = coverPlan.thumbnailUrl;
                 return token;
             }
 
@@ -654,13 +678,17 @@
             }
 
             function revealLoadedPosterVideo() {
-                if (!posterCover) return;
                 if (
-                    posterTargetVideoId !== '' &&
-                    posterLoadedVideoId === posterTargetVideoId
+                    posterTargetVideoId === '' ||
+                    posterLoadedVideoId !== posterTargetVideoId
                 ) {
-                    posterCover.classList.add('is-hidden');
+                    return;
                 }
+                if (posterCover) posterCover.classList.add('is-hidden');
+                if (loadScrim) loadScrim.classList.add('is-hidden');
+                coverUsesScrim = false;
+                // Keep a short guard: Vimeo often bufferstarts again right after reveal.
+                suppressGrayUntil = Date.now() + 1000;
             }
 
             function markPosterPlaybackStarted() {
@@ -670,7 +698,15 @@
             }
 
             function revealPosterAfterPlaybackProgress(seconds) {
-                if (!posterPlaybackStarted || Number(seconds) <= 0.05) return;
+                if (
+                    !L.shouldRevealLoadCover({
+                        playbackStarted: posterPlaybackStarted,
+                        seconds: seconds,
+                        buffering: coverBuffering,
+                    })
+                ) {
+                    return;
+                }
                 revealLoadedPosterVideo();
             }
 
@@ -1053,7 +1089,7 @@
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
                 var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
-                var posterToken = beginPosterCoveredLoad(item);
+                var posterToken = beginPosterCoveredLoad(item, wantAutoplay);
 
                 setTransportLoading(true);
                 if (!wantAutoplay) {
@@ -1613,6 +1649,21 @@
             });
             p.on('playing', function () {
                 markPosterPlaybackStarted();
+            });
+            p.on('bufferstart', function () {
+                coverBuffering = true;
+                // Cover Vimeo's gray loader during the load window and a short post-reveal grace.
+                if (loadScrim && Date.now() < suppressGrayUntil) {
+                    loadScrim.classList.remove('is-hidden');
+                }
+            });
+            p.on('bufferend', function () {
+                coverBuffering = false;
+                p.getCurrentTime()
+                    .then(function (seconds) {
+                        revealPosterAfterPlaybackProgress(seconds);
+                    })
+                    .catch(function () {});
             });
             p.on('pause', function () {
                 setTransportPlaying(false);

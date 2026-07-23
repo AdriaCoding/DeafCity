@@ -74,7 +74,18 @@
     opacity: 1;
     pointer-events: none;
 }
-.vpc-poster-cover.is-hidden {
+/* Solid white load cover: fill the whole shell so aspect-ratio swaps cannot leak Vimeo gray. */
+.vpc-load-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    background: #fff;
+    opacity: 1;
+    pointer-events: none;
+}
+.vpc-poster-cover.is-hidden,
+.vpc-load-scrim.is-hidden {
     opacity: 0;
 }
 @media screen and (max-width: 650px) {

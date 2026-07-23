@@ -226,6 +226,15 @@ if (!preg_match(
 }
 echo "PASS: initial loading cover renders the selected video thumbnail\n";
 
+// Solid white scrim for mid-playlist autoplay advances (no next-thumb flash).
+if (strpos($html, 'class="vpc-load-scrim is-hidden"') === false
+    && strpos($html, "class='vpc-load-scrim is-hidden'") === false
+) {
+    fwrite(STDERR, "FAIL: video shell should include a hidden solid white load scrim\n");
+    exit(1);
+}
+echo "PASS: solid white load scrim present (hidden on cold load)\n";
+
 // Issue #05 load polish: transport spinner during loadVideo.
 // AC: Over many reloads every video appears first with roughly equal frequency.
 // Verify randomness: shuffle the full catalog playlist 30 times in-process and
@@ -508,6 +517,8 @@ if (is_file($playerJsPath)) {
     assert_not_contains("querySelector('.vpc-shuffle-btn')", $playerJs, 'no shuffle button DOM queries in player JS');
     assert_contains('setTransportLoading', $playerJs, 'player shows transport spinner during loadVideo');
     assert_contains("querySelector('.vpc-poster-cover')", $playerJs, 'player controls the loading cover');
+    assert_contains("querySelector('.vpc-load-scrim')", $playerJs, 'player controls the solid white load scrim');
+    assert_contains('planLoadCover', $playerJs, 'player chooses thumb vs solid-white cover via playlist logic');
     assert_contains("preload: 'auto'", $playerJs, 'playlist transitions preload initial video segments');
     assert_contains(
         'revealPosterAfterPlaybackProgress(data.seconds)',
@@ -519,6 +530,14 @@ if (is_file($playerJsPath)) {
         $playerJs,
         'already-running autoplay still arms progress-based reveal'
     );
+    assert_contains(
+        "coverPlan.kind === 'solid-white'",
+        $playerJs,
+        'autoplay advances use solid white scrim instead of next thumb'
+    );
+    assert_contains('shouldRevealLoadCover', $playerJs, 'cover reveal waits for buffering to end');
+    assert_contains("p.on('bufferstart'", $playerJs, 'player tracks Vimeo bufferstart for cover');
+    assert_contains("p.on('bufferend'", $playerJs, 'player tracks Vimeo bufferend for cover');
 }
 
 $chromeWidthsPath = dirname(dirname(__FILE__)) . '/js/chrome_button_widths.js';
@@ -542,6 +561,7 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: square chrome buttons share one fixed width (no stretch)\n";
     assert_contains('vpc-poster-cover', $playerCss, 'loading cover CSS');
+    assert_contains('vpc-load-scrim', $playerCss, 'solid white load scrim CSS');
     assert_not_contains(
         'transition: opacity',
         $playerCss,

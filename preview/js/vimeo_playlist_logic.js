@@ -1317,6 +1317,45 @@
         return Math.round(fitted * 10) / 10;
     }
 
+    /**
+     * Choose the load-time cover over the Vimeo iframe.
+     * Running-playlist autoplay advances use a solid white scrim (no next thumb).
+     * Paused/cold loads may show the target Video thumbnail.
+     *
+     * @param {{ willAutoplay?: boolean, thumbnailUrl?: string }} opts
+     * @returns {{ kind: 'thumbnail'|'solid-white'|'none', thumbnailUrl: string }}
+     */
+    function planLoadCover(opts) {
+        var willAutoplay = !!(opts && opts.willAutoplay);
+        var thumbnailUrl =
+            opts && opts.thumbnailUrl != null ? String(opts.thumbnailUrl) : '';
+        if (willAutoplay) {
+            return { kind: 'solid-white', thumbnailUrl: '' };
+        }
+        if (thumbnailUrl !== '') {
+            return { kind: 'thumbnail', thumbnailUrl: thumbnailUrl };
+        }
+        return { kind: 'none', thumbnailUrl: '' };
+    }
+
+    /**
+     * Whether the load cover (thumb or solid white) may be removed.
+     * Keep covering while Vimeo is still buffering so its gray loader never flashes.
+     *
+     * @param {{ playbackStarted?: boolean, seconds?: number, buffering?: boolean, minSeconds?: number }} opts
+     * @returns {boolean}
+     */
+    function shouldRevealLoadCover(opts) {
+        var playbackStarted = !!(opts && opts.playbackStarted);
+        var buffering = !!(opts && opts.buffering);
+        var seconds = opts && opts.seconds != null ? Number(opts.seconds) : 0;
+        var minSeconds =
+            opts && opts.minSeconds != null ? Number(opts.minSeconds) : 0.05;
+        if (!playbackStarted || buffering) return false;
+        if (!(seconds > minSeconds)) return false;
+        return true;
+    }
+
     return {
         CAPTION_TARGET_MAX_CHARS: CAPTION_TARGET_MAX_CHARS,
         CAPTION_MAX_CHARS_TOLERANCE: CAPTION_MAX_CHARS_TOLERANCE,
@@ -1370,5 +1409,7 @@
         formatParticipantNavLabel: formatParticipantNavLabel,
         resolveParticipantsNavState: resolveParticipantsNavState,
         planEndOfPlaylist: planEndOfPlaylist,
+        planLoadCover: planLoadCover,
+        shouldRevealLoadCover: shouldRevealLoadCover,
     };
 }));

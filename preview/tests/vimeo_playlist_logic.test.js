@@ -1710,3 +1710,75 @@ console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING se
 
 console.log('vimeo_playlist_logic.test.js: all passed (including secondary R2 filter handoff)');
 
+// ── Load cover: solid white while playlist autoplays; thumb only when paused ─
+
+(function () {
+    var thumb =
+        logic.planLoadCover({
+            willAutoplay: false,
+            thumbnailUrl: 'https://example.com/a.jpg',
+        });
+    assert.strictEqual(thumb.kind, 'thumbnail', 'paused/cold load uses thumbnail cover');
+    assert.strictEqual(thumb.thumbnailUrl, 'https://example.com/a.jpg');
+
+    var solid =
+        logic.planLoadCover({
+            willAutoplay: true,
+            thumbnailUrl: 'https://example.com/next.jpg',
+        });
+    assert.strictEqual(solid.kind, 'solid-white', 'running playlist advance uses solid white, not next thumb');
+    assert.strictEqual(solid.thumbnailUrl, '', 'solid cover does not carry next thumbnail URL');
+
+    var none =
+        logic.planLoadCover({
+            willAutoplay: false,
+            thumbnailUrl: '',
+        });
+    assert.strictEqual(none.kind, 'none', 'paused load with no thumb has no cover bitmap');
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including load cover plan)');
+
+// ── Load cover reveal: wait for real playback, not while Vimeo is buffering ─
+
+(function () {
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: false,
+            seconds: 1,
+            buffering: false,
+        }),
+        false,
+        'no reveal before playback started'
+    );
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: true,
+            seconds: 0.02,
+            buffering: false,
+        }),
+        false,
+        'no reveal until enough progress'
+    );
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: true,
+            seconds: 0.2,
+            buffering: true,
+        }),
+        false,
+        'no reveal while Vimeo is buffering (avoids gray flash)'
+    );
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: true,
+            seconds: 0.2,
+            buffering: false,
+        }),
+        true,
+        'reveal once playing with progress and not buffering'
+    );
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including load cover reveal)');
+

@@ -647,6 +647,7 @@ $navHiddenClass = '';
         <div class="video-stack">
             <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box"></div>
             <div class="video-shell">
+                <div class="vpc-load-scrim is-hidden" aria-hidden="true"></div>
                 <?php if ($initialPosterUrl !== ''): ?>
                 <img
                     class="vpc-poster-cover"
