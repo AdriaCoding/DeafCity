@@ -203,4 +203,10 @@ a {
         width: 25px;
         height: 25px;
     }
+
+    .gallery-image .caption {
+        padding: 0.35em 0.5em;
+        font-size: 0.875rem;
+        line-height: 1.3;
+    }
 }
