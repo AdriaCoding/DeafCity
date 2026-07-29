@@ -2019,9 +2019,7 @@
             "title": "2026_BARCELONA_Raquel_5_4k",
             "sign_language": "lsc",
             "edition": "2026-barcelona",
-            "tags": [
-                "NO"
-            ],
+            "tags": [],
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181896101-7e0f728f40e67511a0f6ccc79af3ca37396468272a357583b702236054eafd8a-d_960x540?&r=pad&region=us",
@@ -2048,7 +2046,9 @@
             "title": "2026_MARSEILLE_Alysone_1_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "SUN GANG"
+            ],
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924211-8f58237e2a65fce90d4fe97ec5b0cf81589d363974a8b68d5847cb81a4bb5297-d_960x540?&r=pad&region=us",
@@ -2060,11 +2060,14 @@
             "title": "2026_MARSEILLE_Alysone_2_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "FAIM"
+            ],
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924254-4b7310221da836009892426189cf50b51a432acf8a6d4ed7d501e914b83374b4-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690991?h=31d7553695"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690991?h=31d7553695",
+            "typology": "anecdotes"
         },
         {
             "id": "lsf_1211690990",
@@ -2072,7 +2075,9 @@
             "title": "2026_MARSEILLE_Alysone_3_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "PAINTING"
+            ],
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924293-381dcaa99b6ed9792d42070466f82fe55dd244d6a6bb1293839aa9bd9100fc11-d_960x540?&r=pad&region=us",
@@ -2084,7 +2089,9 @@
             "title": "2026_MARSEILLE_Alysone_4_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "NUDE MODEL"
+            ],
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924240-a93667dc2220412b905e66058ef530a518dc495f1a525f303a224ce3a630960d-d_960x540?&r=pad&region=us",
@@ -2096,7 +2103,9 @@
             "title": "2026_MARSEILLE_Alysone_5_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "I LIKE"
+            ],
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924476-e618624e029b6de1054c260460882612538ce5375948ec73a183f93251ee6ce4-d_960x540?&r=pad&region=us",
@@ -2108,7 +2117,9 @@
             "title": "2026_MARSEILLE_Hugo_1_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "FOOTPRINTS"
+            ],
             "captions": [],
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924781-7ed69d5d80d0bdb58cd569ef684f2a8c80d9c86a4d00732f6bbc57003dd16180-d_960x540?&r=pad&region=us",
@@ -2120,11 +2131,15 @@
             "title": "2026_MARSEILLE_Hugo_2_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "CAT",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181925033-7a9c9b4acc64437a8fe8c8c3a06513582891e0e9ba94672b40bccbee701eee76-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691224?h=767266df9e"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691224?h=767266df9e",
+            "typology": "memories"
         },
         {
             "id": "lsf_1211691420",
@@ -2132,7 +2147,9 @@
             "title": "2026_MARSEILLE_Hugo_3_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "ANGRY SUN"
+            ],
             "captions": [
                 {
                     "lang": "fr",
@@ -2178,7 +2195,8 @@
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181925153-0b1fe57b015eee8720b9657b8a250a6d093c875f305b5ede5eefe556a57aac91-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211691420?h=44ab71e198",
-            "master_caption_lang": "fr"
+            "master_caption_lang": "fr",
+            "typology": "memories"
         },
         {
             "id": "lsf_1211691531",
@@ -2186,11 +2204,14 @@
             "title": "2026_MARSEILLE_Hugo_4_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "ELEVATOR"
+            ],
             "captions": [],
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181925417-ae640c2a085235e97377717d60d3567e16eeb7ae3c66a1fb11f02efcff296531-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691531?h=ae0834b988"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691531?h=ae0834b988",
+            "typology": "anecdotes"
         },
         {
             "id": "lsf_1211691595",
@@ -2198,11 +2219,15 @@
             "title": "2026_MARSEILLE_Hugo_5_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "SINGING BABY",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181925553-d5fd72d0ac5223187d9d48e720514582b0866984bc021b2a96552665ae1b1a91-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691595?h=e218b36da9"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691595?h=e218b36da9",
+            "typology": "anecdotes"
         },
         {
             "id": "lsf_1211691881",
@@ -2210,11 +2235,14 @@
             "title": "2026_MARSEILLE_Lola_1_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "FEAST"
+            ],
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181925647-467c253a7371d0e8f4495e25801bbbd46c49cbf4177a38b9613aada23f38b576-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691881?h=a6bb74e9f6"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691881?h=a6bb74e9f6",
+            "typology": "memories"
         },
         {
             "id": "lsf_1211692071",
@@ -2222,11 +2250,14 @@
             "title": "2026_MARSEILLE_Lola_2_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "COCA-COLA"
+            ],
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181925973-8a25e3ecfa89a7d9ff0013fa5083a6bf33bc225720c6e9ec26a5ecda8a814db6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692071?h=d9d9db8013"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692071?h=d9d9db8013",
+            "typology": "memories"
         },
         {
             "id": "lsf_1211692170",
@@ -2234,11 +2265,14 @@
             "title": "2026_MARSEILLE_Lola_3_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "BUTTERFLIES"
+            ],
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181926307-80a988885efd1378565e9a2e7567d440e0a32a481f3e5aaafd995a27ac7f0a45-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692170?h=6f3b2289ae"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692170?h=6f3b2289ae",
+            "typology": "memories"
         },
         {
             "id": "lsf_1211692225",
@@ -2246,7 +2280,9 @@
             "title": "2026_MARSEILLE_Lola_4_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "ORIGINAL"
+            ],
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181926513-f0de5e13ff97a069e862904b5891ad3f9f4044227017dfa2a646cfd3f1e6229d-d_960x540?&r=pad&region=us",
@@ -2258,11 +2294,14 @@
             "title": "2026_MARSEILLE_Lola_5_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "SUBWAY"
+            ],
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181926544-bf162bd09a81dacb1fb3fc6597376390128438a6c4cb8ccbb2e658fff13a9c72-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692573?h=ecaeea85f5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692573?h=ecaeea85f5",
+            "typology": "memories"
         },
         {
             "id": "lsf_1211692820",
@@ -2270,7 +2309,9 @@
             "title": "2026_MARSEILLE_Lola_6_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "KIWI WOMAN"
+            ],
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181926547-503e257bfe2cc5cd38a3f3bc14ec6a0b16ebf80f258e1682864d2df86aa38267-d_960x540?&r=pad&region=us",
@@ -2663,9 +2704,7 @@
             "title": "2026_ROMA_Serena_2_4K",
             "sign_language": "lis",
             "edition": "2026-rome",
-            "tags": [
-                "NUMBERS"
-            ],
+            "tags": [],
             "captions": [],
             "typology": "endevinalles",
             "participant": "Serena",
@@ -2738,11 +2777,14 @@
             "title": "2026_TUNIS_Aya_1_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "SOCIABLE"
+            ],
             "captions": [],
             "participant": "Aya",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949695-b2ef8dad5c407074ac3f9956941f30c936aad683ddfb26613e9ec01f4c8becf2-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711234?h=21b62c5c34"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711234?h=21b62c5c34",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711232",
@@ -2750,11 +2792,15 @@
             "title": "2026_TUNIS_Aya_3_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "PAINT",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Aya",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949800-6de559417574ff33f80020030f722ffc8eb10d8dc303211c03d7c32ea5c586de-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711232?h=db3782a3ce"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711232?h=db3782a3ce",
+            "typology": "malentesos"
         },
         {
             "id": "tunisian-sl_1211711233",
@@ -2762,11 +2808,14 @@
             "title": "2026_TUNIS_Aya_4_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "CHIEN"
+            ],
             "captions": [],
             "participant": "Aya",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949675-48db5a91317ff05291f08ed109693eff8d6955aea558cf5d5ee258dc0537f501-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711233?h=0de3808e28"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711233?h=0de3808e28",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711369",
@@ -2774,11 +2823,15 @@
             "title": "2026_TUNIS_Aya_5_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "HAPPY",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Aya",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949923-0ba53ae50e313ebac396227f39837813cc24f393176acd2982f80dc03fa8f101-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711369?h=dfac9343c9"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711369?h=dfac9343c9",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211711370",
@@ -2786,7 +2839,10 @@
             "title": "2026_TUNIS_Ayoub_1_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "CRAZY",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Ayoub",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949843-d72cfeb31d98a1cc84b2c795e6aa2cfd989b353e3bc43d63c09552ec546579c8-d_960x540?&r=pad&region=us",
@@ -2798,11 +2854,15 @@
             "title": "2026_TUNIS_Ayoub_2_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "SHUT-IN",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Ayoub",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949890-19e39ef9ce0ee6204e63c3b12f892f9df7caf0eea5edee5a128f1c1852c42edc-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711391?h=8e7b808390"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711391?h=8e7b808390",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711451",
@@ -2810,11 +2870,15 @@
             "title": "2026_TUNIS_Ayoub_3_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "BIRTHDAY",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Ayoub",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949972-a72cfc53f11d3dc545665089dfbb16183dcec31dfaecdd866ba5061ad359cf20-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711451?h=6d219af3c4"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711451?h=6d219af3c4",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211711496",
@@ -2822,11 +2886,14 @@
             "title": "2026_TUNIS_Ayoub_4_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "CAMPING"
+            ],
             "captions": [],
             "participant": "Ayoub",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950029-732ca6843c29b9b31893e87bcf74456495b39b21e173115a1a8242d08084994d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711496?h=2faec07923"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711496?h=2faec07923",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711502",
@@ -2834,11 +2901,14 @@
             "title": "2026_TUNIS_Ayoub_5_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "PENALTY"
+            ],
             "captions": [],
             "participant": "Ayoub",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950006-6788c9c38f1a916774f4caec7c2bbcbc5158e7445e6c70f0ec805b1af308d34f-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711502?h=0a8158abc0"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711502?h=0a8158abc0",
+            "typology": "anecdotes"
         },
         {
             "id": "lsc_1211664836",
@@ -2862,11 +2932,14 @@
             "title": "2026_TUNIS_NourAlislem_3_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "PUPPY"
+            ],
             "captions": [],
             "participant": "NourAlislem",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950770-876d0156cfd13619477e1da9b5f9e8ce585d60d67b4df633d74ab75ae3491741-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712110?h=40536efd3d"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712110?h=40536efd3d",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211712123",
@@ -2874,11 +2947,15 @@
             "title": "2026_TUNIS_NourAlislem_4_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "RELOCATION",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "NourAlislem",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950840-9488abe472d29ad8694f180c7a3f0989d05c327786f2021e41ec7465cc7e8327-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712123?h=c1855e698a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712123?h=c1855e698a",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211712216",
@@ -2886,7 +2963,9 @@
             "title": "2026_TUNIS_NourAlislem_5_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "DELIGHTED"
+            ],
             "captions": [],
             "participant": "NourAlislem",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950881-0d9f4571aed453921650c93ea3b606509f45cf3594db689f3296ae1a41432602-d_960x540?&r=pad&region=us",
@@ -2898,11 +2977,15 @@
             "title": "2026_TUNIS_Imen_1_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "OPTIMIST",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950115-49c12c6ecda7a7891db39d8f69a48e553650bec4d5e11d734fb14418338dc1c3-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711542?h=4c89a816a1"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711542?h=4c89a816a1",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211711580",
@@ -2910,7 +2993,9 @@
             "title": "2026_TUNIS_Imen_2_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "EUROPE"
+            ],
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950046-97213769ef313ccc54b8131d23200ddb1b5cc605623c69cf37bcf0ccc480a5d0-d_960x540?&r=pad&region=us",
@@ -2922,7 +3007,9 @@
             "title": "2026_TUNIS_Imen_3_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "TICTOCK"
+            ],
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950169-8c1568d4bbf863d9e1abb18494331ac1b8bc05523465166a884678d54b2a3f83-d_960x540?&r=pad&region=us",
@@ -2934,11 +3021,14 @@
             "title": "2026_TUNIS_Imen_4_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "APPLE"
+            ],
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950207-b751e868e1f63125a7bf502262283c3620632ae4c5f43ca9c641741bc81eb530-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711622?h=0e0c1f8e85"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711622?h=0e0c1f8e85",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211711660",
@@ -2946,11 +3036,14 @@
             "title": "2026_TUNIS_Imen_5_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "INSECT"
+            ],
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950187-fa93e310c2c960190e3e3ae1a99c4e919762e5649118c6f9ae4ac5f15b624a29-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711660?h=9105d741d2"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711660?h=9105d741d2",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211711696",
@@ -2958,11 +3051,14 @@
             "title": "2026_TUNIS_Malek_1_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "AFRAID"
+            ],
             "captions": [],
             "participant": "Malek",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950253-971866f87d677e067623f86e27ee91771442de9fc6fc19100fc203eccdb87692-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711696?h=2b9dc594c0"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711696?h=2b9dc594c0",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711751",
@@ -2970,11 +3066,14 @@
             "title": "2026_TUNIS_Malek_2_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "CHALLENGE"
+            ],
             "captions": [],
             "participant": "Malek",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950311-5359ab8f5eebeada1e22a817129a1f323d2a28b8e10866000a8963dfc591e8e7-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711751?h=2de0a11dd6"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711751?h=2de0a11dd6",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711762",
@@ -2982,11 +3081,14 @@
             "title": "2026_TUNIS_Malek_3_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "DOG"
+            ],
             "captions": [],
             "participant": "Malek",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950360-734b8ecea2083fb14f079a40c78c3c7466c7880163091afe69a07e4b253a9077-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711762?h=fc076a9465"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711762?h=fc076a9465",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211711765",
@@ -2994,11 +3096,14 @@
             "title": "2026_TUNIS_Malek_4_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "ASTONISHED"
+            ],
             "captions": [],
             "participant": "Malek",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950492-547f3a6753841b6435b64f2aeab7ab8ceb23f476f4cf6e1762a7cfc0ca581f17-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711765?h=0ce02b6c88"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711765?h=0ce02b6c88",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711828",
@@ -3006,7 +3111,9 @@
             "title": "2026_TUNIS_Malek_5_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "HUG"
+            ],
             "captions": [],
             "participant": "Malek",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950446-4283f9023b26cf005bf4d7d5b7279126dcac4eb04edc7796a6fc6c08704299e3-d_960x540?&r=pad&region=us",
@@ -3018,11 +3125,14 @@
             "title": "2026_TUNIS_Nour_1_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "DOG"
+            ],
             "captions": [],
             "participant": "Nour",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950488-3224a6499a4eee467bce4a2f6e6dbece355bd57026234a332336b4bf49ae3117-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711873?h=c9645efb93"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711873?h=c9645efb93",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711905",
@@ -3030,11 +3140,15 @@
             "title": "2026_TUNIS_Nour_2_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "TAKING CARE",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Nour",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950516-31568e107181d02aff04f6eef1187900e190de91a63f62c3aec4ee60ee8910ac-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711905?h=12e5dd2714"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711905?h=12e5dd2714",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211711990",
@@ -3042,11 +3156,14 @@
             "title": "2026_TUNIS_Nour_3_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "CHOCOLATE"
+            ],
             "captions": [],
             "participant": "Nour",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950622-ba5cbda220a9ce40f53d3a1612520ef1e377c0686dc0a35d30f015cbaf95edf6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711990?h=1f014322c5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711990?h=1f014322c5",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211712000",
@@ -3054,11 +3171,14 @@
             "title": "2026_TUNIS_Nour_4_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "ASLEEP"
+            ],
             "captions": [],
             "participant": "Nour",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950611-9b7bae07d84ddae7c639e4b6238ce5c6f05719d9f960ba3e77ff522fa2e8d277-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712000?h=a562603d8d"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712000?h=a562603d8d",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211712009",
@@ -3066,11 +3186,15 @@
             "title": "2026_TUNIS_Nour_5_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "CHEATED",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "Nour",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950607-a09cbfa21c20ed841a22f9de497c66f59f34ee98d69e52ffef305b6abb46242c-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712009?h=d8b49d7763"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712009?h=d8b49d7763",
+            "typology": "anecdotes"
         },
         {
             "id": "tunisian-sl_1211712035",
@@ -3078,11 +3202,15 @@
             "title": "2026_TUNIS_NourAlislem_1_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "SCHOOL",
+                "DEAF&HEARING"
+            ],
             "captions": [],
             "participant": "NourAlislem",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950743-5c72dc8f1495c4d972012abf11353531c6b154500973dd48b88cbb36a42b9321-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712035?h=a0e7253fb5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712035?h=a0e7253fb5",
+            "typology": "memories"
         },
         {
             "id": "tunisian-sl_1211712098",
@@ -3090,11 +3218,14 @@
             "title": "2026_TUNIS_NourAlislem_2_4K",
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
-            "tags": [],
+            "tags": [
+                "COW"
+            ],
             "captions": [],
             "participant": "NourAlislem",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950745-9b586ab68ecf1d2fe160d09ffd52239c2647fea552e9a146df3df7c840fc652e-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712098?h=00ef94abb7"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712098?h=00ef94abb7",
+            "typology": "memories"
         },
         {
             "id": "lsc_1211664901",
@@ -3670,7 +3801,9 @@
             "title": "2026_MARSEILLE_Alysone_6_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "I'M DEAF"
+            ],
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924687-c7991af241c67a51e13aae8eb27bc8c9f79a5f400e3d48313527b7ff18dc0fe4-d_960x540?&r=pad&region=us",
@@ -3682,11 +3815,14 @@
             "title": "2026_MARSEILLE_Hugo_6_4K",
             "sign_language": "lsf",
             "edition": "2026-marseille",
-            "tags": [],
+            "tags": [
+                "FEAST"
+            ],
             "captions": [],
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181926365-2758c35893960a02c1a1f1c0401581ff2c46c760bb01c147460a22d9ea8eafa0-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691765?h=a7a45fce80"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691765?h=a7a45fce80",
+            "typology": "anecdotes"
         },
         {
             "id": "lis_1211703947",
@@ -3748,6 +3884,22 @@
             "participant": "Olivier",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181941655-af46e54da11e6a20ae02c71d9f85c0bccdde07652e7d25627d3f6f918c0b2d96-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211704788?h=5f4402e36b"
+        },
+        {
+            "id": "tunisian-sl_1211711231",
+            "vimeo_id": "1211711231",
+            "title": "2026_TUNIS_Aya_2_4K",
+            "sign_language": "tunisian-sl",
+            "edition": "2026-tunis",
+            "tags": [
+                "HARASSMENT",
+                "DEAF&HEARING"
+            ],
+            "captions": [],
+            "typology": "memories",
+            "participant": "Aya",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949736-54927c7208692fa6c0b466510f59a3b65f19152946b27396e53997f1f3c7914e-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711231?h=5691bdb522"
         }
     ]
 }
