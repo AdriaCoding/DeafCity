@@ -4,7 +4,6 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\BulkZipBuilder;
-use Studio\StudioConfig;
 
 class BulkZipBuilderTest extends TestCase
 {
@@ -12,7 +11,7 @@ class BulkZipBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->builder = new BulkZipBuilder(new StudioConfig(__DIR__ . '/fixtures/studio-config.json'));
+        $this->builder = new BulkZipBuilder();
     }
 
     public function test_non_english_source_produces_only_en_srt(): void

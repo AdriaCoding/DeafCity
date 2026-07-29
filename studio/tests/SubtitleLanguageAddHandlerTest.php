@@ -29,65 +29,55 @@ class SubtitleLanguageAddHandlerTest extends TestCase
         }
     }
 
-    public function test_adds_subtitle_language_with_vimeo_code_to_config_file(): void
+    public function test_adds_language_in_iso_vimeo_intersection(): void
     {
-        $handler = $this->makeHandler();
-
-        $result = $handler->handle('de', 'German', 'de');
+        // 'de' is both an ISO language and an accepted Vimeo locale.
+        $result = $this->makeHandler()->handle('de', 'German');
 
         $this->assertTrue($result['ok']);
         $this->assertSame('de', $result['id']);
         $this->assertSame('German', $result['label']);
-        $this->assertSame('de', $result['vimeo_code']);
+        $this->assertArrayNotHasKey('vimeo_code', $result);
 
         $reloaded = new StudioConfig($this->configPath);
         $entry = array_values(array_filter(
             $reloaded->getSubtitleLanguages(),
             fn($e) => $e['id'] === 'de',
         ))[0];
-        $this->assertSame('de', $entry['vimeo_code']);
-        $this->assertArrayNotHasKey('translation_target', $entry);
+        $this->assertSame(['id' => 'de', 'label' => 'German'], $entry);
 
         $raw = json_decode((string) file_get_contents($this->configPath), true);
         $rawEntry = array_values(array_filter(
             $raw['subtitle_languages'] ?? [],
             fn($e) => ($e['id'] ?? '') === 'de',
         ))[0];
-        $this->assertArrayNotHasKey('translation_target', $rawEntry);
+        $this->assertArrayNotHasKey('vimeo_code', $rawEntry);
     }
 
     public function test_rejects_duplicate_subtitle_language_id(): void
     {
         $handler = $this->makeHandler();
 
-        $this->assertTrue($handler->handle('de', 'German', 'de')['ok']);
-        $again = $handler->handle('de', 'Deutsch', 'de');
+        $this->assertTrue($handler->handle('de', 'German')['ok']);
+        $again = $handler->handle('de', 'Deutsch');
 
         $this->assertFalse($again['ok']);
     }
 
     public function test_rejects_unknown_iso_code(): void
     {
-        $result = $this->makeHandler()->handle('zzz', 'Fake', 'es');
+        $result = $this->makeHandler()->handle('zzz', 'Fake');
 
         $this->assertFalse($result['ok']);
     }
 
-    public function test_rejects_unknown_vimeo_code(): void
+    public function test_rejects_iso_language_not_accepted_by_vimeo(): void
     {
-        $result = $this->makeHandler()->handle('de', 'German', 'zzz');
+        // 'arq' (Algerian Darija) is a valid ISO language but not a Vimeo locale,
+        // so it falls outside the selectable intersection.
+        $result = $this->makeHandler()->handle('arq', 'Algerian Darija');
 
         $this->assertFalse($result['ok']);
-    }
-
-    public function test_rejects_duplicate_vimeo_code(): void
-    {
-        $handler = $this->makeHandler();
-
-        $this->assertTrue($handler->handle('arq', 'Algerian Darija', 'ar')['ok']);
-        $again = $handler->handle('aeb', 'Tunisian Arabic', 'ar');
-
-        $this->assertFalse($again['ok']);
     }
 
     private function makeHandler(): SubtitleLanguageAddHandler

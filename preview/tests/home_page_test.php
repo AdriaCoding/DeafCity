@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/home_page_test.php
+// Run: php8.4 preview/tests/home_page_test.php
 
 function assert_contains($needle, $haystack, $label)
 {

@@ -2,7 +2,7 @@
 /**
  * Participant field tests
  *
- * Run: php preview/tests/participant_field_test.php
+ * Run: php8.4 preview/tests/participant_field_test.php
  *
  * Tests:
  *   1. Every visible catalog entry has a non-empty participant string.
@@ -214,13 +214,12 @@ foreach ($videos as $v) {
 }
 
 $spotChecks = [
-    'lse_508315910'  => 'Sony',    // lowercase "sony" → "Sony"
-    'lse_506004144'  => 'Pegolino', // surname kept
-    'lse_506003536'  => 'Riutort',  // surname kept
-    'lse_501686486'  => 'Mònica',  // accented name
-    'libras_1128914281' => 'Edinho', // bulk basic
-    'libras_1128773138' => 'AnaLaura', // mixed-case
-    'lsm_638736137'  => 'Veronica', // city with spaces
+    'lse_1211608971'    => 'Sony',
+    'lse_1211614388'    => 'Pegolino',
+    'lse_1211611135'    => 'Riutort',
+    'libras_1211648906' => 'Edinho',
+    'libras_1211648907' => 'AnaLaura',
+    'lsm_1211633776'    => 'Veronica',
 ];
 
 foreach ($spotChecks as $id => $expectedName) {

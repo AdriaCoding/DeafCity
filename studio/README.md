@@ -13,7 +13,7 @@ The legacy **Nova feina** end-to-end pipeline (`?action=intake` → translation 
 
 ## Catalog sync (push to Vimeo)
 
-Push title, tags, and caption files for every video in `catalog.json` to Vimeo using each Subtitle language's `vimeo_code`. The server catalog and `data/captions/` are never overwritten from Vimeo. Thumbnail URLs are pulled from Vimeo only when missing on a catalog entry.
+Push title, tags, and caption files for every video in `catalog.json` to Vimeo using each Caption language's canonical ID. The server catalog and `data/captions/` are never overwritten from Vimeo. Thumbnail URLs are pulled from Vimeo only when missing on a catalog entry.
 
 **Publication ops:** `data/catalog.json` and `data/captions/` must be writable by the web server user (`www-data`). Vimeo token needs `private`, `upload`, `edit` scopes — see `config/config.example.php`. Test with `php studio/scripts/test_vimeo_publish.php`.
 
@@ -25,8 +25,6 @@ php studio/scripts/sync_to_vimeo.php
 ```
 
 Or via the Studio header (**Sincronitzar a Vimeo**), which launches the same script as a background process. Progress is written to `data/sync-status.json`; the UI polls `?action=sync-status` every few seconds and shows a progress indicator. A sync already in progress blocks a second launch.
-
-**After deploying `vimeo_code` backfill:** run **Sincronitzar a Vimeo** once so existing Vimeo text tracks (especially `aeb`, previously uploaded under `ar`) are re-uploaded under the correct locale codes.
 
 ## Continguts
 

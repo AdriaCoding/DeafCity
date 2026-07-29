@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/site_nav_test.php
+// Run: php8.4 preview/tests/site_nav_test.php
 
 require dirname(dirname(__FILE__)) . '/lib/site_nav_builder.php';
 require dirname(dirname(__FILE__)) . '/lib/preview_locale.php';

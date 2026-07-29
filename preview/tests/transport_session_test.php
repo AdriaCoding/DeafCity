@@ -2,7 +2,7 @@
 /**
  * Issue #02 — playback sessionStorage + secondary transport handoff
  *
- * Run: php preview/tests/transport_session_test.php
+ * Run: php8.4 preview/tests/transport_session_test.php
  */
 
 function ts_assert_contains($needle, $haystack, $label)

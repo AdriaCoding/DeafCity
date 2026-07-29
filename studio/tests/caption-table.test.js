@@ -59,9 +59,9 @@ function load(documentObj) {
 }
 
 const languages = [
-    { id: 'es', label: 'Spanish', vimeo_code: 'es' },
-    { id: 'en', label: 'English', vimeo_code: 'en' },
-    { id: 'ca', label: 'Catalan', vimeo_code: 'ca' },
+    { id: 'es', label: 'Spanish' },
+    { id: 'en', label: 'English' },
+    { id: 'ca', label: 'Catalan' },
 ];
 
 const documentObj = makeDocument();

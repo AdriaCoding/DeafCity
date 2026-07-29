@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/filter_pickers_test.php
+// Run: php8.4 preview/tests/filter_pickers_test.php
 // Issue #12 — live readout markup, cascading options config, keep-if-matches helpers.
 
 function assert_true($cond, $label)

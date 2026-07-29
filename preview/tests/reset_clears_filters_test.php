@@ -2,7 +2,7 @@
 /**
  * Issue #13 — Reset clears filters & collections (D1′)
  *
- * Run: php preview/tests/reset_clears_filters_test.php
+ * Run: php8.4 preview/tests/reset_clears_filters_test.php
  */
 
 function rcf_assert_contains($needle, $haystack, $label) {

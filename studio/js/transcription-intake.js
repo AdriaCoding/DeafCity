@@ -23,23 +23,13 @@
         var codes = [];
         languages.forEach(function (lang) {
             var id = (lang.id || '').toLowerCase();
-            var vimeo = (lang.vimeo_code || '').toLowerCase();
             if (id) {
-                codes.push({ langId: lang.id, code: id, type: 'id', len: id.length });
-            }
-            if (vimeo && vimeo !== id) {
-                codes.push({ langId: lang.id, code: vimeo, type: 'vimeo', len: vimeo.length });
+                codes.push({ langId: lang.id, code: id, len: id.length });
             }
         });
 
         codes.sort(function (a, b) {
-            if (b.len !== a.len) {
-                return b.len - a.len;
-            }
-            if (a.type !== b.type) {
-                return a.type === 'id' ? -1 : 1;
-            }
-            return 0;
+            return b.len - a.len;
         });
 
         return codes;

@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/participants_page_test.php
+// Run: php8.4 preview/tests/participants_page_test.php
 
 function pp_assert_contains($needle, $haystack, $label) {
     if (strpos($haystack, $needle) === false) {

@@ -3,7 +3,6 @@
 namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Studio\StudioConfig;
 use Studio\SubtitleOutputBasename;
 
 class SubtitleOutputBasenameTest extends TestCase
@@ -12,9 +11,7 @@ class SubtitleOutputBasenameTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->basename = new SubtitleOutputBasename(
-            new StudioConfig(__DIR__ . '/fixtures/studio-config.json'),
-        );
+        $this->basename = new SubtitleOutputBasename();
     }
 
     public function test_strips_source_language_suffix_from_audio_stem(): void
@@ -36,12 +33,6 @@ class SubtitleOutputBasenameTest extends TestCase
         $this->assertSame('talk', $this->basename->baseStem('talk_ca', 'ca'));
         $this->assertSame('talk_CA.srt', $this->basename->srtFilename('talk_ca', 'ca', 'ca'));
         $this->assertSame('talk_EN.srt', $this->basename->srtFilename('talk_ca', 'ca', 'en'));
-    }
-
-    public function test_vimeo_code_suffix_is_stripped_for_arq(): void
-    {
-        $this->assertSame('session', $this->basename->baseStem('session_ar', 'arq'));
-        $this->assertSame('session_AR.srt', $this->basename->srtFilename('session_ar', 'arq', 'arq'));
     }
 
     public function test_transcription_download_uses_source_language_when_lang_not_specified(): void

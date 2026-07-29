@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/rtl_chrome_test.php
+// Run: php8.4 preview/tests/rtl_chrome_test.php
 
 function rtl_assert_not_contains($needle, $haystack, $label)
 {

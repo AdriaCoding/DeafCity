@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/i18n_test.php
+// Run: php8.4 preview/tests/i18n_test.php
 
 require_once dirname(__DIR__) . '/lib/i18n.php';
 

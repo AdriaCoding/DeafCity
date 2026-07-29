@@ -355,15 +355,6 @@
             color: var(--studio-text-secondary);
             font-family: monospace;
         }
-        .vimeo-badge {
-            font-size: 0.68rem;
-            background: var(--studio-accent-bg);
-            border: 1px solid var(--studio-accent-border);
-            border-radius: 10px;
-            padding: 0.1rem 0.45rem;
-            color: var(--studio-accent-text);
-            font-family: monospace;
-        }
         .subtitle-lang-table {
             width: 100%;
             border-collapse: collapse;
@@ -397,10 +388,8 @@
         }
         .subtitle-lang-table .col-name { width: 36%; }
         .subtitle-lang-table .col-code { width: 5rem; }
-        .subtitle-lang-table .col-vimeo { width: 8rem; }
         .subtitle-lang-table .col-actions { width: 3rem; text-align: right; }
         .subtitle-lang-table td.actions-cell { text-align: right; white-space: nowrap; }
-        .subtitle-lang-table .vimeo-empty { color: var(--studio-text-placeholder); font-family: monospace; }
         .language-picker { position: relative; }
         .language-search-input {
             width: 100%;
@@ -503,17 +492,6 @@
             text-decoration: none;
         }
         .btn-text:hover { color: var(--studio-btn-blue-text); text-decoration: underline; }
-        .oral-lang-vimeo-step {
-            margin-top: 1.15rem;
-            padding-top: 1.15rem;
-            border-top: 1px solid var(--studio-border-subtle);
-        }
-        .oral-lang-vimeo-hint {
-            font-size: 0.8rem;
-            color: var(--studio-text-muted);
-            line-height: 1.45;
-            margin-bottom: 0.75rem;
-        }
         .btn-icon {
             background: none;
             border: 1px solid var(--studio-border);
@@ -871,27 +849,15 @@
                 <tr>
                     <th class="col-name">Llengua</th>
                     <th class="col-code">Codi</th>
-                    <th class="col-vimeo">Locale Vimeo</th>
                     <th class="col-actions" aria-label="Accions"></th>
                 </tr>
             </thead>
             <tbody class="config-list">
             <?php foreach ($subtitleLanguages as $sl): ?>
             <?php $isRef = in_array($sl['id'], $referencedSubtitleLanguageIds, true) ?>
-            <?php
-            $vimeoCode = (string) ($sl['vimeo_code'] ?? $sl['id']);
-            $showVimeoBadge = $vimeoCode !== $sl['id'];
-            ?>
             <tr class="config-entry" data-id="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>" data-type="subtitle-language">
                 <td class="config-entry-label"><?= htmlspecialchars($sl['label']) ?></td>
                 <td class="config-id"><?= htmlspecialchars($sl['id']) ?></td>
-                <td class="vimeo-cell">
-                    <?php if ($showVimeoBadge): ?>
-                    <span class="vimeo-badge" title="Locale Vimeo">→ <?= htmlspecialchars($vimeoCode) ?></span>
-                    <?php else: ?>
-                    <span class="vimeo-empty" aria-hidden="true">—</span>
-                    <?php endif; ?>
-                </td>
                 <td class="actions-cell">
                     <?php if (!$isRef): ?>
                     <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
@@ -919,16 +885,6 @@
                 <span class="oral-lang-selected-name" id="oral-selected-label-display"></span>
                 <span class="oral-lang-selected-code" id="oral-selected-code-display"></span>
                 <button type="button" class="btn-text" id="oral-lang-change-btn">Canvia</button>
-            </div>
-
-            <div class="oral-lang-vimeo-step" id="oral-vimeo-picker" hidden>
-                <p class="oral-lang-vimeo-hint" id="oral-vimeo-hint"></p>
-                <div class="language-picker">
-                    <label class="field-label" for="oral_vimeo_search_c">Locale Vimeo</label>
-                    <input type="search" id="oral_vimeo_search_c" class="config-input language-search-input" autocomplete="off" placeholder="Cerca un locale Vimeo…">
-                    <div class="language-picker-results" id="oral_vimeo_results_c" role="listbox"></div>
-                    <input type="hidden" id="oral_vimeo_code_c" value="">
-                </div>
             </div>
 
             <div class="config-new-actions">
@@ -2073,43 +2029,29 @@
     var oralSelectedLabelDisplay = document.getElementById('oral-selected-label-display');
     var oralSelectedCodeDisplay = document.getElementById('oral-selected-code-display');
     var oralLangChangeBtn = document.getElementById('oral-lang-change-btn');
-    var oralVimeoPicker = document.getElementById('oral-vimeo-picker');
-    var oralVimeoHint = document.getElementById('oral-vimeo-hint');
     var selectedIsoLabel = '';
-    var oralVimeoSearch = document.getElementById('oral_vimeo_search_c');
-    var oralVimeoResults = document.getElementById('oral_vimeo_results_c');
-    var oralVimeoCode = document.getElementById('oral_vimeo_code_c');
     var subtitleLangAddError = document.getElementById('subtitle-lang-add-error');
     var subtitleLangAddBtn = document.getElementById('subtitle-lang-add-btn-c');
     var subtitleLangCancelBtn = document.getElementById('subtitle-lang-cancel-btn-c');
 
+    // Only ISO languages that Vimeo also accepts as a text-track locale are
+    // selectable — the intersection of both registries — so every choice yields
+    // a single id valid as server id, Caption language, and Vimeo locale.
     var isoLanguages = [];
-    var vimeoLocales = [];
     var isoLanguagesReady = false;
-    var usedVimeoCodes = <?= json_encode(array_map(
-        fn($sl) => (string) ($sl['vimeo_code'] ?? $sl['id']),
-        $subtitleLanguages,
-    ), JSON_UNESCAPED_UNICODE) ?>;
     var existingSubtitleIds = <?= json_encode(array_column($subtitleLanguages, 'id'), JSON_UNESCAPED_UNICODE) ?>;
 
     Promise.all([
         fetch('js/iso-639-3.json').then(function (r) { return r.json(); }),
         fetch('js/vimeo-texttrack-locales.json').then(function (r) { return r.json(); }),
     ]).then(function (data) {
+        var vimeoCodes = {};
+        (data[1].locales || []).forEach(function (loc) { vimeoCodes[loc.code] = true; });
         isoLanguages = (data[0].languages || []).filter(function (item) {
-            return existingSubtitleIds.indexOf(item.code) === -1;
+            return existingSubtitleIds.indexOf(item.code) === -1 && vimeoCodes[item.code] === true;
         });
-        vimeoLocales = data[1].locales || [];
         isoLanguagesReady = true;
     });
-
-    function vimeoCodesInUse() {
-        return usedVimeoCodes.slice();
-    }
-
-    function vimeoLocaleAvailable(code) {
-        return vimeoCodesInUse().indexOf(code) === -1;
-    }
 
     function filterByLabel(items, query) {
         var q = query.trim().toLowerCase();
@@ -2231,8 +2173,7 @@
 
     function updateSubtitleLangAddButton() {
         var code = oralLangCode.value.trim();
-        var vimeoCode = oralVimeoCode.value.trim();
-        subtitleLangAddBtn.disabled = !(code && selectedIsoLabel && vimeoCode);
+        subtitleLangAddBtn.disabled = !(code && selectedIsoLabel);
     }
 
     function clearIsoSelection() {
@@ -2241,9 +2182,6 @@
         oralLangSearch.value = '';
         oralLangSelected.hidden = true;
         oralLangPicker.hidden = false;
-        oralVimeoPicker.hidden = true;
-        oralVimeoSearch.value = '';
-        oralVimeoCode.value = '';
         updateSubtitleLangAddButton();
     }
 
@@ -2260,18 +2198,6 @@
         oralSelectedCodeDisplay.textContent = item.code;
         oralLangPicker.hidden = true;
         oralLangSelected.hidden = false;
-
-        var vimeoHasCode = vimeoLocales.some(function (loc) { return loc.code === item.code; });
-        if (vimeoHasCode && vimeoLocaleAvailable(item.code)) {
-            oralVimeoCode.value = item.code;
-            oralVimeoPicker.hidden = true;
-        } else {
-            oralVimeoCode.value = '';
-            oralVimeoHint.textContent = 'Vimeo no reconeix «' + item.code + '». Trieu un locale de còpia de seguretat:';
-            oralVimeoPicker.hidden = false;
-            oralVimeoSearch.value = '';
-            setTimeout(function () { oralVimeoSearch.focus(); }, 0);
-        }
         updateSubtitleLangAddButton();
     }
 
@@ -2281,20 +2207,6 @@
         oralLangCode,
         function () { return isoLanguages; },
         onIsoLanguageSelected,
-    );
-
-    setupLabelPicker(
-        oralVimeoSearch,
-        oralVimeoResults,
-        oralVimeoCode,
-        function () {
-            return vimeoLocales.filter(function (loc) { return vimeoLocaleAvailable(loc.code); });
-        },
-        function (item) {
-            oralVimeoCode.value = item.code;
-            oralVimeoSearch.value = item.label + ' (' + item.code + ')';
-            updateSubtitleLangAddButton();
-        },
     );
 
     oralLangChangeBtn.addEventListener('click', function () {
@@ -2315,16 +2227,14 @@
     subtitleLangAddBtn.addEventListener('click', function () {
         subtitleLangAddError.textContent = '';
         var code = oralLangCode.value.trim();
-        var vimeoCode = oralVimeoCode.value.trim();
-        if (!code || !selectedIsoLabel || !vimeoCode) {
-            subtitleLangAddError.textContent = 'Seleccioneu una llengua i, si cal, un locale Vimeo.';
+        if (!code || !selectedIsoLabel) {
+            subtitleLangAddError.textContent = 'Seleccioneu una llengua.';
             return;
         }
         subtitleLangAddBtn.disabled = true;
         var body = new FormData();
         body.append('subtitle_language_code', code);
         body.append('subtitle_language_name', selectedIsoLabel);
-        body.append('subtitle_language_vimeo_code', vimeoCode);
         fetch('?action=add-subtitle-language', { method: 'POST', body: body })
             .then(function (r) { return r.json(); })
             .then(function (data) {
@@ -2332,7 +2242,6 @@
                     subtitleLangAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la llengua verbal.';
                     return;
                 }
-                usedVimeoCodes.push(data.vimeo_code);
                 existingSubtitleIds.push(data.id);
                 isoLanguages = isoLanguages.filter(function (item) {
                     return item.code !== data.id;
@@ -2342,12 +2251,8 @@
                 row.className = 'config-entry';
                 row.dataset.id = data.id;
                 row.dataset.type = 'subtitle-language';
-                var vimeoCell = (data.vimeo_code && data.vimeo_code !== data.id)
-                    ? '<span class="vimeo-badge" title="Locale Vimeo">→ ' + escHtml(data.vimeo_code) + '</span>'
-                    : '<span class="vimeo-empty" aria-hidden="true">—</span>';
                 row.innerHTML = '<td class="config-entry-label">' + escHtml(data.label) + '</td>' +
                     '<td class="config-id">' + escHtml(data.id) + '</td>' +
-                    '<td class="vimeo-cell">' + vimeoCell + '</td>' +
                     '<td class="actions-cell">' +
                     '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>' +
                     '</td>';

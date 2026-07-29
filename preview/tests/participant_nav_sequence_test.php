@@ -2,7 +2,7 @@
 /**
  * Participant nav sequence helpers (title parse + label format).
  *
- * Run: php preview/tests/participant_nav_sequence_test.php
+ * Run: php8.4 preview/tests/participant_nav_sequence_test.php
  */
 
 require dirname(dirname(__FILE__)) . '/lib/videos_catalog.php';

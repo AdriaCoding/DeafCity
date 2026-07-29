@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/gesture_gated_audio_test.php
+// Run: php8.4 preview/tests/gesture_gated_audio_test.php
 
 function gga_assert_contains($needle, $haystack, $label) {
     if (strpos($haystack, $needle) === false) {

@@ -17,8 +17,8 @@ class StudioConfigTest extends TestCase
                 ['id' => 'lsa', 'label' => 'LSA Algerian Sign Language'],
             ],
             'subtitle_languages' => [
-                ['id' => 'es', 'label' => 'Spanish', 'vimeo_code' => 'es'],
-                ['id' => 'en', 'label' => 'English', 'vimeo_code' => 'en'],
+                ['id' => 'es', 'label' => 'Spanish'],
+                ['id' => 'en', 'label' => 'English'],
             ],
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
 
@@ -48,10 +48,10 @@ class StudioConfigTest extends TestCase
         );
         $this->assertSame(
             [
-                ['id' => 'ar', 'label' => 'Arabic', 'vimeo_code' => 'ar'],
-                ['id' => 'ca', 'label' => 'Catalan', 'vimeo_code' => 'ca'],
-                ['id' => 'en', 'label' => 'English', 'vimeo_code' => 'en'],
-                ['id' => 'es', 'label' => 'Spanish', 'vimeo_code' => 'es'],
+                ['id' => 'ar', 'label' => 'Arabic'],
+                ['id' => 'ca', 'label' => 'Catalan'],
+                ['id' => 'en', 'label' => 'English'],
+                ['id' => 'es', 'label' => 'Spanish'],
             ],
             $config->getSubtitleLanguages()
         );

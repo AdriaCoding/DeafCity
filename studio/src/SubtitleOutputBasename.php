@@ -4,36 +4,22 @@ namespace Studio;
 
 class SubtitleOutputBasename
 {
-    public function __construct(private readonly StudioConfig $studioConfig) {}
-
     /**
-     * Strip a trailing _{lang} suffix from the audio stem when it matches the source language.
+     * Strip a trailing _{lang} suffix from the audio stem when it matches the source language id.
      */
     public function baseStem(string $originalFilename, string $sourceLanguageId): string
     {
         $stem = $originalFilename;
         $lowerStem = strtolower($stem);
 
-        $suffixes = [];
-        $id = strtolower($sourceLanguageId);
-        if ($id !== '') {
-            $suffixes[] = $id;
-        }
-        $vimeo = strtolower($this->studioConfig->vimeoCodeFor($sourceLanguageId));
-        if ($vimeo !== '' && $vimeo !== $id) {
-            $suffixes[] = $vimeo;
+        $suffix = strtolower($sourceLanguageId);
+        if (strlen($suffix) < 2) {
+            return $stem;
         }
 
-        usort($suffixes, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
-
-        foreach ($suffixes as $suffix) {
-            if (strlen($suffix) < 2) {
-                continue;
-            }
-            $trailing = '_' . $suffix;
-            if (str_ends_with($lowerStem, $trailing)) {
-                return substr($stem, 0, -strlen($trailing));
-            }
+        $trailing = '_' . $suffix;
+        if (str_ends_with($lowerStem, $trailing)) {
+            return substr($stem, 0, -strlen($trailing));
         }
 
         return $stem;
@@ -62,7 +48,7 @@ class SubtitleOutputBasename
         string $ext,
     ): string {
         $base = $this->baseStem($originalFilename, $sourceLanguageId);
-        $code = strtoupper($this->studioConfig->vimeoCodeFor($subtitleLanguageId));
+        $code = strtoupper($subtitleLanguageId);
 
         return $base . '_' . $code . '.' . $ext;
     }

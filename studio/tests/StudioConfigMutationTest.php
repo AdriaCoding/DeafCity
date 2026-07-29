@@ -179,7 +179,7 @@ class StudioConfigMutationTest extends TestCase
     public function test_remove_subtitle_language_deletes_entry_when_unreferenced(): void
     {
         $config = new StudioConfig($this->configPath);
-        $config->addSubtitleLanguage('de', 'German', 'de');
+        $config->addSubtitleLanguage('de', 'German');
 
         $catalogEditor = new CatalogEditor($this->catalogFile);
         $config->removeSubtitleLanguage('de', $catalogEditor);

@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/spoken_language_test.php
+// Run: php8.4 preview/tests/spoken_language_test.php
 
 require dirname(dirname(__FILE__)) . '/lib/videos_catalog.php';
 
@@ -32,12 +32,17 @@ $catalogPath = $dataDir . '/catalog.json';
 
 $subtitleLanguages = vpc_subtitle_languages_from_studio_config($studioConfigPath);
 assert_true(count($subtitleLanguages) >= 6, 'subtitle_languages loaded from studio-config');
+foreach ($subtitleLanguages as $subtitleLanguage) {
+    assert_true(!array_key_exists('vimeo_code', $subtitleLanguage), 'subtitle language exposes no Vimeo mapping');
+}
 
 assert_eq('es', vpc_resolve_track_lang_to_subtitle_id('es-MX', $subtitleLanguages), 'es-MX maps to Spanish');
 assert_eq('es', vpc_resolve_track_lang_to_subtitle_id('es-ES', $subtitleLanguages), 'es-ES maps to Spanish');
 assert_eq('es', vpc_resolve_track_lang_to_subtitle_id('es', $subtitleLanguages), 'es maps to Spanish');
 assert_eq('en', vpc_resolve_track_lang_to_subtitle_id('en', $subtitleLanguages), 'en maps to English');
 assert_eq('ca', vpc_resolve_track_lang_to_subtitle_id('ca', $subtitleLanguages), 'ca maps to Catalan');
+assert_eq('ar', vpc_resolve_track_lang_to_subtitle_id('ar', $subtitleLanguages), 'ar maps to Arabic');
+assert_eq('', vpc_resolve_track_lang_to_subtitle_id('arq', $subtitleLanguages), 'unconfigured dialect does not map');
 
 $catalog = vpc_load_videos_catalog($catalogPath);
 assert_true(is_array($catalog), 'catalog loads');

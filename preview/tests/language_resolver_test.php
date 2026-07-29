@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/language_resolver_test.php
+// Run: php8.4 preview/tests/language_resolver_test.php
 
 require_once dirname(__DIR__) . '/lib/language_resolver.php';
 

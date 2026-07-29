@@ -97,7 +97,7 @@ class VimeoPushSync
                 $this->vimeoClient->uploadAndActivateTextTrack(
                     $vimeoId,
                     $path,
-                    $this->studioConfig->vimeoCodeFor($lang),
+                    $lang,
                     (string) ($caption['label'] ?? $lang),
                 );
             } catch (\Throwable) {

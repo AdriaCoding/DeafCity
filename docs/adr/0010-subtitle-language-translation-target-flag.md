@@ -17,3 +17,5 @@ Toggle changes do not affect in-flight Jobs; the flag applies on the next spawn 
 ## Supersession
 
 The selective flag was removed. Every configured Subtitle language is now a translation destination (excluding the Master and languages that already have captions). The `translation_target` field, Llengues verbals checkbox, and related Studio APIs no longer exist. Legacy keys in config JSON are ignored on read.
+
+The active Subtitle-language configuration uses international Arabic (`ar`) only. Historical dialect references (`arq`, `aeb`) in this superseded decision are not configured application languages.

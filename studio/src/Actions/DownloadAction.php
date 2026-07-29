@@ -53,7 +53,7 @@ class DownloadAction
     /** @param array<string, mixed> $job */
     private function buildDownloadFilename(array $job, string $lang, string $ext): string
     {
-        return (new SubtitleOutputBasename($this->c->studioConfig))->transcriptionDownloadFilename(
+        return (new SubtitleOutputBasename())->transcriptionDownloadFilename(
             $job['original_filename'] ?? 'transcription',
             $job['subtitle_language'] ?? '',
             $lang,

@@ -127,43 +127,35 @@
     "subtitle_languages": [
         {
             "id": "es",
-            "label": "Spanish",
-            "vimeo_code": "es"
+            "label": "Spanish"
         },
         {
             "id": "en",
-            "label": "English",
-            "vimeo_code": "en"
+            "label": "English"
         },
         {
             "id": "it",
-            "label": "Italian",
-            "vimeo_code": "it"
+            "label": "Italian"
         },
         {
             "id": "fr",
-            "label": "French",
-            "vimeo_code": "fr"
+            "label": "French"
         },
         {
             "id": "ca",
-            "label": "Catalan",
-            "vimeo_code": "ca"
+            "label": "Catalan"
         },
         {
             "id": "pt",
-            "label": "Portuguese",
-            "vimeo_code": "pt"
+            "label": "Portuguese"
         },
         {
             "id": "ar",
-            "label": "Arabic",
-            "vimeo_code": "ar"
+            "label": "Arabic"
         },
         {
             "id": "eu",
-            "label": "Basque",
-            "vimeo_code": "eu"
+            "label": "Basque"
         }
     ],
     "typologies": [

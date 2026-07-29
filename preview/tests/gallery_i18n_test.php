@@ -1,5 +1,5 @@
 <?php
-// Run: php preview/tests/gallery_i18n_test.php
+// Run: php8.4 preview/tests/gallery_i18n_test.php
 
 require dirname(dirname(__FILE__)) . '/lib/gallery_images.php';
 require dirname(dirname(__FILE__)) . '/lib/preview_locale.php';

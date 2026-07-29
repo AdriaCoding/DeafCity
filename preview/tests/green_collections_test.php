@@ -2,7 +2,7 @@
 /**
  * Issue #14 — Green active state for participant/tag collections (D21)
  *
- * Run: php preview/tests/green_collections_test.php
+ * Run: php8.4 preview/tests/green_collections_test.php
  */
 
 function gc_assert_contains($needle, $haystack, $label) {

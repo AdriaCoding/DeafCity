@@ -8,108 +8,78 @@
 
 ## Context
 
-The server (`data/catalog.json`, `data/captions/`, `data/studio-config.json`) should be the authoritative source for Subtitle languages and Caption files. Vimeo text tracks are a **backup mirror** for the legacy homepage embed and external tools — not a second master.
+The server (`data/catalog.json`, `data/captions/`, and `data/studio-config.json`) is authoritative for Subtitle languages and Caption files. Vimeo text tracks are a backup mirror for legacy embeds and external tools, not a second master.
 
-Today this is violated in several ways:
+The previous model stored a server `id` and a separate `vimeo_code` for each configured Subtitle language. It was intended to preserve dialect-specific server IDs where Vimeo did not accept the same locale. The active configuration now uses only Subtitle language IDs that Vimeo accepts directly, so the mapping is redundant and creates inconsistent behavior across configuration, filenames, Caption uploads, and sync.
 
-- `sync_from_vimeo.php` **pulls** titles, tags, and text tracks from Vimeo into `catalog.json` and `data/captions/`, overwriting server state. Pulling destroys dialect identity when Vimeo collapses extended ISO codes (`arq` and `aeb` both appear as `ar`).
-- `VimeoClient::LANGUAGE_MAP` hardcodes server `id` → Vimeo locale mapping, including a bug where both `arq` and `aeb` map to `ar` — only one dialect can exist as a Vimeo text track per video.
-- Continguts allows free-text Subtitle language codes instead of a curated ISO list.
-- `subtitle_languages` entries store only `id` and `label`; there is no persisted `vimeo_code`.
-
-The Preview site player already fetches Caption files from the server ([ADR-0001](0001-server-hosted-subtitles.md)). The legacy homepage still uses Vimeo `?texttrack=` but will be deprecated in favour of the Preview player within weeks — we accept its dialect auto-match limitations and will not add a server-side mapping layer for it.
+The Preview site plays server Caption files ([ADR-0001](0001-server-hosted-subtitles.md)). Vimeo tracks remain useful as a pushed backup, but are never the source of Caption data or Subtitle-language metadata.
 
 ## Decision
 
-### Subtitle language data model
+### Canonical Subtitle language ID
 
-Each Subtitle language in `studio-config.json` has three fields:
+Each `subtitle_languages` entry in `studio-config.json` has exactly two fields:
 
 | Field | Meaning |
 | --- | --- |
-| `id` | **Extended ISO code** — canonical key everywhere on the server (catalog `captions[].lang`, VTT filenames `{vimeo_id}.{id}.vtt`, intake, translation). Prefer ISO 639-1 when one exists (`es`, `ca`, `pt`); otherwise ISO 639-3 (`arq`, `aeb`). Immutable after creation. |
-| `label` | Human-readable name in Studio and the Preview caption picker, set from the ISO list at add time (e.g. "Algerian Arabic"). Immutable after creation. |
-| `vimeo_code` | Locale code Vimeo accepts when uploading a text track. Equals `id` when Vimeo supports that code 1:1; otherwise a Producer-chosen code from Vimeo's restricted list. Must be **unique** across all configured Subtitle languages (Vimeo allows one active track per locale per video). Editable only while no catalog caption references this `id`. |
+| `id` | The canonical language ID used for Catalog `captions[].lang`, Caption filenames, Studio intake, translation, Preview selection, and Vimeo text-track uploads. |
+| `label` | The immutable, human-readable name shown in Studio and the Preview caption picker. |
 
-Example mappings:
+`vimeo_code` is not persisted or exposed by Studio. Vimeo upload uses the Caption language ID directly.
 
-- `ca` → `vimeo_code: ca` (1:1)
-- `arq` → `vimeo_code: ar` (Algerian Darija stored under Arabic on Vimeo)
-- `aeb` → `vimeo_code: mt` (Tunisian Arabic stored under Maltese on Vimeo; codes need not be linguistically related, only unique slots)
+International Arabic (`ar`, label `Arabic`) is the only configured Arabic Subtitle language. ISO registry entries such as `arq` and `aeb` remain valid reference data, but are not configured Subtitle languages.
 
-**Backfill:** production `data/studio-config.json` is updated explicitly for all existing languages. **Runtime fallback:** `vimeo_code ?? id` when reading config — safety net for tests/fixtures; production JSON must be explicit for dialects.
-
-**Remove `VimeoClient::LANGUAGE_MAP`.** Callers resolve `vimeo_code` from `StudioConfig` and pass the resolved Vimeo locale to `uploadAndActivateTextTrack` directly.
-
-### Reference data (single source of truth)
+### Reference data and language management
 
 | File | Purpose |
 | --- | --- |
-| `studio/js/iso-639-3.json` | Searchable language picker — `{ languages: [{ code, label }] }`; 639-1 preferred when available |
-| `studio/js/vimeo-texttrack-locales.json` | Vimeo text-track locale list — `{ locales: [{ code, label }] }` |
+| `studio/js/iso-639-3.json` | Searchable ISO language registry — `{ languages: [{ code, label }] }` |
+| `studio/js/vimeo-texttrack-locales.json` | Vimeo text-track locale registry — `{ locales: [{ code, label }] }` |
 
-Both Continguts (browser) and Studio PHP validation read the **same files**. No duplicate copies.
+Continguts and Studio PHP validation use these same registries. A Producer can add a Subtitle language only when its ID exists in both registries. The selectable list is their code intersection; free-text IDs and a separate Vimeo-locale picker are not allowed.
 
-On add, the server rejects unknown `id` (not in ISO registry) and unknown `vimeo_code` (not in Vimeo registry), and enforces `vimeo_code` uniqueness.
-
-### Adding a Subtitle language (Continguts)
-
-Producers pick a language from the searchable ISO list. The `id` and `label` are set from that selection and cannot be changed afterward (delete and re-add to replace). Free-text language codes are not allowed.
-
-- If the selected `id` is in the Vimeo locale list → `vimeo_code` defaults to `id`; no second step.
-- If not → a second dropdown asks the Producer to choose a `vimeo_code` from the Vimeo locale list. Codes already assigned to another Subtitle language are excluded.
-
-In the Subtitle language list, show `vimeo_code` **only when it differs from `id`**.
+Configured IDs remain immutable. A Subtitle language can be removed only when existing Catalog-reference safeguards allow it.
 
 ### Sync direction
 
 | When | Direction | What |
 | --- | --- | --- |
-| Add video at Continguts | **Pull once** from Vimeo | Title, thumbnail URL, tags (initial seed) |
-| Edit video metadata in Continguts | **Push** to Vimeo | Title, tags (`VideoEditHandler`, existing) |
-| Publication / caption upload | **Push** to Vimeo | Caption files using `vimeo_code` + `label`; server files written first |
-| Bulk sync (`sync_to_vimeo.php`, button **Sincronitzar a Vimeo**) | **Push** for all catalog videos | Title, tags, all caption files; **pull** `thumbnail_url` only when missing |
+| Add Video at Continguts | **Pull once** from Vimeo | Title, thumbnail URL, tags as an initial seed |
+| Edit Video metadata in Continguts | **Push** to Vimeo | Title and tags |
+| Publication / Caption upload | **Push** to Vimeo | Server-written Caption file using its canonical language ID and label |
+| Bulk sync (`sync_to_vimeo.php`, **Sincronitzar a Vimeo**) | **Push** for all Catalog Videos | Title, tags, and all Caption files; pull `thumbnail_url` only when absent |
 
-The server catalog and `data/captions/` are **never overwritten** from a Vimeo pull (except the narrow thumbnail backfill above).
+The Catalog and `data/captions/` are never overwritten from Vimeo, except for the narrow missing-thumbnail backfill above. Publication and every push path save the server Caption file first; a Vimeo failure is non-fatal and reported as a warning.
 
-Pull sync for captions/metadata was rejected because Vimeo's locale list is a strict subset of our extended ISO codes; pulling destroys dialect identity and labels.
-
-### Playback vs backup
+### Playback and backup
 
 | Concern | Source of truth |
 | --- | --- |
-| Preview site / future homepage player | Server Caption files + catalog metadata |
-| Legacy homepage `?texttrack=` | Vimeo text tracks (backup push; no mapping layer — deprecating soon) |
-| Studio editing, translation, Continguts | Server only |
-
-Publication and all push paths write server files first, then attempt Vimeo upload. Vimeo upload failure is non-fatal (warning banner); the server copy is already saved.
-
-### Post-deploy
-
-After deploying the `vimeo_code` backfill, run **Sincronitzar a Vimeo** once (documented in `studio/README.md`) to re-upload all text tracks under the correct locale codes — required to fix `aeb` tracks previously uploaded under `ar`. No in-app banner or auto-run.
+| Preview site and future homepage player | Server Caption files and Catalog metadata |
+| Legacy homepage `?texttrack=` | Vimeo text tracks, maintained by push-only backup sync |
+| Studio editing, translation, and Continguts | Server only |
 
 ## Consequences
 
 **Benefits:**
 
-- Dialect identity (`arq`, `aeb`) is preserved on the server and in caption filenames regardless of Vimeo locale slots.
-- Producers configure Vimeo mappings once in Continguts; no developer edit of PHP constants.
-- Bulk push is a reliable "make Vimeo match server" repair tool after mapping fixes or failed uploads.
-- One-time tag pull on video add avoids re-entering tags already set on Vimeo before intake.
+- One ID is used consistently across configuration, Catalog data, filenames, Studio workflows, Preview selection, and Vimeo uploads.
+- Producers can select only Subtitle languages that can be synced to Vimeo without a hidden mapping.
+- Bulk sync remains a reliable way to make Vimeo’s backup tracks match the server.
+- One-time Vimeo metadata pull on Video add avoids re-entering title and tags already present on Vimeo.
 
 **Trade-offs:**
 
-- Two locale lists to maintain (`iso-639-3.json`, `vimeo-texttrack-locales.json`), though both change rarely.
-- Legacy homepage will not auto-select dialect tracks by browser language until it is replaced by Preview.
-- After changing `vimeo_code` on an unreferenced language, existing Vimeo tracks are stale until the next per-video push or bulk sync.
+- The ISO and Vimeo registries remain separate datasets and must be maintained as Vimeo changes its accepted locales.
+- A valid ISO code that Vimeo does not accept cannot be configured as a Subtitle language.
+- Vimeo remains a limited backup representation; it does not define the Catalog or Caption files.
 
 ## Alternatives considered
 
 | Alternative | Reason rejected |
 | --- | --- |
-| **Vimeo as master with extended→Vimeo mapping and pull sync** | Reverse-mapping is ambiguous when multiple dialects share one Vimeo code; pull overwrites dialect metadata. |
-| **Server only, no Vimeo captions** | Legacy homepage and embed compatibility still need tracks on Vimeo. |
-| **Hardcoded `LANGUAGE_MAP` in `VimeoClient` (configurable or not)** | Same information as `vimeo_code` but hidden from Producers; current map breaks `arq`/`aeb` coexistence; rejected in favour of persisted `vimeo_code` on each language entry. |
-| **Legacy homepage Accept-Language → `vimeo_code` mapping** | Rejected — page deprecating in weeks; not worth the investment. |
-| **Auto-run bulk push on deploy** | Rejected — surprise API calls; manual sync once after migration is sufficient. |
-| **Server as master, push-only, with explicit `vimeo_code` mapping** | **Chosen.** |
+| **Vimeo as master with pull sync** | Pulling can overwrite server-owned Caption data and language metadata. |
+| **Server-only Caption files with no Vimeo tracks** | Legacy embeds and external tools still need Vimeo text tracks. |
+| **Persisted or hardcoded server-to-Vimeo mapping** | It duplicates the canonical ID, permits unusable language choices, and adds hidden translation behavior. |
+| **Allow a Producer to choose an unrelated Vimeo locale** | A Caption should never be uploaded under a different language identity. |
+| **Auto-run bulk sync on deploy** | It would make unexpected external API writes; Producers run sync deliberately. |

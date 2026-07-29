@@ -409,15 +409,18 @@ var samplePlaylist = [
 // ── Issue #11 / D16′: Spoken Language by available tracks + sticky-by-language ──
 
 var subtitleLanguagesFixture = [
-    { id: 'es', label: 'Spanish', vimeo_code: 'es' },
-    { id: 'en', label: 'English', vimeo_code: 'en' },
-    { id: 'ca', label: 'Catalan', vimeo_code: 'ca' },
-    { id: 'pt', label: 'Portuguese', vimeo_code: 'pt' },
+    { id: 'es', label: 'Spanish' },
+    { id: 'en', label: 'English' },
+    { id: 'ca', label: 'Catalan' },
+    { id: 'pt', label: 'Portuguese' },
+    { id: 'ar', label: 'Arabic' },
 ];
 
 assert.strictEqual(logic.resolveSpokenLangId('es-MX', subtitleLanguagesFixture), 'es', 'es-MX → Spanish');
 assert.strictEqual(logic.resolveSpokenLangId('es-ES', subtitleLanguagesFixture), 'es', 'es-ES → Spanish');
 assert.strictEqual(logic.resolveSpokenLangId('en', subtitleLanguagesFixture), 'en', 'en → English');
+assert.strictEqual(logic.resolveSpokenLangId('ar', subtitleLanguagesFixture), 'ar', 'ar → Arabic');
+assert.strictEqual(logic.resolveSpokenLangId('arq', subtitleLanguagesFixture), '', 'unconfigured dialect does not resolve');
 
 (function () {
     var tracks = [

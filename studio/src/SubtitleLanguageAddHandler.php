@@ -12,18 +12,21 @@ class SubtitleLanguageAddHandler
     }
 
     /**
-     * @return array{ok: bool, id?: string, label?: string, vimeo_code?: string, errors?: string[]}
+     * A Subtitle language may be added only when its ISO language id is also an
+     * accepted Vimeo text-track locale — the intersection of both registries.
+     * The single id then serves as server id, Caption language, and Vimeo locale.
+     *
+     * @return array{ok: bool, id?: string, label?: string, errors?: string[]}
      */
-    public function handle(string $id, string $label, string $vimeoCode): array
+    public function handle(string $id, string $label): array
     {
         $id = trim($id);
         $label = trim($label);
-        $vimeoCode = trim($vimeoCode);
 
-        if ($id === '' || $label === '' || $vimeoCode === '') {
+        if ($id === '' || $label === '') {
             return [
                 'ok' => false,
-                'errors' => ['Indiqueu una llengua, un nom i un codi Vimeo.'],
+                'errors' => ['Indiqueu una llengua i un nom.'],
             ];
         }
 
@@ -34,10 +37,10 @@ class SubtitleLanguageAddHandler
             ];
         }
 
-        if (!$this->vimeoRegistry->isValidCode($vimeoCode)) {
+        if (!$this->vimeoRegistry->isValidCode($id)) {
             return [
                 'ok' => false,
-                'errors' => ['Codi de locale Vimeo no reconegut.'],
+                'errors' => ['Aquest idioma no és un locale acceptat per Vimeo.'],
             ];
         }
 
@@ -50,15 +53,8 @@ class SubtitleLanguageAddHandler
             }
         }
 
-        if (in_array($vimeoCode, $this->studioConfig->getUsedVimeoCodes(), true)) {
-            return [
-                'ok' => false,
-                'errors' => ['Aquest codi de locale Vimeo ja està assignat a una altra llengua verbal.'],
-            ];
-        }
-
         try {
-            $this->studioConfig->addSubtitleLanguage($id, $label, $vimeoCode);
+            $this->studioConfig->addSubtitleLanguage($id, $label);
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,
@@ -70,7 +66,6 @@ class SubtitleLanguageAddHandler
             'ok' => true,
             'id' => $id,
             'label' => $label,
-            'vimeo_code' => $vimeoCode,
         ];
     }
 }

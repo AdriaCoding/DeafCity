@@ -69,9 +69,9 @@ function loadContext() {
 }
 
 const languages = [
-    { id: 'es', label: 'Espanyol', vimeo_code: 'es' },
-    { id: 'en', label: 'Anglès', vimeo_code: 'en' },
-    { id: 'ca', label: 'Català', vimeo_code: 'ca' },
+    { id: 'es', label: 'Espanyol' },
+    { id: 'en', label: 'Anglès' },
+    { id: 'ca', label: 'Català' },
 ];
 
 const TI = loadContext();

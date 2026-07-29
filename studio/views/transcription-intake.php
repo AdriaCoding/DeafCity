@@ -154,7 +154,6 @@
                 static fn (array $lang): array => [
                     'id' => $lang['id'] ?? '',
                     'label' => $lang['label'] ?? '',
-                    'vimeo_code' => $lang['vimeo_code'] ?? '',
                 ],
                 $subtitleLanguages
             ),

@@ -2,7 +2,7 @@
 /**
  * Single-line preview captions — full text, shrink-to-fit in the player.
  *
- * Run: php preview/tests/caption_single_line_test.php
+ * Run: php8.4 preview/tests/caption_single_line_test.php
  */
 
 require dirname(dirname(__FILE__)) . '/lib/caption_cues.php';
@@ -45,7 +45,11 @@ if (strpos($css, 'white-space: nowrap') === false) {
 }
 echo "PASS: caption CSS enforces single line\n";
 
-if (strpos($css, 'text-overflow: ellipsis') !== false) {
+if (!preg_match('~\.caption-box\s*\{([^}]*)\}~s', $css, $captionBoxRule)) {
+    fwrite(STDERR, "FAIL: caption CSS missing .caption-box rule\n");
+    exit(1);
+}
+if (strpos($captionBoxRule[1], 'text-overflow: ellipsis') !== false) {
     fwrite(STDERR, "FAIL: caption CSS should not ellipsis long tracks\n");
     exit(1);
 }

@@ -6,8 +6,8 @@
     { "id": "2020-valencia", "label": "2020 Valencia" }
   ],
   "subtitle_languages": [
-    { "id": "es", "label": "Spanish", "vimeo_code": "es" },
-    { "id": "en", "label": "English", "vimeo_code": "en" },
-    { "id": "ca", "label": "Catalan", "vimeo_code": "ca" }
+    { "id": "es", "label": "Spanish" },
+    { "id": "en", "label": "English" },
+    { "id": "ca", "label": "Catalan" }
   ]
 }

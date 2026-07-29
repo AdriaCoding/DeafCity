@@ -7,11 +7,10 @@ class BulkZipBuilder
     private readonly SubtitleOutputBasename $basename;
 
     public function __construct(
-        private readonly StudioConfig $studioConfig,
         private readonly VttToSrtConverter $converter = new VttToSrtConverter(),
         ?SubtitleOutputBasename $basename = null,
     ) {
-        $this->basename = $basename ?? new SubtitleOutputBasename($studioConfig);
+        $this->basename = $basename ?? new SubtitleOutputBasename();
     }
 
     /**

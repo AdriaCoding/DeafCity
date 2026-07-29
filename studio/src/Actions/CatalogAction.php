@@ -65,7 +65,6 @@ class CatalogAction
         ))->handle(
             (string) ($_POST['subtitle_language_code'] ?? ''),
             (string) ($_POST['subtitle_language_name'] ?? ''),
-            (string) ($_POST['subtitle_language_vimeo_code'] ?? ''),
         );
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
         exit;

@@ -31,7 +31,7 @@ class VimeoPushSyncTest extends TestCase
         $this->removeDir($this->baseDir);
     }
 
-    public function test_pushes_title_tags_and_captions_using_vimeo_code(): void
+    public function test_pushes_title_tags_and_captions_using_caption_lang(): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [
             [
@@ -42,18 +42,18 @@ class VimeoPushSyncTest extends TestCase
                 'edition' => '2020-valencia',
                 'tags' => ['humor'],
                 'captions' => [
-                    ['lang' => 'arq', 'label' => 'Algerian Darija', 'file' => '111.arq.vtt'],
+                    ['lang' => 'ar', 'label' => 'Arabic', 'file' => '111.ar.vtt'],
                 ],
             ],
         ]]));
-        file_put_contents($this->captionsDir . '/111.arq.vtt', "WEBVTT\n\n");
+        file_put_contents($this->captionsDir . '/111.ar.vtt', "WEBVTT\n\n");
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->expects($this->once())->method('updateTitle')->with('111', 'Server Title');
         $vimeo->expects($this->once())->method('setTags')->with('111', ['humor']);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
-            ->with('111', $this->captionsDir . '/111.arq.vtt', 'ar', 'Algerian Darija');
+            ->with('111', $this->captionsDir . '/111.ar.vtt', 'ar', 'Arabic');
         $vimeo->expects($this->never())->method('getThumbnailUrl');
 
         $result = $this->makeSync($vimeo)->syncVideo([
@@ -62,7 +62,7 @@ class VimeoPushSyncTest extends TestCase
             'tags' => ['humor'],
             'thumbnail_url' => 'https://example.com/t.jpg',
             'captions' => [
-                ['lang' => 'arq', 'label' => 'Algerian Darija', 'file' => '111.arq.vtt'],
+                ['lang' => 'ar', 'label' => 'Arabic', 'file' => '111.ar.vtt'],
             ],
         ]);
 
@@ -80,11 +80,11 @@ class VimeoPushSyncTest extends TestCase
                 'edition' => '2020-valencia',
                 'tags' => [],
                 'captions' => [
-                    ['lang' => 'arq', 'label' => 'Algerian Darija', 'file' => '111.arq.vtt'],
+                    ['lang' => 'ar', 'label' => 'Arabic', 'file' => '111.ar.vtt'],
                 ],
             ],
         ]]));
-        file_put_contents($this->captionsDir . '/111.arq.vtt', "WEBVTT\n\nserver content\n");
+        file_put_contents($this->captionsDir . '/111.ar.vtt', "WEBVTT\n\nserver content\n");
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
@@ -97,13 +97,13 @@ class VimeoPushSyncTest extends TestCase
             'title' => 'Server Title',
             'tags' => [],
             'captions' => [
-                ['lang' => 'arq', 'label' => 'Algerian Darija', 'file' => '111.arq.vtt'],
+                ['lang' => 'ar', 'label' => 'Arabic', 'file' => '111.ar.vtt'],
             ],
         ]);
 
         $catalog = json_decode(file_get_contents($this->catalogFile), true);
-        $this->assertSame('arq', $catalog['videos'][0]['captions'][0]['lang']);
-        $this->assertStringContainsString('server content', file_get_contents($this->captionsDir . '/111.arq.vtt'));
+        $this->assertSame('ar', $catalog['videos'][0]['captions'][0]['lang']);
+        $this->assertStringContainsString('server content', file_get_contents($this->captionsDir . '/111.ar.vtt'));
     }
 
     public function test_pulls_thumbnail_only_when_missing(): void

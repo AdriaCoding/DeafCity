@@ -224,7 +224,7 @@ class GeminiTranslatorTest extends TestCase
         $this->assertSame('application/json', $capturedPayload['generationConfig']['responseMimeType']);
     }
 
-    public function test_prompt_uses_human_readable_dialect_names(): void
+    public function test_prompt_uses_human_readable_language_names(): void
     {
         $capturedPayload = null;
 
@@ -233,10 +233,10 @@ class GeminiTranslatorTest extends TestCase
             return $this->okResponse(['مرحبا']);
         });
 
-        $translator->translate(['Hello'], 'es', 'arq');
+        $translator->translate(['Hello'], 'es', 'ar');
 
         $prompt = $capturedPayload['systemInstruction']['parts'][0]['text'];
         $this->assertStringContainsString('Spanish', $prompt);
-        $this->assertStringContainsString('Algerian Darija', $prompt);
+        $this->assertStringContainsString('Arabic', $prompt);
     }
 }

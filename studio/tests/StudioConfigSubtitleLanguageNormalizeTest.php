@@ -27,14 +27,14 @@ class StudioConfigSubtitleLanguageNormalizeTest extends TestCase
         }
     }
 
-    public function test_get_subtitle_languages_strips_legacy_translation_target_field(): void
+    public function test_get_subtitle_languages_strips_legacy_translation_target_and_vimeo_code_fields(): void
     {
         $config = new StudioConfig($this->configPath);
 
         $this->assertSame(
             [
-                ['id' => 'en', 'label' => 'English', 'vimeo_code' => 'en'],
-                ['id' => 'es', 'label' => 'Spanish', 'vimeo_code' => 'es'],
+                ['id' => 'en', 'label' => 'English'],
+                ['id' => 'es', 'label' => 'Spanish'],
             ],
             $config->getSubtitleLanguages()
         );
