@@ -4,6 +4,8 @@ namespace Studio;
 
 class CaptionUploadHandler
 {
+    private CaptionPublication $publication;
+
     public function __construct(
         private VimeoClient $vimeoClient,
         private CatalogEditor $catalogEditor,
@@ -12,7 +14,13 @@ class CaptionUploadHandler
         private WebVttValidator $vttValidator = new WebVttValidator(),
         private SrtToVttConverter $srtConverter = new SrtToVttConverter(),
         private IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
-    ) {}
+    ) {
+        $this->publication = new CaptionPublication(
+            $catalogEditor,
+            $vimeoClient,
+            $captionsDirPath,
+        );
+    }
 
     /**
      * @param list<array{lang: string, tmpPath: string, originalName: string}> $uploads
@@ -87,19 +95,16 @@ class CaptionUploadHandler
         }
 
         try {
-            $this->catalogEditor->upsertCaptions($vimeoId, $newCaptions);
+            $result = $this->publication->publish($vimeoId, $newCaptions, $syncToVimeo);
         } catch (\Throwable $e) {
             return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
         }
 
-        $video = $this->catalogEditor->findVideoByVimeoId($vimeoId);
-        $allCaptions = $video['captions'] ?? [];
-
         return [
             'ok' => true,
-            'vimeoWarnings' => $syncToVimeo ? $this->syncVimeoCaptions($vimeoId, $allCaptions) : [],
-            'captions' => $allCaptions,
-            'masterCaptionLang' => $video['master_caption_lang'] ?? ($allCaptions[0]['lang'] ?? ''),
+            'vimeoWarnings' => $result['vimeoWarnings'],
+            'captions' => $result['captions'],
+            'masterCaptionLang' => $result['masterCaptionLang'],
         ];
     }
 
@@ -112,40 +117,4 @@ class CaptionUploadHandler
         $this->vttValidator->validate($tmpPath, $originalName);
     }
 
-    /** @return string[] */
-    private function syncVimeoCaptions(string $vimeoId, array $captions): array
-    {
-        try {
-            $tracks = $this->vimeoClient->getTextTracks($vimeoId);
-            foreach ($tracks as $track) {
-                try {
-                    $this->vimeoClient->deleteTextTrack($track['uri']);
-                } catch (\Throwable) {
-                    // ignore
-                }
-            }
-        } catch (\Throwable) {
-            // ignore
-        }
-
-        $warnings = [];
-        foreach ($captions as $caption) {
-            $path = $this->captionsDirPath . '/' . ($caption['file'] ?? '');
-            if (!is_file($path)) {
-                continue;
-            }
-            try {
-                $this->vimeoClient->uploadAndActivateTextTrack(
-                    $vimeoId,
-                    $path,
-                    (string) $caption['lang'],
-                    $caption['label'],
-                );
-            } catch (\Throwable) {
-                $warnings[] = $caption['label'];
-            }
-        }
-
-        return $warnings;
-    }
 }

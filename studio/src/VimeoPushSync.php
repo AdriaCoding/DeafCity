@@ -4,12 +4,20 @@ namespace Studio;
 
 class VimeoPushSync
 {
+    private CaptionPublication $publication;
+
     public function __construct(
         private VimeoClient $vimeoClient,
         private StudioConfig $studioConfig,
         private CatalogEditor $catalogEditor,
         private string $captionsDirPath,
-    ) {}
+    ) {
+        $this->publication = new CaptionPublication(
+            $catalogEditor,
+            $vimeoClient,
+            $captionsDirPath,
+        );
+    }
 
     /**
      * @param array<string, mixed> $entry
@@ -36,7 +44,7 @@ class VimeoPushSync
             // non-fatal — title already pushed
         }
 
-        $this->pushCaptions($vimeoId, $entry['captions'] ?? []);
+        $this->publication->mirror($vimeoId, $entry['captions'] ?? []);
 
         $thumbnailBackfilled = $this->backfillThumbnailIfMissing($vimeoId, $entry);
 
@@ -63,47 +71,6 @@ class VimeoPushSync
         }
 
         return ['synced' => $synced, 'skipped' => $skipped, 'total' => $total];
-    }
-
-    /** @param list<array<string, mixed>> $captions */
-    private function pushCaptions(string $vimeoId, array $captions): void
-    {
-        try {
-            $tracks = $this->vimeoClient->getTextTracks($vimeoId);
-            foreach ($tracks as $track) {
-                try {
-                    $this->vimeoClient->deleteTextTrack($track['uri']);
-                } catch (\Throwable) {
-                    // ignore
-                }
-            }
-        } catch (\Throwable) {
-            // ignore
-        }
-
-        foreach ($captions as $caption) {
-            $lang = (string) ($caption['lang'] ?? '');
-            $file = (string) ($caption['file'] ?? '');
-            if ($lang === '' || $file === '') {
-                continue;
-            }
-
-            $path = $this->captionsDirPath . '/' . $file;
-            if (!is_file($path)) {
-                continue;
-            }
-
-            try {
-                $this->vimeoClient->uploadAndActivateTextTrack(
-                    $vimeoId,
-                    $path,
-                    $lang,
-                    (string) ($caption['label'] ?? $lang),
-                );
-            } catch (\Throwable) {
-                // non-fatal
-            }
-        }
     }
 
     /** @param array<string, mixed> $entry */

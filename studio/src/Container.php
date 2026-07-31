@@ -6,6 +6,7 @@ class Container
 {
     private ?VimeoClient $vimeoClient = null;
     private ?CatalogEditor $catalogEditor = null;
+    private ?StudioConfigMutation $configMutation = null;
 
     public function __construct(
         public readonly string $dataDir,
@@ -27,6 +28,14 @@ class Container
     public function catalogEditor(): CatalogEditor
     {
         return $this->catalogEditor ??= new CatalogEditor($this->dataDir . '/catalog.json');
+    }
+
+    public function configMutation(): StudioConfigMutation
+    {
+        return $this->configMutation ??= new StudioConfigMutation(
+            $this->studioConfig,
+            $this->catalogEditor(),
+        );
     }
 
     public function catalogSheetSync(): CatalogSheetSync

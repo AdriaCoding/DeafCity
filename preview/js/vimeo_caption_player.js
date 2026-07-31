@@ -561,8 +561,11 @@
             /** @type {any} */
             var p = vimeoPlayer;
 
-            /** Once true, subsequent Videos load unmuted (browser permits after first gesture). */
+            /** Once true, subsequent Videos load unmuted and keep sound for this session. */
             var sessionSoundOn = false;
+            try {
+                sessionSoundOn = sessionStorage.getItem('vpc-sound-enabled') === '1';
+            } catch (e) {}
             /** Once true, end-of-video may advance within the Playlist. */
             var visitorStartedPlayback = false;
             /** While >0, suppress play events from forced-pause loads (D1′, D19). */
@@ -575,11 +578,17 @@
             function markGestureActivation() {
                 visitorStartedPlayback = true;
                 sessionSoundOn = true;
+                try {
+                    sessionStorage.setItem('vpc-sound-enabled', '1');
+                } catch (e) {}
             }
 
             /** @deprecated alias — use markGestureActivation */
             function markPlaybackStarted() {
-                markGestureActivation();
+                visitorStartedPlayback = true;
+                if (sessionSoundOn) {
+                    markGestureActivation();
+                }
             }
 
             /** D23: participant card click on /preview/participants counts as a gesture. */
@@ -601,6 +610,7 @@
             }
 
             var videoShell = root.querySelector('.video-shell');
+            var muteBtn = root.querySelector('.vpc-mute-btn');
             var videoStack = root.querySelector('.video-stack');
             var posterCover = root.querySelector('.vpc-poster-cover');
             var loadScrim = root.querySelector('.vpc-load-scrim');
@@ -875,7 +885,38 @@
 
             function unmuteForPlayback() {
                 if (typeof p.setMuted !== 'function') return Promise.resolve();
-                return p.setMuted(false);
+                return p.setMuted(false).then(function () {
+                    if (muteBtn) {
+                        muteBtn.setAttribute('aria-pressed', 'true');
+                        muteBtn.setAttribute('aria-label', 'Mute video');
+                        muteBtn.textContent = 'Mute';
+                    }
+                });
+            }
+
+            function muteForPlayback() {
+                if (typeof p.setMuted !== 'function') return Promise.resolve();
+                return p.setMuted(true).then(function () {
+                    if (muteBtn) {
+                        muteBtn.setAttribute('aria-pressed', 'false');
+                        muteBtn.setAttribute('aria-label', 'Unmute video');
+                        muteBtn.textContent = 'Unmute';
+                    }
+                });
+            }
+
+            if (muteBtn) {
+                muteBtn.addEventListener('click', function () {
+                    if (sessionSoundOn) {
+                        sessionSoundOn = false;
+                        try {
+                            sessionStorage.removeItem('vpc-sound-enabled');
+                        } catch (e) {}
+                        return muteForPlayback();
+                    }
+                    markGestureActivation();
+                    return unmuteForPlayback();
+                });
             }
 
             function togglePlayPause() {
@@ -957,14 +998,15 @@
             }
 
             function tryAutoplayFallback() {
-                if (!L.shouldAutoplayWithSound(sessionSoundOn, true)) {
-                    return Promise.resolve();
-                }
                 var readyPromise =
                     typeof p.ready === 'function' ? p.ready() : Promise.resolve();
                 return readyPromise
                     .then(function () {
-                        return unmuteForPlayback().then(function () {
+                        var wantsSound = L.shouldAutoplayWithSound(sessionSoundOn, true);
+                        var soundPromise = wantsSound
+                            ? unmuteForPlayback()
+                            : muteForPlayback();
+                        return soundPromise.then(function () {
                             return p.getPaused().then(function (paused) {
                                 if (paused) return p.play();
                                 if (!paused) markPosterPlaybackStarted();
@@ -1081,7 +1123,7 @@
 
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
-                var wantAutoplay = L.shouldAutoplayWithSound(sessionSoundOn, autoPlayPreferred);
+                var wantAutoplay = autoPlayPreferred !== false;
                 var posterToken = beginPosterCoveredLoad(item, wantAutoplay);
 
                 setTransportLoading(true);
@@ -1646,7 +1688,10 @@
                     setTransportPlaying(false);
                     return;
                 }
-                markGestureActivation();
+                visitorStartedPlayback = true;
+                if (sessionSoundOn) {
+                    markGestureActivation();
+                }
                 setTransportPlaying(true);
                 savePlaybackSession();
             });

@@ -496,9 +496,9 @@ class CatalogAction
         }
         try {
             match ($type) {
-                'edition' => $this->c->studioConfig->updateEditionLabel($id, $label),
-                'sign_language' => $this->c->studioConfig->updateSignLanguageLabel($id, $label),
-                'typology' => $this->c->studioConfig->updateTypologyLabel($id, $label),
+                'edition' => $this->c->configMutation()->updateEditionLabel($id, $label),
+                'sign_language' => $this->c->configMutation()->updateSignLanguageLabel($id, $label),
+                'typology' => $this->c->configMutation()->updateTypologyLabel($id, $label),
                 default => throw new \InvalidArgumentException('Unknown label type.'),
             };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
@@ -688,10 +688,10 @@ class CatalogAction
         }
         try {
             match ($type) {
-                'edition' => $this->c->studioConfig->removeEdition($id, $this->c->catalogEditor()),
-                'sign_language' => $this->c->studioConfig->removeSignLanguage($id, $this->c->catalogEditor()),
-                'subtitle_language' => $this->c->studioConfig->removeSubtitleLanguage($id, $this->c->catalogEditor()),
-                'typology' => $this->c->studioConfig->removeTypology($id, $this->c->catalogEditor()),
+                'edition' => $this->c->configMutation()->removeEdition($id),
+                'sign_language' => $this->c->configMutation()->removeSignLanguage($id),
+                'subtitle_language' => $this->c->configMutation()->removeSubtitleLanguage($id),
+                'typology' => $this->c->configMutation()->removeTypology($id),
                 default => throw new \InvalidArgumentException('Unknown delete type.'),
             };
             echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
@@ -952,7 +952,12 @@ class CatalogAction
 
         if ($newCaptions !== []) {
             try {
-                $this->c->catalogEditor()->upsertCaptions($vimeoId, $newCaptions);
+                $publication = new \Studio\CaptionPublication(
+                    $this->c->catalogEditor(),
+                    $this->c->vimeoClient(),
+                    $captionsDir,
+                );
+                $publication->publish($vimeoId, $newCaptions);
             } catch (\Throwable) {
                 $errorLangs = array_merge($errorLangs, $savedLangs);
                 $savedLangs = [];

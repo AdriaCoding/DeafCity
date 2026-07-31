@@ -20,15 +20,15 @@ function gga_assert_not_contains($needle, $haystack, $label) {
 $homePage = dirname(dirname(__FILE__)) . '/index.php';
 $participantsPage = dirname(dirname(__FILE__)) . '/participants/index.php';
 
-// ── Cold load: paused poster, no autoplay-with-sound ─────────────────────────
+// ── Cold load: muted autoplay, with an explicit unmute gesture ───────────────
 unset($_GET['participant']);
 ob_start();
 include $homePage;
 $coldHtml = ob_get_clean();
 
-gga_assert_not_contains('autoplay=1', $coldHtml, 'cold load iframe has no autoplay=1');
-gga_assert_not_contains('vpc-mute-btn', $coldHtml, 'no mute control on cold load');
-gga_assert_not_contains('vpc-unmute-btn', $coldHtml, 'no unmute control on cold load');
+gga_assert_contains('autoplay=1', $coldHtml, 'cold load iframe requests autoplay');
+gga_assert_contains('muted=1', $coldHtml, 'cold load iframe requests muted playback');
+gga_assert_contains('vpc-mute-btn', $coldHtml, 'cold load exposes mute control');
 
 if (!preg_match('~<script[^>]+class="vpc-config"[^>]*>(.*?)</script>~s', $coldHtml, $m)) {
     fwrite(STDERR, "FAIL: no vpc-config on cold load\n");

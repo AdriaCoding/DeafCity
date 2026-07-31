@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/catalog_projection.php';
+
 /**
  * Load video metadata from data/videos.json for the Vimeo caption player.
  *
@@ -436,83 +438,13 @@ if (!function_exists('vpc_vimeo_playlist_all_from_catalog')) {
         }
         $playlist = array();
         foreach ($catalog['videos'] as $v) {
-            if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
+            if (!is_array($v)) {
                 continue;
             }
-            if (!vpc_catalog_entry_is_visible($v)) {
+            $entry = vpc_project_catalog_video($v);
+            if ($entry === null) {
                 continue;
             }
-            $entry = array();
-
-            if (!empty($v['vimeo_id'])) {
-                $entry['video_id'] = preg_replace('/\D/', '', (string) $v['vimeo_id']);
-            }
-            if (!empty($v['embed_url']) && is_string($v['embed_url'])) {
-                $entry['embed_url'] = $v['embed_url'];
-            }
-
-            if (!empty($v['captions']) && is_array($v['captions'])) {
-                $tracks = vpc_caption_tracks_from_catalog_captions($v['captions']);
-                if (count($tracks) > 0) {
-                    $entry['caption_tracks'] = $tracks;
-                }
-            }
-
-            // Filterable catalog fields — all passed to JS for client-side filtering (D17, D18).
-            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
-            if ($sl !== '') {
-                $entry['sign_language'] = $sl;
-            }
-            $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
-            if ($edition !== '') {
-                $entry['edition'] = $edition;
-            }
-            $typology = isset($v['typology']) ? trim((string) $v['typology']) : '';
-            if ($typology !== '') {
-                $entry['typology'] = $typology;
-            }
-            vpc_playlist_entry_apply_participant_fields($entry, $v);
-
-            $tagsOut = array();
-            if (isset($v['tags']) && is_array($v['tags'])) {
-                foreach ($v['tags'] as $tag) {
-                    if (!is_string($tag)) {
-                        continue;
-                    }
-                    $tag = trim($tag);
-                    if ($tag !== '' && !in_array($tag, $tagsOut, true)) {
-                        $tagsOut[] = $tag;
-                    }
-                }
-            }
-            $entry['tags'] = $tagsOut;
-
-            // Filterable catalog fields — passed to JS for client-side composable filtering (D17, D18).
-            $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
-            if ($edition !== '') {
-                $entry['edition'] = $edition;
-            }
-            $typology = isset($v['typology']) ? trim((string) $v['typology']) : '';
-            if ($typology !== '') {
-                $entry['typology'] = $typology;
-            }
-            vpc_playlist_entry_apply_participant_fields($entry, $v);
-
-            if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
-                $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
-            }
-
-            $eParams = isset($v['embed_params']) && is_array($v['embed_params'])
-                ? $v['embed_params']
-                : array();
-            if (count($eParams) > 0) {
-                $entry['embed_params'] = $eParams;
-            }
-
-            if (empty($entry['video_id']) && empty($entry['embed_url'])) {
-                continue;
-            }
-
             $playlist[] = $entry;
         }
         return $playlist;
@@ -687,75 +619,17 @@ if (!function_exists('vpc_participant_playlist_from_catalog')) {
         }
         $playlist = array();
         foreach ($catalog['videos'] as $v) {
-            if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
-                continue;
-            }
-            if (!vpc_catalog_entry_is_visible($v)) {
+            if (!is_array($v)) {
                 continue;
             }
             $vParticipant = isset($v['participant']) ? trim((string) $v['participant']) : '';
             if ($vParticipant !== $participantName) {
                 continue;
             }
-            $entry = array();
-
-            if (!empty($v['vimeo_id'])) {
-                $entry['video_id'] = preg_replace('/\D/', '', (string) $v['vimeo_id']);
-            }
-            if (!empty($v['embed_url']) && is_string($v['embed_url'])) {
-                $entry['embed_url'] = $v['embed_url'];
-            }
-
-            if (!empty($v['captions']) && is_array($v['captions'])) {
-                $tracks = vpc_caption_tracks_from_catalog_captions($v['captions']);
-                if (count($tracks) > 0) {
-                    $entry['caption_tracks'] = $tracks;
-                }
-            }
-
-            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
-            if ($sl !== '') {
-                $entry['sign_language'] = $sl;
-            }
-            $edition = isset($v['edition']) ? trim((string) $v['edition']) : '';
-            if ($edition !== '') {
-                $entry['edition'] = $edition;
-            }
-            $typology = isset($v['typology']) ? trim((string) $v['typology']) : '';
-            if ($typology !== '') {
-                $entry['typology'] = $typology;
-            }
-            vpc_playlist_entry_apply_participant_fields($entry, $v);
-
-            $tagsOut = array();
-            if (isset($v['tags']) && is_array($v['tags'])) {
-                foreach ($v['tags'] as $tag) {
-                    if (!is_string($tag)) {
-                        continue;
-                    }
-                    $tag = trim($tag);
-                    if ($tag !== '' && !in_array($tag, $tagsOut, true)) {
-                        $tagsOut[] = $tag;
-                    }
-                }
-            }
-            $entry['tags'] = $tagsOut;
-
-            if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
-                $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
-            }
-
-            $eParams = isset($v['embed_params']) && is_array($v['embed_params'])
-                ? $v['embed_params']
-                : array();
-            if (count($eParams) > 0) {
-                $entry['embed_params'] = $eParams;
-            }
-
-            if (empty($entry['video_id']) && empty($entry['embed_url'])) {
+            $entry = vpc_project_catalog_video($v);
+            if ($entry === null) {
                 continue;
             }
-
             $playlist[] = $entry;
         }
         return vpc_sort_playlist_by_participant_sequence($playlist);
