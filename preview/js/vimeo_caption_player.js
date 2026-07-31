@@ -561,10 +561,10 @@
             /** @type {any} */
             var p = vimeoPlayer;
 
-            /** Once true, subsequent Videos load unmuted and keep sound for this session. */
-            var sessionSoundOn = false;
+            /** Once true, later Videos may autoplay after a qualifying visitor interaction. */
+            var sessionPlaybackActivated = false;
             try {
-                sessionSoundOn = sessionStorage.getItem('vpc-sound-enabled') === '1';
+                sessionPlaybackActivated = sessionStorage.getItem('vpc-playback-activated') === '1';
             } catch (e) {}
             /** Once true, end-of-video may advance within the Playlist. */
             var visitorStartedPlayback = false;
@@ -572,23 +572,15 @@
             var forcedPauseLoads = 0;
 
             /**
-             * Sticky activation for this page view (D12′). First gesture unlocks sound;
-             * thereafter playlist advances and rebuilds auto-play with sound.
+             * Sticky activation for this browser session. A qualifying intent gesture
+             * authorizes later Video playback with sound.
              */
             function markGestureActivation() {
                 visitorStartedPlayback = true;
-                sessionSoundOn = true;
+                sessionPlaybackActivated = true;
                 try {
-                    sessionStorage.setItem('vpc-sound-enabled', '1');
+                    sessionStorage.setItem('vpc-playback-activated', '1');
                 } catch (e) {}
-            }
-
-            /** @deprecated alias — use markGestureActivation */
-            function markPlaybackStarted() {
-                visitorStartedPlayback = true;
-                if (sessionSoundOn) {
-                    markGestureActivation();
-                }
             }
 
             /** D23: participant card click on /preview/participants counts as a gesture. */
@@ -610,7 +602,6 @@
             }
 
             var videoShell = root.querySelector('.video-shell');
-            var muteBtn = root.querySelector('.vpc-mute-btn');
             var videoStack = root.querySelector('.video-stack');
             var posterCover = root.querySelector('.vpc-poster-cover');
             var loadScrim = root.querySelector('.vpc-load-scrim');
@@ -883,50 +874,12 @@
                     .catch(function () {});
             }
 
-            function unmuteForPlayback() {
-                if (typeof p.setMuted !== 'function') return Promise.resolve();
-                return p.setMuted(false).then(function () {
-                    if (muteBtn) {
-                        muteBtn.setAttribute('aria-pressed', 'true');
-                        muteBtn.setAttribute('aria-label', 'Mute video');
-                        muteBtn.textContent = 'Mute';
-                    }
-                });
-            }
-
-            function muteForPlayback() {
-                if (typeof p.setMuted !== 'function') return Promise.resolve();
-                return p.setMuted(true).then(function () {
-                    if (muteBtn) {
-                        muteBtn.setAttribute('aria-pressed', 'false');
-                        muteBtn.setAttribute('aria-label', 'Unmute video');
-                        muteBtn.textContent = 'Unmute';
-                    }
-                });
-            }
-
-            if (muteBtn) {
-                muteBtn.addEventListener('click', function () {
-                    if (sessionSoundOn) {
-                        sessionSoundOn = false;
-                        try {
-                            sessionStorage.removeItem('vpc-sound-enabled');
-                        } catch (e) {}
-                        return muteForPlayback();
-                    }
-                    markGestureActivation();
-                    return unmuteForPlayback();
-                });
-            }
-
             function togglePlayPause() {
                 p.getPaused()
                     .then(function (paused) {
                         if (paused) {
                             markGestureActivation();
-                            return unmuteForPlayback().then(function () {
-                                return p.play();
-                            });
+                            return p.play();
                         }
                         return p.pause();
                     })
@@ -1002,15 +955,12 @@
                     typeof p.ready === 'function' ? p.ready() : Promise.resolve();
                 return readyPromise
                     .then(function () {
-                        var wantsSound = L.shouldAutoplayWithSound(sessionSoundOn, true);
-                        var soundPromise = wantsSound
-                            ? unmuteForPlayback()
-                            : muteForPlayback();
-                        return soundPromise.then(function () {
-                            return p.getPaused().then(function (paused) {
-                                if (paused) return p.play();
-                                if (!paused) markPosterPlaybackStarted();
-                            });
+                        if (!L.shouldAutoplayWithSound(sessionPlaybackActivated, true)) {
+                            return;
+                        }
+                        return p.getPaused().then(function (paused) {
+                            if (paused) return p.play();
+                            if (!paused) markPosterPlaybackStarted();
                         });
                     })
                     .catch(function () {})
@@ -1097,10 +1047,9 @@
                     if (currentRaw === vidRaw) {
                         return Promise.resolve();
                     }
-                    /** @type {{ autoplay: boolean, muted: boolean, preload: string, id?: number, url?: string }} */
+                    /** @type {{ autoplay: boolean, preload: string, id?: number, url?: string }} */
                     var loadPayload = {
                         autoplay: wantAutoplay,
-                        muted: !sessionSoundOn,
                         preload: 'auto',
                     };
                     if (embedUrl !== '') {
@@ -1123,7 +1072,10 @@
 
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
                 var vidNum = parseInt(vidRaw, 10);
-                var wantAutoplay = autoPlayPreferred !== false;
+                var wantAutoplay = L.shouldAutoplayWithSound(
+                    sessionPlaybackActivated,
+                    autoPlayPreferred
+                );
                 var posterToken = beginPosterCoveredLoad(item, wantAutoplay);
 
                 setTransportLoading(true);
@@ -1689,9 +1641,7 @@
                     return;
                 }
                 visitorStartedPlayback = true;
-                if (sessionSoundOn) {
-                    markGestureActivation();
-                }
+                markGestureActivation();
                 setTransportPlaying(true);
                 savePlaybackSession();
             });

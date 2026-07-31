@@ -144,24 +144,24 @@ assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no
 
 assert_not_contains('data-picker="spoken_language"', $html, 'no spoken language picker in DOM');
 
-// ── ADR-0009: muted autoplay with an explicit unmute control ─────────────────
+// ── ADR-0009: intent-gated playback with sound and no mute control ───────────
 
-// AC: Cold load requests autoplay but keeps it muted for browser policy.
+// AC: Cold load stays paused and never requests muted playback.
 if (preg_match('~player\.vimeo\.com/video/\d+[^"]*autoplay=([^&"]+)~', $html, $autoM)) {
-    if ($autoM[1] !== '1') {
-        fwrite(STDERR, "FAIL: muted autoplay — autoplay param is '{$autoM[1]}', expected '1'\n");
+    if ($autoM[1] !== '0') {
+        fwrite(STDERR, "FAIL: cold load autoplay param is '{$autoM[1]}', expected '0'\n");
         exit(1);
     }
 }
-assert_contains('autoplay=1', $html, 'cold load requests autoplay');
-assert_contains('muted=1', $html, 'cold load requests muted playback');
-echo "PASS: muted autoplay on load\n";
+assert_contains('autoplay=0', $html, 'cold load remains paused');
+assert_not_contains('muted=1', $html, 'cold load does not request muted playback');
+echo "PASS: intent-gated playback on load\n";
 assert_contains('preload=auto', $html, 'Vimeo preloads the current video before playback');
 
-// AC: A keyboard-focusable, stateful mute control is present.
-assert_contains('vpc-mute-btn', $html, 'mute button element');
-assert_contains('aria-label="Unmute video"', $html, 'initial unmute aria-label');
-echo "PASS: mute/unmute control\n";
+// AC: Videos cannot be muted through player chrome.
+assert_not_contains('vpc-mute-btn', $html, 'no mute button element');
+assert_not_contains('aria-label="Unmute video"', $html, 'no unmute control');
+echo "PASS: no mute control\n";
 
 // AC: Server-chosen video renders — player iframe src contains a Vimeo video id.
 $firstVideoId = extract_first_video_id($html);

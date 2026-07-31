@@ -20,15 +20,15 @@ function gga_assert_not_contains($needle, $haystack, $label) {
 $homePage = dirname(dirname(__FILE__)) . '/index.php';
 $participantsPage = dirname(dirname(__FILE__)) . '/participants/index.php';
 
-// ── Cold load: muted autoplay, with an explicit unmute gesture ───────────────
+// ── Cold load: paused; playback awaits a qualifying intent gesture ───────────
 unset($_GET['participant']);
 ob_start();
 include $homePage;
 $coldHtml = ob_get_clean();
 
-gga_assert_contains('autoplay=1', $coldHtml, 'cold load iframe requests autoplay');
-gga_assert_contains('muted=1', $coldHtml, 'cold load iframe requests muted playback');
-gga_assert_contains('vpc-mute-btn', $coldHtml, 'cold load exposes mute control');
+gga_assert_contains('autoplay=0', $coldHtml, 'cold load iframe remains paused');
+gga_assert_not_contains('muted=1', $coldHtml, 'cold load does not request muted playback');
+gga_assert_not_contains('vpc-mute-btn', $coldHtml, 'cold load exposes no mute control');
 
 if (!preg_match('~<script[^>]+class="vpc-config"[^>]*>(.*?)</script>~s', $coldHtml, $m)) {
     fwrite(STDERR, "FAIL: no vpc-config on cold load\n");
@@ -95,5 +95,7 @@ gga_assert_contains('markGestureActivation', $playerSrc, 'player defines markGes
 gga_assert_contains('shouldAutoplayWithSound', $playerSrc, 'player uses shouldAutoplayWithSound');
 gga_assert_contains('resolveParticipantGestureCarry', $playerSrc, 'player uses participant gesture carry');
 gga_assert_contains('GESTURE_STORAGE_KEY', $playerSrc, 'player references gesture storage key');
+gga_assert_contains('vpc-playback-activated', $playerSrc, 'player persists playback activation');
+gga_assert_not_contains('setMuted', $playerSrc, 'player has no mute state');
 
 echo "\nAll gesture_gated_audio tests passed.\n";

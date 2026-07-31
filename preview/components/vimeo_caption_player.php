@@ -431,8 +431,7 @@ $defaultParams = array(
     'portrait' => '0',
     'dnt'      => '1',
     'controls' => '0',
-    'autoplay'    => '1',
-    'muted'       => '1',
+    'autoplay'    => '0',
     'preload'     => 'auto',
     'playsinline' => '1',
 );
@@ -671,12 +670,6 @@ $navHiddenClass = '';
                     aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
                     aria-label="<?= htmlspecialchars(preview_t('player.transport.play_or_pause'), ENT_QUOTES, 'UTF-8') ?>"
                 ></button>
-                <button
-                    type="button"
-                    class="vpc-mute-btn"
-                    aria-pressed="false"
-                    aria-label="Unmute video"
-                >Unmute</button>
             </div>
         </div>
     </div>

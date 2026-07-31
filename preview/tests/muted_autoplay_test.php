@@ -12,13 +12,25 @@ function maa_assert_contains($needle, $haystack, $label) {
     }
 }
 
-maa_assert_contains('autoplay=1', $html, 'cold load requests autoplay');
-maa_assert_contains('muted=1', $html, 'cold load requests muted playback');
-maa_assert_contains('vpc-mute-btn', $html, 'cold load exposes mute control');
-maa_assert_contains('aria-label="Unmute video"', $html, 'mute control has initial accessible state');
+function maa_assert_not_contains($needle, $haystack, $label) {
+    if (strpos($haystack, $needle) !== false) {
+        fwrite(STDERR, "FAIL: {$label}\n");
+        exit(1);
+    }
+}
+
+maa_assert_contains('autoplay=0', $html, 'cold load remains paused');
+if (strpos($html, 'muted=1') !== false) {
+    fwrite(STDERR, "FAIL: cold load must not request muted playback\n");
+    exit(1);
+}
+if (strpos($html, 'vpc-mute-btn') !== false) {
+    fwrite(STDERR, "FAIL: cold load must not expose a mute control\n");
+    exit(1);
+}
 
 $playerJs = file_get_contents(dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js');
-maa_assert_contains('sessionSoundOn', $playerJs, 'player tracks session sound preference');
-maa_assert_contains('setMuted', $playerJs, 'player controls Vimeo mute state');
+maa_assert_not_contains('setMuted', $playerJs, 'player must not control a mute state');
+maa_assert_not_contains('vpc-sound-enabled', $playerJs, 'player must not persist a sound preference');
 
-echo "PASS: muted autoplay and unmute affordance\n";
+echo "PASS: intent-gated playback has no muted autoplay or mute control\n";

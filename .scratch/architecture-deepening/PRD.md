@@ -8,7 +8,7 @@ DEAF.city’s Studio and Preview site preserve the correct domain decisions, but
 
 This weakens locality: the same Caption file publication behaviour, Subtitle translation run behaviour, Catalog invariants, Preview projection rules, and Studio configuration constraints must be understood and changed in multiple places. It also makes the interface, rather than the domain action, the test surface.
 
-The Preview site additionally no longer implements the accepted muted-autoplay/unmute behaviour in ADR-0009. Its current playback behaviour and its test expectation conflict with that decision.
+The Preview site refactor introduced muted autoplay and a mute/unmute control, contradicting the retained intent-gated playback behaviour. The prior player began paused and used a visitor interaction that expressed willingness to watch to authorize later playback with sound.
 
 ## Solution
 
@@ -19,7 +19,7 @@ Deepen six modules around the domain actions they already support:
 3. Catalog persistence;
 4. Preview Catalog projection;
 5. Studio configuration mutation; and
-6. Preview muted-autoplay and unmute interaction.
+6. Preview intent-gated playback with sound.
 
 Each module exposes a small, domain-oriented interface and absorbs its persistence, orchestration, conversion, and validation implementation. The server remains the master for Caption files and Subtitle languages; Vimeo remains a best-effort backup mirror. The Catalog remains authoritative for Studio and the Preview site.
 
@@ -44,15 +44,15 @@ Each module exposes a small, domain-oriented interface and absorbs its persisten
 17. As a Producer, I want Studio configuration mutations to enforce reference integrity, so that I cannot remove an Edition, Sign language, Typology, or Subtitle language that an existing Catalog Video still needs.
 18. As a Producer, I want Subtitle language configuration constraints to be enforced in one place, so that language selection and Caption file Publication stay valid.
 19. As a Producer, I want Studio configuration writes to remain serialized and durable, so that simultaneous or interrupted changes cannot corrupt shared reference data.
-20. As a hearing Preview visitor, I want a Video to autoplay muted on a cold visit, so that browser autoplay policy does not prevent playback.
-21. As a hearing Preview visitor, I want a visible affordance to unmute a Video with one gesture, so that I know sound is available.
-22. As a hearing Preview visitor, I want sound to remain enabled for the rest of my session after I unmute, so that subsequent Videos respect my choice.
-23. As a keyboard or screen-reader user, I want a focusable mute/unmute control with stateful text, so that the sound interaction remains usable without the pointer shortcut.
+20. As a hearing Preview visitor, I want the first Video to begin paused with sound available, so that I never encounter silent playback.
+21. As a hearing Preview visitor, I want a Play action or Video-selection action to start the selected Video with sound, so that the interaction that expresses willingness to watch authorizes playback.
+22. As a hearing Preview visitor, I want later Videos to play with sound after a qualifying intent gesture, so that I do not have to restart playback for every Video.
+23. As a hearing Preview visitor, I want no possibility to mute a Video, so that the Website always presents Videos with their audio.
 24. As a maintainer, I want the server-master and Catalog-authority decisions to remain unchanged while modules are deepened, so that architectural work does not reverse accepted domain decisions.
 25. As a developer, I want tests to cross each deep module’s interface, so that a regression is detected through behaviour a caller actually relies on.
 26. As a developer, I want fixture-based tests for Catalog-to-Preview projection, so that one Catalog Video can be verified through the emitted player data without route-specific duplication.
 27. As a developer, I want Publication and translation-run failure cases tested without a live Vimeo or translation provider, so that the tests are deterministic.
-28. As a developer, I want the accepted muted-autoplay decision reflected in Preview tests, so that implementation drift is reported rather than preserved.
+28. As a developer, I want the accepted intent-gated playback decision reflected in Preview tests, so that implementation drift is reported rather than preserved.
 
 ## Implementation Decisions
 
@@ -99,14 +99,16 @@ Each module exposes a small, domain-oriented interface and absorbs its persisten
 - Keep the current Subtitle-language policy and canonical identifier rules intact. This work must integrate with the active Subtitle-language simplification rather than reintroducing a secondary Vimeo mapping.
 - Configuration data beneath `data/` must retain `www-data:www-data` ownership after any root-initiated write.
 
-### Preview muted autoplay and unmute interaction
+### Preview intent-gated playback with sound
 
-- Correct Preview playback so every Video begins muted and attempts autoplay, matching ADR-0009.
-- The Video surface is reserved for mute/unmute. Play/pause remains on its dedicated transport control.
-- The visible mute/unmute affordance is a real focusable control with stateful accessible text.
-- After the first unmute, the sound preference persists for the browser session and applies to subsequent Videos.
-- Retain the accepted hover-capable and touch-device affordance behaviour from ADR-0009.
-- Update the existing cold-load test expectation to assert the accepted behaviour rather than the superseded implementation.
+- Restore a paused cold load with no autoplay and no muted playback parameter, matching the revised ADR-0009.
+- Remove every mute/unmute control, muted state, sound-preference state, and mute action from the Preview player.
+- A qualifying intent gesture starts the selected Video immediately with sound: dedicated Play, Video-surface click/tap, Participant selection, previous/next navigation, or a filter or collection change that selects a Video.
+- Opening or closing UI and changing Caption language do not authorize playback.
+- Once a qualifying gesture has started playback, automatic transitions and later selected Videos play with sound for the browser session.
+- If unmuted autoplay is rejected after authorization, leave the Video paused; never fall back to muted playback.
+- Keep the existing transport Play control as the focusable playback control. The Video surface remains a pointer shortcut for play/pause.
+- Update the cold-load and interaction tests to assert the restored behaviour.
 
 ### Delivery order
 
@@ -115,7 +117,7 @@ Each module exposes a small, domain-oriented interface and absorbs its persisten
 - Build Caption file Publication next and route individual, replacement, finalization, and bulk synchronization through it.
 - Build the Subtitle translation run module and migrate each translation entry point to it.
 - Build Preview Catalog projection and migrate all Preview routes that create player data.
-- Correct muted autoplay/unmute behaviour and test it independently of the Catalog projection work.
+- Correct intent-gated playback with sound and test it independently of the Catalog projection work.
 - Remove obsolete duplicate implementation only after its callers cross the new module interface and regression tests pass.
 
 ## Testing Decisions
@@ -129,10 +131,10 @@ Each module exposes a small, domain-oriented interface and absorbs its persisten
   - Studio configuration mutation add/remove validation, locked persistence, and Catalog reference-integrity rejection.
 - Use fake adapters at real seams for Vimeo, translation execution, filesystem persistence, and Catalog inspection. A seam receives a second adapter only where the test or production variability is genuine; do not add hypothetical seams merely to mock implementation details.
 - Add Preview fixture tests that pass a Catalog Video through the projection interface and assert the player-facing data for normal, Invisible, Caption-bearing, filtered, and Participant-scoped Videos.
-- Extend existing Preview transport and gesture tests to assert muted autoplay, the initial unmute affordance, pointer interaction, keyboard interaction, touch feedback, re-mute behaviour, and session-sticky sound across Video changes.
+- Extend existing Preview transport and gesture tests to assert paused cold load, no mute control or muted state, qualifying and non-qualifying intent gestures, Video-surface play/pause, Participant selection, session-sticky unmuted playback, and unmuted-autoplay rejection that leaves the Video paused.
 - Preserve PHP 5.6-compatible Preview runtime source. Run Studio tests with PHP 8.4 and Preview test scripts with their documented compatible runner.
 - Reuse the existing test prior art for Catalog mutations, Caption upload, Vimeo synchronization, translation state and runner behaviour, Studio configuration mutations, Preview visibility, Participant routes, transport sessions, and gesture-gated audio.
-- Run the relevant Studio PHP, Studio JavaScript, and Preview PHP/JavaScript suites, then perform browser smoke tests of a Caption file Publication, a translation retry, Catalog visibility, Preview caption selection, and muted autoplay/unmute.
+- Run the relevant Studio PHP, Studio JavaScript, and Preview PHP/JavaScript suites, then perform browser smoke tests of a Caption file Publication, a translation retry, Catalog visibility, Preview caption selection, and intent-gated playback with sound.
 
 ## Out of Scope
 
@@ -142,12 +144,12 @@ Each module exposes a small, domain-oriented interface and absorbs its persisten
 - Migrating the legacy homepage, removing the transitional legacy data source, or changing the Preview site’s route set.
 - Adding Catalog aspect-ratio fields or changing ADR-0008’s runtime Vimeo aspect-ratio decision.
 - Changing Subtitle-language policy, reintroducing `vimeo_code`, or expanding the configured Subtitle-language set.
-- Changing public Website design except the already accepted Preview sound affordance behaviour.
+- Adding a mute control, muted autoplay, or silent-first-playback behaviour.
 - Rewriting historical PRDs or ADRs that do not conflict with these implementation decisions.
 
 ## Further Notes
 
-- This PRD combines every candidate from the 29 July 2026 architecture review and includes the ADR-0009 implementation drift found during that review.
+- This PRD combines every candidate from the 29 July 2026 architecture review and records the corrected Preview playback policy agreed on 31 July 2026.
 - The chosen work deepens existing modules; it is not a rewrite of Studio, Catalog, Publication, or the Preview site.
 - The highest-leverage first implementation is Caption file Publication because it removes duplicate server/Vimeo mirror implementation while directly preserving the server-master rule.
 - The active Subtitle-language simplification work may be in progress concurrently. Any implementation must begin from its resulting canonical language model and avoid editing its active files until that work has landed.

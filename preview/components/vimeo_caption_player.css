@@ -116,21 +116,6 @@
     outline: 2px solid #007800;
     outline-offset: 2px;
 }
-.vpc-mute-btn {
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 4;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    background: rgba(0, 0, 0, 0.55);
-    color: #fff;
-    padding: 0.45rem 0.7rem;
-    cursor: pointer;
-}
-.vpc-mute-btn:focus-visible {
-    outline: 2px solid #007800;
-    outline-offset: 2px;
-}
 .caption-box {
     width: var(--vpc-caption-width, 100%);
     max-width: 100%;
