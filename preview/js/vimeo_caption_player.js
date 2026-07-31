@@ -792,6 +792,19 @@
 
             var playBtn = root.querySelector('.vpc-play-pause-btn');
             var transportPlaying = false;
+            var transportLoading = false;
+            var transportCurrentTimeSec = 0;
+
+            function publishTransportState(reason) {
+                window.__vpcTransportState = {
+                    playing: !!transportPlaying,
+                    loading: !!transportLoading,
+                    currentTimeSec: transportCurrentTimeSec,
+                    playlistIndex: playlistIndex,
+                    updatedAt: Date.now(),
+                    reason: reason || '',
+                };
+            }
 
             /** Persist playback context for About/Participants transport (issue #02). */
             function savePlaybackSession(done) {
@@ -851,6 +864,7 @@
                     }
                     playBtn.setAttribute('aria-label', vpcString('player.transport.play', 'Play video'));
                 }
+                publishTransportState('setTransportPlaying');
                 syncCollectionNavButtons();
             }
 
@@ -859,9 +873,13 @@
                 if (isLoading) {
                     playBtn.setAttribute('data-loading', 'true');
                     playBtn.disabled = true;
+                    transportLoading = true;
+                    publishTransportState('setTransportLoading:true');
                 } else {
                     playBtn.removeAttribute('data-loading');
                     playBtn.disabled = false;
+                    transportLoading = false;
+                    publishTransportState('setTransportLoading:false');
                     refreshTransport();
                 }
             }
@@ -1665,7 +1683,13 @@
             });
             p.on('pause', function () {
                 setTransportPlaying(false);
-                p.getCurrentTime().then(syncVimeoCaptionBoxes);
+                p.getCurrentTime().then(function (seconds) {
+                    if (typeof seconds === 'number' && isFinite(seconds) && seconds >= 0) {
+                        transportCurrentTimeSec = seconds;
+                        publishTransportState('pauseCurrentTime');
+                    }
+                    syncVimeoCaptionBoxes(seconds);
+                });
                 savePlaybackSession();
             });
             p.on('ended', function () {
@@ -1674,6 +1698,9 @@
             });
 
             p.on('timeupdate', function (data) {
+                if (data && typeof data.seconds === 'number' && isFinite(data.seconds) && data.seconds >= 0) {
+                    transportCurrentTimeSec = data.seconds;
+                }
                 revealPosterAfterPlaybackProgress(data.seconds);
                 syncVimeoCaptionBoxes(data.seconds);
             });

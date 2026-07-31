@@ -452,6 +452,27 @@ if (count($langOptions) > 1):
     var btn = document.getElementById('<?= htmlspecialchars($langPickerBtnId, ENT_QUOTES, 'UTF-8') ?>');
     var dropdown = document.getElementById('<?= htmlspecialchars($langDropdownId, ENT_QUOTES, 'UTF-8') ?>');
     if (!btn || !dropdown) { return; }
+    var navIntentKey = 'vpc-nav-intent';
+    var playPauseBtn = document.querySelector('.vpc-play-pause-btn');
+
+    function shouldResumeAfterLanguageSwitch() {
+        var state = window.__vpcTransportState;
+        if (state && typeof state === 'object') {
+            if (!!state.playing && !state.loading) {
+                return true;
+            }
+            if (!state.loading && typeof state.currentTimeSec === 'number' && state.currentTimeSec > 0.25) {
+                return true;
+            }
+            return false;
+        }
+        if (!playPauseBtn) { return false; }
+        if (playPauseBtn.getAttribute('data-loading') === 'true') { return false; }
+        var icon = playPauseBtn.querySelector('.vpc-chrome-icon');
+        if (!icon) { return false; }
+        var src = icon.getAttribute('src') || '';
+        return src.indexOf('pause_circle') >= 0;
+    }
 
     function closePicker() {
         dropdown.hidden = true;
@@ -474,6 +495,16 @@ if (count($langOptions) > 1):
         e.stopPropagation();
         var href = target.getAttribute('data-href');
         if (!href) { return; }
+        var shouldResume = shouldResumeAfterLanguageSwitch();
+        if (typeof sessionStorage !== 'undefined') {
+            try {
+                if (shouldResume) {
+                    sessionStorage.setItem(navIntentKey, 'play');
+                } else {
+                    sessionStorage.removeItem(navIntentKey);
+                }
+            } catch (err) {}
+        }
         if (typeof window.__vpcSavePlaybackSession === 'function') {
             window.__vpcSavePlaybackSession(function () {
                 window.location.href = href;

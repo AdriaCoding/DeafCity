@@ -96,3 +96,9 @@ _Avoid_: Video database, registry, index
 **Invisible Video**:
 A published Video marked in the Catalog as hidden from all public surfaces (Website, Preview site, Playlists). The Catalog entry — Edition, captions, Tags, and all metadata — is preserved; only visibility changes. In Studio Continguts, Invisible Videos appear in a separate "Invisibles" section, not under their Edition group. A Producer can restore visibility at any time.
 _Avoid_: Deleted, archived, unpublished, hidden (alone — say Invisible Video)
+
+## Preview playback behavior contracts
+
+**Language switch resume intent**:
+When a visitor changes Website language from the Preview player chrome, playback state must carry across the navigation. If the current Video is actively playing, or has already progressed beyond start and is not loading, the language switch sets a restore intent to resume playback with sound after reload. This prevents paused restore on a thumbnail with an in-cue Subtitle text ("ghost caption").
+_Avoid_: Treating language switch as always neutral UI navigation

@@ -87,9 +87,12 @@ if (!is_readable($dataDir . '/catalog.json')) {
 }
 $studioConfigPath = $dataDir . '/studio-config.json';
 $catalog = vpc_load_videos_catalog($dataDir . '/catalog.json');
-$signOpts = vpc_sign_language_options_from_catalog($catalog, $studioConfigPath);
-$editionOpts = vpc_edition_options_from_catalog($catalog, $studioConfigPath);
-$typologyOpts = vpc_typology_options_from_catalog($catalog, $studioConfigPath);
+// Mirror index.php: typology (and, for non-en locales, sign_language/edition) go
+// through preview_localize_filter_options before display — compare against the
+// same localized labels the page actually renders, not the raw catalog values.
+$signOpts = preview_localize_filter_options(vpc_sign_language_options_from_catalog($catalog, $studioConfigPath), 'sign_language');
+$editionOpts = preview_localize_filter_options(vpc_edition_options_from_catalog($catalog, $studioConfigPath), 'edition');
+$typologyOpts = preview_localize_filter_options(vpc_typology_options_from_catalog($catalog, $studioConfigPath), 'typology');
 
 foreach (array(
     'sign_language' => array('field' => 'signLanguage', 'generic' => 'Sign Language', 'opts' => $signOpts),
