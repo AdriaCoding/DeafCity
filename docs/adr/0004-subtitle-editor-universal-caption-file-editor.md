@@ -1,5 +1,9 @@
 # Subtitle Editor is a universal caption file editor, reused across pipeline slices
 
+**Status:** Superseded (2026-07-31) — the editor is no longer shared across pipeline slices.
+
+## Original decision
+
 The Subtitle Editor (Slice 2) is designed as a universal caption file editor rather than a one-off review screen for the Intake VTT. The same view, JS, and PHP handler serve every pipeline step that requires a Producer to author or correct subtitle cues: reviewing an uploaded caption file (Slice 2), correcting auto-generated cues (Slice 3), and reviewing translations (Slice 4).
 
 **Considered options:**
@@ -13,3 +17,13 @@ The universal approach was chosen because:
 3. The `VttParser` and `CaptionFileIntegrityChecker` PHP modules are already generic by construction — they operate on cue arrays, not on specific filenames or pipeline steps. The view and JS follow the same boundary.
 
 When future slices extend the editor (e.g., cue split/merge for Slice 3), all new behaviour is added to the shared components.
+
+## Supersession
+
+The Subtitle Editor (`SubtitleEditorHandler` + `continguts-caption-editor.php`/`.js`) now serves a single route: `continguts-caption-review` (`CatalogAction::captionReview()`), the post-publication Catalog caption editor reached from Continguts. It is not part of the Intake pipeline.
+
+Slices 2–4 (upload → Groq/faster-whisper transcription → Gemini revision → Gemini translation — see [ADR-0006](0006-groq-primary-faster-whisper-fallback-transcription.md), [ADR-0011](0011-gemini-flash-master-subtitle-revision.md), [ADR-0005](0005-gemini-flash-for-subtitle-translation.md)) now run as an unattended background job (`transcription-loading.php`, states `transcribing → revising → translating → download_ready`). The terminal `download_ready` state offers VTT/SRT downloads only; there is no inline cue-editing step for the Producer to review or correct auto-generated or translated cues before download.
+
+`studio/views/translation-review.php` and `studio/js/translation-review.js` remain in the repository — an apparent attempt to extend the shared editor to the translation-review step — but are not referenced by any route in `studio/index.php` or any `Actions/*` class. They are dead code as of this writing.
+
+The universal-editor architecture was not carried through as the pipeline evolved. Catalog editing and the automated intake pipeline now have separate review surfaces (one interactive editor, one download-only completion screen) rather than one shared component.

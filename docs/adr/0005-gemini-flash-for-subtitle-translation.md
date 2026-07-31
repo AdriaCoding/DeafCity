@@ -1,8 +1,9 @@
-# ADR-0005 — Use Gemini 2.0 Flash for subtitle translation
+# ADR-0005 — Use Gemini Flash for subtitle translation
 
 **Date**: 2026-05-22
 **Status**: Accepted
 **Supersedes**: implicit "T2TT/NLLB-200 only" decision in Slice 4 PRD
+**Updated**: 2026-07-31 — code now calls `gemini-2.5-flash`, not `gemini-2.0-flash` (model upgraded post-launch; rationale below is unaffected by the point-version bump)
 
 ---
 
@@ -23,7 +24,7 @@ Constraints:
 ## Decision
 
 Replace the local NLLB Python subprocess with a direct PHP call to the
-**Gemini 2.0 Flash** REST API (`gemini-2.0-flash:generateContent`).
+**Gemini Flash** REST API (`gemini-2.5-flash:generateContent`).
 
 Key design choices:
 - **No new Composer dependencies**: the HTTP call uses native PHP `curl_*`.
