@@ -3,8 +3,10 @@
 namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Studio\CatalogEditor;
 use Studio\EditionAddHandler;
 use Studio\StudioConfig;
+use Studio\StudioConfigMutation;
 
 class EditionAddHandlerTest extends TestCase
 {
@@ -21,12 +23,20 @@ class EditionAddHandlerTest extends TestCase
         if (is_file($this->configPath)) {
             unlink($this->configPath);
         }
+        @unlink($this->configPath . '.lock');
+    }
+
+    private function makeMutation(): StudioConfigMutation
+    {
+        return new StudioConfigMutation(
+            new StudioConfig($this->configPath),
+            new CatalogEditor($this->configPath . '.catalog-unused'),
+        );
     }
 
     public function test_adds_edition_to_config_file(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new EditionAddHandler($config);
+        $handler = new EditionAddHandler($this->makeMutation());
 
         $result = $handler->handle('Lisboa', '2027');
 
@@ -42,8 +52,7 @@ class EditionAddHandlerTest extends TestCase
 
     public function test_rejects_duplicate_edition(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new EditionAddHandler($config);
+        $handler = new EditionAddHandler($this->makeMutation());
 
         $this->assertTrue($handler->handle('Lisboa', '2027')['ok']);
         $again = $handler->handle('Lisboa', '2027');
@@ -54,8 +63,7 @@ class EditionAddHandlerTest extends TestCase
 
     public function test_rejects_invalid_input(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new EditionAddHandler($config);
+        $handler = new EditionAddHandler($this->makeMutation());
 
         $result = $handler->handle('', '20');
 

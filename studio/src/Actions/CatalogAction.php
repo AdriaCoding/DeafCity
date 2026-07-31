@@ -6,13 +6,14 @@ use Studio\ActiveJobBanner;
 use Studio\CaptionDeleteHandler;
 use Studio\CaptionReplaceHandler;
 use Studio\CaptionUploadHandler;
-use Studio\CatalogTagPool;
 use Studio\CatalogIntakeAddHandler;
 use Studio\Container;
 use Studio\EditionAddHandler;
+use Studio\JobManager;
 use Studio\SignLanguageAddHandler;
 use Studio\SubtitleLanguageAddHandler;
 use Studio\StudioHeader;
+use Studio\TranslationJobState;
 use Studio\TypologyAddHandler;
 use Studio\VideoEditHandler;
 use Studio\VideoVisibilityHandler;
@@ -26,7 +27,7 @@ class CatalogAction
     public function addSignLanguage(): never
     {
         header('Content-Type: application/json; charset=utf-8');
-        $result = (new SignLanguageAddHandler($this->c->studioConfig))->handle(
+        $result = (new SignLanguageAddHandler($this->c->configMutation()))->handle(
             (string) ($_POST['sign_language_code'] ?? ''),
             (string) ($_POST['sign_language_qualifier'] ?? ''),
         );
@@ -37,7 +38,7 @@ class CatalogAction
     public function addEdition(): never
     {
         header('Content-Type: application/json; charset=utf-8');
-        $result = (new EditionAddHandler($this->c->studioConfig))->handle(
+        $result = (new EditionAddHandler($this->c->configMutation()))->handle(
             (string) ($_POST['edition_city'] ?? ''),
             (string) ($_POST['edition_year'] ?? ''),
         );
@@ -48,7 +49,7 @@ class CatalogAction
     public function addTypology(): never
     {
         header('Content-Type: application/json; charset=utf-8');
-        $result = (new TypologyAddHandler($this->c->studioConfig))->handle(
+        $result = (new TypologyAddHandler($this->c->configMutation()))->handle(
             (string) ($_POST['typology_label'] ?? ''),
         );
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
@@ -59,7 +60,7 @@ class CatalogAction
     {
         header('Content-Type: application/json; charset=utf-8');
         $result = (new SubtitleLanguageAddHandler(
-            $this->c->studioConfig,
+            $this->c->configMutation(),
             new \Studio\Iso639LanguageRegistry(__DIR__ . '/../../js/iso-639-3.json'),
             new \Studio\VimeoLocaleRegistry(__DIR__ . '/../../js/vimeo-texttrack-locales.json'),
         ))->handle(
@@ -114,21 +115,17 @@ class CatalogAction
     public function contingutsContext(?array $syncContext = null): array
     {
         $c = $this->c;
-        $catalogFilePath = $c->dataDir . '/catalog.json';
-        $catalogData = is_file($catalogFilePath)
-            ? (json_decode((string) file_get_contents($catalogFilePath), true) ?? ['videos' => []])
-            : ['videos' => []];
-        $catalogVideos = $catalogData['videos'] ?? [];
         $editions = $c->studioConfig->getEditions();
         $signLanguages = $c->studioConfig->getSignLanguages();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         $typologies = $c->studioConfig->getTypologies();
         $catalogEditor = $c->catalogEditor();
+        $catalogVideos = $catalogEditor->getAllVideos();
         $referencedEditionIds = $catalogEditor->getReferencedEditionIds();
         $referencedSignLanguageIds = $catalogEditor->getReferencedSignLanguageIds();
         $referencedSubtitleLanguageIds = $catalogEditor->getReferencedSubtitleLanguageIds();
         $referencedTypologyIds = $catalogEditor->getReferencedTypologyIds();
-        $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
+        $catalogTags = $catalogEditor->getAllTags();
         [$syncStatus, $isSyncing] = $this->resolveSyncContext($syncContext);
 
         return array_merge(
@@ -197,8 +194,7 @@ class CatalogAction
             require $this->view('continguts-video-not-found.php');
             exit;
         }
-        $catalogFilePath = $c->dataDir . '/catalog.json';
-        $catalogTags = (new CatalogTagPool($catalogFilePath))->getTagsSortedAlphabetically();
+        $catalogTags = $c->catalogEditor()->getAllTags();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
         $typologies = $c->studioConfig->getTypologies();
         $signLanguages = $c->studioConfig->getSignLanguages();
@@ -715,9 +711,10 @@ class CatalogAction
 
         $jobDir   = $this->captionTranslationJobDir($vimeoId);
         $stateFile = $jobDir . '/translation.json';
+        $translationState = $this->translationJobState($vimeoId);
 
         if (is_file($stateFile)) {
-            $existing = json_decode((string) file_get_contents($stateFile), true);
+            $existing = $translationState->read();
             if (in_array($existing['status'] ?? '', ['pending', 'running'], true)) {
                 http_response_code(409);
                 echo json_encode(['ok' => false, 'error' => 'Ja hi ha una traducció en curs per a aquest vídeo.'], JSON_UNESCAPED_UNICODE);
@@ -779,14 +776,7 @@ class CatalogAction
             exit;
         }
 
-        $languages = [];
-        foreach ($targets as $lang) {
-            $languages[$lang] = ['status' => 'pending'];
-        }
-        file_put_contents(
-            $stateFile,
-            json_encode(['status' => 'pending', 'languages' => $languages], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n"
-        );
+        $translationState->initiate($targets);
 
         $this->c->launcher->launchTranslation($masterVttPath, $stateFile, $masterLang, $jobDir, $targets);
 
@@ -812,12 +802,7 @@ class CatalogAction
             exit;
         }
 
-        $state = json_decode((string) file_get_contents($stateFile), true);
-        if (!is_array($state)) {
-            echo json_encode(['status' => 'idle', 'missingTargets' => $this->computeMissingTargets($vimeoId)], JSON_UNESCAPED_UNICODE);
-            exit;
-        }
-
+        $state = $this->translationJobState($vimeoId)->read();
         $topStatus = $state['status'] ?? 'pending';
 
         if ($topStatus === 'done') {
@@ -869,8 +854,9 @@ class CatalogAction
             exit;
         }
 
-        $state = json_decode((string) file_get_contents($stateFile), true);
-        if (!is_array($state) || !array_key_exists($lang, $state['languages'] ?? [])) {
+        $translationState = $this->translationJobState($vimeoId);
+        $state = $translationState->read();
+        if (!array_key_exists($lang, $state['languages'] ?? [])) {
             http_response_code(422);
             echo json_encode(['ok' => false, 'error' => 'Idioma no trobat a l\'estat de traducció.'], JSON_UNESCAPED_UNICODE);
             exit;
@@ -899,10 +885,7 @@ class CatalogAction
 
         $masterVttPath = $this->c->dataDir . '/captions/' . $masterFile;
 
-        $state['languages'][$lang] = ['status' => 'pending'];
-        $state['status'] = 'running';
-        unset($state['savedLangs'], $state['errorLangs']);
-        file_put_contents($stateFile, json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+        $translationState->resetLanguage($lang);
 
         $this->c->launcher->launchTranslation($masterVttPath, $stateFile, $masterLang, $jobDir, [$lang]);
 
@@ -964,16 +947,14 @@ class CatalogAction
             }
         }
 
-        $updatedState               = $state;
-        $updatedState['status']     = 'saved';
-        $updatedState['savedLangs'] = $savedLangs;
-        $updatedState['errorLangs'] = $errorLangs;
-        @file_put_contents(
-            $jobDir . '/translation.json',
-            json_encode($updatedState, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n"
-        );
+        $this->translationJobState($vimeoId)->markSaved($savedLangs, $errorLangs);
 
         return ['saved' => $savedLangs, 'errors' => $errorLangs];
+    }
+
+    private function translationJobState(string $vimeoId): TranslationJobState
+    {
+        return new TranslationJobState(new JobManager(dirname($this->captionTranslationJobDir($vimeoId))));
     }
 
     /** @return list<array{id: string, label: string}> */

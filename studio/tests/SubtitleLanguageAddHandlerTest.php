@@ -3,8 +3,10 @@
 namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Studio\CatalogEditor;
 use Studio\Iso639LanguageRegistry;
 use Studio\StudioConfig;
+use Studio\StudioConfigMutation;
 use Studio\SubtitleLanguageAddHandler;
 use Studio\VimeoLocaleRegistry;
 
@@ -27,6 +29,7 @@ class SubtitleLanguageAddHandlerTest extends TestCase
         if (is_file($this->configPath)) {
             unlink($this->configPath);
         }
+        @unlink($this->configPath . '.lock');
     }
 
     public function test_adds_language_in_iso_vimeo_intersection(): void
@@ -83,7 +86,10 @@ class SubtitleLanguageAddHandlerTest extends TestCase
     private function makeHandler(): SubtitleLanguageAddHandler
     {
         return new SubtitleLanguageAddHandler(
-            new StudioConfig($this->configPath),
+            new StudioConfigMutation(
+                new StudioConfig($this->configPath),
+                new CatalogEditor($this->configPath . '.catalog-unused'),
+            ),
             $this->isoRegistry,
             $this->vimeoRegistry,
         );

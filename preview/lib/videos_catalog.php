@@ -79,102 +79,51 @@ if (!function_exists('vpc_catalog_entry_is_visible')) {
     }
 }
 
-if (!function_exists('vpc_vimeo_playlist_from_catalog')) {
+if (!function_exists('vpc_filter_options_from_catalog')) {
     /**
-     * Build a $vpc-compatible playlist from ordered catalog ids.
-     *
-     * @param array<string, mixed> $catalog Decoded root (must include "videos")
-     * @param string[]             $orderedIds Catalog entry "id" values, in play order
-     * @return array<int, array<string, mixed>> playlist entries for vimeo_caption_player
-     */
-    function vpc_vimeo_playlist_from_catalog(array $catalog, array $orderedIds) {
-        /** @var array<string, array<string, mixed>> $byId */
-        $byId = array();
-        foreach ($catalog['videos'] as $v) {
-            if (!is_array($v) || empty($v['id']) || !is_string($v['id'])) {
-                continue;
-            }
-            if (!vpc_catalog_entry_is_visible($v)) {
-                continue;
-            }
-            $byId[$v['id']] = $v;
-        }
-
-        $playlist = array();
-        foreach ($orderedIds as $slug) {
-            if (!is_string($slug) || $slug === '' || empty($byId[$slug])) {
-                continue;
-            }
-            $v = $byId[$slug];
-            $entry = array();
-
-            if (!empty($v['vimeo_id'])) {
-                $entry['video_id'] = preg_replace('/\D/', '', (string) $v['vimeo_id']);
-            }
-            if (!empty($v['embed_url']) && is_string($v['embed_url'])) {
-                $entry['embed_url'] = $v['embed_url'];
-            }
-
-            if (!empty($v['captions']) && is_array($v['captions'])) {
-                $tracks = vpc_caption_tracks_from_catalog_captions($v['captions']);
-                if (count($tracks) > 0) {
-                    $entry['caption_tracks'] = $tracks;
-                }
-            }
-
-            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
-            if ($sl !== '') {
-                $entry['sign_language'] = $sl;
-            }
-
-            if (!empty($v['thumbnail_url']) && is_string($v['thumbnail_url'])) {
-                $entry['thumbnail_url'] = trim((string) $v['thumbnail_url']);
-            }
-
-            if (empty($entry['video_id']) && empty($entry['embed_url'])) {
-                continue;
-            }
-
-            $playlist[] = $entry;
-        }
-        return $playlist;
-    }
-}
-
-if (!function_exists('vpc_sign_language_options_from_catalog')) {
-    /**
-     * Derive sign language filter options from distinct sign_language IDs in the catalog,
-     * resolved to labels via studio-config.json.
-     * Ordered alphabetically by the second word of the label (e.g. "Spanish" in
-     * "LSE Spanish Sign Language"), with full-label tie-break.
+     * Derive filter options for one Catalog field (sign_language, edition,
+     * typology, ...), resolved to labels via studio-config.json. This is the
+     * single place that walks the Catalog + config for a filterable field —
+     * adding a new filterable Video field means one call to this function,
+     * not a new copy-pasted extractor.
      *
      * @param array<string, mixed> $catalog
-     * @return array<int, array{value: string, label: string}>
+     * @param string $studioConfigPath
+     * @param string $catalogField  Catalog video field, e.g. 'edition'
+     * @param string $configListKey studio-config.json list key, e.g. 'editions'
+     * @param 'config_order'|'label_second_word' $order
+     *   'config_order': ordered as in studio-config.json (edition, typology).
+     *   'label_second_word': alphabetical by the label's second word, e.g.
+     *   "Spanish" in "LSE Spanish Sign Language" (sign_language).
+     * @return array<int, array{value: string, label: string, short_label?: string}>
      */
-    function vpc_sign_language_options_from_catalog(array $catalog, $studioConfigPath) {
+    function vpc_filter_options_from_catalog(array $catalog, $studioConfigPath, $catalogField, $configListKey, $order = 'config_order') {
         $seen = array();
         foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
             if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
                 continue;
             }
-            $sl = isset($v['sign_language']) ? trim((string) $v['sign_language']) : '';
-            if ($sl !== '' && !isset($seen[$sl])) {
-                $seen[$sl] = true;
+            $val = isset($v[$catalogField]) ? trim((string) $v[$catalogField]) : '';
+            if ($val !== '' && !isset($seen[$val])) {
+                $seen[$val] = true;
             }
         }
 
         $labelMap = array();
         $shortLabelMap = array();
+        $orderMap = array();
         if (is_readable($studioConfigPath)) {
             $raw = file_get_contents($studioConfigPath);
             $cfg = $raw !== false ? json_decode($raw, true) : null;
             if (is_array($cfg)) {
-                foreach (isset($cfg['sign_languages']) ? $cfg['sign_languages'] : array() as $item) {
+                $pos = 0;
+                foreach (isset($cfg[$configListKey]) ? $cfg[$configListKey] : array() as $item) {
                     if (!empty($item['id']) && !empty($item['label'])) {
                         $labelMap[$item['id']] = $item['label'];
                         if (!empty($item['short_label']) && is_string($item['short_label'])) {
                             $shortLabelMap[$item['id']] = $item['short_label'];
                         }
+                        $orderMap[$item['id']] = $pos++;
                     }
                 }
             }
@@ -189,18 +138,41 @@ if (!function_exists('vpc_sign_language_options_from_catalog')) {
             if (isset($shortLabelMap[$id])) {
                 $opt['short_label'] = $shortLabelMap[$id];
             }
+            if ($order === 'config_order') {
+                $opt['_order'] = isset($orderMap[$id]) ? $orderMap[$id] : 999;
+            }
             $opts[] = $opt;
         }
-        usort($opts, function ($a, $b) {
-            $wordA = vpc_sign_language_sort_key($a['label']);
-            $wordB = vpc_sign_language_sort_key($b['label']);
-            $cmp = strcasecmp($wordA, $wordB);
-            if ($cmp !== 0) {
-                return $cmp;
-            }
-            return strcasecmp($a['label'], $b['label']);
-        });
+
+        if ($order === 'config_order') {
+            usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
+            $opts = array_map(function ($o) {
+                unset($o['_order']);
+                return $o;
+            }, $opts);
+        } else {
+            usort($opts, function ($a, $b) {
+                $wordA = vpc_sign_language_sort_key($a['label']);
+                $wordB = vpc_sign_language_sort_key($b['label']);
+                $cmp = strcasecmp($wordA, $wordB);
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+                return strcasecmp($a['label'], $b['label']);
+            });
+        }
+
         return $opts;
+    }
+}
+
+if (!function_exists('vpc_sign_language_options_from_catalog')) {
+    /**
+     * @param array<string, mixed> $catalog
+     * @return array<int, array{value: string, label: string}>
+     */
+    function vpc_sign_language_options_from_catalog(array $catalog, $studioConfigPath) {
+        return vpc_filter_options_from_catalog($catalog, $studioConfigPath, 'sign_language', 'sign_languages', 'label_second_word');
     }
 }
 
@@ -692,128 +664,74 @@ if (!function_exists('vpc_shuffle_playlist')) {
 
 if (!function_exists('vpc_edition_options_from_catalog')) {
     /**
-     * Derive City/Edition filter options from distinct edition IDs in the catalog,
-     * resolved to labels via studio-config.json. Order follows config file order.
-     *
      * @param array<string, mixed> $catalog
-     * @param string $studioConfigPath
      * @return array<int, array{value: string, label: string}>
      */
     function vpc_edition_options_from_catalog(array $catalog, $studioConfigPath) {
-        $seen = array();
-        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
-            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
-                continue;
-            }
-            $ed = isset($v['edition']) ? trim((string) $v['edition']) : '';
-            if ($ed !== '' && !isset($seen[$ed])) {
-                $seen[$ed] = true;
-            }
-        }
-
-        $labelMap = array();
-        $shortLabelMap = array();
-        $orderMap = array();
-        if (is_readable($studioConfigPath)) {
-            $raw = file_get_contents($studioConfigPath);
-            $cfg = $raw !== false ? json_decode($raw, true) : null;
-            if (is_array($cfg)) {
-                $pos = 0;
-                foreach (isset($cfg['editions']) ? $cfg['editions'] : array() as $item) {
-                    if (!empty($item['id']) && !empty($item['label'])) {
-                        $labelMap[$item['id']] = $item['label'];
-                        if (!empty($item['short_label']) && is_string($item['short_label'])) {
-                            $shortLabelMap[$item['id']] = $item['short_label'];
-                        }
-                        $orderMap[$item['id']] = $pos++;
-                    }
-                }
-            }
-        }
-
-        $opts = array();
-        foreach (array_keys($seen) as $id) {
-            $opt = array(
-                'value'  => $id,
-                'label'  => isset($labelMap[$id]) ? $labelMap[$id] : $id,
-                '_order' => isset($orderMap[$id]) ? $orderMap[$id] : 999,
-            );
-            if (isset($shortLabelMap[$id])) {
-                $opt['short_label'] = $shortLabelMap[$id];
-            }
-            $opts[] = $opt;
-        }
-        usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
-        return array_map(function ($o) {
-            $out = array('value' => $o['value'], 'label' => $o['label']);
-            if (isset($o['short_label'])) {
-                $out['short_label'] = $o['short_label'];
-            }
-            return $out;
-        }, $opts);
+        return vpc_filter_options_from_catalog($catalog, $studioConfigPath, 'edition', 'editions', 'config_order');
     }
 }
 
 if (!function_exists('vpc_typology_options_from_catalog')) {
     /**
-     * Derive Typology filter options from distinct typology IDs in the catalog,
-     * resolved to labels via studio-config.json. Order follows config file order.
-     *
      * @param array<string, mixed> $catalog
-     * @param string $studioConfigPath
      * @return array<int, array{value: string, label: string}>
      */
     function vpc_typology_options_from_catalog(array $catalog, $studioConfigPath) {
-        $seen = array();
-        foreach (isset($catalog['videos']) ? $catalog['videos'] : array() as $v) {
-            if (!is_array($v) || !vpc_catalog_entry_is_visible($v)) {
-                continue;
-            }
-            $ty = isset($v['typology']) ? trim((string) $v['typology']) : '';
-            if ($ty !== '' && !isset($seen[$ty])) {
-                $seen[$ty] = true;
-            }
-        }
+        return vpc_filter_options_from_catalog($catalog, $studioConfigPath, 'typology', 'typologies', 'config_order');
+    }
+}
 
-        $labelMap = array();
-        $shortLabelMap = array();
-        $orderMap = array();
-        if (is_readable($studioConfigPath)) {
-            $raw = file_get_contents($studioConfigPath);
-            $cfg = $raw !== false ? json_decode($raw, true) : null;
-            if (is_array($cfg)) {
-                $pos = 0;
-                foreach (isset($cfg['typologies']) ? $cfg['typologies'] : array() as $item) {
-                    if (!empty($item['id']) && !empty($item['label'])) {
-                        $labelMap[$item['id']] = $item['label'];
-                        if (!empty($item['short_label']) && is_string($item['short_label'])) {
-                            $shortLabelMap[$item['id']] = $item['short_label'];
-                        }
-                        $orderMap[$item['id']] = $pos++;
-                    }
-                }
-            }
-        }
-
-        $opts = array();
-        foreach (array_keys($seen) as $id) {
-            $opt = array(
-                'value'  => $id,
-                'label'  => isset($labelMap[$id]) ? $labelMap[$id] : $id,
-                '_order' => isset($orderMap[$id]) ? $orderMap[$id] : 999,
+if (!function_exists('vpc_catalog_collection')) {
+    /**
+     * Assemble the catalog-derived bundle a Preview route needs to render
+     * its player: shuffled playlist, unshuffled catalog playlist (for
+     * client-side filtering), the three filter option lists, subtitle
+     * languages, and the DEAF&HEARING chrome guard.
+     *
+     * This is the single place that walks the Catalog to build that bundle.
+     * `preview/index.php` (home) and `preview/lib/bottom_bar_player_config.php`
+     * (About / Participants secondary chrome) both need it; before this
+     * function existed they independently re-derived it, so a new
+     * catalog-derived field had to be wired into both places by hand.
+     * Locale strings are intentionally left to the caller — this module has
+     * no dependency on preview_locale.php.
+     *
+     * @param array<string, mixed>|null $catalog
+     * @param string $studioConfigPath
+     * @return array{
+     *   playlist: array<int, array<string, mixed>>,
+     *   catalog_playlist: array<int, array<string, mixed>>,
+     *   sign_language_options: array<int, array<string, mixed>>,
+     *   edition_options: array<int, array<string, mixed>>,
+     *   typology_options: array<int, array<string, mixed>>,
+     *   subtitle_languages: array<int, array<string, mixed>>,
+     *   deaf_hearing_enabled: bool,
+     * }
+     */
+    function vpc_catalog_collection($catalog, $studioConfigPath) {
+        if (!$catalog) {
+            return array(
+                'playlist' => array(),
+                'catalog_playlist' => array(),
+                'sign_language_options' => array(),
+                'edition_options' => array(),
+                'typology_options' => array(),
+                'subtitle_languages' => array(),
+                'deaf_hearing_enabled' => false,
             );
-            if (isset($shortLabelMap[$id])) {
-                $opt['short_label'] = $shortLabelMap[$id];
-            }
-            $opts[] = $opt;
         }
-        usort($opts, function ($a, $b) { return $a['_order'] - $b['_order']; });
-        return array_map(function ($o) {
-            $out = array('value' => $o['value'], 'label' => $o['label']);
-            if (isset($o['short_label'])) {
-                $out['short_label'] = $o['short_label'];
-            }
-            return $out;
-        }, $opts);
+
+        $catalogPlaylist = vpc_vimeo_playlist_all_from_catalog($catalog);
+
+        return array(
+            'playlist' => vpc_shuffle_playlist($catalogPlaylist),
+            'catalog_playlist' => $catalogPlaylist,
+            'sign_language_options' => vpc_sign_language_options_from_catalog($catalog, $studioConfigPath),
+            'edition_options' => vpc_edition_options_from_catalog($catalog, $studioConfigPath),
+            'typology_options' => vpc_typology_options_from_catalog($catalog, $studioConfigPath),
+            'subtitle_languages' => vpc_subtitle_languages_from_studio_config($studioConfigPath),
+            'deaf_hearing_enabled' => vpc_catalog_deaf_hearing_tag_count($catalog) > 0,
+        );
     }
 }

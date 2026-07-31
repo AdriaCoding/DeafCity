@@ -3,8 +3,10 @@
 namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Studio\CatalogEditor;
 use Studio\SignLanguageAddHandler;
 use Studio\StudioConfig;
+use Studio\StudioConfigMutation;
 
 class SignLanguageAddHandlerTest extends TestCase
 {
@@ -21,12 +23,20 @@ class SignLanguageAddHandlerTest extends TestCase
         if (is_file($this->configPath)) {
             unlink($this->configPath);
         }
+        @unlink($this->configPath . '.lock');
+    }
+
+    private function makeMutation(): StudioConfigMutation
+    {
+        return new StudioConfigMutation(
+            new StudioConfig($this->configPath),
+            new CatalogEditor($this->configPath . '.catalog-unused'),
+        );
     }
 
     public function test_adds_sign_language_to_config_file(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new SignLanguageAddHandler($config);
+        $handler = new SignLanguageAddHandler($this->makeMutation());
 
         $result = $handler->handle('GSS', 'Greek');
 
@@ -41,8 +51,7 @@ class SignLanguageAddHandlerTest extends TestCase
 
     public function test_rejects_duplicate_sign_language(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new SignLanguageAddHandler($config);
+        $handler = new SignLanguageAddHandler($this->makeMutation());
 
         $this->assertTrue($handler->handle('GSS', 'Greek')['ok']);
         $again = $handler->handle('GSS', 'Greek');

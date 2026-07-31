@@ -15,15 +15,13 @@ $studioConfigPath = $_dataDir . '/studio-config.json';
 $catalog  = vpc_load_videos_catalog($catalogJsonPath);
 // D2 + D12: shuffle server-side so item[0] is both the paused poster and the queue head.
 // Every reload yields a fresh random order; no sign-language pre-filter (D7).
-$playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog($catalog)) : [];
-$signLanguageOptions  = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : [];
-$editionOptions       = $catalog ? vpc_edition_options_from_catalog($catalog, $studioConfigPath) : [];
-$typologyOptions      = $catalog ? vpc_typology_options_from_catalog($catalog, $studioConfigPath) : [];
-$signLanguageOptions  = preview_localize_filter_options($signLanguageOptions, 'sign_language');
-$editionOptions       = preview_localize_filter_options($editionOptions, 'edition');
-$typologyOptions      = preview_localize_filter_options($typologyOptions, 'typology');
-$subtitleLanguages    = vpc_subtitle_languages_from_studio_config($studioConfigPath);
-$catalogPlaylist = $catalog ? vpc_vimeo_playlist_all_from_catalog($catalog) : [];
+$collection = vpc_catalog_collection($catalog, $studioConfigPath);
+$playlist = $collection['playlist'];
+$catalogPlaylist = $collection['catalog_playlist'];
+$signLanguageOptions  = preview_localize_filter_options($collection['sign_language_options'], 'sign_language');
+$editionOptions       = preview_localize_filter_options($collection['edition_options'], 'edition');
+$typologyOptions      = preview_localize_filter_options($collection['typology_options'], 'typology');
+$subtitleLanguages    = $collection['subtitle_languages'];
 $vpc = null;
 if (count($playlist) > 0) {
     $vpc = [
@@ -66,7 +64,7 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
     // Empty/unknown: keep catalog master + a technical SSR playlist; JS applies empty filter.
 }
 
-$deafHearingEnabled = $catalog ? vpc_catalog_deaf_hearing_tag_count($catalog) > 0 : false;
+$deafHearingEnabled = $collection['deaf_hearing_enabled'];
 if ($vpc !== null) {
     $vpc['deaf_hearing_enabled'] = $deafHearingEnabled;
 }

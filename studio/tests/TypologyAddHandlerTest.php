@@ -3,7 +3,9 @@
 namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Studio\CatalogEditor;
 use Studio\StudioConfig;
+use Studio\StudioConfigMutation;
 use Studio\TypologyAddHandler;
 
 class TypologyAddHandlerTest extends TestCase
@@ -21,12 +23,20 @@ class TypologyAddHandlerTest extends TestCase
         if (is_file($this->configPath)) {
             unlink($this->configPath);
         }
+        @unlink($this->configPath . '.lock');
+    }
+
+    private function makeMutation(): StudioConfigMutation
+    {
+        return new StudioConfigMutation(
+            new StudioConfig($this->configPath),
+            new CatalogEditor($this->configPath . '.catalog-unused'),
+        );
     }
 
     public function test_adds_typology_to_config_file(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new TypologyAddHandler($config);
+        $handler = new TypologyAddHandler($this->makeMutation());
 
         $result = $handler->handle('ANÈCDOTES');
 
@@ -41,8 +51,7 @@ class TypologyAddHandlerTest extends TestCase
 
     public function test_rejects_duplicate_typology_id(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new TypologyAddHandler($config);
+        $handler = new TypologyAddHandler($this->makeMutation());
 
         // Slugifies to 'acudits', which already exists in the fixture.
         $result = $handler->handle('Acudits');
@@ -53,8 +62,7 @@ class TypologyAddHandlerTest extends TestCase
 
     public function test_rejects_empty_label(): void
     {
-        $config = new StudioConfig($this->configPath);
-        $handler = new TypologyAddHandler($config);
+        $handler = new TypologyAddHandler($this->makeMutation());
 
         $result = $handler->handle('   ');
 

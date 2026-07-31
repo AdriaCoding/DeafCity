@@ -5,7 +5,7 @@ namespace Studio;
 class SubtitleLanguageAddHandler
 {
     public function __construct(
-        private readonly StudioConfig $studioConfig,
+        private readonly StudioConfigMutation $configMutation,
         private readonly Iso639LanguageRegistry $isoRegistry,
         private readonly VimeoLocaleRegistry $vimeoRegistry,
     ) {
@@ -44,7 +44,7 @@ class SubtitleLanguageAddHandler
             ];
         }
 
-        foreach ($this->studioConfig->getSubtitleLanguages() as $language) {
+        foreach ($this->configMutation->getSubtitleLanguages() as $language) {
             if (($language['id'] ?? '') === $id) {
                 return [
                     'ok' => false,
@@ -54,7 +54,7 @@ class SubtitleLanguageAddHandler
         }
 
         try {
-            $this->studioConfig->addSubtitleLanguage($id, $label);
+            $this->configMutation->addSubtitleLanguage($id, $label);
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,

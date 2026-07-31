@@ -5,7 +5,7 @@ namespace Studio;
 class SignLanguageAddHandler
 {
     public function __construct(
-        private readonly StudioConfig $studioConfig,
+        private readonly StudioConfigMutation $configMutation,
         private readonly SignLanguageFormatter $formatter = new SignLanguageFormatter(),
     ) {
     }
@@ -23,7 +23,7 @@ class SignLanguageAddHandler
             ];
         }
 
-        foreach ($this->studioConfig->getSignLanguages() as $language) {
+        foreach ($this->configMutation->getSignLanguages() as $language) {
             if (($language['id'] ?? '') === $formatted['id']) {
                 return [
                     'ok' => false,
@@ -33,7 +33,7 @@ class SignLanguageAddHandler
         }
 
         try {
-            $this->studioConfig->addSignLanguage($formatted['id'], $formatted['label']);
+            $this->configMutation->addSignLanguage($formatted['id'], $formatted['label']);
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,

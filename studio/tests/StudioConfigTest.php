@@ -7,6 +7,41 @@ use Studio\StudioConfig;
 
 class StudioConfigTest extends TestCase
 {
+    public function test_concurrent_writes_do_not_corrupt_or_lose_updates(): void
+    {
+        $configPath = sys_get_temp_dir() . '/studio-config-concurrent-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+
+        try {
+            $pids = [];
+            foreach (['alpha', 'beta'] as $slug) {
+                $pid = pcntl_fork();
+                if ($pid === 0) {
+                    (new StudioConfig($configPath))->addTypology($slug, strtoupper($slug));
+                    exit(0);
+                }
+                $pids[] = $pid;
+            }
+            foreach ($pids as $pid) {
+                pcntl_waitpid($pid, $status);
+            }
+
+            $raw = file_get_contents($configPath);
+            $data = json_decode($raw, true);
+            $this->assertIsArray($data, 'concurrent writes through the lock+rename path must never leave invalid/truncated JSON');
+
+            $ids = array_column($data['typologies'], 'id');
+            $this->assertContains('alpha', $ids);
+            $this->assertContains('beta', $ids);
+        } finally {
+            if (is_file($configPath)) {
+                unlink($configPath);
+            }
+            @unlink($configPath . '.lock');
+        }
+    }
+
+
     public function test_sign_languages_are_sorted_alphabetically_by_second_word(): void
     {
         $configPath = sys_get_temp_dir() . '/studio-config-sort-' . uniqid() . '.json';

@@ -30,80 +30,31 @@ class StudioConfig
         $this->prependConfigEntry('editions', $id, $label);
     }
 
-    private function prependConfigEntry(string $listKey, string $id, string $label): void
+    public function addSignLanguage(string $id, string $label): void
     {
-        $fp = fopen($this->configPath, 'c+');
-        if ($fp === false) {
-            throw new \RuntimeException('Could not open studio config for writing.');
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid sign language id.');
         }
 
-        flock($fp, LOCK_EX);
-
-        $raw = stream_get_contents($fp);
-        $data = json_decode($raw ?: '', true);
-        if (!is_array($data)) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            throw new \RuntimeException('Invalid studio config JSON.');
-        }
-
-        $entries = $data[$listKey] ?? [];
-        foreach ($entries as $entry) {
-            if (($entry['id'] ?? '') === $id) {
-                flock($fp, LOCK_UN);
-                fclose($fp);
-                throw new \RuntimeException('Config entry already exists.');
-            }
-        }
-
-        array_unshift($entries, ['id' => $id, 'label' => $label]);
-        $data[$listKey] = $entries;
-
-        ftruncate($fp, 0);
-        fseek($fp, 0);
-        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-        flock($fp, LOCK_UN);
-        fclose($fp);
-
-        $this->data = $data;
+        $this->appendConfigEntry('sign_languages', $id, $label);
     }
 
-    private function appendConfigEntry(string $listKey, string $id, string $label): void
+    public function addTypology(string $id, string $label): void
     {
-        $fp = fopen($this->configPath, 'c+');
-        if ($fp === false) {
-            throw new \RuntimeException('Could not open studio config for writing.');
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid typology id.');
         }
 
-        flock($fp, LOCK_EX);
+        $this->appendConfigEntry('typologies', $id, $label);
+    }
 
-        $raw = stream_get_contents($fp);
-        $data = json_decode($raw ?: '', true);
-        if (!is_array($data)) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            throw new \RuntimeException('Invalid studio config JSON.');
+    public function addSubtitleLanguage(string $id, string $label): void
+    {
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid subtitle language id.');
         }
 
-        $entries = $data[$listKey] ?? [];
-        foreach ($entries as $entry) {
-            if (($entry['id'] ?? '') === $id) {
-                flock($fp, LOCK_UN);
-                fclose($fp);
-                throw new \RuntimeException('Config entry already exists.');
-            }
-        }
-
-        $entries[] = ['id' => $id, 'label' => $label];
-        $data[$listKey] = $entries;
-
-        ftruncate($fp, 0);
-        fseek($fp, 0);
-        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-        flock($fp, LOCK_UN);
-        fclose($fp);
-
-        $this->data = $data;
+        $this->appendConfigEntry('subtitle_languages', $id, $label);
     }
 
     public function updateEditionLabel(string $id, string $label): void
@@ -151,140 +102,6 @@ class StudioConfig
             throw new \RuntimeException("Subtitle language '$id' is still referenced by one or more catalog videos.");
         }
         $this->removeConfigEntry('subtitle_languages', $id);
-    }
-
-    private function updateConfigEntryLabel(string $listKey, string $id, string $label): void
-    {
-        $fp = fopen($this->configPath, 'c+');
-        if ($fp === false) {
-            throw new \RuntimeException('Could not open studio config for writing.');
-        }
-
-        flock($fp, LOCK_EX);
-
-        $raw = stream_get_contents($fp);
-        $data = json_decode($raw ?: '', true);
-        if (!is_array($data)) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            throw new \RuntimeException('Invalid studio config JSON.');
-        }
-
-        $found = false;
-        foreach ($data[$listKey] ?? [] as $i => $entry) {
-            if (($entry['id'] ?? '') === $id) {
-                $data[$listKey][$i]['label'] = $label;
-                $found = true;
-                break;
-            }
-        }
-
-        if (!$found) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            throw new \RuntimeException("Config entry '$id' not found in '$listKey'.");
-        }
-
-        ftruncate($fp, 0);
-        fseek($fp, 0);
-        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-        flock($fp, LOCK_UN);
-        fclose($fp);
-
-        $this->data = $data;
-    }
-
-    private function removeConfigEntry(string $listKey, string $id): void
-    {
-        $fp = fopen($this->configPath, 'c+');
-        if ($fp === false) {
-            throw new \RuntimeException('Could not open studio config for writing.');
-        }
-
-        flock($fp, LOCK_EX);
-
-        $raw = stream_get_contents($fp);
-        $data = json_decode($raw ?: '', true);
-        if (!is_array($data)) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            throw new \RuntimeException('Invalid studio config JSON.');
-        }
-
-        $entries = $data[$listKey] ?? [];
-        $filtered = array_values(array_filter($entries, fn($e) => ($e['id'] ?? '') !== $id));
-        $data[$listKey] = $filtered;
-
-        ftruncate($fp, 0);
-        fseek($fp, 0);
-        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-        flock($fp, LOCK_UN);
-        fclose($fp);
-
-        $this->data = $data;
-    }
-
-    public function addSignLanguage(string $id, string $label): void
-    {
-        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
-            throw new \InvalidArgumentException('Invalid sign language id.');
-        }
-
-        $this->appendConfigEntry('sign_languages', $id, $label);
-    }
-
-    public function addTypology(string $id, string $label): void
-    {
-        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
-            throw new \InvalidArgumentException('Invalid typology id.');
-        }
-
-        $this->appendConfigEntry('typologies', $id, $label);
-    }
-
-    public function addSubtitleLanguage(string $id, string $label): void
-    {
-        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
-            throw new \InvalidArgumentException('Invalid subtitle language id.');
-        }
-
-        $fp = fopen($this->configPath, 'c+');
-        if ($fp === false) {
-            throw new \RuntimeException('Could not open studio config for writing.');
-        }
-
-        flock($fp, LOCK_EX);
-
-        $raw = stream_get_contents($fp);
-        $data = json_decode($raw ?: '', true);
-        if (!is_array($data)) {
-            flock($fp, LOCK_UN);
-            fclose($fp);
-            throw new \RuntimeException('Invalid studio config JSON.');
-        }
-
-        $entries = $data['subtitle_languages'] ?? [];
-        foreach ($entries as $entry) {
-            if (($entry['id'] ?? '') === $id) {
-                flock($fp, LOCK_UN);
-                fclose($fp);
-                throw new \RuntimeException('Config entry already exists.');
-            }
-        }
-
-        $entries[] = [
-            'id' => $id,
-            'label' => $label,
-        ];
-        $data['subtitle_languages'] = $entries;
-
-        ftruncate($fp, 0);
-        fseek($fp, 0);
-        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-        flock($fp, LOCK_UN);
-        fclose($fp);
-
-        $this->data = $data;
     }
 
     public function getSignLanguages(): array
@@ -370,5 +187,110 @@ class StudioConfig
         }
 
         return $parts[1];
+    }
+
+    private function prependConfigEntry(string $listKey, string $id, string $label): void
+    {
+        $this->withLockedConfig(function (array &$data) use ($listKey, $id, $label): void {
+            $entries = $data[$listKey] ?? [];
+            foreach ($entries as $entry) {
+                if (($entry['id'] ?? '') === $id) {
+                    throw new \RuntimeException('Config entry already exists.');
+                }
+            }
+
+            array_unshift($entries, ['id' => $id, 'label' => $label]);
+            $data[$listKey] = $entries;
+        });
+    }
+
+    private function appendConfigEntry(string $listKey, string $id, string $label): void
+    {
+        $this->withLockedConfig(function (array &$data) use ($listKey, $id, $label): void {
+            $entries = $data[$listKey] ?? [];
+            foreach ($entries as $entry) {
+                if (($entry['id'] ?? '') === $id) {
+                    throw new \RuntimeException('Config entry already exists.');
+                }
+            }
+
+            $entries[] = ['id' => $id, 'label' => $label];
+            $data[$listKey] = $entries;
+        });
+    }
+
+    private function updateConfigEntryLabel(string $listKey, string $id, string $label): void
+    {
+        $this->withLockedConfig(function (array &$data) use ($listKey, $id, $label): void {
+            $found = false;
+            foreach ($data[$listKey] ?? [] as $i => $entry) {
+                if (($entry['id'] ?? '') === $id) {
+                    $data[$listKey][$i]['label'] = $label;
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                throw new \RuntimeException("Config entry '$id' not found in '$listKey'.");
+            }
+        });
+    }
+
+    private function removeConfigEntry(string $listKey, string $id): void
+    {
+        $this->withLockedConfig(function (array &$data) use ($listKey, $id): void {
+            $entries = $data[$listKey] ?? [];
+            $data[$listKey] = array_values(array_filter($entries, fn($e) => ($e['id'] ?? '') !== $id));
+        });
+    }
+
+    /**
+     * Serialize writers through a dedicated lock file, then commit via
+     * write-temp-then-rename so a crash mid-write can never leave
+     * studio-config.json truncated or partially written — readers always
+     * see either the pre- or post-mutation content, never a corrupt file.
+     *
+     * A separate lock file (rather than locking configPath itself) is
+     * required for this to be correct: locking the path being replaced by
+     * rename() would let a writer that opened its handle just before the
+     * rename go on to read/lock the now-unlinked old inode instead of the
+     * file current writers actually see.
+     *
+     * @param callable(array<string, mixed> &$data): void $mutate
+     */
+    private function withLockedConfig(callable $mutate): void
+    {
+        $lockFp = fopen($this->configPath . '.lock', 'c');
+        if ($lockFp === false) {
+            throw new \RuntimeException('Could not open studio config lock.');
+        }
+
+        try {
+            flock($lockFp, LOCK_EX);
+
+            $raw = file_get_contents($this->configPath);
+            $data = $raw !== false ? json_decode($raw, true) : null;
+            if (!is_array($data)) {
+                throw new \RuntimeException('Invalid studio config JSON.');
+            }
+
+            $mutate($data);
+
+            $tmpPath = $this->configPath . '.tmp-' . bin2hex(random_bytes(6));
+            $encoded = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
+            if (file_put_contents($tmpPath, $encoded) === false) {
+                throw new \RuntimeException('Could not write studio config.');
+            }
+            if (!rename($tmpPath, $this->configPath)) {
+                @unlink($tmpPath);
+                throw new \RuntimeException('Could not save studio config.');
+            }
+
+            $this->data = $data;
+        } finally {
+            flock($lockFp, LOCK_UN);
+            fclose($lockFp);
+        }
     }
 }

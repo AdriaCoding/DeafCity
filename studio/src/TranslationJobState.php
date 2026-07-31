@@ -99,6 +99,26 @@ class TranslationJobState
         $data = $this->read();
         $data['languages'][$lang] = ['status' => 'pending'];
         $data['status'] = 'running';
+        // Clear any stale markSaved() addendum — a retry supersedes it.
+        unset($data['savedLangs'], $data['errorLangs']);
+        $this->write($data);
+    }
+
+    /**
+     * Record the outcome of publishing completed translations (Catalog
+     * Publication step, run after the worker marks the job 'done'). Not
+     * part of the pending/running/done/error worker state machine itself —
+     * an addendum a caller layers on top after it acts on 'done'.
+     *
+     * @param list<string> $savedLangs
+     * @param list<string> $errorLangs
+     */
+    public function markSaved(array $savedLangs, array $errorLangs): void
+    {
+        $data = $this->read();
+        $data['status'] = 'saved';
+        $data['savedLangs'] = $savedLangs;
+        $data['errorLangs'] = $errorLangs;
         $this->write($data);
     }
 

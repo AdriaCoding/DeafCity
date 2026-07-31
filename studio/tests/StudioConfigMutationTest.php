@@ -22,7 +22,7 @@ class StudioConfigMutationTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach ([$this->configPath, $this->catalogFile] as $f) {
+        foreach ([$this->configPath, $this->catalogFile, $this->configPath . '.lock'] as $f) {
             if (is_file($f)) {
                 unlink($f);
             }

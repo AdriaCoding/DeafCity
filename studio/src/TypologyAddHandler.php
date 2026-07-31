@@ -5,7 +5,7 @@ namespace Studio;
 class TypologyAddHandler
 {
     public function __construct(
-        private readonly StudioConfig $studioConfig,
+        private readonly StudioConfigMutation $configMutation,
     ) {
     }
 
@@ -23,7 +23,7 @@ class TypologyAddHandler
             ];
         }
 
-        foreach ($this->studioConfig->getTypologies() as $typology) {
+        foreach ($this->configMutation->getTypologies() as $typology) {
             if (($typology['id'] ?? '') === $id) {
                 return [
                     'ok' => false,
@@ -33,7 +33,7 @@ class TypologyAddHandler
         }
 
         try {
-            $this->studioConfig->addTypology($id, $label);
+            $this->configMutation->addTypology($id, $label);
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,

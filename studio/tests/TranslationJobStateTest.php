@@ -119,6 +119,39 @@ class TranslationJobStateTest extends TestCase
         $this->assertSame(['status' => 'done'], $this->state->getLanguageStatus('en'));
     }
 
+    public function test_resetLanguage_clears_stale_markSaved_addendum(): void
+    {
+        $this->state->initiate(['en', 'fr']);
+        $this->state->markRunning();
+        $this->state->markLanguageDone('en');
+        $this->state->markLanguageDone('fr');
+        $this->state->markSaved(['en', 'fr'], []);
+
+        $this->state->resetLanguage('fr');
+
+        $data = $this->state->read();
+        $this->assertArrayNotHasKey('savedLangs', $data);
+        $this->assertArrayNotHasKey('errorLangs', $data);
+        $this->assertSame('running', $data['status']);
+    }
+
+    public function test_markSaved_records_status_and_lang_lists(): void
+    {
+        $this->state->initiate(['en', 'fr']);
+        $this->state->markRunning();
+        $this->state->markLanguageDone('en');
+        $this->state->markLanguageError('fr', 'boom');
+
+        $this->state->markSaved(['en'], ['fr']);
+
+        $data = $this->state->read();
+        $this->assertSame('saved', $data['status']);
+        $this->assertSame(['en'], $data['savedLangs']);
+        $this->assertSame(['fr'], $data['errorLangs']);
+        // The per-language statuses from the worker run are untouched.
+        $this->assertSame(['status' => 'done'], $data['languages']['en']);
+    }
+
     public function test_markLanguageReviewed_updates_done_language(): void
     {
         $this->state->initiate(['en']);

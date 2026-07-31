@@ -20,6 +20,7 @@ class StudioConfigAddSubtitleLanguageTest extends TestCase
         if (is_file($this->configPath)) {
             unlink($this->configPath);
         }
+        @unlink($this->configPath . '.lock');
     }
 
     public function test_add_subtitle_language_persists_id_and_label(): void

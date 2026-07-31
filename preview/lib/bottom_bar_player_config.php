@@ -61,17 +61,15 @@ if (!function_exists('preview_build_bottom_bar_player_config')) {
         $catalogJsonPath = $dataDir . '/catalog.json';
         $studioConfigPath = $dataDir . '/studio-config.json';
         $catalog = vpc_load_videos_catalog($catalogJsonPath);
+        $collection = vpc_catalog_collection($catalog, $studioConfigPath);
 
-        $signLanguageOptions = $catalog ? vpc_sign_language_options_from_catalog($catalog, $studioConfigPath) : array();
-        $editionOptions = $catalog ? vpc_edition_options_from_catalog($catalog, $studioConfigPath) : array();
-        $typologyOptions = $catalog ? vpc_typology_options_from_catalog($catalog, $studioConfigPath) : array();
-        $signLanguageOptions = preview_localize_filter_options($signLanguageOptions, 'sign_language');
-        $editionOptions = preview_localize_filter_options($editionOptions, 'edition');
-        $typologyOptions = preview_localize_filter_options($typologyOptions, 'typology');
+        $signLanguageOptions = preview_localize_filter_options($collection['sign_language_options'], 'sign_language');
+        $editionOptions = preview_localize_filter_options($collection['edition_options'], 'edition');
+        $typologyOptions = preview_localize_filter_options($collection['typology_options'], 'typology');
 
-        $playlist = $catalog ? vpc_shuffle_playlist(vpc_vimeo_playlist_all_from_catalog($catalog)) : array();
+        $playlist = $collection['playlist'];
         $initialEntry = count($playlist) > 0 ? $playlist[0] : array();
-        $deafHearingEnabled = $catalog ? vpc_catalog_deaf_hearing_tag_count($catalog) > 0 : false;
+        $deafHearingEnabled = $collection['deaf_hearing_enabled'];
 
         $idBase = 'preview-secondary-' . preg_replace('/[^a-z0-9_-]/i', '', (string) $instanceSuffix);
         $transportId = $idBase . '__transport';

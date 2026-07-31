@@ -197,6 +197,39 @@ class TranslationRunnerTest extends TestCase
         $this->assertStringContainsString('API quota exceeded', $data['languages']['fr']['message']);
     }
 
+    // ------------------------------------------------------------------ integrity check
+
+    public function test_overlapping_translated_cues_are_marked_error_not_written(): void
+    {
+        // Master has two cues that already overlap; translation preserves
+        // timestamps exactly, so the defect propagates into the output —
+        // the integrity check must catch it before markLanguageDone.
+        $vttContent = "WEBVTT\n\n00:00:01.000 --> 00:00:05.000\nHello\n\n00:00:03.000 --> 00:00:06.000\nWorld\n";
+        file_put_contents($this->jobManager->draftVttPath(), $vttContent);
+        $this->state->initiate(['fr']);
+
+        $translator = $this->makeCallableTranslator(fn(array $cues) => array_fill(0, count($cues), 'x'));
+
+        $runner = new TranslationRunner(
+            jobManager: $this->jobManager,
+            state: $this->state,
+            vttParser: $this->vttParser,
+            translator: $translator,
+            logger: $this->logger(),
+        );
+
+        $runner->run(
+            masterVttPath: $this->jobManager->draftVttPath(),
+            srcLang: 'en',
+            targetLangs: ['fr'],
+        );
+
+        $data = $this->state->read();
+        $this->assertSame('error', $data['languages']['fr']['status']);
+        $this->assertStringContainsString('integrity check', $data['languages']['fr']['message']);
+        $this->assertFileDoesNotExist($this->jobManager->draftVttPathForLang('fr'));
+    }
+
     // ------------------------------------------------------------------ VTT round-trip
 
     public function test_vtt_timestamps_and_opaque_are_preserved(): void

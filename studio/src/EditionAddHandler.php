@@ -5,7 +5,7 @@ namespace Studio;
 class EditionAddHandler
 {
     public function __construct(
-        private readonly StudioConfig $studioConfig,
+        private readonly StudioConfigMutation $configMutation,
         private readonly EditionFormatter $formatter = new EditionFormatter(),
     ) {
     }
@@ -23,7 +23,7 @@ class EditionAddHandler
             ];
         }
 
-        foreach ($this->studioConfig->getEditions() as $edition) {
+        foreach ($this->configMutation->getEditions() as $edition) {
             if (($edition['id'] ?? '') === $formatted['id']) {
                 return [
                     'ok' => false,
@@ -33,7 +33,7 @@ class EditionAddHandler
         }
 
         try {
-            $this->studioConfig->addEdition($formatted['id'], $formatted['label']);
+            $this->configMutation->addEdition($formatted['id'], $formatted['label']);
         } catch (\RuntimeException $e) {
             return [
                 'ok' => false,

@@ -17,6 +17,8 @@ class TranslationRunner
         private VttParser $vttParser,
         private object $translator,
         callable $logger,
+        private CaptionFileIntegrityChecker $integrityChecker = new CaptionFileIntegrityChecker(),
+        private WebVttValidator $vttValidator = new WebVttValidator(),
     ) {
         $this->logger = $logger;
     }
@@ -57,6 +59,13 @@ class TranslationRunner
                     $translatedCues[] = array_merge($cue, ['text' => $translations[$i] ?? '']);
                 }
 
+                $integrityErrors = $this->integrityChecker->check($translatedCues);
+                if ($integrityErrors !== []) {
+                    throw new \RuntimeException(
+                        'Translated captions failed integrity check: ' . $integrityErrors[0]['message']
+                    );
+                }
+
                 $outParsed = [
                     'header' => $parsed['header'],
                     'opaque_blocks' => $parsed['opaque_blocks'],
@@ -67,6 +76,13 @@ class TranslationRunner
                 $bytes = file_put_contents($outPath, $this->vttParser->write($outParsed));
                 if ($bytes === false) {
                     throw new \RuntimeException("Failed to write translated VTT to {$outPath}");
+                }
+
+                try {
+                    $this->vttValidator->validate($outPath, $outPath);
+                } catch (\InvalidArgumentException $e) {
+                    @unlink($outPath);
+                    throw new \RuntimeException('Translated VTT failed validation: ' . $e->getMessage());
                 }
 
                 $this->state->markLanguageDone($lang);

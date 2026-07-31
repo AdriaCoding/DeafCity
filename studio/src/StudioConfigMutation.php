@@ -35,6 +35,26 @@ class StudioConfigMutation
         $this->config->addSubtitleLanguage($id, $label);
     }
 
+    public function getEditions(): array
+    {
+        return $this->config->getEditions();
+    }
+
+    public function getSignLanguages(): array
+    {
+        return $this->config->getSignLanguages();
+    }
+
+    public function getTypologies(): array
+    {
+        return $this->config->getTypologies();
+    }
+
+    public function getSubtitleLanguages(): array
+    {
+        return $this->config->getSubtitleLanguages();
+    }
+
     public function removeEdition(string $id): void
     {
         $this->config->removeEdition($id, $this->catalog);

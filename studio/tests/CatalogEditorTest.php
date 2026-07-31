@@ -304,6 +304,63 @@ class CatalogEditorTest extends TestCase
         (new CatalogEditor($this->catalogFile))->addVideo('111', 'Other', 'lse', 'x');
     }
 
+    public function test_concurrent_addVideo_for_same_vimeo_id_does_not_duplicate(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        // Child A simulates a slow concurrent writer: it grabs the exclusive
+        // lock, holds it, and only then writes the '999' entry. This opens
+        // exactly the window the race lived in — a window where an unlocked
+        // pre-check (findVideoByVimeoId) run by another process still sees
+        // an empty catalog.
+        $writerPid = pcntl_fork();
+        if ($writerPid === 0) {
+            $fp = fopen($this->catalogFile, 'c+');
+            flock($fp, LOCK_EX);
+            usleep(300_000);
+            $raw = stream_get_contents($fp);
+            $catalog = json_decode($raw ?: '', true) ?: ['videos' => []];
+            $catalog['videos'][] = ['id' => 'lse_999', 'vimeo_id' => '999', 'title' => 'Writer', 'sign_language' => 'lse', 'edition' => 'x', 'tags' => [], 'captions' => []];
+            ftruncate($fp, 0);
+            fseek($fp, 0);
+            fwrite($fp, json_encode($catalog));
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            exit(0);
+        }
+
+        // Child B: waits just long enough for the writer to hold the lock
+        // (but not to have written yet), then races addVideo() for the same
+        // vimeo_id. Its unlocked pre-check will see the still-empty catalog;
+        // it then blocks on the lock until the writer commits. The fix must
+        // re-check for the duplicate *after* acquiring the lock.
+        $racerPid = pcntl_fork();
+        if ($racerPid === 0) {
+            usleep(100_000);
+            $editor = new CatalogEditor($this->catalogFile);
+            try {
+                $editor->addVideo('999', 'Racer', 'lse', 'x');
+                exit(0);
+            } catch (\RuntimeException) {
+                exit(1);
+            }
+        }
+
+        pcntl_waitpid($writerPid, $writerStatus);
+        pcntl_waitpid($racerPid, $racerStatus);
+
+        // The racer must lose: its post-lock re-check should reject the
+        // duplicate the writer already committed.
+        $this->assertSame(1, pcntl_wexitstatus($racerStatus));
+
+        $catalog = $this->readCatalog();
+        $entries = array_values(array_filter(
+            $catalog['videos'],
+            static fn(array $e): bool => ($e['vimeo_id'] ?? '') === '999',
+        ));
+        $this->assertCount(1, $entries);
+    }
+
     public function test_findVideoByVimeoId_returns_null_for_empty_catalog(): void
     {
         $this->writeCatalog(['videos' => []]);
