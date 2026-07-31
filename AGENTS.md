@@ -23,10 +23,9 @@ The Studio webapp (`studio/`) is Catalan-only for all controls and user-visible 
 
 ### PHP version
 
-We run two PHP versions — match the tree you are editing:
+The whole site runs **PHP 8.4** — set once, site-wide, by the Apache vhost include (outside the repo). No directory currently opts down via its own `.htaccess` (the old `studio/.htaccess` pinning 8.4 was deleted as redundant once 8.4 became the default). CLI is also 8.4; lint with `php8.4 -l`.
 
-- **Site root** (`src/`, `preview/`, root `*.php`, etc.) — **PHP 5.6** (vhost default). Use PHP 5–compatible syntax only; follow the style of the file.
-- **Studio** (`studio/`) — **PHP 8.4** (`studio/.htaccess`). Use modern idioms already in `studio/src/`; do not use features above 8.4. Lint with `php8.4 -l`.
+Some `preview/`/site-root files still carry old "PHP 5.6 compatible" doc comments and avoid PHP 7+ syntax (`??`, etc.) from before the 2026-07-29 migration — that's now a style choice, not a hard constraint. Modern idioms are fine anywhere. If a directory ever needs to run a *different* PHP version, add `<dir>/.htaccess` with a `SetHandler` block pointing at that version's FPM socket (mirrors the old `studio/.htaccess` pattern).
 
 ### Frontend testing
 

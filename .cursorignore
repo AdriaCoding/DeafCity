@@ -43,13 +43,6 @@
 /realt_colors/
 /yt/
 
-# Logs & temp
-*.log
-/logs/
-/tmp/
-*.tmp
-*.temp
-
 # Nested Git repositories (standalone clones inside this tree)
 **/.git/
 
