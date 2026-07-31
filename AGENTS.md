@@ -44,3 +44,6 @@ PHP-FPM runs as `www-data`. Studio must be able to write JSON under `data/` (e.g
 - Default ACLs on `data/` give `www-data` write access even on root-created files; still fix ownership so listings and backups stay consistent.
 
 The design of the website should be MINIMALISTIC.
+
+## Harnesss
+Never touch or read the folders `doble`, `doble2`, `realtime`, `realtime_BW`. Do NOT ever read the secrets file `config/config.php`, you may only check `config/config.example.php`.

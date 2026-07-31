@@ -69,3 +69,7 @@ Thumbs.db
 *.local.php
 *.local.js
 config/google-sheets-service-account.json
+doble/
+doble2/
+realtime/
+realtime_BW/

@@ -80,3 +80,7 @@ data/*
 /studio/.venv/
 /studio/models/
 config/google-sheets-service-account.json
+doble/
+doble2/
+realtime/
+realtime_BW/
