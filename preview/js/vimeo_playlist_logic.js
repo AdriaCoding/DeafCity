@@ -1512,6 +1512,8 @@
         MediaTrackNext: 'next',
         r: 'reset',
         d: 'deaf-hearing',
+        a: 'about',
+        p: 'participants',
     };
 
     /**
@@ -1530,7 +1532,7 @@
      * Map a keydown event to a transport action, or null when it should be ignored
      * (modifier held, or focus is on an editable element).
      * @param {{ key?: string, ctrlKey?: boolean, altKey?: boolean, metaKey?: boolean, shiftKey?: boolean, activeElement?: unknown }} opts
-     * @returns {'play-pause'|'prev'|'next'|'reset'|'deaf-hearing'|null}
+     * @returns {'play-pause'|'prev'|'next'|'reset'|'deaf-hearing'|'about'|'participants'|null}
      */
     function resolveTransportShortcutAction(opts) {
         var o = opts || {};

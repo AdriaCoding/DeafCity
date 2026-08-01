@@ -1836,5 +1836,28 @@
         "translations": {
             "en": "PENSAMENTS"
         }
+    },
+    "player.transport.space_key": {
+        "section": "player",
+        "context": "Name of the spacebar key, used in the Play/Pause keyboard-shortcut hint appended to its title/aria-label, e.g. \"Play video (Space)\"",
+        "translations": {
+            "en": "Space",
+            "fr": "Espace",
+            "ca": "Espai",
+            "es": "Espacio",
+            "it": "Spazio",
+            "pt": "Espaço",
+            "ar": "مسافة",
+            "eu": "Zuriunea"
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true,
+            "eu": true
+        }
     }
 }

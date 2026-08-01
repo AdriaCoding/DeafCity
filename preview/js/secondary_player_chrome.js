@@ -145,6 +145,8 @@
     var prevBtn = bar.querySelector('.vpc-prev-btn');
     var nextBtn = bar.querySelector('.vpc-next-btn');
     var deafBtn = bar.querySelector('.vpc-deaf-hearing-btn');
+    var aboutNavLink = bar.querySelector('[data-route="about"]');
+    var participantsNavLink = bar.querySelector('[data-route="participants"]');
 
     bind(resetBtn, 'reset');
     bind(playPauseBtn, 'play');
@@ -172,6 +174,8 @@
             else if (action === 'next' && nextBtn) nextBtn.click();
             else if (action === 'reset' && resetBtn) resetBtn.click();
             else if (action === 'deaf-hearing' && deafBtn) deafBtn.click();
+            else if (action === 'about' && aboutNavLink) aboutNavLink.click();
+            else if (action === 'participants' && participantsNavLink) participantsNavLink.click();
         });
     }
 

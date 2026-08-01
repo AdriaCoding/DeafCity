@@ -2072,5 +2072,17 @@ assert.strictEqual(
     'Escape is not a transport shortcut'
 );
 
+// A/P navigate to About/Participants — same action a click on those nav links performs
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'a' }),
+    'about',
+    "'a' maps to about"
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'p' }),
+    'participants',
+    "'p' maps to participants"
+);
+
 console.log('vimeo_playlist_logic.test.js: all passed (including transport shortcuts)');
 

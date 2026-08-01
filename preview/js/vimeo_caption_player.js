@@ -851,12 +851,13 @@
                 var icon = playBtn.querySelector('.vpc-chrome-icon');
                 if (playBtn.getAttribute('data-loading') === 'true') return;
                 transportPlaying = !!isPlaying;
+                var spaceKeyLabel = vpcString('player.transport.space_key', 'Space');
                 if (isPlaying) {
                     if (icon) {
                         icon.src = playBtn.getAttribute('data-icon-pause')
                             || '/preview/img/pause_circle_80dp_007800.svg';
                     }
-                    var pauseLabel = vpcString('player.transport.pause', 'Pause video') + ' (Space)';
+                    var pauseLabel = vpcString('player.transport.pause', 'Pause video') + ' (' + spaceKeyLabel + ')';
                     playBtn.setAttribute('aria-label', pauseLabel);
                     playBtn.setAttribute('title', pauseLabel);
                 } else {
@@ -864,7 +865,7 @@
                         icon.src = playBtn.getAttribute('data-icon-play')
                             || '/preview/img/play_circle_80dp_007800.svg';
                     }
-                    var playLabel = vpcString('player.transport.play', 'Play video') + ' (Space)';
+                    var playLabel = vpcString('player.transport.play', 'Play video') + ' (' + spaceKeyLabel + ')';
                     playBtn.setAttribute('aria-label', playLabel);
                     playBtn.setAttribute('title', playLabel);
                 }
@@ -1712,6 +1713,9 @@
                 p.getCurrentTime().then(syncVimeoCaptionBoxes);
             });
 
+            var aboutNavLink = root.querySelector('[data-route="about"]');
+            var participantsNavLink = root.querySelector('[data-route="participants"]');
+
             document.addEventListener('keydown', function (e) {
                 var action = L.resolveTransportShortcutAction({
                     key: e.key,
@@ -1728,6 +1732,8 @@
                 else if (action === 'next' && nextTransport) nextTransport.click();
                 else if (action === 'reset' && resetBtn) resetBtn.click();
                 else if (action === 'deaf-hearing' && deafHearingBtn) deafHearingBtn.click();
+                else if (action === 'about' && aboutNavLink) aboutNavLink.click();
+                else if (action === 'participants' && participantsNavLink) participantsNavLink.click();
             });
         }
 

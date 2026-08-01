@@ -89,7 +89,7 @@ $deafHearingAriaWithHint = $deafHearingAria . ' (D)';
 $resetAriaWithHint = preview_t('player.transport.reset') . ' (R)';
 $prevAriaWithHint = preview_t('player.transport.prev') . ' (←)';
 $nextAriaWithHint = preview_t('player.transport.next') . ' (→)';
-$playAriaWithHint = preview_t('player.transport.play') . ' (Space)';
+$playAriaWithHint = preview_t('player.transport.play') . ' (' . preview_t('player.transport.space_key') . ')';
 
 if (!function_exists('preview_chrome_btn_face')) {
     /**
@@ -136,6 +136,19 @@ if (!function_exists('preview_chrome_btn_label')) {
     }
 }
 
+if (!function_exists('preview_nav_link_shortcut_key')) {
+    /**
+     * Keyboard-shortcut letter for a nav route, or '' when the route has none.
+     * @param string $route
+     * @return string
+     */
+    function preview_nav_link_shortcut_key($route)
+    {
+        $keys = array('about' => 'A', 'participants' => 'P');
+        return isset($keys[$route]) ? $keys[$route] : '';
+    }
+}
+
 if (!function_exists('preview_render_nav_link')) {
     function preview_render_nav_link($link)
     {
@@ -147,8 +160,16 @@ if (!function_exists('preview_render_nav_link')) {
         $ariaCurrent = $link['aria_current'] !== ''
             ? ' aria-current="' . htmlspecialchars($link['aria_current'], ENT_QUOTES, 'UTF-8') . '"'
             : '';
+        // Shortcut hint on both aria-label and title (this nav label has no fixed-glyph
+        // constraint, unlike About — see preview_render_icon_nav_link).
+        $shortcutKey = preview_nav_link_shortcut_key($link['route']);
+        $hintAttrs = '';
+        if ($shortcutKey !== '') {
+            $labelWithHint = htmlspecialchars($link['label'] . ' (' . $shortcutKey . ')', ENT_QUOTES, 'UTF-8');
+            $hintAttrs = ' aria-label="' . $labelWithHint . '" title="' . $labelWithHint . '"';
+        }
         ?>
-        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?>><?= preview_chrome_btn_label($link['label']) ?></a>
+        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>" data-route="<?= htmlspecialchars($link['route'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?><?= $hintAttrs ?>><?= preview_chrome_btn_label($link['label']) ?></a>
         <?php
     }
 }
@@ -165,8 +186,16 @@ if (!function_exists('preview_render_icon_nav_link')) {
             ? ' aria-current="' . htmlspecialchars($link['aria_current'], ENT_QUOTES, 'UTF-8') . '"'
             : '';
         $label = htmlspecialchars($link['label'], ENT_QUOTES, 'UTF-8');
+        // ADR-0012: the About link's accessible name must stay the bare "?" glyph in every
+        // locale — aria-label is untouched. `title` is a mouse-hover-only affordance (not part
+        // of the accessible-name computation when aria-label is present), so it's safe to append
+        // the shortcut hint there without reintroducing a translated "About" label.
+        $shortcutKey = preview_nav_link_shortcut_key($link['route']);
+        $titleAttr = $shortcutKey !== ''
+            ? ' title="' . htmlspecialchars($link['label'] . ' (' . $shortcutKey . ')', ENT_QUOTES, 'UTF-8') . '"'
+            : '';
         ?>
-        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?> preview-site-nav__btn--icon"<?= $collectionAttr ?><?= $ariaCurrent ?> aria-label="<?= $label ?>">
+        <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?> preview-site-nav__btn--icon" data-route="<?= htmlspecialchars($link['route'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?> aria-label="<?= $label ?>"<?= $titleAttr ?>>
             <img class="vpc-chrome-icon" src="<?= htmlspecialchars($svgSrc, ENT_QUOTES, 'UTF-8') ?>" alt="" width="44" height="44" aria-hidden="true">
             <span class="vpc-chrome-btn__label"><?= $label ?></span>
         </a>
