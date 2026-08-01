@@ -54,7 +54,8 @@ class VimeoPushSyncTest extends TestCase
         $vimeo->expects($this->once())->method('setTags')->with('111', ['humor']);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
             ->with('111', $this->captionsDir . '/111.ar.vtt', 'ar', 'Arabic');
-        $vimeo->expects($this->never())->method('getThumbnailUrl');
+        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('111')
+            ->willReturn('https://example.com/t.jpg');
 
         $result = $this->makeSync($vimeo)->syncVideo([
             'vimeo_id' => '111',
@@ -106,7 +107,7 @@ class VimeoPushSyncTest extends TestCase
         $this->assertStringContainsString('server content', file_get_contents($this->captionsDir . '/111.ar.vtt'));
     }
 
-    public function test_pulls_thumbnail_only_when_missing(): void
+    public function test_pulls_thumbnail_when_missing(): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [
             [
@@ -135,13 +136,13 @@ class VimeoPushSyncTest extends TestCase
         ]);
 
         $this->assertTrue($result['ok']);
-        $this->assertTrue($result['thumbnailBackfilled']);
+        $this->assertTrue($result['thumbnailUpdated']);
 
         $catalog = json_decode(file_get_contents($this->catalogFile), true);
         $this->assertSame('https://example.com/backfill.jpg', $catalog['videos'][0]['thumbnail_url']);
     }
 
-    public function test_skips_thumbnail_pull_when_already_present(): void
+    public function test_refreshes_thumbnail_even_when_already_present(): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [
             [
@@ -160,15 +161,21 @@ class VimeoPushSyncTest extends TestCase
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->method('updateTitle');
         $vimeo->method('setTags');
-        $vimeo->expects($this->never())->method('getThumbnailUrl');
+        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('333')
+            ->willReturn('https://example.com/updated.jpg');
 
-        $this->makeSync($vimeo)->syncVideo([
+        $result = $this->makeSync($vimeo)->syncVideo([
             'vimeo_id' => '333',
             'title' => 'Title',
             'tags' => [],
             'thumbnail_url' => 'https://example.com/existing.jpg',
             'captions' => [],
         ]);
+
+        $this->assertTrue($result['thumbnailUpdated']);
+
+        $catalog = json_decode(file_get_contents($this->catalogFile), true);
+        $this->assertSame('https://example.com/updated.jpg', $catalog['videos'][0]['thumbnail_url']);
     }
 
     public function test_skips_video_not_found_on_vimeo(): void

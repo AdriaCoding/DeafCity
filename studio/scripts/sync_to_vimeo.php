@@ -2,7 +2,8 @@
 
 /**
  * Push catalog state to Vimeo: title, tags, and caption files for every video
- * in data/catalog.json. Pulls thumbnail_url from Vimeo only when missing.
+ * in data/catalog.json. Re-fetches thumbnail_url from Vimeo for every video,
+ * so Vimeo-side thumbnail changes are picked up on each sync.
  *
  * Usage: php studio/scripts/sync_to_vimeo.php [--status-file /path/to/status.json]
  */
@@ -82,7 +83,7 @@ foreach ($videos as $idx => $entry) {
 
     $captionCount = count($entry['captions'] ?? []);
     $tagCount = count($entry['tags'] ?? []);
-    $thumbNote = ($result['thumbnailBackfilled'] ?? false) ? ', thumbnail backfilled' : '';
+    $thumbNote = ($result['thumbnailUpdated'] ?? false) ? ', thumbnail updated' : '';
     echo "title=\"" . ($entry['title'] ?? '') . "\", $tagCount tag(s), $captionCount caption(s)$thumbNote\n";
 }
 

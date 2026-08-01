@@ -21,7 +21,7 @@ class VimeoPushSync
 
     /**
      * @param array<string, mixed> $entry
-     * @return array{ok: bool, skipped?: bool, thumbnailBackfilled?: bool}
+     * @return array{ok: bool, skipped?: bool, thumbnailUpdated?: bool}
      */
     public function syncVideo(array $entry): array
     {
@@ -46,9 +46,9 @@ class VimeoPushSync
 
         $this->publication->mirror($vimeoId, $entry['captions'] ?? []);
 
-        $thumbnailBackfilled = $this->backfillThumbnailIfMissing($vimeoId, $entry);
+        $thumbnailUpdated = $this->refreshThumbnail($vimeoId);
 
-        return ['ok' => true, 'thumbnailBackfilled' => $thumbnailBackfilled];
+        return ['ok' => true, 'thumbnailUpdated' => $thumbnailUpdated];
     }
 
     /**
@@ -73,14 +73,8 @@ class VimeoPushSync
         return ['synced' => $synced, 'skipped' => $skipped, 'total' => $total];
     }
 
-    /** @param array<string, mixed> $entry */
-    private function backfillThumbnailIfMissing(string $vimeoId, array $entry): bool
+    private function refreshThumbnail(string $vimeoId): bool
     {
-        $existing = trim((string) ($entry['thumbnail_url'] ?? ''));
-        if ($existing !== '') {
-            return false;
-        }
-
         try {
             $thumbnailUrl = $this->vimeoClient->getThumbnailUrl($vimeoId);
         } catch (\Throwable) {
