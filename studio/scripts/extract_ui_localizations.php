@@ -36,6 +36,7 @@ $manifest = [
     ['key' => 'player.transport.next', 'section' => 'player', 'context' => 'Next button aria-label', 'en' => 'Next video in playlist'],
     ['key' => 'player.transport.reset', 'section' => 'player', 'context' => 'Reset button aria-label', 'en' => 'Reset filters and playlist'],
     ['key' => 'player.transport.reset_short', 'section' => 'player', 'context' => 'Reset button visible short label', 'en' => 'Reset'],
+    ['key' => 'player.transport.space_key', 'section' => 'player', 'context' => 'Name of the spacebar key, used in the Play/Pause keyboard-shortcut hint appended to its title/aria-label, e.g. "Play video (Space)"', 'en' => 'Space'],
     ['key' => 'player.aria.filters', 'section' => 'player', 'context' => 'Filters group aria-label', 'en' => 'Filters'],
     ['key' => 'player.aria.playback', 'section' => 'player', 'context' => 'Playback group aria-label', 'en' => 'Playback'],
     ['key' => 'player.error.no_playlist', 'section' => 'player', 'context' => 'Empty catalog message', 'en' => 'No playlist loaded. Check that data/catalog.json exists.'],
