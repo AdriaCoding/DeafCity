@@ -286,6 +286,7 @@ class CatalogAction
             $this->c->catalogEditor(),
             $this->c->studioConfig,
             $this->c->dataDir . '/captions',
+            $this->c->dataDir . '/caption-translation',
         ))->handle($vimeoId, $signLanguage, $edition, $title, $typology, $tags, $captionUploads['uploads'], $masterLang);
 
         if (!$result['ok']) {
@@ -398,6 +399,7 @@ class CatalogAction
                 $this->c->catalogEditor(),
                 $this->c->studioConfig,
                 $this->c->dataDir . '/captions',
+                $this->c->dataDir . '/caption-translation',
             ))->handle($videoId, $captionUploads['uploads']);
 
             if (!$captionResult['ok']) {
@@ -519,6 +521,7 @@ class CatalogAction
         $result = (new CaptionDeleteHandler(
             $this->c->catalogEditor(),
             $this->c->dataDir . '/captions',
+            $this->c->dataDir . '/caption-translation',
         ))->handle($vimeoId, $lang);
 
         if (!$result['ok']) {
@@ -553,6 +556,7 @@ class CatalogAction
                 $this->c->catalogEditor(),
                 $this->c->studioConfig,
                 $this->c->dataDir . '/captions',
+                $this->c->dataDir . '/caption-translation',
             ),
         ))->handle($vimeoId, $lang, [
             'lang' => $lang,
@@ -776,7 +780,7 @@ class CatalogAction
             exit;
         }
 
-        $translationState->initiate($targets);
+        $translationState->initiate($targets, $masterLang);
 
         $this->c->launcher->launchTranslation($masterVttPath, $stateFile, $masterLang, $jobDir, $targets);
 
@@ -802,7 +806,23 @@ class CatalogAction
             exit;
         }
 
-        $state = $this->translationJobState($vimeoId)->read();
+        $translationState = $this->translationJobState($vimeoId);
+
+        $video = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        $currentMasterLang = $video !== null
+            ? ($video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? ''))
+            : '';
+
+        if ($translationState->isStaleFor($currentMasterLang)) {
+            // The video's master caption changed since this job was started
+            // (or it's a legacy job predating this check) — discard it
+            // rather than trust/replay a result that no longer applies.
+            $translationState->cancel();
+            echo json_encode(['status' => 'idle', 'missingTargets' => $this->computeMissingTargets($vimeoId)], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $state = $translationState->read();
         $topStatus = $state['status'] ?? 'pending';
 
         if ($topStatus === 'done') {

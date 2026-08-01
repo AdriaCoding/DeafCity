@@ -11,6 +11,7 @@ class CaptionUploadHandler
         private CatalogEditor $catalogEditor,
         private StudioConfig $studioConfig,
         private string $captionsDirPath,
+        private string $captionTranslationDirPath,
         private WebVttValidator $vttValidator = new WebVttValidator(),
         private SrtToVttConverter $srtConverter = new SrtToVttConverter(),
         private IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
@@ -99,6 +100,11 @@ class CaptionUploadHandler
         } catch (\Throwable $e) {
             return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
         }
+
+        // New caption content invalidates any prior auto-translate job's
+        // premise (its captured master caption), so it can't be trusted
+        // to silently re-merge stale translations back in later.
+        (new JobManager($this->captionTranslationDirPath . '/' . $vimeoId))->cancel();
 
         return [
             'ok' => true,

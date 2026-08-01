@@ -7,6 +7,7 @@ class CaptionDeleteHandler
     public function __construct(
         private CatalogEditor $catalogEditor,
         private string $captionsDirPath,
+        private string $captionTranslationDirPath,
     ) {}
 
     /**
@@ -45,6 +46,11 @@ class CaptionDeleteHandler
         if (is_file($path)) {
             unlink($path);
         }
+
+        // A caption changed, so any prior auto-translate job's premise
+        // (its captured master caption) may no longer hold. Drop it rather
+        // than risk it silently re-merging stale translations back in.
+        (new JobManager($this->captionTranslationDirPath . '/' . $vimeoId))->cancel();
 
         $result = ['ok' => true];
         if ($wasMaster) {

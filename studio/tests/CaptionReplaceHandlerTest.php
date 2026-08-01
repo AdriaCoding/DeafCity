@@ -71,6 +71,7 @@ class CaptionReplaceHandlerTest extends TestCase
                 new CatalogEditor($this->catalogFile),
                 $this->config,
                 $this->captionsDir,
+                $this->baseDir . '/caption-translation',
             ),
         );
     }

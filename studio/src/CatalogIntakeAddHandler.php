@@ -9,6 +9,7 @@ class CatalogIntakeAddHandler
         private CatalogEditor $catalogEditor,
         private StudioConfig $studioConfig,
         private string $captionsDir,
+        private string $captionTranslationDir,
     ) {}
 
     /**
@@ -56,6 +57,7 @@ class CatalogIntakeAddHandler
             $this->catalogEditor,
             $this->studioConfig,
             $this->captionsDir,
+            $this->captionTranslationDir,
         ))->handle($vimeoId, $captionUploads, syncToVimeo: false);
 
         if (!$captionResult['ok']) {

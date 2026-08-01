@@ -6,12 +6,13 @@ class TranslationJobState
 {
     public function __construct(private JobManager $jobManager) {}
 
-    public function initiate(array $targetLangs): void
+    public function initiate(array $targetLangs, string $masterLang): void
     {
         if ($targetLangs === []) {
             $this->write([
                 'status' => 'done',
                 'languages' => [],
+                'master' => $masterLang,
             ]);
             return;
         }
@@ -24,7 +25,27 @@ class TranslationJobState
         $this->write([
             'status' => 'pending',
             'languages' => $languages,
+            'master' => $masterLang,
         ]);
+    }
+
+    /**
+     * A job is stale once the video's current master caption no longer
+     * matches the one it was started from — e.g. the master (or any
+     * caption) was deleted/replaced after this job's result was captured.
+     * Legacy job files written before this field existed have no 'master'
+     * key, so they're always treated as stale too.
+     */
+    public function isStaleFor(string $currentMasterLang): bool
+    {
+        $data = $this->read();
+
+        return ($data['master'] ?? null) !== $currentMasterLang;
+    }
+
+    public function cancel(): void
+    {
+        $this->jobManager->cancel();
     }
 
     public function read(): array

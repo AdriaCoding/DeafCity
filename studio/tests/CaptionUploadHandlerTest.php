@@ -121,6 +121,32 @@ class CaptionUploadHandlerTest extends TestCase
         $this->assertCount(1, $entry['captions']);
     }
 
+    public function test_upload_invalidates_the_translation_job_state(): void
+    {
+        $jobDir = $this->baseDir . '/caption-translation/111/current';
+        mkdir($jobDir, 0777, true);
+        file_put_contents($jobDir . '/translation.json', json_encode([
+            'status' => 'saved',
+            'master' => 'es',
+            'savedLangs' => ['en'],
+        ]));
+
+        $vtt = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHola\n");
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getTextTracks')->willReturn([]);
+
+        $result = $this->makeHandler($vimeo)->handle('111', [[
+            'lang' => 'es',
+            'tmpPath' => $vtt,
+            'originalName' => 'subtitles.vtt',
+        ]]);
+
+        $this->assertTrue($result['ok']);
+        $this->assertDirectoryDoesNotExist($jobDir);
+    }
+
     public function test_vimeo_failure_still_saves_file_and_catalog(): void
     {
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
@@ -211,6 +237,7 @@ class CaptionUploadHandlerTest extends TestCase
             new CatalogEditor($this->catalogFile),
             $this->config,
             $this->captionsDir,
+            $this->baseDir . '/caption-translation',
         );
     }
 

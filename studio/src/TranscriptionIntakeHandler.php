@@ -139,10 +139,10 @@ class TranscriptionIntakeHandler
         file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
 
         if ($this->shouldSkipEnglishTranslation($values['subtitle_language'])) {
-            $this->translationState->initiate([]);
+            $this->translationState->initiate([], $values['subtitle_language']);
             $targetLangs = [];
         } else {
-            $this->translationState->initiate(['en']);
+            $this->translationState->initiate(['en'], $values['subtitle_language']);
             $targetLangs = ['en'];
         }
 

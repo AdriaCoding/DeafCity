@@ -92,6 +92,30 @@ class CaptionDeleteHandlerTest extends TestCase
         $this->assertArrayNotHasKey('newMaster', $result);
     }
 
+    public function test_deleting_a_caption_invalidates_the_translation_job_state(): void
+    {
+        $this->writeCatalog([
+            'master_caption_lang' => 'es',
+            'captions' => [
+                ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt'],
+            ],
+        ]);
+        file_put_contents($this->captionsDir . '/111.es.vtt', "WEBVTT\n\n");
+
+        $jobDir = $this->baseDir . '/caption-translation/111/current';
+        mkdir($jobDir, 0777, true);
+        file_put_contents($jobDir . '/translation.json', json_encode([
+            'status' => 'saved',
+            'master' => 'es',
+            'savedLangs' => ['en'],
+        ]));
+
+        $result = $this->makeHandler()->handle('111', 'es');
+
+        $this->assertTrue($result['ok']);
+        $this->assertDirectoryDoesNotExist($jobDir);
+    }
+
     private function writeCatalog(array $videoFields): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [
@@ -111,6 +135,7 @@ class CaptionDeleteHandlerTest extends TestCase
         return new CaptionDeleteHandler(
             new CatalogEditor($this->catalogFile),
             $this->captionsDir,
+            $this->baseDir . '/caption-translation',
         );
     }
 

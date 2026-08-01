@@ -44,7 +44,7 @@ class TranslationRunnerTest extends TestCase
             new UploadedFile($vttPath, 'draft.vtt')
         );
 
-        $this->state->initiate(['fr', 'it']);
+        $this->state->initiate(['fr', 'it'], 'en');
     }
 
     protected function tearDown(): void
@@ -206,7 +206,7 @@ class TranslationRunnerTest extends TestCase
         // the integrity check must catch it before markLanguageDone.
         $vttContent = "WEBVTT\n\n00:00:01.000 --> 00:00:05.000\nHello\n\n00:00:03.000 --> 00:00:06.000\nWorld\n";
         file_put_contents($this->jobManager->draftVttPath(), $vttContent);
-        $this->state->initiate(['fr']);
+        $this->state->initiate(['fr'], 'en');
 
         $translator = $this->makeCallableTranslator(fn(array $cues) => array_fill(0, count($cues), 'x'));
 
@@ -238,7 +238,7 @@ class TranslationRunnerTest extends TestCase
         $vttContent = "WEBVTT\n\n00:00:01.000 --> 00:00:03.000 align:middle\nHello\n";
         file_put_contents($this->jobManager->draftVttPath(), $vttContent);
 
-        $this->state->initiate(['ca']);
+        $this->state->initiate(['ca'], 'en');
 
         $translator = $this->makeCallableTranslator(fn(array $cues) => ['Hola']);
 

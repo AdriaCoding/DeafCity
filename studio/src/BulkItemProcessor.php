@@ -163,10 +163,10 @@ class BulkItemProcessor
         file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
 
         if ($sourceLang === 'en') {
-            $this->translationState->initiate([]);
+            $this->translationState->initiate([], $sourceLang);
             $targetLangs = [];
         } else {
-            $this->translationState->initiate(['en']);
+            $this->translationState->initiate(['en'], $sourceLang);
             $targetLangs = ['en'];
         }
 
@@ -202,11 +202,11 @@ class BulkItemProcessor
     private function startTranslationIfNeeded(string $sourceLang): void
     {
         if ($sourceLang === 'en') {
-            $this->translationState->initiate([]);
+            $this->translationState->initiate([], $sourceLang);
             return;
         }
 
-        $this->translationState->initiate(['en']);
+        $this->translationState->initiate(['en'], $sourceLang);
         $this->launcher->launchTranslation(
             $this->jobManager->draftVttPath(),
             $this->jobManager->translationStatePath(),
