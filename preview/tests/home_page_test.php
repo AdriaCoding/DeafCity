@@ -551,6 +551,21 @@ if (is_file($playerCssPath)) {
     assert_contains('text-overflow: ellipsis', $playerCss, 'chrome buttons crop overflowing labels');
     // Six square buttons share one fixed width (Toni: equal length, no stretch).
     assert_contains('--vpc-square-btn-w', $playerCss, 'square chrome buttons share one fixed-width var');
+    assert_contains('width: 2.75rem', $playerCss, 'chrome icon boxes remain 44px');
+    $iconPaths = array(
+        dirname(dirname(__FILE__)) . '/img/help_80dp_007800.svg' => 'viewBox="2 2 20 20"',
+        dirname(dirname(__FILE__)) . '/img/play_circle_80dp_007800.svg' => 'viewBox="2 2 16 16"',
+        dirname(dirname(__FILE__)) . '/img/pause_circle_80dp_007800.svg' => 'viewBox="2 2 16 16"',
+        dirname(dirname(__FILE__)) . '/img/replay_circle_filled_80dp_007800.svg' => 'viewBox="2 2 20 20"',
+        dirname(dirname(__FILE__)) . '/img/skip_previous_80dp_007800.svg' => 'viewBox="6 6 12 12"',
+        dirname(dirname(__FILE__)) . '/img/skip_next_80dp_007800.svg' => 'viewBox="6 6 12 12"',
+    );
+    foreach ($iconPaths as $iconPath => $viewBox) {
+        if (is_file($iconPath)) {
+            $iconSvg = file_get_contents($iconPath);
+            assert_contains($viewBox, $iconSvg, 'circular chrome SVG is cropped to its artwork');
+        }
+    }
     if (!preg_match(
         '~\.vpc-control-secondary-l > \.vpc-deaf-hearing-btn,\s*\.vpc-control-secondary-l > \.vpc-picker,\s*\.vpc-control-secondary-r > \.vpc-r2-filters > \.vpc-picker,\s*\.vpc-control-secondary-r > \.preview-site-nav\s*\{[^}]*flex:\s*0 1 var\(--vpc-square-btn-w\)~s',
         $playerCss
