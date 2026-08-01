@@ -140,14 +140,39 @@
         });
     }
 
-    bind(bar.querySelector('.vpc-reset-btn'), 'reset');
-    bind(bar.querySelector('.vpc-play-pause-btn'), 'play');
-    bind(bar.querySelector('.vpc-prev-btn'), 'prev');
-    bind(bar.querySelector('.vpc-next-btn'), 'next');
-
+    var resetBtn = bar.querySelector('.vpc-reset-btn');
+    var playPauseBtn = bar.querySelector('.vpc-play-pause-btn');
+    var prevBtn = bar.querySelector('.vpc-prev-btn');
+    var nextBtn = bar.querySelector('.vpc-next-btn');
     var deafBtn = bar.querySelector('.vpc-deaf-hearing-btn');
+
+    bind(resetBtn, 'reset');
+    bind(playPauseBtn, 'play');
+    bind(prevBtn, 'prev');
+    bind(nextBtn, 'next');
+
     if (deafBtn && !deafBtn.disabled) {
         bind(deafBtn, 'deaf-hearing');
+    }
+
+    if (L && typeof L.resolveTransportShortcutAction === 'function') {
+        document.addEventListener('keydown', function (e) {
+            var action = L.resolveTransportShortcutAction({
+                key: e.key,
+                ctrlKey: e.ctrlKey,
+                altKey: e.altKey,
+                metaKey: e.metaKey,
+                shiftKey: e.shiftKey,
+                activeElement: document.activeElement,
+            });
+            if (!action) return;
+            e.preventDefault();
+            if (action === 'play-pause' && playPauseBtn) playPauseBtn.click();
+            else if (action === 'prev' && prevBtn) prevBtn.click();
+            else if (action === 'next' && nextBtn) nextBtn.click();
+            else if (action === 'reset' && resetBtn) resetBtn.click();
+            else if (action === 'deaf-hearing' && deafBtn) deafBtn.click();
+        });
     }
 
     // R2 filter pickers (Sign language / City–Edition / Typology): on secondary pages the

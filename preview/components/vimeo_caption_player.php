@@ -434,6 +434,9 @@ $defaultParams = array(
     'autoplay'    => '0',
     'preload'     => 'auto',
     'playsinline' => '1',
+    // Disable Vimeo's native keyboard shortcuts (Space, Shift+,/.) — we drive our own
+    // consistent set (Space/←/→/R/D) through the parent document instead.
+    'keyboard'    => '0',
 );
 
 $firstEntry = $playlistNormalized[0];
@@ -662,6 +665,7 @@ $navHiddenClass = '';
                     title="<?php echo htmlspecialchars($iframeTitle, ENT_QUOTES, 'UTF-8'); ?>"
                     allow="autoplay; fullscreen; picture-in-picture"
                     referrerpolicy="strict-origin-when-cross-origin"
+                    tabindex="-1"
                     allowfullscreen></iframe>
                 <button
                     type="button"

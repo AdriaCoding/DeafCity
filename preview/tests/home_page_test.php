@@ -499,7 +499,7 @@ echo "PASS: language picker neutral when English is active\n";
 assert_not_contains('vpc-shuffle-btn', $html, 'shuffle button removed from transport');
 assert_contains('chrome_button_widths.js', $html, 'uniform chrome width sync script');
 assert_contains('vpc-reset-btn__text', $html, 'reset keeps accessible text for screen readers');
-assert_contains('aria-label="Reset filters and playlist"', $html, 'reset retains aria-label');
+assert_contains('aria-label="Reset filters and playlist (R)"', $html, 'reset retains aria-label with shortcut hint');
 assert_contains('/preview/img/help_80dp_007800.svg', $html, 'help uses filled circle SVG');
 assert_contains('/preview/img/skip_previous_80dp_007800.svg', $html, 'prev uses borderless skip SVG');
 assert_contains('/preview/img/play_circle_80dp_007800.svg', $html, 'play uses filled circle SVG');

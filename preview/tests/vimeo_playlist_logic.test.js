@@ -1960,3 +1960,117 @@ console.log('vimeo_playlist_logic.test.js: all passed (including load cover reve
 
 console.log('vimeo_playlist_logic.test.js: all passed (including participant natural order)');
 
+// ── Keyboard shortcuts: transport chrome (Space/Arrows/R/D) ─────────────────
+
+// Space toggles play/pause when no modifier is held and focus isn't editable
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: ' ' }),
+    'play-pause',
+    'Space maps to play-pause'
+);
+
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'ArrowLeft' }),
+    'prev',
+    'ArrowLeft maps to prev'
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'ArrowRight' }),
+    'next',
+    'ArrowRight maps to next'
+);
+
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'r' }),
+    'reset',
+    "'r' maps to reset"
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'd' }),
+    'deaf-hearing',
+    "'d' maps to deaf-hearing"
+);
+
+// OS/hardware media keys map to the same actions as their keyboard equivalents
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'MediaPlayPause' }),
+    'play-pause',
+    'MediaPlayPause maps to play-pause'
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'MediaTrackPrevious' }),
+    'prev',
+    'MediaTrackPrevious maps to prev'
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'MediaTrackNext' }),
+    'next',
+    'MediaTrackNext maps to next'
+);
+
+// Caps Lock produces uppercase letters with shiftKey still false; shortcuts must still fire
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'R', shiftKey: false }),
+    'reset',
+    "Caps-Lock 'R' (no shiftKey) maps to reset"
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'D', shiftKey: false }),
+    'deaf-hearing',
+    "Caps-Lock 'D' (no shiftKey) maps to deaf-hearing"
+);
+
+// Unbound keys and missing input are ignored
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'x' }),
+    null,
+    "unbound key 'x' returns null"
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({}),
+    null,
+    'missing key returns null'
+);
+
+// Any modifier held suppresses an otherwise-bound key (e.g. Ctrl+R must not hijack browser refresh)
+['ctrlKey', 'altKey', 'metaKey', 'shiftKey'].forEach(function (modifier) {
+    var opts = { key: 'r' };
+    opts[modifier] = true;
+    assert.strictEqual(
+        logic.resolveTransportShortcutAction(opts),
+        null,
+        modifier + ' held suppresses the shortcut'
+    );
+});
+
+// Focus inside an editable field suppresses the shortcut (protects any future text input)
+['INPUT', 'TEXTAREA', 'SELECT'].forEach(function (tagName) {
+    assert.strictEqual(
+        logic.resolveTransportShortcutAction({ key: ' ', activeElement: { tagName: tagName } }),
+        null,
+        'focus on ' + tagName + ' suppresses the shortcut'
+    );
+});
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({
+        key: ' ',
+        activeElement: { tagName: 'DIV', isContentEditable: true },
+    }),
+    null,
+    'focus on a contenteditable element suppresses the shortcut'
+);
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: ' ', activeElement: { tagName: 'BODY' } }),
+    'play-pause',
+    'focus on a non-editable element does not suppress the shortcut'
+);
+
+// Escape stays out of scope for this function — dropdown-close handling lives elsewhere
+assert.strictEqual(
+    logic.resolveTransportShortcutAction({ key: 'Escape' }),
+    null,
+    'Escape is not a transport shortcut'
+);
+
+console.log('vimeo_playlist_logic.test.js: all passed (including transport shortcuts)');
+

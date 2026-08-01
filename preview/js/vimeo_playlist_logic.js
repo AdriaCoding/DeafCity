@@ -1503,7 +1503,47 @@
         return true;
     }
 
+    var TRANSPORT_SHORTCUT_KEYS = {
+        ' ': 'play-pause',
+        MediaPlayPause: 'play-pause',
+        ArrowLeft: 'prev',
+        MediaTrackPrevious: 'prev',
+        ArrowRight: 'next',
+        MediaTrackNext: 'next',
+        r: 'reset',
+        d: 'deaf-hearing',
+    };
+
+    /**
+     * Whether a focused element should suppress transport shortcuts (typing target).
+     * @param {{ tagName?: string, isContentEditable?: boolean } | null | undefined} el
+     * @returns {boolean}
+     */
+    function isEditableFocusTarget(el) {
+        if (!el) return false;
+        if (el.isContentEditable) return true;
+        var tag = typeof el.tagName === 'string' ? el.tagName.toUpperCase() : '';
+        return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    }
+
+    /**
+     * Map a keydown event to a transport action, or null when it should be ignored
+     * (modifier held, or focus is on an editable element).
+     * @param {{ key?: string, ctrlKey?: boolean, altKey?: boolean, metaKey?: boolean, shiftKey?: boolean, activeElement?: unknown }} opts
+     * @returns {'play-pause'|'prev'|'next'|'reset'|'deaf-hearing'|null}
+     */
+    function resolveTransportShortcutAction(opts) {
+        var o = opts || {};
+        if (o.ctrlKey || o.altKey || o.metaKey || o.shiftKey) return null;
+        if (isEditableFocusTarget(o.activeElement)) return null;
+        var key = typeof o.key === 'string' ? o.key : '';
+        var lookupKey = key.length === 1 ? key.toLowerCase() : key;
+        return TRANSPORT_SHORTCUT_KEYS[lookupKey] || null;
+    }
+
     return {
+        resolveTransportShortcutAction: resolveTransportShortcutAction,
+        isEditableFocusTarget: isEditableFocusTarget,
         CAPTION_TARGET_MAX_CHARS: CAPTION_TARGET_MAX_CHARS,
         CAPTION_MAX_CHARS_TOLERANCE: CAPTION_MAX_CHARS_TOLERANCE,
         CAPTION_MIN_FONT_SIZE_PX: CAPTION_MIN_FONT_SIZE_PX,

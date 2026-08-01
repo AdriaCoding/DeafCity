@@ -33,7 +33,7 @@ $html = ob_get_clean();
 
 // Reset no longer advertises restart-from-beginning behaviour
 rcf_assert_not_contains('Restart video from the beginning', $html, 'no restart aria-label on reset button');
-rcf_assert_contains('aria-label="Reset filters and playlist"', $html, 'reset button has neutral-reset aria-label');
+rcf_assert_contains('aria-label="Reset filters and playlist (R)"', $html, 'reset button has neutral-reset aria-label with shortcut hint');
 rcf_assert_contains('vpc-reset-btn', $html, 'reset button present in chrome');
 if (!preg_match('~vpc-control-secondary-r[^>]*>.*?vpc-reset-btn~s', $html)) {
     fwrite(STDERR, "FAIL: reset button should be in right secondary wing\n");

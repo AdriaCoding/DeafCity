@@ -856,13 +856,17 @@
                         icon.src = playBtn.getAttribute('data-icon-pause')
                             || '/preview/img/pause_circle_80dp_007800.svg';
                     }
-                    playBtn.setAttribute('aria-label', vpcString('player.transport.pause', 'Pause video'));
+                    var pauseLabel = vpcString('player.transport.pause', 'Pause video') + ' (Space)';
+                    playBtn.setAttribute('aria-label', pauseLabel);
+                    playBtn.setAttribute('title', pauseLabel);
                 } else {
                     if (icon) {
                         icon.src = playBtn.getAttribute('data-icon-play')
                             || '/preview/img/play_circle_80dp_007800.svg';
                     }
-                    playBtn.setAttribute('aria-label', vpcString('player.transport.play', 'Play video'));
+                    var playLabel = vpcString('player.transport.play', 'Play video') + ' (Space)';
+                    playBtn.setAttribute('aria-label', playLabel);
+                    playBtn.setAttribute('title', playLabel);
                 }
                 publishTransportState('setTransportPlaying');
                 syncCollectionNavButtons();
@@ -1706,6 +1710,24 @@
             });
             p.on('seeked', function () {
                 p.getCurrentTime().then(syncVimeoCaptionBoxes);
+            });
+
+            document.addEventListener('keydown', function (e) {
+                var action = L.resolveTransportShortcutAction({
+                    key: e.key,
+                    ctrlKey: e.ctrlKey,
+                    altKey: e.altKey,
+                    metaKey: e.metaKey,
+                    shiftKey: e.shiftKey,
+                    activeElement: document.activeElement,
+                });
+                if (!action) return;
+                e.preventDefault();
+                if (action === 'play-pause' && playBtn) playBtn.click();
+                else if (action === 'prev' && prevTransport) prevTransport.click();
+                else if (action === 'next' && nextTransport) nextTransport.click();
+                else if (action === 'reset' && resetBtn) resetBtn.click();
+                else if (action === 'deaf-hearing' && deafHearingBtn) deafHearingBtn.click();
             });
         }
 

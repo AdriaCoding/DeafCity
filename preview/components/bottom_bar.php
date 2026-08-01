@@ -84,6 +84,12 @@ $initialTypologyReadout = isset($playerCfg['initial_typology_readout'])
     ? $playerCfg['initial_typology_readout'] : '';
 $deafHearingEnabled = !isset($playerCfg['deaf_hearing_enabled']) || !empty($playerCfg['deaf_hearing_enabled']);
 $deafHearingAria = preview_t('player.filter.deaf_hearing');
+// Keyboard-shortcut hints appended to title/aria-label for discoverability (Space/←/→/R/D).
+$deafHearingAriaWithHint = $deafHearingAria . ' (D)';
+$resetAriaWithHint = preview_t('player.transport.reset') . ' (R)';
+$prevAriaWithHint = preview_t('player.transport.prev') . ' (←)';
+$nextAriaWithHint = preview_t('player.transport.next') . ' (→)';
+$playAriaWithHint = preview_t('player.transport.play') . ' (Space)';
 
 if (!function_exists('preview_chrome_btn_face')) {
     /**
@@ -257,7 +263,8 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     type="button"
                     class="vpc-chrome-btn vpc-deaf-hearing-btn"
                     aria-pressed="false"
-                    aria-label="<?= htmlspecialchars($deafHearingAria, ENT_QUOTES, 'UTF-8') ?>"
+                    aria-label="<?= htmlspecialchars($deafHearingAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                    title="<?= htmlspecialchars($deafHearingAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-deaf-hearing-tag="<?= htmlspecialchars('DEAF&HEARING', ENT_QUOTES, 'UTF-8') ?>"
                     <?php if (!$deafHearingEnabled): ?>disabled<?php endif; ?>
                 >
@@ -402,7 +409,8 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 type="button"
                 class="vpc-reset-btn"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.reset'), ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                title="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
             ><img class="vpc-chrome-icon" src="/preview/img/replay_circle_filled_80dp_007800.svg" alt="" width="44" height="44" aria-hidden="true"><span class="vpc-reset-btn__text"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
             </div>
         </div>
@@ -415,7 +423,8 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.prev'), ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                title="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportPrevDisabled ? 'disabled' : '' ?>
             ><img class="vpc-chrome-icon" src="/preview/img/skip_previous_80dp_007800.svg?v=2" alt="" width="44" height="44" aria-hidden="true"></button>
             <div class="vpc-control-center">
@@ -423,7 +432,8 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     type="button"
                     class="vpc-play-pause-btn"
                     aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                    aria-label="<?= htmlspecialchars(preview_t('player.transport.play'), ENT_QUOTES, 'UTF-8') ?>"
+                    aria-label="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                    title="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-icon-play="/preview/img/play_circle_80dp_007800.svg"
                     data-icon-pause="/preview/img/pause_circle_80dp_007800.svg"
                 ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><span class="material-icons vpc-play-pause-btn__hourglass" aria-hidden="true">hourglass_empty</span></button>
@@ -432,7 +442,8 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 type="button"
                 class="vpc-next-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars(preview_t('player.transport.next'), ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                title="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportNextDisabled ? 'disabled' : '' ?>
             ><img class="vpc-chrome-icon" src="/preview/img/skip_next_80dp_007800.svg?v=3" alt="" width="44" height="44" aria-hidden="true"></button>
         </div>
