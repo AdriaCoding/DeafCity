@@ -12,13 +12,13 @@ if (!isset($GLOBALS['preview_i18n']) || !($GLOBALS['preview_i18n'] instanceof Pr
     $__credits_locale = preview_bootstrap_locale();
     $GLOBALS['preview_i18n'] = $__credits_locale['i18n'];
 }
-$sb  = htmlspecialchars(preview_t('about.credits.label.supported_by'), ENT_QUOTES, 'UTF-8');
-$pa  = htmlspecialchars(preview_t('about.credits.label.participants'), ENT_QUOTES, 'UTF-8');
-$itp = htmlspecialchars(preview_t('about.credits.label.interpreter'), ENT_QUOTES, 'UTF-8');
-$its = htmlspecialchars(preview_t('about.credits.label.interpreters'), ENT_QUOTES, 'UTF-8');
-$co  = htmlspecialchars(preview_t('about.credits.label.coordination'), ENT_QUOTES, 'UTF-8');
-$cl  = htmlspecialchars(preview_t('about.credits.label.collaboration'), ENT_QUOTES, 'UTF-8');
-$tt  = htmlspecialchars(preview_t('about.credits.label.thanks_to'), ENT_QUOTES, 'UTF-8');
+$sb  = '<b>' . htmlspecialchars(preview_t('about.credits.label.supported_by'), ENT_QUOTES, 'UTF-8') . '</b>';
+$pa  = '<b>' . htmlspecialchars(preview_t('about.credits.label.participants'), ENT_QUOTES, 'UTF-8') . '</b>';
+$itp = '<b>' . htmlspecialchars(preview_t('about.credits.label.interpreter'), ENT_QUOTES, 'UTF-8') . '</b>';
+$its = '<b>' . htmlspecialchars(preview_t('about.credits.label.interpreters'), ENT_QUOTES, 'UTF-8') . '</b>';
+$co  = '<b>' . htmlspecialchars(preview_t('about.credits.label.coordination'), ENT_QUOTES, 'UTF-8') . '</b>';
+$cl  = '<b>' . htmlspecialchars(preview_t('about.credits.label.collaboration'), ENT_QUOTES, 'UTF-8') . '</b>';
+$tt  = '<b>' . htmlspecialchars(preview_t('about.credits.label.thanks_to'), ENT_QUOTES, 'UTF-8') . '</b>';
 $pby = htmlspecialchars(preview_t('about.credits.project_by'), ENT_QUOTES, 'UTF-8');
 $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8');
 ?>
@@ -83,7 +83,9 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
   <?= $itp ?> Carmen Tos
   <?= $tt ?> Matteo Sisti Sette, Roc Parés, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.</p>
 
-<p>DEAF.city 1.0 Website and AI code by Adrià Lisa, Video editing by Inma Alcario Westudio, International Sign Clock code by Daniel Julià, English subtitle correction by Inès David</p>
+<p><b>DEAF.city 2.0</b> <b>ONLINE ARCHIVE AND AI CODE</b> by Adrià Lisa, <b>Video editing</b> by Inma Alcario Westudio, <b>International Sign Clock code</b> by Daniel Julià, <b>English subtitle correction</b> by Inès David</p>
+
+<p><b>377</b> participants <b>3742</b> missatges DEAF.city contents under <u>CC BY-NC-ND 4.0</u></p>
 
 <p><b><?= $pby ?> <a href="https://www.antoniabad.info" target="_blank">Antoni Abad</a> &nbsp; <a href="https://www.instagram.com/antoni__abad/" target="_blank"><?= $ct ?></a></b></p>
 
