@@ -136,6 +136,18 @@ class BackgroundJobLauncher
         call_user_func($this->exec, $cmd);
     }
 
+    /** @param string $statusFilePath */
+    public function launchBatchTranslate($statusFilePath)
+    {
+        $cmd = sprintf(
+            'GEMINI_API_KEY=%s nohup %s --status-file %s > /dev/null 2>&1 &',
+            escapeshellarg($this->geminiApiKey),
+            escapeshellarg($this->scriptsDir . '/run_batch_translate.sh'),
+            escapeshellarg($statusFilePath),
+        );
+        call_user_func($this->exec, $cmd);
+    }
+
     public function launchBulkQueue(string $dataDir): void
     {
         $cmd = sprintf(

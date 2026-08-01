@@ -97,6 +97,8 @@ class CatalogAction
             'continguts-caption-translate-status'    => $this->captionTranslateStatus(),
             'continguts-caption-translate-retry'     => $this->captionTranslateRetry(),
             'continguts-sync-from-sheet'             => $this->syncFromSheet(),
+            'continguts-batch-translate'             => $this->batchTranslateStart(),
+            'continguts-batch-translate-status'      => $this->batchTranslateStatus(),
             default                               => (function () { http_response_code(404); exit; })(),
         };
     }
@@ -217,6 +219,38 @@ class CatalogAction
             http_response_code(422);
         }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function batchTranslateStart(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        $statusPath = $this->c->dataDir . '/batch-translate-status.json';
+        $raw = is_file($statusPath) ? @file_get_contents($statusPath) : false;
+        $current = $raw ? json_decode($raw, true) : null;
+        if (($current['status'] ?? '') === 'running') {
+            http_response_code(409);
+            echo json_encode(['ok' => false, 'error' => 'Ja hi ha una traducció per lots en curs.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        file_put_contents($statusPath, json_encode([
+            'status' => 'running', 'processed' => 0, 'translated' => 0, 'skipped' => 0, 'total' => 0,
+            'last_message' => 'Començant…',
+        ]));
+        $this->c->launcher->launchBatchTranslate($statusPath);
+
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function batchTranslateStatus(): never
+    {
+        ini_set('display_errors', '0');
+        header('Content-Type: application/json; charset=utf-8');
+        $statusPath = $this->c->dataDir . '/batch-translate-status.json';
+        echo is_file($statusPath) ? (file_get_contents($statusPath) ?: '{}') : json_encode(['status' => 'idle']);
         exit;
     }
 

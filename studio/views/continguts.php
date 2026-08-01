@@ -79,6 +79,24 @@
             opacity: 0.55;
             cursor: default;
         }
+        .tab-panel-toolbar .btn-generate {
+            padding: 0.55rem 1.1rem;
+            background: var(--studio-btn-green-alt-bg);
+            border: 1px solid var(--studio-btn-green-alt-border);
+            border-radius: 4px;
+            color: var(--studio-btn-green-text);
+            font-size: 0.85rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .tab-panel-toolbar .btn-generate:hover:not(:disabled) { background: var(--studio-btn-green-alt-bg-hover); }
+        .tab-panel-toolbar .btn-generate:disabled {
+            opacity: 0.55;
+            cursor: default;
+            background: var(--studio-hover);
+            border-color: var(--studio-border);
+            color: var(--studio-text-muted);
+        }
         .sheet-sync-status {
             color: var(--studio-text-muted);
             font-size: 0.85rem;
@@ -634,6 +652,8 @@
             <button type="button" class="btn-add-video" id="video-add-trigger">+ Afegir vídeo</button>
             <button type="button" class="studio-sync-btn" id="sheet-sync-trigger">Sincronitza desde Google Sheet</button>
             <span id="sheet-sync-status" class="sheet-sync-status" aria-live="polite"></span>
+            <button type="button" class="btn-generate" id="batch-translate-trigger">Tradueix subtítols pendents</button>
+            <span id="batch-translate-status" class="sheet-sync-status" aria-live="polite"></span>
         </div>
         <p id="videos-empty-msg" style="color:var(--studio-text-muted);font-size:0.9rem;<?= empty($catalogVideos) ? '' : ' display:none;' ?>">El catàleg no conté cap vídeo publicat.</p>
         <div id="videos-catalog">
@@ -1107,6 +1127,8 @@
     var videoAddTrigger = document.getElementById('video-add-trigger');
     var sheetSyncTrigger = document.getElementById('sheet-sync-trigger');
     var sheetSyncStatus = document.getElementById('sheet-sync-status');
+    var batchTranslateTrigger = document.getElementById('batch-translate-trigger');
+    var batchTranslateStatus = document.getElementById('batch-translate-status');
     var videoAddCancel = document.getElementById('video-add-cancel');
     var videoAddClose = document.getElementById('video-add-close');
     var videoAddSubmit = document.getElementById('video-add-submit');
@@ -1316,6 +1338,96 @@
                 })
                 .finally(function () {
                     sheetSyncTrigger.disabled = false;
+                });
+        });
+    }
+
+    if (batchTranslateTrigger) {
+        var batchTranslatePoll = null;
+
+        var stopBatchTranslatePoll = function () {
+            if (batchTranslatePoll) {
+                clearInterval(batchTranslatePoll);
+                batchTranslatePoll = null;
+            }
+        };
+
+        var pollBatchTranslateStatus = function () {
+            fetch('?action=continguts-batch-translate-status')
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var status = data.status || 'idle';
+                    if (status === 'running') {
+                        batchTranslateTrigger.disabled = true;
+                        batchTranslateStatus.classList.remove('is-error', 'is-ok');
+                        var progress = (typeof data.processed === 'number' && typeof data.total === 'number' && data.total > 0)
+                            ? '(' + data.processed + '/' + data.total + ') '
+                            : '';
+                        batchTranslateStatus.textContent = progress + (data.last_message || 'Traduint…');
+                        return;
+                    }
+                    stopBatchTranslatePoll();
+                    batchTranslateTrigger.disabled = false;
+                    if (status === 'done') {
+                        batchTranslateStatus.classList.add('is-ok');
+                        batchTranslateStatus.textContent = data.last_message || 'Traducció completada.';
+                    } else if (status === 'error') {
+                        batchTranslateStatus.classList.add('is-error');
+                        batchTranslateStatus.textContent = data.last_message || 'Error en la traducció per lots.';
+                    }
+                })
+                .catch(function () {
+                    stopBatchTranslatePoll();
+                    batchTranslateTrigger.disabled = false;
+                });
+        };
+
+        var startBatchTranslatePoll = function () {
+            stopBatchTranslatePoll();
+            pollBatchTranslateStatus();
+            batchTranslatePoll = setInterval(pollBatchTranslateStatus, 2000);
+        };
+
+        // Resume polling if a batch was already running when the page loaded.
+        fetch('?action=continguts-batch-translate-status')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if ((data.status || '') === 'running') {
+                    startBatchTranslatePoll();
+                }
+            })
+            .catch(function () {});
+
+        batchTranslateTrigger.addEventListener('click', function () {
+            if (batchTranslateTrigger.disabled) {
+                return;
+            }
+            if (!window.confirm('Traduir els subtítols que falten a tots els vídeos del catàleg? Es farà en segon pla i pot trigar una estona.')) {
+                return;
+            }
+            batchTranslateTrigger.disabled = true;
+            batchTranslateStatus.classList.remove('is-error', 'is-ok');
+            batchTranslateStatus.textContent = 'Llançant traducció en segon pla…';
+            fetch('?action=continguts-batch-translate', { method: 'POST' })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { okHttp: res.ok, data: data };
+                    });
+                })
+                .then(function (result) {
+                    var data = result.data || {};
+                    if (!result.okHttp || !data.ok) {
+                        batchTranslateStatus.classList.add('is-error');
+                        batchTranslateStatus.textContent = data.error || 'Error en llançar la traducció.';
+                        batchTranslateTrigger.disabled = false;
+                        return;
+                    }
+                    startBatchTranslatePoll();
+                })
+                .catch(function () {
+                    batchTranslateStatus.classList.add('is-error');
+                    batchTranslateStatus.textContent = 'Error de xarxa en llançar la traducció.';
+                    batchTranslateTrigger.disabled = false;
                 });
         });
     }
