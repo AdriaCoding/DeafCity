@@ -564,6 +564,89 @@
     }
 
     /**
+     * Base playlist pool (issue #01): one master index per distinct city (edition),
+     * each a random Participant's random Video. A Participant belongs to exactly one
+     * city, so grouping by participant within the city gives each Participant equal
+     * odds regardless of how many Videos they have.
+     * @param {Array<{ edition?: string, participant?: string }>} fullPlaylistItems
+     * @param {() => number} [randomFn]
+     * @returns {number[]} master indices, one per distinct city, in first-seen order
+     */
+    function buildOneVideoPerCityPool(fullPlaylistItems, randomFn) {
+        var random = randomFn || Math.random;
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var cityOrder = [];
+        var byCity = {};
+        var i;
+        for (i = 0; i < items.length; i++) {
+            var edition = itemFacetValue(items[i], 'edition');
+            if (edition === '') continue;
+            if (!byCity[edition]) {
+                byCity[edition] = [];
+                cityOrder.push(edition);
+            }
+            byCity[edition].push(i);
+        }
+
+        var pool = [];
+        for (var c = 0; c < cityOrder.length; c++) {
+            var cityIndices = byCity[cityOrder[c]];
+            var byParticipant = {};
+            var participantOrder = [];
+            for (i = 0; i < cityIndices.length; i++) {
+                var ix = cityIndices[i];
+                var item = items[ix];
+                var name = item && typeof item.participant === 'string' ? item.participant.trim() : '';
+                var key = name !== '' ? 'n:' + name : 'ix:' + ix;
+                if (!byParticipant[key]) {
+                    byParticipant[key] = [];
+                    participantOrder.push(key);
+                }
+                byParticipant[key].push(ix);
+            }
+            var chosenParticipant = participantOrder[Math.floor(random() * participantOrder.length)];
+            var candidates = byParticipant[chosenParticipant];
+            pool.push(candidates[Math.floor(random() * candidates.length)]);
+        }
+        return pool;
+    }
+
+    /**
+     * Base playlist plan (issue #01): buildOneVideoPerCityPool + a fresh shuffle
+     * over the reduced pool (same Fisher–Yates approach used elsewhere, just applied
+     * to this smaller set instead of the full catalog).
+     * @param {{
+     *   fullPlaylistItems: Array<{ edition?: string, participant?: string }>,
+     *   randomFn?: () => number
+     * }} opts
+     * @returns {{
+     *   filteredMasterIndices: number[],
+     *   filteredCursor: number,
+     *   shuffleStep: number,
+     *   shuffledSequence: number[],
+     *   shuffleMode: boolean,
+     *   loadMasterIndex: number
+     * } | null}
+     */
+    function planBaseCityPlaylist(opts) {
+        var randomFn = (opts && opts.randomFn) || Math.random;
+        var pool = buildOneVideoPerCityPool(opts && opts.fullPlaylistItems, randomFn);
+        var fc = pool.length;
+        if (fc === 0) return null;
+
+        var shuffledSequence = buildShuffledSequence(fc, randomFn);
+        var filteredCursor = shuffledSequence[0];
+        return {
+            filteredMasterIndices: pool,
+            filteredCursor: filteredCursor,
+            shuffleStep: 0,
+            shuffledSequence: shuffledSequence,
+            shuffleMode: true,
+            loadMasterIndex: pool[filteredCursor],
+        };
+    }
+
+    /**
      * Shuffle indices 0..count-1 excluding one fixed index (placed at step 0).
      * @param {number} count
      * @param {number} fixedIndex
@@ -680,6 +763,20 @@
     }
 
     /**
+     * Whether filterState has no facet pinned (issue #01: routes filter clears back
+     * to the base-city playlist, same as Reset).
+     * @param {VpcFilterState} filterState
+     * @returns {boolean}
+     */
+    function isFilterStateNeutral(filterState) {
+        var fs = filterState || {};
+        if (fs.sign_language !== null && fs.sign_language !== undefined) return false;
+        if (fs.edition !== null && fs.edition !== undefined) return false;
+        if (fs.typology !== null && fs.typology !== undefined) return false;
+        return !isTagPinned(fs);
+    }
+
+    /**
      * Empty R2 filter state (all facets unfixed).
      * @returns {VpcFilterState}
      */
@@ -731,7 +828,8 @@
     }
 
     /**
-     * Reset control (D1′): clear all filters and collections, reshuffle unfiltered ALL,
+     * Reset control (D1′): clear all filters and collections, rebuild the base
+     * playlist (issue #01: one random Participant's random Video per city, shuffled),
      * land paused on a fresh random poster — never restart current video from t=0.
      * @param {{
      *   fullPlaylistItems: Array<{ signLanguage?: string, edition?: string, typology?: string }>,
@@ -755,24 +853,19 @@
         var randomFn = opts.randomFn || Math.random;
         var filterState = emptyFilterState();
 
-        var filteredMasterIndices = recomputeFilteredMasterIndices(items, filterState);
-        var fc = filteredMasterIndices.length;
-        if (fc === 0) return null;
-
-        var shuffledSequence = buildShuffledSequence(fc, randomFn);
-        var filteredCursor = shuffledSequence[0];
-        var loadMasterIndex = filteredMasterIndices[filteredCursor];
+        var basePlan = planBaseCityPlaylist({ fullPlaylistItems: items, randomFn: randomFn });
+        if (!basePlan) return null;
 
         return {
             filterState: filterState,
             isParticipantMode: false,
             participantName: '',
-            filteredMasterIndices: filteredMasterIndices,
-            filteredCursor: filteredCursor,
-            shuffleStep: 0,
-            shuffledSequence: shuffledSequence,
-            shuffleMode: true,
-            loadMasterIndex: loadMasterIndex,
+            filteredMasterIndices: basePlan.filteredMasterIndices,
+            filteredCursor: basePlan.filteredCursor,
+            shuffleStep: basePlan.shuffleStep,
+            shuffledSequence: basePlan.shuffledSequence,
+            shuffleMode: basePlan.shuffleMode,
+            loadMasterIndex: basePlan.loadMasterIndex,
             shouldAutoplay: false,
         };
     }
@@ -792,13 +885,14 @@
      *   shuffledSequence: number[],
      *   shuffleStep: number,
      *   filteredCursor: number,
+     *   filteredMasterIndices?: number[]
      *   playbackTimeSec?: number
      * }} opts
      * @returns {object}
      */
     function buildPlaybackSessionSnapshot(opts) {
         return {
-            v: 2,
+            v: 3,
             masterIndex: typeof opts.masterIndex === 'number' ? opts.masterIndex : 0,
             filterState: {
                 sign_language: opts.filterState.sign_language,
@@ -816,6 +910,12 @@
                 : [],
             shuffleStep: typeof opts.shuffleStep === 'number' ? opts.shuffleStep : 0,
             filteredCursor: typeof opts.filteredCursor === 'number' ? opts.filteredCursor : 0,
+            // Issue #01: the base-city pool is a random pick, not a pure function of
+            // filterState — persisted so a same-tab refresh restores the exact pool
+            // instead of recomputing a different one.
+            filteredMasterIndices: Array.isArray(opts.filteredMasterIndices)
+                ? opts.filteredMasterIndices.slice()
+                : [],
             playbackTimeSec: typeof opts.playbackTimeSec === 'number' ? opts.playbackTimeSec : 0,
         };
     }
@@ -838,7 +938,8 @@
 
     /**
      * Parse a playback session JSON string, or null when invalid.
-     * Accepts v:1 (migrates tag:null) and v:2 (DH17).
+     * Accepts v:1 (migrates tag:null), v:2 (DH17), and v:3 (issue #01, adds
+     * filteredMasterIndices — absent/older sessions migrate to []).
      * @param {string} raw
      * @returns {object|null}
      */
@@ -847,7 +948,7 @@
         try {
             var data = JSON.parse(raw);
             if (!data || typeof data !== 'object') return null;
-            if (data.v !== 1 && data.v !== 2) return null;
+            if (data.v !== 1 && data.v !== 2 && data.v !== 3) return null;
             if (typeof data.masterIndex !== 'number') return null;
             if (!data.filterState || typeof data.filterState !== 'object') return null;
             if (data.v === 1 || data.filterState.tag === undefined) {
@@ -855,6 +956,9 @@
             }
             if (typeof data.participantSequence !== 'string') {
                 data.participantSequence = '';
+            }
+            if (!Array.isArray(data.filteredMasterIndices)) {
+                data.filteredMasterIndices = [];
             }
             return data;
         } catch (e) {
@@ -1072,6 +1176,25 @@
             filterState,
             participantName
         );
+
+        // Issue #01: the base-city pool is a random pick, not a pure function of
+        // filterState — a neutral restore must reuse the exact pool that was saved
+        // (session v3+) rather than recompute, which would widen back to the full
+        // catalog and desync filteredCursor/shuffledSequence from the saved video.
+        if (
+            participantName === ''
+            && isFilterStateNeutral(filterState)
+            && Array.isArray(session.filteredMasterIndices)
+            && session.filteredMasterIndices.length > 0
+        ) {
+            var storedPool = session.filteredMasterIndices.filter(function (ix) {
+                return typeof ix === 'number' && ix >= 0 && ix < items.length;
+            });
+            if (storedPool.length > 0) {
+                filteredMasterIndices = storedPool;
+            }
+        }
+
         var fc = filteredMasterIndices.length;
 
         var shuffleMode = !!session.shuffleMode;
@@ -1580,9 +1703,12 @@
         distinctFacetValuesInSubset: distinctFacetValuesInSubset,
         buildCascadingFilterOptions: buildCascadingFilterOptions,
         buildShuffledSequenceWithHead: buildShuffledSequenceWithHead,
+        buildOneVideoPerCityPool: buildOneVideoPerCityPool,
+        planBaseCityPlaylist: planBaseCityPlaylist,
         planFilterPlaylistRebuild: planFilterPlaylistRebuild,
         shouldClearCollectionOnFilterFix: shouldClearCollectionOnFilterFix,
         emptyFilterState: emptyFilterState,
+        isFilterStateNeutral: isFilterStateNeutral,
         resolveTagToggleOnFilterState: resolveTagToggleOnFilterState,
         filterStateAfterParticipantPick: filterStateAfterParticipantPick,
         planResetToNeutralAll: planResetToNeutralAll,

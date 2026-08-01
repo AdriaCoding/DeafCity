@@ -662,6 +662,54 @@ if (!function_exists('vpc_shuffle_playlist')) {
     }
 }
 
+if (!function_exists('vpc_base_city_playlist_pool')) {
+    /**
+     * Base playlist pool (issue #01): one entry per distinct city (edition), each a
+     * random Participant's random Video. Mirrors VpcPlaylistLogic.buildOneVideoPerCityPool
+     * in vimeo_playlist_logic.js (JS rebuilds this same pool for Reset / clearing
+     * filters; this PHP copy only needs to produce the cold-entry SSR playlist).
+     * A Participant belongs to exactly one city, so grouping by participant within
+     * the city gives each Participant equal odds regardless of how many Videos they have.
+     *
+     * @param array<int, array<string, mixed>> $catalogPlaylist
+     * @return array<int, array<string, mixed>>
+     */
+    function vpc_base_city_playlist_pool(array $catalogPlaylist) {
+        $byCity = array();
+        $cityOrder = array();
+        foreach ($catalogPlaylist as $entry) {
+            if (!is_array($entry) || empty($entry['edition'])) {
+                continue;
+            }
+            $city = (string) $entry['edition'];
+            if (!isset($byCity[$city])) {
+                $byCity[$city] = array();
+                $cityOrder[] = $city;
+            }
+            $byCity[$city][] = $entry;
+        }
+
+        $pool = array();
+        foreach ($cityOrder as $city) {
+            $cityEntries = $byCity[$city];
+            $byParticipant = array();
+            $participantOrder = array();
+            foreach ($cityEntries as $i => $entry) {
+                $name = !empty($entry['participant']) ? (string) $entry['participant'] : ('__ix_' . $i);
+                if (!isset($byParticipant[$name])) {
+                    $byParticipant[$name] = array();
+                    $participantOrder[] = $name;
+                }
+                $byParticipant[$name][] = $entry;
+            }
+            $chosenParticipant = $participantOrder[mt_rand(0, count($participantOrder) - 1)];
+            $candidates = $byParticipant[$chosenParticipant];
+            $pool[] = $candidates[mt_rand(0, count($candidates) - 1)];
+        }
+        return $pool;
+    }
+}
+
 if (!function_exists('vpc_edition_options_from_catalog')) {
     /**
      * @param array<string, mixed> $catalog
@@ -708,6 +756,10 @@ if (!function_exists('vpc_catalog_collection')) {
      *   subtitle_languages: array<int, array<string, mixed>>,
      *   deaf_hearing_enabled: bool,
      * }
+     *
+     * `playlist` (issue #01) is the base playlist: one random Participant's random
+     * Video per city, shuffled — never the full catalog. `catalog_playlist` stays
+     * the full unshuffled catalog for client-side filtering.
      */
     function vpc_catalog_collection($catalog, $studioConfigPath) {
         if (!$catalog) {
@@ -725,7 +777,7 @@ if (!function_exists('vpc_catalog_collection')) {
         $catalogPlaylist = vpc_vimeo_playlist_all_from_catalog($catalog);
 
         return array(
-            'playlist' => vpc_shuffle_playlist($catalogPlaylist),
+            'playlist' => vpc_shuffle_playlist(vpc_base_city_playlist_pool($catalogPlaylist)),
             'catalog_playlist' => $catalogPlaylist,
             'sign_language_options' => vpc_sign_language_options_from_catalog($catalog, $studioConfigPath),
             'edition_options' => vpc_edition_options_from_catalog($catalog, $studioConfigPath),

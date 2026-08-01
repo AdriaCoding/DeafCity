@@ -190,13 +190,29 @@ if (!preg_match('~<script[^>]+class="vpc-config"[^>]*>(.*?)</script>~s', $homeHt
     exit(1);
 }
 $cfg2 = json_decode(html_entity_decode($m2[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'), true);
-$fullCatalogCount = count(vpc_vimeo_playlist_all_from_catalog($catalog));
-$fullCount = count($cfg2['playlist'] ?? []);
-if ($fullCount !== $fullCatalogCount) {
-    fwrite(STDERR, "FAIL: full catalog playlist should have {$fullCatalogCount} videos, got {$fullCount}\n");
+$fullCatalog = vpc_vimeo_playlist_all_from_catalog($catalog);
+$fullCatalogCount = count($fullCatalog);
+$catalogPlaylistCount = count($cfg2['catalogPlaylist'] ?? []);
+if ($catalogPlaylistCount !== $fullCatalogCount) {
+    fwrite(STDERR, "FAIL: catalogPlaylist should have {$fullCatalogCount} videos, got {$catalogPlaylistCount}\n");
     exit(1);
 }
-echo "PASS: full catalog playlist has {$fullCatalogCount} videos (no participant filter)\n";
+echo "PASS: catalogPlaylist has {$fullCatalogCount} videos (no participant filter)\n";
+
+// Issue #01: without a participant filter, `playlist` is the cold-entry base
+// playlist — one video per city — not the full catalog.
+$distinctEditions = [];
+foreach ($fullCatalog as $entry) {
+    if (!empty($entry['edition'])) {
+        $distinctEditions[$entry['edition']] = true;
+    }
+}
+$basePlaylistCount = count($cfg2['playlist'] ?? []);
+if ($basePlaylistCount !== count($distinctEditions)) {
+    fwrite(STDERR, "FAIL: base playlist should have " . count($distinctEditions) . " videos (one per city), got {$basePlaylistCount}\n");
+    exit(1);
+}
+echo "PASS: base playlist has {$basePlaylistCount} videos, one per city (no participant filter)\n";
 
 if (($cfg2['participantName'] ?? 'NOT_SET') !== '') {
     fwrite(STDERR, "FAIL: participantName should be '' when no ?participant, got: " . json_encode($cfg2['participantName'] ?? null) . "\n");

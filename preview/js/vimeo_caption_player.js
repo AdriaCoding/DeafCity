@@ -524,31 +524,32 @@
                 playlistIndex = participantPlan.loadMasterIndex;
             } else if (serverShuffled && filteredCount() > 0) {
                 shuffleMode = true;
-                shuffledSequence = [];
+                var serverMasterIndices = [];
                 serverPlaylist.forEach(function (entry) {
                     var mix = masterIndexForVideoId(entry.videoId);
-                    var fpos = filteredMasterIndices.indexOf(mix);
-                    if (fpos >= 0 && shuffledSequence.indexOf(fpos) < 0) {
-                        shuffledSequence.push(fpos);
+                    if (serverMasterIndices.indexOf(mix) < 0) {
+                        serverMasterIndices.push(mix);
                     }
                 });
-                filteredMasterIndices.forEach(function (_, fpos) {
-                    if (shuffledSequence.indexOf(fpos) < 0) {
-                        shuffledSequence.push(fpos);
-                    }
-                });
+                // Issue #01: the server already built the exact playlist for cold entry
+                // (the base playlist — one video per city). Trust its order and size
+                // as-is; do not pad with the rest of the full-catalog filteredMasterIndices.
+                filteredMasterIndices = serverMasterIndices;
+                shuffledSequence = filteredMasterIndices.map(function (_, fpos) { return fpos; });
                 var startFpos = filteredMasterIndices.indexOf(playlistIndex);
-                shuffleStep = startFpos >= 0 ? shuffledSequence.indexOf(startFpos) : 0;
-                if (shuffleStep < 0) shuffleStep = 0;
-                filteredCursor = shuffledSequence[shuffleStep];
+                shuffleStep = startFpos >= 0 ? startFpos : 0;
+                filteredCursor = shuffleStep;
             } else {
-                var defaultShuffle = L.createDefaultShuffleState(filteredCount());
-                shuffleMode = defaultShuffle.shuffleMode;
-                shuffledSequence = defaultShuffle.shuffledSequence;
-                shuffleStep = defaultShuffle.shuffleStep;
-                filteredCursor = defaultShuffle.filteredCursor;
-                if (filteredCount() > 0) {
-                    playlistIndex = filteredMasterIndices[filteredCursor];
+                // Issue #01: cold entry without a server-pre-built playlist still gets
+                // the base playlist (one video per city), never a full-catalog shuffle.
+                var basePlan = L.planBaseCityPlaylist({ fullPlaylistItems: fullPlaylistItems });
+                if (basePlan) {
+                    filteredMasterIndices = basePlan.filteredMasterIndices;
+                    shuffleMode = basePlan.shuffleMode;
+                    shuffledSequence = basePlan.shuffledSequence;
+                    shuffleStep = basePlan.shuffleStep;
+                    filteredCursor = basePlan.filteredCursor;
+                    playlistIndex = basePlan.loadMasterIndex;
                 }
             }
         }
@@ -831,6 +832,7 @@
                         shuffledSequence: shuffledSequence,
                         shuffleStep: shuffleStep,
                         filteredCursor: filteredCursor,
+                        filteredMasterIndices: filteredMasterIndices,
                         playbackTimeSec: typeof sec === 'number' ? sec : 0,
                     });
                     try {
@@ -1507,6 +1509,32 @@
 
                 if (facet === 'tag' && newValue) {
                     filterState = L.resolveTagToggleOnFilterState(filterState, fullPlaylistItems);
+                }
+
+                // Issue #01: clearing back to neutral (every facet unset) behaves like
+                // Reset — a fresh base playlist (one random Participant's Video per
+                // city), not a widen-and-keep-current of the full catalog.
+                if (L.isFilterStateNeutral(filterState)) {
+                    var basePlan = L.planResetToNeutralAll({ fullPlaylistItems: fullPlaylistItems });
+                    if (basePlan) {
+                        filterState = basePlan.filterState;
+                        filteredMasterIndices = basePlan.filteredMasterIndices;
+                        filteredCursor = basePlan.filteredCursor;
+                        shuffleStep = basePlan.shuffleStep;
+                        shuffledSequence = basePlan.shuffledSequence;
+                        shuffleMode = basePlan.shuffleMode;
+
+                        updateAllFilterPickerReadouts();
+                        rebuildAllCascadingDropdowns();
+                        savePlaybackSession();
+
+                        playlistIndex = basePlan.loadMasterIndex;
+                        loadVideoMaster(playlistIndex, basePlan.shouldAutoplay).then(function () {
+                            updatePlaylistNavButtons();
+                            savePlaybackSession();
+                        });
+                        return;
+                    }
                 }
 
                 var plan = L.planFilterPlaylistRebuild({

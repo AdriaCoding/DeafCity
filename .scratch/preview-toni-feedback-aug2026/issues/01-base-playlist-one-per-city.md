@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Base playlist: one random participant per city
 
@@ -19,11 +19,18 @@ Thumbnail display/fallback logic is explicitly **out of scope** — that require
 
 ## Acceptance criteria
 
-- [ ] Cold entry (empty sessionStorage / new tab) builds a playlist with exactly one video per Edition, from a randomly chosen Participant of that Edition
-- [ ] Pressing Reset produces a fresh such playlist (new random participant/video per city, new shuffle order)
-- [ ] Manually clearing all active filters back to neutral produces the same fresh playlist behavior as Reset
-- [ ] A same-tab browser refresh while a video is loaded/playing restores the exact same video and position as before (no regression to existing session-restore behavior)
-- [ ] Unit tests cover the pool-construction function (1 per city) and the cold-vs-restore branch selection, following the existing pure-function testing pattern in `vimeo_playlist_logic.test.js`
+- [x] Cold entry (empty sessionStorage / new tab) builds a playlist with exactly one video per Edition, from a randomly chosen Participant of that Edition
+- [x] Pressing Reset produces a fresh such playlist (new random participant/video per city, new shuffle order)
+- [x] Manually clearing all active filters back to neutral produces the same fresh playlist behavior as Reset
+- [x] A same-tab browser refresh while a video is loaded/playing restores the exact same video and position as before (no regression to existing session-restore behavior)
+- [x] Unit tests cover the pool-construction function (1 per city) and the cold-vs-restore branch selection, following the existing pure-function testing pattern in `vimeo_playlist_logic.test.js`
+
+## Implementation notes
+
+- `buildOneVideoPerCityPool` / `planBaseCityPlaylist` (`preview/js/vimeo_playlist_logic.js`) build the pool + shuffle; reused by `planResetToNeutralAll` and by `applyFilterChange` (via the new `isFilterStateNeutral` check) so cold entry, Reset, and clearing all filters share one implementation.
+- Mirrored server-side as `vpc_base_city_playlist_pool` (`preview/lib/videos_catalog.php`) for the cold-entry SSR playlist; `catalog_playlist` stays the full catalog for client-side filtering.
+- The base pool is a random pick, not a pure function of filter state, so a same-tab refresh can't simply recompute it. The playback session snapshot was bumped to v3 to carry `filteredMasterIndices`; `planSecondaryNavRestore` reuses the stored pool on a neutral-state restore instead of recomputing (old v1/v2 sessions still parse and fall back to prior behavior).
+- Tests: `preview/tests/vimeo_playlist_logic.test.js` (pool construction, reset, neutral-filter routing, session v3, cold-vs-restore branch selection) and `preview/tests/base_city_playlist_test.php` (PHP pool function + integration check against the real catalog).
 
 ## Blocked by
 

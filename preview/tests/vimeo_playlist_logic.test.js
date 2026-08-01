@@ -932,10 +932,15 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(plan.filterState.tag, null, 'clears tag filter');
     assert.strictEqual(plan.isParticipantMode, false, 'clears participant mode');
     assert.strictEqual(plan.participantName, '', 'clears participant name');
-    assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'unfiltered ALL catalog');
+    // Issue #01: Reset rebuilds the base playlist — one random Participant's random
+    // Video per city — not a shuffle of the full catalog.
+    assert.strictEqual(plan.filteredMasterIndices.length, 5, 'one video per city, not full catalog');
+    var editionsSeen = plan.filteredMasterIndices.map(function (ix) { return samplePlaylist[ix].edition; });
+    var uniqueEditions = editionsSeen.filter(function (v, i) { return editionsSeen.indexOf(v) === i; });
+    assert.strictEqual(uniqueEditions.length, 5, 'each entry from a distinct city');
     assert.strictEqual(plan.shuffleMode, true, 'reset uses shuffle-on ALL');
     assert.strictEqual(plan.shuffleStep, 0, 'reset starts at shuffle step 0');
-    assert.strictEqual(plan.shuffledSequence.length, samplePlaylist.length, 'full reshuffle');
+    assert.strictEqual(plan.shuffledSequence.length, 5, 'reshuffle over the reduced pool');
     assert.strictEqual(plan.shouldAutoplay, false, 'reset never auto-plays (D1′ exception)');
     assert.strictEqual(
         logic.shouldAutoplayWithSound(true, plan.shouldAutoplay),
@@ -947,14 +952,14 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(plan.loadMasterIndex, plan.filteredMasterIndices[plan.filteredCursor], 'load index maps from shuffle head');
 })();
 
-// Reset from a narrowed filtered state still widens to full catalog
+// Reset from a narrowed filtered state still produces the reduced one-per-city pool
 (function () {
     var plan = logic.planResetToNeutralAll({
         fullPlaylistItems: samplePlaylist,
         randomFn: function () { return 0.5; },
     });
     assert.ok(plan);
-    assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'reset widens to ALL');
+    assert.strictEqual(plan.filteredMasterIndices.length, 5, 'reset always rebuilds the base one-per-city pool');
 })();
 
 // emptyFilterState helper matches cleared reset state
@@ -967,6 +972,68 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     var filtered = recomputeFilteredMasterIndices(samplePlaylist, empty);
     assert.strictEqual(filtered.length, samplePlaylist.length);
 })();
+
+// ── Issue #01: base playlist — one random participant per city ──────────────
+
+// Pool construction: exactly one master index per distinct edition (city)
+(function () {
+    var pool = logic.buildOneVideoPerCityPool(samplePlaylist, function () { return 0; });
+    // samplePlaylist has 5 distinct editions: sao-paulo, valencia, bilbao, mexico, salamanca
+    assert.strictEqual(pool.length, 5, 'one entry per distinct city');
+    var editionsSeen = pool.map(function (ix) { return samplePlaylist[ix].edition; });
+    var uniqueEditions = editionsSeen.filter(function (v, i) { return editionsSeen.indexOf(v) === i; });
+    assert.strictEqual(uniqueEditions.length, 5, 'each pool entry is from a distinct city');
+})();
+
+// Pool construction: picks a random participant (not just a random video) per city —
+// sao-paulo has 2 participants (Edinho idx0, Fabio idx5); a high randomFn should be
+// able to land on the second participant even though each has exactly 1 video.
+(function () {
+    var poolLow = logic.buildOneVideoPerCityPool(samplePlaylist, function () { return 0; });
+    var poolHigh = logic.buildOneVideoPerCityPool(samplePlaylist, function () { return 0.999; });
+    var saoPauloLow = poolLow.filter(function (ix) { return samplePlaylist[ix].edition === '2023-sao-paulo'; })[0];
+    var saoPauloHigh = poolHigh.filter(function (ix) { return samplePlaylist[ix].edition === '2023-sao-paulo'; })[0];
+    assert.strictEqual(samplePlaylist[saoPauloLow].participant, 'Edinho', 'low random picks first participant');
+    assert.strictEqual(samplePlaylist[saoPauloHigh].participant, 'Fabio', 'high random picks other participant');
+})();
+
+// planBaseCityPlaylist: pool + fresh shuffle over the reduced set
+(function () {
+    var plan = logic.planBaseCityPlaylist({
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan, 'plan produced');
+    assert.strictEqual(plan.filteredMasterIndices.length, 5, 'reduced to one per city');
+    assert.strictEqual(plan.shuffleMode, true);
+    assert.strictEqual(plan.shuffleStep, 0);
+    assert.strictEqual(plan.shuffledSequence.length, 5);
+    assert.strictEqual(plan.filteredCursor, plan.shuffledSequence[0]);
+    assert.strictEqual(plan.loadMasterIndex, plan.filteredMasterIndices[plan.filteredCursor]);
+})();
+
+// planBaseCityPlaylist: empty catalog → null
+(function () {
+    var plan = logic.planBaseCityPlaylist({ fullPlaylistItems: [], randomFn: function () { return 0; } });
+    assert.strictEqual(plan, null, 'no cities → no plan');
+})();
+
+// isFilterStateNeutral: true only when every facet is unset (used to route filter
+// clears back to the base-city playlist, same as Reset)
+(function () {
+    assert.strictEqual(logic.isFilterStateNeutral(logic.emptyFilterState()), true, 'empty state is neutral');
+    assert.strictEqual(
+        logic.isFilterStateNeutral({ sign_language: 'lse', edition: null, typology: null, tag: null }),
+        false,
+        'sign_language pin is not neutral'
+    );
+    assert.strictEqual(
+        logic.isFilterStateNeutral({ sign_language: null, edition: null, typology: null, tag: 'DEAF&HEARING' }),
+        false,
+        'tag pin is not neutral'
+    );
+})();
+
 
 // Single-line caption normalization and shrink-to-fit sizing
 (function () {
@@ -1018,6 +1085,96 @@ assert.strictEqual(logic.NAV_INTENT_KEY, 'vpc-nav-intent');
 
 assert.strictEqual(logic.parsePlaybackSession(''), null);
 assert.strictEqual(logic.parsePlaybackSession('not-json'), null);
+
+// Issue #01: session snapshot carries the exact base-city pool (v3) so a same-tab
+// refresh mid-neutral-state restores the identical random pick, not a fresh recompute.
+(function () {
+    var snap = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 4,
+        filterState: logic.emptyFilterState(),
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [2, 0, 1],
+        shuffleStep: 0,
+        filteredCursor: 2,
+        filteredMasterIndices: [4, 1, 6],
+        playbackTimeSec: 8,
+    });
+    assert.strictEqual(snap.v, 3, 'base-pool-aware sessions are v3');
+    assert.deepStrictEqual(snap.filteredMasterIndices, [4, 1, 6]);
+
+    var parsed = logic.parsePlaybackSession(JSON.stringify(snap));
+    assert.ok(parsed);
+    assert.deepStrictEqual(parsed.filteredMasterIndices, [4, 1, 6], 'round-trips the stored pool');
+
+    // v2 sessions (pre-issue-#01) have no filteredMasterIndices — migrates to [].
+    var v2raw = JSON.stringify({
+        v: 2,
+        masterIndex: 0,
+        filterState: { sign_language: null, edition: null, typology: null, tag: null },
+        participantName: '',
+        shuffleMode: false,
+        shuffledSequence: [],
+        shuffleStep: 0,
+        filteredCursor: 0,
+        playbackTimeSec: 0,
+    });
+    var v2parsed = logic.parsePlaybackSession(v2raw);
+    assert.ok(v2parsed);
+    assert.deepStrictEqual(v2parsed.filteredMasterIndices, [], 'v2 session migrates to empty pool');
+})();
+
+// Issue #01: same-tab refresh (no nav-intent) with a neutral session reuses the
+// stored base-city pool verbatim instead of recomputing (which would widen to the
+// full catalog and desync filteredCursor from the video that was actually playing).
+(function () {
+    var session = logic.buildPlaybackSessionSnapshot({
+        masterIndex: 2, // samplePlaylist[2] = 2023-bilbao / Amaia
+        filterState: { sign_language: null, edition: null, typology: null },
+        participantName: '',
+        shuffleMode: true,
+        shuffledSequence: [1, 0, 2],
+        shuffleStep: 0,
+        filteredCursor: 1,
+        filteredMasterIndices: [0, 2, 4], // a prior base-city pool (3 of the 5 cities)
+        playbackTimeSec: 17,
+    });
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: '',
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'restore');
+    assert.deepStrictEqual(plan.filteredMasterIndices, [0, 2, 4], 'reuses the stored pool, not the full catalog');
+    assert.strictEqual(plan.loadMasterIndex, 2, 'resolves to the video that was actually playing');
+    assert.strictEqual(plan.playbackTimeSec, 17);
+})();
+
+// Legacy (pre-issue-#01) sessions have no stored pool: falls back to recomputing
+// from filterState, same as before this change.
+(function () {
+    var session = {
+        v: 2,
+        masterIndex: 2,
+        filterState: { sign_language: null, edition: null, typology: null, tag: null },
+        participantName: '',
+        participantSequence: '',
+        shuffleMode: true,
+        shuffledSequence: [1, 0, 2],
+        shuffleStep: 0,
+        filteredCursor: 2,
+        playbackTimeSec: 0,
+    };
+    var plan = logic.planSecondaryNavRestore({
+        session: session,
+        navIntent: '',
+        fullPlaylistItems: samplePlaylist,
+        randomFn: function () { return 0; },
+    });
+    assert.strictEqual(plan.kind, 'restore');
+    assert.strictEqual(plan.filteredMasterIndices.length, samplePlaylist.length, 'legacy session widens to full catalog');
+})();
 
 // Branch A: nav intent without session → fresh neutral
 (function () {
@@ -1486,7 +1643,7 @@ assert.strictEqual(logic.shouldClearCollectionOnFilterFix(true, T), true, 'tag-o
 
 console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING membership)');
 
-// Session v2 includes tag; v1 migrates to tag:null (DH17)
+// Session (current version) includes tag; v1 migrates to tag:null (DH17)
 (function () {
     var snap = logic.buildPlaybackSessionSnapshot({
         masterIndex: 0,
@@ -1498,7 +1655,6 @@ console.log('vimeo_playlist_logic.test.js: all passed (including DEAF+HEARING me
         filteredCursor: 0,
         playbackTimeSec: 0,
     });
-    assert.strictEqual(snap.v, 2);
     assert.strictEqual(snap.filterState.tag, T);
     var parsed = logic.parsePlaybackSession(JSON.stringify(snap));
     assert.ok(parsed);

@@ -315,11 +315,15 @@ if ($r2Pos === false || $controlRowPos === false || $r2Pos < $controlRowPos) {
 }
 echo "PASS: filters inside single control row\n";
 
-// AC: Each playlist item has catalog fields (sign_language, edition, typology, participant, tags)
+// AC: Each catalog item has catalog fields (sign_language, edition, typology, participant, tags).
+// Issue #01: `playlist` is now the reduced cold-entry base playlist (one video per
+// city) — too small to reliably contain a DEAF&HEARING-tagged item every render, so
+// this field/tag-presence check reads `catalogPlaylist` (the full catalog) instead,
+// which is what it always meant to validate.
 $cfg2 = $cfg; // already parsed above
-$playlistItems2 = isset($cfg2['playlist']) && is_array($cfg2['playlist']) ? $cfg2['playlist'] : [];
+$playlistItems2 = isset($cfg2['catalogPlaylist']) && is_array($cfg2['catalogPlaylist']) ? $cfg2['catalogPlaylist'] : [];
 if (count($playlistItems2) === 0) {
-    fwrite(STDERR, "FAIL: playlist is empty in vpc-config for field check\n");
+    fwrite(STDERR, "FAIL: catalogPlaylist is empty in vpc-config for field check\n");
     exit(1);
 }
 $missingFields = [];
@@ -336,14 +340,14 @@ foreach ($playlistItems2 as $i => $item) {
     }
 }
 if (count($missingFields) > 0) {
-    fwrite(STDERR, "FAIL: Missing catalog fields in playlist JSON: " . implode(', ', $missingFields) . "\n");
+    fwrite(STDERR, "FAIL: Missing catalog fields in catalogPlaylist JSON: " . implode(', ', $missingFields) . "\n");
     exit(1);
 }
 if ($taggedCount < 1) {
-    fwrite(STDERR, "FAIL: expected at least one playlist item with DEAF&HEARING tag\n");
+    fwrite(STDERR, "FAIL: expected at least one catalogPlaylist item with DEAF&HEARING tag\n");
     exit(1);
 }
-echo "PASS: all playlist items have signLanguage, edition, typology, participant, tags fields ($taggedCount tagged)\n";
+echo "PASS: all catalogPlaylist items have signLanguage, edition, typology, participant, tags fields ($taggedCount tagged)\n";
 
 // AC: signLanguageFilter config in vpc-config carries options array (D17)
 if (!isset($cfg2['signLanguageFilter']) || !is_array($cfg2['signLanguageFilter'])) {
