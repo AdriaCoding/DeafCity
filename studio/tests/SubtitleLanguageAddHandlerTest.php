@@ -4,7 +4,9 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\CatalogEditor;
+use Studio\ContentLocalizationSync;
 use Studio\Iso639LanguageRegistry;
+use Studio\LocalizationStore;
 use Studio\StudioConfig;
 use Studio\StudioConfigMutation;
 use Studio\SubtitleLanguageAddHandler;
@@ -13,6 +15,7 @@ use Studio\VimeoLocaleRegistry;
 class SubtitleLanguageAddHandlerTest extends TestCase
 {
     private string $configPath;
+    private string $localizationsPath;
     private Iso639LanguageRegistry $isoRegistry;
     private VimeoLocaleRegistry $vimeoRegistry;
 
@@ -20,6 +23,8 @@ class SubtitleLanguageAddHandlerTest extends TestCase
     {
         $this->configPath = sys_get_temp_dir() . '/studio-subtitle-lang-add-' . uniqid() . '.json';
         copy(__DIR__ . '/fixtures/studio-config-vimeo.json', $this->configPath);
+        $this->localizationsPath = sys_get_temp_dir() . '/ui-localizations-subtitle-lang-add-' . uniqid() . '.json';
+        file_put_contents($this->localizationsPath, '{}');
         $this->isoRegistry = new Iso639LanguageRegistry(__DIR__ . '/../js/iso-639-3.json');
         $this->vimeoRegistry = new VimeoLocaleRegistry(__DIR__ . '/../js/vimeo-texttrack-locales.json');
     }
@@ -30,6 +35,7 @@ class SubtitleLanguageAddHandlerTest extends TestCase
             unlink($this->configPath);
         }
         @unlink($this->configPath . '.lock');
+        @unlink($this->localizationsPath);
     }
 
     public function test_adds_language_in_iso_vimeo_intersection(): void
@@ -89,6 +95,7 @@ class SubtitleLanguageAddHandlerTest extends TestCase
             new StudioConfigMutation(
                 new StudioConfig($this->configPath),
                 new CatalogEditor($this->configPath . '.catalog-unused'),
+                new ContentLocalizationSync(new LocalizationStore($this->localizationsPath)),
             ),
             $this->isoRegistry,
             $this->vimeoRegistry,

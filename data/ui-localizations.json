@@ -1829,5 +1829,12 @@
             "pt": true,
             "es": true
         }
+    },
+    "content.typology.pensaments": {
+        "section": "content",
+        "context": "Typology (pensaments)",
+        "translations": {
+            "en": "PENSAMENTS"
+        }
     }
 }

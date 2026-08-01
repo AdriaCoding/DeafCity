@@ -4,18 +4,24 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\CatalogEditor;
+use Studio\ContentLocalizationSync;
 use Studio\EditionAddHandler;
+use Studio\LocalizationStore;
 use Studio\StudioConfig;
 use Studio\StudioConfigMutation;
 
 class EditionAddHandlerTest extends TestCase
 {
     private string $configPath;
+    private string $localizationsPath;
 
     protected function setUp(): void
     {
         $this->configPath = sys_get_temp_dir() . '/studio-edition-add-' . uniqid() . '.json';
         copy(__DIR__ . '/fixtures/studio-config.json', $this->configPath);
+
+        $this->localizationsPath = sys_get_temp_dir() . '/ui-localizations-edition-add-' . uniqid() . '.json';
+        file_put_contents($this->localizationsPath, '{}');
     }
 
     protected function tearDown(): void
@@ -24,6 +30,7 @@ class EditionAddHandlerTest extends TestCase
             unlink($this->configPath);
         }
         @unlink($this->configPath . '.lock');
+        @unlink($this->localizationsPath);
     }
 
     private function makeMutation(): StudioConfigMutation
@@ -31,6 +38,7 @@ class EditionAddHandlerTest extends TestCase
         return new StudioConfigMutation(
             new StudioConfig($this->configPath),
             new CatalogEditor($this->configPath . '.catalog-unused'),
+            new ContentLocalizationSync(new LocalizationStore($this->localizationsPath)),
         );
     }
 
@@ -48,6 +56,10 @@ class EditionAddHandlerTest extends TestCase
         $ids = array_column($reloaded->getEditions(), 'id');
         $this->assertContains('2027-lisboa', $ids);
         $this->assertSame('2027-lisboa', $ids[0], 'new editions are prepended to the top');
+
+        $localizations = new LocalizationStore($this->localizationsPath);
+        $entry = $localizations->all()['content.edition.2027-lisboa'];
+        $this->assertSame(['en' => 'Lisboa 2027'], $entry['translations']);
     }
 
     public function test_rejects_duplicate_edition(): void

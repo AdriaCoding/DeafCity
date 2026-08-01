@@ -144,6 +144,87 @@ class LocalizationStore
     }
 
     /**
+     * Create a new localization key if it doesn't already exist. Never
+     * overwrites an existing key, so it's safe to call unconditionally
+     * whenever a new content item (typology, edition, sign language, ...)
+     * is added.
+     *
+     * @return bool true if the key was created, false if it already existed
+     */
+    public function createKeyIfMissing(string $key, string $section, string $context, string $enText): bool
+    {
+        $fp = fopen($this->storePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open ui-localizations for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $data = json_decode($raw ?: '', true);
+        if (!is_array($data)) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid ui-localizations JSON.');
+        }
+
+        if (isset($data[$key])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            return false;
+        }
+
+        $data[$key] = [
+            'section' => $section,
+            'context' => $context,
+            'translations' => ['en' => $enText],
+        ];
+
+        $this->writeLocked($fp, $data);
+        $this->data = $data;
+
+        return true;
+    }
+
+    /**
+     * Delete a localization key if present. Safe to call unconditionally
+     * when a content item (typology, edition, sign language, ...) is
+     * removed — no-op if the key was never created.
+     *
+     * @return bool true if the key was removed, false if it didn't exist
+     */
+    public function removeKey(string $key): bool
+    {
+        $fp = fopen($this->storePath, 'c+');
+        if ($fp === false) {
+            throw new \RuntimeException('Could not open ui-localizations for writing.');
+        }
+
+        flock($fp, LOCK_EX);
+
+        $raw = stream_get_contents($fp);
+        $data = json_decode($raw ?: '', true);
+        if (!is_array($data)) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            throw new \RuntimeException('Invalid ui-localizations JSON.');
+        }
+
+        if (!isset($data[$key])) {
+            flock($fp, LOCK_UN);
+            fclose($fp);
+            return false;
+        }
+
+        unset($data[$key]);
+
+        $this->writeLocked($fp, $data);
+        $this->data = $data;
+
+        return true;
+    }
+
+    /**
      * Fill empty cells only; mark filled cells seeded.
      *
      * @param array<string, string> $translations key => translated text

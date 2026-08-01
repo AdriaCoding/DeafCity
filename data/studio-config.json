@@ -183,6 +183,10 @@
             "id": "memories",
             "label": "MEMÒRIES",
             "short_label": "Memòries"
+        },
+        {
+            "id": "pensaments",
+            "label": "PENSAMENTS"
         }
     ]
 }

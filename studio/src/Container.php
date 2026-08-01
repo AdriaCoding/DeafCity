@@ -35,6 +35,7 @@ class Container
         return $this->configMutation ??= new StudioConfigMutation(
             $this->studioConfig,
             $this->catalogEditor(),
+            new ContentLocalizationSync(new LocalizationStore($this->dataDir . '/ui-localizations.json')),
         );
     }
 

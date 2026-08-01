@@ -101,4 +101,53 @@ class LocalizationStoreTest extends TestCase
         $this->assertArrayNotHasKey('seeded', $entry);
         $this->assertSame('Tutte le tipologie (edited)', $reloaded->getCell('player.filter.all_typologies', 'it'));
     }
+
+    public function test_create_key_if_missing_creates_new_key(): void
+    {
+        $store = new LocalizationStore($this->storePath);
+        $created = $store->createKeyIfMissing('content.typology.pensaments', 'content', 'Typology (pensaments)', 'PENSAMENTS');
+
+        $this->assertTrue($created);
+
+        $reloaded = new LocalizationStore($this->storePath);
+        $entry = $reloaded->all()['content.typology.pensaments'];
+        $this->assertSame('content', $entry['section']);
+        $this->assertSame('Typology (pensaments)', $entry['context']);
+        $this->assertSame(['en' => 'PENSAMENTS'], $entry['translations']);
+    }
+
+    public function test_create_key_if_missing_does_not_overwrite_existing_key(): void
+    {
+        $store = new LocalizationStore($this->storePath);
+        $created = $store->createKeyIfMissing('content.typology.acudits', 'content', 'Should not be used', 'Should not be used');
+
+        $this->assertFalse($created);
+
+        $reloaded = new LocalizationStore($this->storePath);
+        $entry = $reloaded->all()['content.typology.acudits'];
+        $this->assertSame('Typology label', $entry['context']);
+        $this->assertSame(['en' => 'Jokes'], $entry['translations']);
+    }
+
+    public function test_remove_key_deletes_existing_key(): void
+    {
+        $store = new LocalizationStore($this->storePath);
+        $removed = $store->removeKey('content.typology.acudits');
+
+        $this->assertTrue($removed);
+
+        $reloaded = new LocalizationStore($this->storePath);
+        $this->assertArrayNotHasKey('content.typology.acudits', $reloaded->all());
+    }
+
+    public function test_remove_key_is_a_no_op_for_missing_key(): void
+    {
+        $store = new LocalizationStore($this->storePath);
+        $removed = $store->removeKey('content.typology.does-not-exist');
+
+        $this->assertFalse($removed);
+
+        $reloaded = new LocalizationStore($this->storePath);
+        $this->assertArrayHasKey('content.typology.acudits', $reloaded->all());
+    }
 }

@@ -4,6 +4,8 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\CatalogEditor;
+use Studio\ContentLocalizationSync;
+use Studio\LocalizationStore;
 use Studio\SignLanguageAddHandler;
 use Studio\StudioConfig;
 use Studio\StudioConfigMutation;
@@ -11,11 +13,15 @@ use Studio\StudioConfigMutation;
 class SignLanguageAddHandlerTest extends TestCase
 {
     private string $configPath;
+    private string $localizationsPath;
 
     protected function setUp(): void
     {
         $this->configPath = sys_get_temp_dir() . '/studio-sign-lang-add-' . uniqid() . '.json';
         copy(__DIR__ . '/fixtures/studio-config.json', $this->configPath);
+
+        $this->localizationsPath = sys_get_temp_dir() . '/ui-localizations-sign-lang-add-' . uniqid() . '.json';
+        file_put_contents($this->localizationsPath, '{}');
     }
 
     protected function tearDown(): void
@@ -24,6 +30,7 @@ class SignLanguageAddHandlerTest extends TestCase
             unlink($this->configPath);
         }
         @unlink($this->configPath . '.lock');
+        @unlink($this->localizationsPath);
     }
 
     private function makeMutation(): StudioConfigMutation
@@ -31,6 +38,7 @@ class SignLanguageAddHandlerTest extends TestCase
         return new StudioConfigMutation(
             new StudioConfig($this->configPath),
             new CatalogEditor($this->configPath . '.catalog-unused'),
+            new ContentLocalizationSync(new LocalizationStore($this->localizationsPath)),
         );
     }
 
@@ -47,6 +55,10 @@ class SignLanguageAddHandlerTest extends TestCase
         $reloaded = new StudioConfig($this->configPath);
         $ids = array_column($reloaded->getSignLanguages(), 'id');
         $this->assertContains('gss', $ids);
+
+        $localizations = new LocalizationStore($this->localizationsPath);
+        $entry = $localizations->all()['content.sign_language.gss.label'];
+        $this->assertSame(['en' => 'GSS Greek'], $entry['translations']);
     }
 
     public function test_rejects_duplicate_sign_language(): void

@@ -13,21 +13,25 @@ class StudioConfigMutation
     public function __construct(
         private StudioConfig $config,
         private CatalogEditor $catalog,
+        private ContentLocalizationSync $localizationSync,
     ) {}
 
     public function addEdition(string $id, string $label): void
     {
         $this->config->addEdition($id, $label);
+        $this->localizationSync->syncEdition($id, $label);
     }
 
     public function addSignLanguage(string $id, string $label): void
     {
         $this->config->addSignLanguage($id, $label);
+        $this->localizationSync->syncSignLanguage($id, $label);
     }
 
     public function addTypology(string $id, string $label): void
     {
         $this->config->addTypology($id, $label);
+        $this->localizationSync->syncTypology($id, $label);
     }
 
     public function addSubtitleLanguage(string $id, string $label): void
@@ -58,16 +62,19 @@ class StudioConfigMutation
     public function removeEdition(string $id): void
     {
         $this->config->removeEdition($id, $this->catalog);
+        $this->localizationSync->removeEdition($id);
     }
 
     public function removeSignLanguage(string $id): void
     {
         $this->config->removeSignLanguage($id, $this->catalog);
+        $this->localizationSync->removeSignLanguage($id);
     }
 
     public function removeTypology(string $id): void
     {
         $this->config->removeTypology($id, $this->catalog);
+        $this->localizationSync->removeTypology($id);
     }
 
     public function removeSubtitleLanguage(string $id): void

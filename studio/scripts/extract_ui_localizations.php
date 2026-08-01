@@ -5,6 +5,10 @@
  * Run: php studio/scripts/extract_ui_localizations.php
  */
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Studio\ContentLocalizationSync;
+
 $dataDir = dirname(__DIR__, 2) . '/data';
 $configPath = $dataDir . '/studio-config.json';
 $outPath = $dataDir . '/ui-localizations.json';
@@ -98,16 +102,16 @@ if (is_array($cfg)) {
             continue;
         }
         if (!empty($item['label'])) {
-            $store["content.sign_language.$id.label"] = [
+            $store[ContentLocalizationSync::signLanguageLabelKey($id)] = [
                 'section' => 'content',
-                'context' => "Sign language label ($id)",
+                'context' => ContentLocalizationSync::signLanguageLabelContext($id),
                 'translations' => ['en' => $item['label']],
             ];
         }
         if (!empty($item['short_label'])) {
-            $store["content.sign_language.$id.short_label"] = [
+            $store[ContentLocalizationSync::signLanguageShortLabelKey($id)] = [
                 'section' => 'content',
-                'context' => "Sign language short label ($id)",
+                'context' => ContentLocalizationSync::signLanguageShortLabelContext($id),
                 'translations' => ['en' => $item['short_label']],
             ];
         }
@@ -123,10 +127,10 @@ if (is_array($cfg)) {
         if ($city === '') {
             continue;
         }
-        $key = "content.edition.$id";
+        $key = ContentLocalizationSync::editionKey($id);
         $store[$key] = [
             'section' => 'content',
-            'context' => "Edition city ($id)",
+            'context' => ContentLocalizationSync::editionContext($id),
             'translations' => ['en' => $city],
         ];
 
@@ -182,10 +186,10 @@ if (is_array($cfg)) {
             continue;
         }
         $enLabel = $typologyEnDefaults[$id] ?? $fallback;
-        $key = "content.typology.$id";
+        $key = ContentLocalizationSync::typologyKey($id);
         $store[$key] = [
             'section' => 'content',
-            'context' => "Typology ($id)",
+            'context' => ContentLocalizationSync::typologyContext($id),
             'translations' => ['en' => $enLabel],
         ];
 
