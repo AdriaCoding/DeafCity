@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Reorder bottom-bar filter buttons
 
@@ -16,11 +16,11 @@ This is a DOM-order change within the existing `vpc-control-secondary-l` contain
 
 ## Acceptance criteria
 
-- [ ] Language picker renders first (leftmost) in the bottom bar's left group, before DEAF+HEARING
-- [ ] DEAF+HEARING and Typology picker follow, in that order, unchanged relative to each other
-- [ ] Right group (Sign language, City) and transport cluster positions are unaffected
-- [ ] No visual regression to existing responsive breakpoints (≤1024px, ≤650px, ≤500px) for this row
-- [ ] Existing tests referencing button order/labels in `home_page_test.php` (or equivalent) updated to match
+- [x] Language picker renders first (leftmost) in the bottom bar's left group, before DEAF+HEARING
+- [x] DEAF+HEARING and Typology picker follow, in that order, unchanged relative to each other
+- [x] Right group (Sign language, City) and transport cluster positions are unaffected
+- [x] No visual regression to existing responsive breakpoints (≤1024px, ≤650px, ≤500px) for this row
+- [x] Existing tests referencing button order/labels in `home_page_test.php` (or equivalent) updated to match
 
 ## Blocked by
 

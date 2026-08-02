@@ -110,7 +110,7 @@ if (preg_match('~vpc-deaf-hearing-btn[\s\S]{0,400}?\bdisabled\b~', $html)) {
 }
 echo "PASS: DEAF+HEARING enabled, inactive, aria-pressed=false by default\n";
 
-// Maketa desktop DOM wings: ? · DEAF+HEARING · TYPOLOGIES · LANGUAGES | transport | SIGNS · CITIES · PARTICIPANTS · reset
+// Maketa desktop DOM wings: ? · LANGUAGES · DEAF+HEARING · TYPOLOGIES | transport | SIGNS · CITIES · PARTICIPANTS · reset
 $aboutPos = strpos($html, '/preview/about');
 $deafPos = strpos($html, 'vpc-deaf-hearing-btn');
 $typPos = strpos($html, 'data-picker="typology"');
@@ -127,18 +127,18 @@ if ($aboutPos === false || $deafPos === false || $typPos === false || $langPos =
     fwrite(STDERR, "FAIL: missing control-row markers for player wing order check\n");
     exit(1);
 }
-if (!($aboutPos < $deafPos && $deafPos < $typPos && $typPos < $langPos
+if (!($aboutPos < $langPos && $langPos < $deafPos && $deafPos < $typPos
     && $langPos < $signPos && $signPos < $edPos && $edPos < $partPos
     && $partPos < $resetPos
     && $clusterPos < $prevPos && $prevPos < $centerPos && $centerPos < $nextPos)) {
-    fwrite(STDERR, "FAIL: desktop maketa order should be ? → DEAF+HEARING → Typology → Language → Sign → Edition → Participants → reset; transport prev → play → next\n");
+    fwrite(STDERR, "FAIL: desktop maketa order should be ? → Language → DEAF+HEARING → Typology → Sign → Edition → Participants → reset; transport prev → play → next\n");
     exit(1);
 }
 if (preg_match('~vpc-control-transport-cluster[^>]*>.*?vpc-reset-btn~s', $html)) {
     fwrite(STDERR, "FAIL: reset must not live inside transport cluster (maketa: right of Participants / mobile flank)\n");
     exit(1);
 }
-echo "PASS: desktop maketa wing order ? → DEAF+HEARING → Typology → Language | Sign → Edition → Participants → reset\n";
+echo "PASS: desktop maketa wing order ? → Language → DEAF+HEARING → Typology | Sign → Edition → Participants → reset\n";
 
 assert_not_contains('href="/preview/" class="preview-site-nav__btn"', $html, 'no Reproductor/home nav link');
 

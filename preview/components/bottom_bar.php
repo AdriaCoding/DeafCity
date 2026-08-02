@@ -288,6 +288,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     <?php endif; ?>
                 <?php endforeach; ?>
                 </nav>
+                <?php preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
                 <button
                     type="button"
                     class="vpc-chrome-btn vpc-deaf-hearing-btn"
@@ -340,7 +341,6 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     </ul>
                 </div>
                 <?php endif; ?>
-                <?php preview_render_lang_picker($langOptions, $langLabel, $currentLangLabel, $langActive, $langPickerId, $langPickerBtnId, $langDropdownId); ?>
             </div>
             <div class="vpc-control-secondary-r">
             <?php if ($useSignLanguageFilter || $useEditionFilter): ?>
