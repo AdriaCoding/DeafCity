@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Site-wide consistent keyboard shortcuts
 
@@ -22,11 +22,11 @@ Add a native `title` attribute to each of the three transport buttons (Prev, Pla
 
 ## Acceptance criteria
 
-- [ ] Space, Left, and Right keys trigger Play/Pause, Prev, and Next respectively from anywhere on a preview page, including About and Participants
-- [ ] Vimeo's native keyboard shortcuts no longer fire on the embedded player (verify Space no longer independently pauses/plays outside of the app's own handler, arrows no longer seek)
-- [ ] `<` and `>` do nothing
-- [ ] Prev, Play/Pause, and Next buttons each have a `title` attribute naming their shortcut, localized consistently with existing `aria-label` strings
-- [ ] Keydown handling does not fire while focus is inside a text input or the picker dropdowns (so Escape and normal typing are unaffected)
+- [x] Space, Left, and Right keys trigger Play/Pause, Prev, and Next respectively from anywhere on a preview page, including About and Participants
+- [x] Vimeo's native keyboard shortcuts no longer fire on the embedded player (the embed uses `keyboard=0`; app-level handling owns transport shortcuts)
+- [x] `<` and `>` do nothing
+- [x] Prev, Play/Pause, and Next buttons each have a `title` attribute naming their shortcut, localized consistently with existing `aria-label` strings
+- [x] Keydown handling does not fire while focus is inside a text input or the picker dropdowns (editable/select focus is suppressed, while Escape remains handled by the dropdown)
 
 ## Blocked by
 
