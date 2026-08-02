@@ -50,7 +50,7 @@ class CaptionUploadHandlerTest extends TestCase
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
-            ->with('111', $this->captionsDir . '/111.es.vtt', 'es', 'Spanish');
+            ->with('111', $this->captionsDir . '/Test_ES.vtt', 'es', 'Spanish');
 
         $result = $this->makeHandler($vimeo)->handle('111', [[
             'lang' => 'es',
@@ -60,16 +60,16 @@ class CaptionUploadHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertSame([], $result['vimeoWarnings']);
-        $this->assertFileExists($this->captionsDir . '/111.es.vtt');
+        $this->assertFileExists($this->captionsDir . '/Test_ES.vtt');
 
         $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
         $this->assertCount(1, $entry['captions']);
         $this->assertSame('es', $entry['captions'][0]['lang']);
-        $this->assertSame('111.es.vtt', $entry['captions'][0]['file']);
+        $this->assertSame('Test_ES.vtt', $entry['captions'][0]['file']);
 
         $this->assertCount(1, $result['captions']);
         $this->assertSame('es', $result['captions'][0]['lang']);
-        $this->assertSame('111.es.vtt', $result['captions'][0]['file']);
+        $this->assertSame('Test_ES.vtt', $result['captions'][0]['file']);
     }
 
     public function test_rejects_invalid_language(): void
@@ -97,10 +97,10 @@ class CaptionUploadHandlerTest extends TestCase
                 'sign_language' => 'lse',
                 'edition' => '2020-valencia',
                 'tags' => [],
-                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt']],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => 'Test_ES.vtt']],
             ],
         ]]));
-        file_put_contents($this->captionsDir . '/111.es.vtt', "WEBVTT\n\nold\n");
+        file_put_contents($this->captionsDir . '/Test_ES.vtt', "WEBVTT\n\nold\n");
 
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nNou\n");
@@ -115,7 +115,7 @@ class CaptionUploadHandlerTest extends TestCase
         ]]);
 
         $this->assertTrue($result['ok']);
-        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/111.es.vtt'));
+        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.vtt'));
 
         $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
         $this->assertCount(1, $entry['captions']);
@@ -164,7 +164,7 @@ class CaptionUploadHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertNotEmpty($result['vimeoWarnings']);
-        $this->assertFileExists($this->captionsDir . '/111.en.vtt');
+        $this->assertFileExists($this->captionsDir . '/Test_EN.vtt');
     }
 
     public function test_upload_sends_caption_lang_directly_to_vimeo(): void
@@ -175,7 +175,7 @@ class CaptionUploadHandlerTest extends TestCase
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
-            ->with('111', $this->captionsDir . '/111.ar.vtt', 'ar', 'Arabic');
+            ->with('111', $this->captionsDir . '/Test_AR.vtt', 'ar', 'Arabic');
 
         $result = $this->makeHandler($vimeo)->handle('111', [[
             'lang' => 'ar',
@@ -207,10 +207,10 @@ class CaptionUploadHandlerTest extends TestCase
                 'sign_language' => 'lse',
                 'edition' => '2020-valencia',
                 'tags' => [],
-                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt']],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => 'Test_ES.vtt']],
             ],
         ]]));
-        file_put_contents($this->captionsDir . '/111.es.vtt', "WEBVTT\n\nold\n");
+        file_put_contents($this->captionsDir . '/Test_ES.vtt', "WEBVTT\n\nold\n");
 
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nNou\n");
@@ -227,7 +227,7 @@ class CaptionUploadHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertSame([], $result['vimeoWarnings']);
-        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/111.es.vtt'));
+        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.vtt'));
     }
 
     private function makeHandler(VimeoClient $vimeo): CaptionUploadHandler

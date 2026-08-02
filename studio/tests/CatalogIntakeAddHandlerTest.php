@@ -74,7 +74,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
         );
 
         $this->assertTrue($result['ok']);
-        $this->assertFileExists($this->captionsDir . '/222.es.vtt');
+        $this->assertFileExists($this->captionsDir . '/With Captions_ES.vtt');
         $this->assertCount(1, $result['video']['captions']);
 
         $catalog = json_decode(file_get_contents($this->catalogFile), true);

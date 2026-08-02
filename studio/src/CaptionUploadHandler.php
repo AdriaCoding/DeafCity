@@ -15,6 +15,7 @@ class CaptionUploadHandler
         private WebVttValidator $vttValidator = new WebVttValidator(),
         private SrtToVttConverter $srtConverter = new SrtToVttConverter(),
         private IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
+        private CaptionFilename $captionFilename = new CaptionFilename(),
     ) {
         $this->publication = new CaptionPublication(
             $catalogEditor,
@@ -40,6 +41,7 @@ class CaptionUploadHandler
 
         $catalogLabels = [];
         $video = $this->catalogEditor->findVideoByVimeoId($vimeoId);
+        $title = (string) ($video['title'] ?? $vimeoId);
         if ($video !== null) {
             foreach ($video['captions'] ?? [] as $caption) {
                 $captionLang = $caption['lang'] ?? '';
@@ -67,7 +69,7 @@ class CaptionUploadHandler
                 return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
             }
 
-            $filename = "$vimeoId.$lang.vtt";
+            $filename = $this->captionFilename->forVideo($title, $lang);
             $destPath = $this->captionsDirPath . '/' . $filename;
 
             try {

@@ -13,6 +13,7 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Studio\CaptionFilename;
 use Studio\CaptionPublication;
 use Studio\CatalogEditor;
 use Studio\GeminiTranslator;
@@ -79,10 +80,11 @@ $logger = static function (string $line) use ($rawLog): void {
     $rawLog(date('Y-m-d H:i:s') . ' [batch_translate_captions.php] ' . $line);
 };
 
-$catalogEditor = new CatalogEditor($catalogPath);
-$studioConfig  = new StudioConfig($configPath);
-$vimeoClient   = new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN);
-$vttParser     = new VttParser();
+$catalogEditor   = new CatalogEditor($catalogPath);
+$studioConfig    = new StudioConfig($configPath);
+$vimeoClient     = new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN);
+$vttParser       = new VttParser();
+$captionFilename = new CaptionFilename();
 
 $langLabels = [];
 foreach ($studioConfig->getSubtitleLanguages() as $language) {
@@ -196,7 +198,7 @@ foreach ($videos as $entry) {
         }
 
         $srcPath      = $jobDir . '/current/draft_' . $langStr . '.vtt';
-        $destFilename = $vimeoId . '.' . $langStr . '.vtt';
+        $destFilename = $captionFilename->forVideo((string) ($entry['title'] ?? $vimeoId), $langStr);
         $destPath     = $captionsDir . '/' . $destFilename;
 
         if (!is_file($srcPath) || !copy($srcPath, $destPath)) {

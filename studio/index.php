@@ -86,6 +86,7 @@ match ($action) {
     'continguts-set-master-caption',
     'continguts-download-caption-vtt',
     'continguts-download-caption-srt',
+    'continguts-download-data-zip',
     'continguts-save-edition-label',
     'continguts-save-sign-language-label',
     'continguts-save-typology-label',

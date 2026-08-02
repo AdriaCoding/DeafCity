@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Human-readable caption filenames
 
@@ -18,16 +18,22 @@ This task includes a one-time migration: rename every already-existing file in `
 
 ## Acceptance criteria
 
-- [ ] A single shared function derives the caption filename from a video's title and language code, used by every caption-writing call site (batch translation, single-video translation, manual upload, Subtitle Editor saves)
-- [ ] New translations/uploads are written with the new naming convention
-- [ ] All pre-existing caption files on disk are renamed to the new convention
-- [ ] `catalog.json`'s `captions[].file` references are updated to match the renamed files, for every affected video
-- [ ] Existing captions continue to serve correctly on the Website and in Vimeo sync after the rename (no broken references)
-- [ ] `data/captions/` files remain writable by `www-data` after the migration (ownership fixed if the migration script ran as root)
-- [ ] A new button sits between "Sincronitza desde Google Sheet" and "Tradueix subtítols pendents" in Studio Continguts, labeled clearly (Catalan, matching surrounding button style)
-- [ ] Clicking it downloads a zip archive of the entire `data/` directory as it currently stands on disk
-- [ ] The zip generation runs server-side without exposing any path traversal or arbitrary-file-read risk (archive strictly scoped to the `data/` directory)
+- [x] A single shared function derives the caption filename from a video's title and language code, used by every caption-writing call site (batch translation, single-video translation, manual upload, Subtitle Editor saves)
+- [x] New translations/uploads are written with the new naming convention
+- [x] All pre-existing caption files on disk are renamed to the new convention
+- [x] `catalog.json`'s `captions[].file` references are updated to match the renamed files, for every affected video
+- [x] Existing captions continue to serve correctly on the Website and in Vimeo sync after the rename (no broken references)
+- [x] `data/captions/` files remain writable by `www-data` after the migration (ownership fixed if the migration script ran as root)
+- [x] A new button sits between "Sincronitza desde Google Sheet" and "Tradueix subtítols pendents" in Studio Continguts, labeled clearly (Catalan, matching surrounding button style)
+- [x] Clicking it downloads a zip archive of the entire `data/` directory as it currently stands on disk
+- [x] The zip generation runs server-side without exposing any path traversal or arbitrary-file-read risk (archive strictly scoped to the `data/` directory)
 
 ## Blocked by
 
 None - can start immediately
+
+## Comments
+
+> **Migration blast radius (Aug 2026):** Only one video in `catalog.json` (`1211691420`) had a non-empty `captions[]` array, so the catalog-driven migration only renamed 8 files. The other 31 files in `data/captions/` were orphans (no catalog entry referenced them, mostly leftovers from re-added/removed videos, plus a few legacy Vimeo-style codes like `en-x-autogen`/`es-MX`). Per Toni's call, these were deleted rather than renamed (backed up first) since there's no title to derive a new name from.
+>
+> `CaptionFormatParityTest` was reading one of those orphans directly off `data/captions/` as a test fixture — deleting it broke the test. Copied it into `studio/tests/fixtures/production_sample.vtt` and repointed the test, so it no longer depends on mutable production data.

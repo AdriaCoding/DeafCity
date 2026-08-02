@@ -652,6 +652,7 @@
             <button type="button" class="btn-add-video" id="video-add-trigger">+ Afegir vídeo</button>
             <button type="button" class="studio-sync-btn" id="sheet-sync-trigger">Sincronitza desde Google Sheet</button>
             <span id="sheet-sync-status" class="sheet-sync-status" aria-live="polite"></span>
+            <a href="?action=continguts-download-data-zip" class="studio-sync-btn" id="data-zip-download-trigger" style="text-decoration:none;">Descarrega dades (zip)</a>
             <button type="button" class="btn-generate" id="batch-translate-trigger">Tradueix subtítols pendents</button>
             <span id="batch-translate-status" class="sheet-sync-status" aria-live="polite"></span>
         </div>

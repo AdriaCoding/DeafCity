@@ -83,6 +83,7 @@ class CatalogAction
             'continguts-set-master-caption'       => $this->setMasterCaption(),
             'continguts-download-caption-vtt'     => $this->downloadCaption('vtt'),
             'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
+            'continguts-download-data-zip'        => $this->downloadDataZip(),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
             'continguts-save-typology-label'         => $this->saveLabel('typology'),
@@ -376,6 +377,17 @@ class CatalogAction
             header('Content-Disposition: attachment; filename="' . $downloadBasename . '.vtt"');
             readfile($vttPath);
         }
+        exit;
+    }
+
+    private function downloadDataZip(): never
+    {
+        $zip = (new \Studio\DataDirZipBuilder())->build($this->c->dataDir);
+
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="deaf-city-data.zip"');
+        header('Content-Length: ' . strlen($zip));
+        echo $zip;
         exit;
     }
 
@@ -951,6 +963,9 @@ class CatalogAction
     private function finalizeCaptionTranslation(string $vimeoId, string $jobDir, array $state): array
     {
         $captionsDir = $this->c->dataDir . '/captions';
+        $video       = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
+        $title       = (string) ($video['title'] ?? $vimeoId);
+        $captionFilename = new \Studio\CaptionFilename();
         $langLabels  = [];
         foreach ($this->c->studioConfig->getSubtitleLanguages() as $language) {
             $langLabels[(string) ($language['id'] ?? '')] = (string) ($language['label'] ?? '');
@@ -971,7 +986,7 @@ class CatalogAction
             }
 
             $srcPath      = $jobDir . '/draft_' . $langStr . '.vtt';
-            $destFilename = $vimeoId . '.' . $langStr . '.vtt';
+            $destFilename = $captionFilename->forVideo($title, $langStr);
             $destPath     = $captionsDir . '/' . $destFilename;
 
             if (!is_file($srcPath) || !copy($srcPath, $destPath)) {

@@ -7,7 +7,7 @@ use Studio\SrtToVttConverter;
 use Studio\VttParser;
 
 /**
- * Production WebVTT (data/captions/) and SubRip intake files share the same cue model:
+ * Production-shaped WebVTT and SubRip intake files share the same cue model:
  * optional index, timestamp line, text. SRT uses commas in timestamps; VTT uses dots.
  */
 class CaptionFormatParityTest extends TestCase
@@ -22,7 +22,7 @@ class CaptionFormatParityTest extends TestCase
     public function test_production_vtt_and_converted_srt_share_cue_shape(): void
     {
         $production = $this->vttParser->parse(
-            dirname(__DIR__, 2) . '/data/captions/501686486.es.vtt'
+            __DIR__ . '/fixtures/production_sample.vtt'
         );
         $converted = $this->vttParser->parseString(
             (new SrtToVttConverter())->convert(__DIR__ . '/ALGER_FR_Hamida_1.srt')
@@ -50,7 +50,7 @@ class CaptionFormatParityTest extends TestCase
 
     public function test_production_vtt_roundtrips_cue_ids(): void
     {
-        $path = dirname(__DIR__, 2) . '/data/captions/501686486.es.vtt';
+        $path = __DIR__ . '/fixtures/production_sample.vtt';
         $parsed = $this->vttParser->parse($path);
         $written = $this->vttParser->write($parsed);
         $reparsed = $this->vttParser->parseString($written);
