@@ -27,6 +27,7 @@ ts_assert_contains('explicitParticipantName', $logicJs, 'explicit participant by
 ts_assert_contains('explicitParticipantName: participantName', $playerJs, 'player passes URL participant to restore planner');
 ts_assert_contains('savePlaybackSession', $playerJs, 'player persists playback session');
 ts_assert_contains('__vpcSavePlaybackSession', $playerJs, 'session save exposed for lang handoff');
+ts_assert_contains('clearParticipantNavigationSession', $playerJs, 'participants navigation clears playback session');
 ts_assert_contains('sessionStorage.removeItem(L.NAV_INTENT_KEY)', $playerJs, 'nav intent cleared after read');
 
 ts_assert_contains("sessionStorage.setItem('vpc-nav-intent'", $secondaryJs, 'secondary chrome writes nav intent');

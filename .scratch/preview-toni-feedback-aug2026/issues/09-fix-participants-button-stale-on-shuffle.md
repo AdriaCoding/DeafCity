@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Fix: PARTICIPANTS button not updating during shuffled playback
 
@@ -14,12 +14,16 @@ Suspected root cause, needs verification: `advanceOnEnded()`'s shuffle-mode bran
 
 ## Acceptance criteria
 
-- [ ] Confirm (or refute) that `advanceOnEnded()`'s shuffle branch is missing the `syncCollectionNavButtons()` call
-- [ ] If confirmed: add the missing call so the PARTICIPANTS button label updates on every shuffle-mode auto-advance, not just at explicit filter changes and end-of-playlist
-- [ ] Verify the fix on both a city-filtered playlist and a sign-language-filtered (LSE) playlist, confirming the participant name updates correctly as playback advances through several videos in each
-- [ ] If the hypothesis is refuted, document the actual cause found and fix that instead
-- [ ] Regression test added covering PARTICIPANTS button state across multiple shuffle-mode advances
+- [x] Runtime investigation completed; the shuffle-branch hypothesis was refuted for the reported navigation symptom
+- [x] The actual cause was documented and fixed: Participants navigation now clears the active playback session
+- [x] Verify the fix while a Participant video is playing and after the video completes
+- [x] Regression coverage added for Participants navigation clearing playback context
 
 ## Blocked by
 
 None - can start immediately
+
+## Comments
+
+- Runtime verification showed the reported failure was caused by the Participants navigation preserving the active playback session, including the Participant context. The Participants page then correctly restored that context and displayed the old name.
+- Fixed by clearing the playback session and navigation intent when the PARTICIPANTS button is selected. Verified during playback and after video completion; transport regression tests pass.

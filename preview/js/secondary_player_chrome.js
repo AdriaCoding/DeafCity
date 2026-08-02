@@ -42,9 +42,6 @@
         var participantSequence = session && typeof session.participantSequence === 'string'
             ? session.participantSequence.trim()
             : '';
-        // #region agent log
-        fetch('http://localhost:15268/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'075697'},body:JSON.stringify({sessionId:'075697',runId:'initial',hypothesisId:'A,C,D',location:'secondary_player_chrome.js:45',message:'participants page synced from session',data:{sessionPresent:!!session,participantMode:participantName !== '',participantSequencePresent:participantSequence !== '',navLabelIsGeneric:!participantName},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         var navState = L.resolveParticipantsNavState({
             isParticipantMode: participantName !== '',
             participantName: participantName,
@@ -181,12 +178,6 @@
             else if (action === 'participants' && participantsNavLink) participantsNavLink.click();
         });
     }
-
-    // #region agent log
-    if (participantsNavLink) participantsNavLink.addEventListener('click', function () {
-        fetch('http://localhost:15268/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'075697'},body:JSON.stringify({sessionId:'075697',runId:'initial',hypothesisId:'A,D',location:'secondary_player_chrome.js:153',message:'participants nav clicked from secondary page',data:{sessionPresent:!!readSession()},timestamp:Date.now()})}).catch(()=>{});
-    });
-    // #endregion
 
     // R2 filter pickers (Sign language / City–Edition / Typology): on secondary pages the
     // player engine is not loaded, so wire the dropup open/close here and hand off to the

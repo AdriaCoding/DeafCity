@@ -835,9 +835,6 @@
                         filteredMasterIndices: filteredMasterIndices,
                         playbackTimeSec: typeof sec === 'number' ? sec : 0,
                     });
-                    // #region agent log
-                    fetch('http://localhost:15268/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'075697'},body:JSON.stringify({sessionId:'075697',runId:'initial',hypothesisId:'C',location:'vimeo_caption_player.js:839',message:'playback session saved',data:{participantMode:isParticipantMode,participantNamePresent:participantName !== '',playlistIndex:playlistIndex,shuffleMode:shuffleMode,shuffleStep:shuffleStep},timestamp:Date.now()})}).catch(()=>{});
-                    // #endregion
                     try {
                         sessionStorage.setItem(L.PLAYBACK_SESSION_KEY, JSON.stringify(snap));
                     } catch (e) {}
@@ -1232,9 +1229,6 @@
                     filteredCursor = step.filteredCursor;
                     var masterIx = filteredMasterIndices[filteredCursor];
                     if (masterIx === undefined) return;
-                    // #region agent log
-                    fetch('http://localhost:15268/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'075697'},body:JSON.stringify({sessionId:'075697',runId:'initial',hypothesisId:'B',location:'vimeo_caption_player.js:1232',message:'shuffle advance before load',data:{playlistIndex:playlistIndex,nextMasterIndex:masterIx,shuffleStep:shuffleStep,participantMode:isParticipantMode},timestamp:Date.now()})}).catch(()=>{});
-                    // #endregion
                     loadVideoMaster(masterIx, true).then(function () {
                         updatePlaylistNavButtons();
                     });
@@ -1765,11 +1759,15 @@
 
             var aboutNavLink = root.querySelector('[data-route="about"]');
             var participantsNavLink = root.querySelector('[data-route="participants"]');
-            // #region agent log
+            function clearParticipantNavigationSession() {
+                try {
+                    sessionStorage.removeItem(L.PLAYBACK_SESSION_KEY);
+                    sessionStorage.removeItem(L.NAV_INTENT_KEY);
+                } catch (e) {}
+            }
             if (participantsNavLink) participantsNavLink.addEventListener('click', function () {
-                fetch('http://localhost:15268/ingest/233184a7-f906-4a8a-8311-6a97214d5e8b',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'075697'},body:JSON.stringify({sessionId:'075697',runId:'initial',hypothesisId:'A',location:'vimeo_caption_player.js:1763',message:'participants nav clicked from player',data:{participantMode:isParticipantMode,participantNamePresent:participantName !== '',shuffleMode:shuffleMode,playlistIndex:playlistIndex},timestamp:Date.now()})}).catch(()=>{});
+                clearParticipantNavigationSession();
             });
-            // #endregion
 
             document.addEventListener('keydown', function (e) {
                 var action = L.resolveTransportShortcutAction({
