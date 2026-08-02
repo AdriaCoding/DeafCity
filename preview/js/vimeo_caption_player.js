@@ -1045,7 +1045,7 @@
                 rebuildAllCascadingDropdowns();
             }
 
-            function resolveLoadVideoPromise(item, wantAutoplay) {
+            function resolveLoadVideoPromise(item, wantAutoplay, forceReload) {
                 if (typeof p.loadVideo !== 'function') {
                     return Promise.reject(new Error('Vimeo.Player.loadVideo unavailable'));
                 }
@@ -1069,7 +1069,7 @@
                         currentId !== null && currentId !== undefined && currentId !== ''
                             ? String(currentId)
                             : iframeEmbedVideoId();
-                    if (currentRaw === vidRaw) {
+                    if (currentRaw === vidRaw && !forceReload) {
                         return Promise.resolve();
                     }
                     /** @type {{ autoplay: boolean, preload: string, id?: number, url?: string }} */
@@ -1086,7 +1086,7 @@
                 });
             }
 
-            function loadVideoMaster(masterIx, autoPlayPreferred, seekToStart) {
+            function loadVideoMaster(masterIx, autoPlayPreferred, seekToStart, forceReload) {
                 var target =
                     typeof masterIx === 'number' && masterIx >= 0 ? masterIx : playlistIndex;
 
@@ -1108,7 +1108,7 @@
                     forcedPauseLoads++;
                 }
 
-                return resolveLoadVideoPromise(item, wantAutoplay)
+                return resolveLoadVideoPromise(item, wantAutoplay, !!forceReload)
                     .then(function () {
                         markPosterVideoLoaded(item, posterToken);
                         applyLoadedVideoUi();
@@ -1118,7 +1118,11 @@
                             autoplayP = tryAutoplayFallback();
                         } else {
                             var resetP = Promise.resolve();
-                            if (seekToStart && typeof p.setCurrentTime === 'function') {
+                            if (
+                                seekToStart &&
+                                !forceReload &&
+                                typeof p.setCurrentTime === 'function'
+                            ) {
                                 resetP = p.setCurrentTime(0).catch(function () {});
                             }
                             autoplayP = resetP
@@ -1196,7 +1200,12 @@
                 if (!plan) return;
                 shuffleStep = plan.shuffleStep;
                 filteredCursor = plan.filteredCursor;
-                loadVideoMaster(plan.loadMasterIndex, plan.shouldAutoplay, true).then(function () {
+                loadVideoMaster(
+                    plan.loadMasterIndex,
+                    plan.shouldAutoplay,
+                    true,
+                    plan.forceReload
+                ).then(function () {
                     updatePlaylistNavButtons();
                     syncCollectionNavButtons();
                 });

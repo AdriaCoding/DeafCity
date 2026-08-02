@@ -1515,6 +1515,11 @@ assert.strictEqual(
     assert.strictEqual(plan.filteredCursor, 2);
     assert.strictEqual(plan.loadMasterIndex, filtered[2]);
     assert.strictEqual(plan.shouldAutoplay, false);
+    assert.strictEqual(
+        plan.forceReload,
+        true,
+        'end-of-playlist must reload even when returning to the current video'
+    );
 })();
 
 (function () {

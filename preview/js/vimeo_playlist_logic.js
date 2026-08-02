@@ -1548,7 +1548,8 @@
      *   filteredCursor: number,
      *   shuffleStep: number,
      *   loadMasterIndex: number,
-     *   shouldAutoplay: boolean
+     *   shouldAutoplay: boolean,
+     *   forceReload: boolean
      * } | null}
      */
     function planEndOfPlaylist(opts) {
@@ -1578,6 +1579,9 @@
             shuffleStep: shuffleStep,
             loadMasterIndex: loadMasterIndex,
             shouldAutoplay: false,
+            // A terminal reset must reload even for a one-video Playlist:
+            // seeking an ended Vimeo player can leave its promise unresolved.
+            forceReload: true,
         };
     }
 
