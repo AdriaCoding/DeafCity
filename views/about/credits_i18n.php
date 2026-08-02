@@ -8,9 +8,25 @@
 if (!function_exists('preview_t')) {
     require_once dirname(dirname(__DIR__)) . '/preview/lib/preview_locale.php';
 }
+if (!function_exists('vpc_load_videos_catalog')) {
+    require_once dirname(dirname(__DIR__)) . '/preview/lib/videos_catalog.php';
+}
 if (!isset($GLOBALS['preview_i18n']) || !($GLOBALS['preview_i18n'] instanceof PreviewI18n)) {
     $__credits_locale = preview_bootstrap_locale();
     $GLOBALS['preview_i18n'] = $__credits_locale['i18n'];
+}
+
+$__credits_catalog_path = preview_resolve_data_dir() . '/catalog.json';
+$__credits_catalog = vpc_load_videos_catalog($__credits_catalog_path);
+$__credits_video_count = 0;
+$__credits_participant_count = 0;
+if ($__credits_catalog) {
+    foreach ($__credits_catalog['videos'] as $__credits_v) {
+        if (is_array($__credits_v) && vpc_catalog_entry_is_visible($__credits_v)) {
+            $__credits_video_count++;
+        }
+    }
+    $__credits_participant_count = count(vpc_participants_from_catalog($__credits_catalog));
 }
 $sb  = '<b>' . htmlspecialchars(preview_t('about.credits.label.supported_by'), ENT_QUOTES, 'UTF-8') . '</b>';
 $pa  = '<b>' . htmlspecialchars(preview_t('about.credits.label.participants'), ENT_QUOTES, 'UTF-8') . '</b>';
@@ -85,7 +101,7 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
 
 <p><b>DEAF.city 2.0</b> <b>ONLINE ARCHIVE AND AI CODE</b> by Adrià Lisa, <b>Video editing</b> by Inma Alcario Westudio, <b>International Sign Clock code</b> by Daniel Julià, <b>English subtitle correction</b> by Inès David</p>
 
-<p><b>377</b> participants <b>3742</b> missatges DEAF.city contents under <u>CC BY-NC-ND 4.0</u></p>
+<p><b><?= $__credits_participant_count ?></b> participants <b><?= $__credits_video_count ?></b> videos DEAF.city contents under <u>CC BY-NC-ND 4.0</u></p>
 
 <p><b><?= $pby ?> <a href="https://www.antoniabad.info" target="_blank">Antoni Abad</a> &nbsp; <a href="https://www.instagram.com/antoni__abad/" target="_blank"><?= $ct ?></a></b></p>
 
