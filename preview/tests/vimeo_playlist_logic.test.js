@@ -2322,3 +2322,204 @@ assert.strictEqual(
 
 console.log('vimeo_playlist_logic.test.js: all passed (including transport shortcuts)');
 
+// ── Issue #08: anti-clustering shuffle (no repeat participant, no long city runs) ──
+
+// buildWithinCityParticipantOrder: never repeats a participant back-to-back when an
+// alternative is available (P1x3/P2x2/P3x1 — feasible to fully alternate).
+(function () {
+    var entries = [
+        { pos: 0, participant: 'P1' },
+        { pos: 1, participant: 'P1' },
+        { pos: 2, participant: 'P1' },
+        { pos: 3, participant: 'P2' },
+        { pos: 4, participant: 'P2' },
+        { pos: 5, participant: 'P3' },
+    ];
+    var participantByPos = {};
+    entries.forEach(function (e) { participantByPos[e.pos] = e.participant; });
+
+    for (var trial = 0; trial < 200; trial++) {
+        var order = logic.buildWithinCityParticipantOrder(entries, Math.random);
+        assert.strictEqual(order.length, 6, 'every candidate placed exactly once');
+        var seen = {};
+        order.forEach(function (p) { seen[p] = true; });
+        assert.strictEqual(Object.keys(seen).length, 6, 'no duplicate/missing positions');
+        for (var i = 0; i < order.length - 1; i++) {
+            assert.notStrictEqual(
+                participantByPos[order[i]],
+                participantByPos[order[i + 1]],
+                'no two consecutive videos share a participant when an alternative remains'
+            );
+        }
+    }
+})();
+
+// buildWithinCityParticipantOrder: a single participant in the bucket has no
+// alternative — the forced repeat is expected, not a defect.
+(function () {
+    var entries = [
+        { pos: 0, participant: 'Q1' },
+        { pos: 1, participant: 'Q1' },
+        { pos: 2, participant: 'Q1' },
+    ];
+    var order = logic.buildWithinCityParticipantOrder(entries, Math.random);
+    assert.deepStrictEqual(
+        order.slice().sort(),
+        [0, 1, 2],
+        'single-participant bucket still places every video exactly once'
+    );
+})();
+
+// buildCityInterleavedOrder: multi-city interleaving — no consecutive same
+// participant (except the single-participant cityB bucket), and no run of 3+
+// videos from one city unless it is the unavoidable terminal single-bucket tail.
+(function () {
+    var entries = [];
+    var pos = 0;
+    function pushEntries(city, participant, count) {
+        for (var i = 0; i < count; i++) {
+            entries.push({ pos: pos, city: city, participant: participant });
+            pos++;
+        }
+    }
+    // cityA: 3 participants, plenty of alternation choices
+    pushEntries('cityA', 'P1', 3);
+    pushEntries('cityA', 'P2', 3);
+    pushEntries('cityA', 'P3', 1);
+    // cityB: 1 participant — any adjacency here is a forced repeat, not a defect
+    pushEntries('cityB', 'Q1', 2);
+    // cityC: 2 participants, 1 video each — small bucket, exhausts early
+    pushEntries('cityC', 'R1', 1);
+    pushEntries('cityC', 'R2', 1);
+
+    var cityByPos = {};
+    var participantByPos = {};
+    entries.forEach(function (e) {
+        cityByPos[e.pos] = e.city;
+        participantByPos[e.pos] = e.participant;
+    });
+    var totalCount = entries.length;
+
+    for (var trial = 0; trial < 200; trial++) {
+        var order = logic.buildCityInterleavedOrder(entries, Math.random);
+
+        assert.strictEqual(order.length, totalCount, 'every candidate placed exactly once');
+        var seen = {};
+        order.forEach(function (p) { seen[p] = true; });
+        assert.strictEqual(Object.keys(seen).length, totalCount, 'no duplicate/missing positions');
+
+        for (var i = 0; i < order.length - 1; i++) {
+            var participantA = participantByPos[order[i]];
+            var participantB = participantByPos[order[i + 1]];
+            if (participantA === participantB) {
+                assert.strictEqual(
+                    participantA,
+                    'Q1',
+                    'only the single-participant city bucket may repeat a participant back-to-back'
+                );
+            }
+        }
+
+        // A run of 3+ same-city videos may only occur once every other bucket is
+        // already empty (the unavoidable single-city tail) — once such a run
+        // starts, it must run to the very end of the sequence.
+        var runStart = 0;
+        for (var j = 1; j <= order.length; j++) {
+            if (j === order.length || cityByPos[order[j]] !== cityByPos[order[runStart]]) {
+                if (j - runStart >= 3) {
+                    var runCity = cityByPos[order[runStart]];
+                    for (var k = j; k < order.length; k++) {
+                        assert.strictEqual(
+                            cityByPos[order[k]],
+                            runCity,
+                            'a run of 3+ from ' + runCity + ' must be the terminal single-city tail'
+                        );
+                    }
+                }
+                runStart = j;
+            }
+        }
+    }
+})();
+
+// buildCityInterleavedOrder: a bucket exhausted after the first round does not
+// truncate or break interleaving of the rest of the sequence.
+(function () {
+    var entries = [
+        { pos: 0, city: 'cityA', participant: 'PA' },
+        { pos: 1, city: 'cityA', participant: 'PA' },
+        { pos: 2, city: 'cityA', participant: 'PA' },
+        { pos: 3, city: 'cityA', participant: 'PA' },
+        { pos: 4, city: 'cityB', participant: 'PB' },
+    ];
+    for (var trial = 0; trial < 50; trial++) {
+        var order = logic.buildCityInterleavedOrder(entries, Math.random);
+        assert.strictEqual(order.length, 5, 'exhausted bucket does not truncate the sequence');
+        var seen = {};
+        order.forEach(function (p) { seen[p] = true; });
+        assert.strictEqual(Object.keys(seen).length, 5, 'every position still appears exactly once');
+        var cityBPosition = order.indexOf(4);
+        assert.ok(
+            cityBPosition === 0 || cityBPosition === 1,
+            'the lone cityB video plays during round 1 (only 2 cities are active then), before its bucket empties'
+        );
+    }
+})();
+
+// buildAntiClusterShuffledSequence: the literal LSE (Bilbao + València) scenario
+// from the Toni feedback — two cities, one participant each, in the real catalog shape.
+(function () {
+    var filterState = { sign_language: 'lse', edition: null, typology: null };
+    var filteredMasterIndices = recomputeFilteredMasterIndices(samplePlaylist, filterState);
+    assert.strictEqual(filteredMasterIndices.length, 3, 'lse: Aurora + Carme (valencia) + Amaia (bilbao)');
+
+    for (var trial = 0; trial < 100; trial++) {
+        var seq = logic.buildAntiClusterShuffledSequence(samplePlaylist, filteredMasterIndices, Math.random);
+        assert.strictEqual(seq.length, 3);
+        var seen = {};
+        seq.forEach(function (p) { seen[p] = true; });
+        assert.strictEqual(Object.keys(seen).length, 3, 'permutation of the filtered pool');
+    }
+})();
+
+// buildAntiClusterSequenceWithHead: fixed index stays at step 0; the rest is a
+// permutation of the remaining positions (mirrors buildShuffledSequenceWithHead's contract).
+(function () {
+    var entries = [
+        { pos: 0, city: 'cityA', participant: 'PA' },
+        { pos: 1, city: 'cityA', participant: 'PA' },
+        { pos: 2, city: 'cityB', participant: 'PB' },
+        { pos: 3, city: 'cityB', participant: 'PB' },
+    ];
+    var fullPlaylistItems = entries.map(function (e) {
+        return { edition: e.city, participant: e.participant };
+    });
+    var filteredMasterIndices = [0, 1, 2, 3];
+
+    for (var trial = 0; trial < 50; trial++) {
+        var seq = logic.buildAntiClusterSequenceWithHead(
+            fullPlaylistItems,
+            filteredMasterIndices,
+            2,
+            Math.random
+        );
+        assert.strictEqual(seq.length, 4);
+        assert.strictEqual(seq[0], 2, 'fixed index is always step 0');
+        var seen = {};
+        seq.forEach(function (p) { seen[p] = true; });
+        assert.strictEqual(Object.keys(seen).length, 4, 'permutation of all positions, fixed one included');
+    }
+
+    // Out-of-range fixedIndex falls back to a full anti-cluster shuffle (mirrors
+    // buildShuffledSequenceWithHead's out-of-range fallback).
+    var fallback = logic.buildAntiClusterSequenceWithHead(
+        fullPlaylistItems,
+        filteredMasterIndices,
+        99,
+        Math.random
+    );
+    assert.strictEqual(fallback.length, 4);
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including issue #08 anti-cluster shuffle)');
+

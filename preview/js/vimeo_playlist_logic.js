@@ -44,6 +44,180 @@
     }
 
     /**
+     * Fisher–Yates shuffle of an arbitrary array (copy, does not mutate input).
+     * @param {Array<*>} list
+     * @param {() => number} randomFn
+     * @returns {Array<*>}
+     */
+    function shuffleCopy(list, randomFn) {
+        var arr = list.slice();
+        for (var i = arr.length - 1; i > 0; i--) {
+            var j = Math.floor(randomFn() * (i + 1));
+            var t = arr[i];
+            arr[i] = arr[j];
+            arr[j] = t;
+        }
+        return arr;
+    }
+
+    /**
+     * Order one city's positions with a round-robin-by-participant pass (issue #08):
+     * repeatedly pick a random participant different from the one picked immediately
+     * before, take a random unplayed video of theirs, until the bucket is exhausted.
+     * Falls back to repeating the same participant only when no other remains.
+     * @param {Array<{ pos: number, participant: string }>} entries  one city's candidates
+     * @param {() => number} randomFn
+     * @returns {number[]} `pos` values in play order
+     */
+    function buildWithinCityParticipantOrder(entries, randomFn) {
+        var byParticipant = {};
+        var participants = [];
+        var i;
+        for (i = 0; i < entries.length; i++) {
+            var key = entries[i].participant;
+            if (!byParticipant[key]) {
+                byParticipant[key] = [];
+                participants.push(key);
+            }
+            byParticipant[key].push(entries[i].pos);
+        }
+
+        var order = [];
+        var lastParticipant = null;
+        while (participants.length > 0) {
+            var candidates = participants.filter(function (p) { return p !== lastParticipant; });
+            if (candidates.length === 0) candidates = participants;
+
+            // Among eligible participants, prefer whoever has the most videos left.
+            // This is what keeps alternation possible for as long as the data allows
+            // it instead of exhausting minority participants first and painting a
+            // forced repeat run into the final stretch; it degrades to the "plain
+            // shuffle fallback" the design accepts only when one participant truly
+            // dominates the bucket (more than half its videos).
+            var maxRemaining = 0;
+            var ci;
+            for (ci = 0; ci < candidates.length; ci++) {
+                maxRemaining = Math.max(maxRemaining, byParticipant[candidates[ci]].length);
+            }
+            var topCandidates = candidates.filter(function (p) {
+                return byParticipant[p].length === maxRemaining;
+            });
+
+            var chosen = topCandidates[Math.floor(randomFn() * topCandidates.length)];
+            var bucket = byParticipant[chosen];
+            var pickIx = Math.floor(randomFn() * bucket.length);
+            order.push(bucket[pickIx]);
+            bucket.splice(pickIx, 1);
+            if (bucket.length === 0) {
+                participants = participants.filter(function (p) { return p !== chosen; });
+            }
+            lastParticipant = chosen;
+        }
+        return order;
+    }
+
+    /**
+     * Two-phase anti-clustering shuffle (issue #08): group candidates by city, order
+     * each city's videos to avoid same-participant adjacency, then round-robin
+     * interleave the city buckets (reshuffling bucket order each round) so runs from
+     * a single city break up whenever more than one bucket still has videos.
+     * A Participant belongs to exactly one city, so this cannot reintroduce
+     * same-participant adjacency across a city boundary.
+     * @param {Array<{ pos: number, city: string, participant: string }>} entries
+     * @param {() => number} randomFn
+     * @returns {number[]} `pos` values in play order (permutation of the input positions)
+     */
+    function buildCityInterleavedOrder(entries, randomFn) {
+        var byCity = {};
+        var cityOrder = [];
+        var i;
+        for (i = 0; i < entries.length; i++) {
+            var city = entries[i].city;
+            if (!byCity[city]) {
+                byCity[city] = [];
+                cityOrder.push(city);
+            }
+            byCity[city].push(entries[i]);
+        }
+
+        var queues = {};
+        for (i = 0; i < cityOrder.length; i++) {
+            var city2 = cityOrder[i];
+            queues[city2] = buildWithinCityParticipantOrder(byCity[city2], randomFn);
+        }
+
+        var result = [];
+        var activeCities = cityOrder.filter(function (c) { return queues[c].length > 0; });
+        while (activeCities.length > 0) {
+            var round = shuffleCopy(activeCities, randomFn);
+            for (i = 0; i < round.length; i++) {
+                var queue = queues[round[i]];
+                if (queue.length > 0) result.push(queue.shift());
+            }
+            activeCities = cityOrder.filter(function (c) { return queues[c].length > 0; });
+        }
+        return result;
+    }
+
+    /**
+     * Anti-clustering shuffle over a filtered-playlist pool (issue #08): a permutation
+     * of positions 0..filteredMasterIndices.length-1, grouped by city/participant from
+     * the underlying catalog items. Replaces plain Fisher–Yates for every shuffled
+     * playlist (base one-per-city and every filtered facet combination).
+     * @param {Array<{ edition?: string, participant?: string }>} fullPlaylistItems
+     * @param {number[]} filteredMasterIndices
+     * @param {() => number} [randomFn]
+     * @returns {number[]}
+     */
+    function buildAntiClusterShuffledSequence(fullPlaylistItems, filteredMasterIndices, randomFn) {
+        var random = randomFn || Math.random;
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var indices = Array.isArray(filteredMasterIndices) ? filteredMasterIndices : [];
+        var entries = indices.map(function (masterIx, pos) {
+            var item = items[masterIx];
+            return {
+                pos: pos,
+                city: itemFacetValue(item, 'edition'),
+                participant: item && typeof item.participant === 'string' ? item.participant.trim() : '',
+            };
+        });
+        return buildCityInterleavedOrder(entries, random);
+    }
+
+    /**
+     * Anti-clustering shuffle (issue #08) with one position fixed at step 0 (the
+     * currently-playing video, kept in place by D22 keep-if-matches); the remaining
+     * positions are ordered by the same two-phase algorithm, excluding the fixed one.
+     * @param {Array<{ edition?: string, participant?: string }>} fullPlaylistItems
+     * @param {number[]} filteredMasterIndices
+     * @param {number} fixedIndex
+     * @param {() => number} [randomFn]
+     * @returns {number[]}
+     */
+    function buildAntiClusterSequenceWithHead(fullPlaylistItems, filteredMasterIndices, fixedIndex, randomFn) {
+        var random = randomFn || Math.random;
+        var indices = Array.isArray(filteredMasterIndices) ? filteredMasterIndices : [];
+        var count = indices.length;
+        if (count <= 0) return [];
+        if (fixedIndex < 0 || fixedIndex >= count) {
+            return buildAntiClusterShuffledSequence(fullPlaylistItems, indices, random);
+        }
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var entries = [];
+        for (var pos = 0; pos < count; pos++) {
+            if (pos === fixedIndex) continue;
+            var item = items[indices[pos]];
+            entries.push({
+                pos: pos,
+                city: itemFacetValue(item, 'edition'),
+                participant: item && typeof item.participant === 'string' ? item.participant.trim() : '',
+            });
+        }
+        var rest = buildCityInterleavedOrder(entries, random);
+        return [fixedIndex].concat(rest);
+    }
+
+    /**
      * Default visit: shuffle on, fresh sequence, first entry at step 0.
      * @param {number} filteredCount
      * @param {() => number} [randomFn]
@@ -665,11 +839,12 @@
      */
     function planBaseCityPlaylist(opts) {
         var randomFn = (opts && opts.randomFn) || Math.random;
-        var pool = buildOneVideoPerCityPool(opts && opts.fullPlaylistItems, randomFn);
+        var items = opts && opts.fullPlaylistItems;
+        var pool = buildOneVideoPerCityPool(items, randomFn);
         var fc = pool.length;
         if (fc === 0) return null;
 
-        var shuffledSequence = buildShuffledSequence(fc, randomFn);
+        var shuffledSequence = buildAntiClusterShuffledSequence(items, pool, randomFn);
         var filteredCursor = shuffledSequence[0];
         return {
             filteredMasterIndices: pool,
@@ -747,7 +922,12 @@
                     filteredMasterIndices: filteredMasterIndices,
                     filteredCursor: posInFiltered,
                     shuffleStep: 0,
-                    shuffledSequence: buildShuffledSequenceWithHead(fc, posInFiltered, randomFn),
+                    shuffledSequence: buildAntiClusterSequenceWithHead(
+                        items,
+                        filteredMasterIndices,
+                        posInFiltered,
+                        randomFn
+                    ),
                     shuffleMode: true,
                     loadMasterIndex: currentIx,
                     keepCurrentVideo: true,
@@ -765,7 +945,7 @@
         }
 
         if (shuffleMode) {
-            var seq = buildShuffledSequence(fc, randomFn);
+            var seq = buildAntiClusterShuffledSequence(items, filteredMasterIndices, randomFn);
             return {
                 filteredMasterIndices: filteredMasterIndices,
                 filteredCursor: seq[0],
@@ -1716,6 +1896,10 @@
         captionFitFontSizeFromWidths: captionFitFontSizeFromWidths,
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
+        buildWithinCityParticipantOrder: buildWithinCityParticipantOrder,
+        buildCityInterleavedOrder: buildCityInterleavedOrder,
+        buildAntiClusterShuffledSequence: buildAntiClusterShuffledSequence,
+        buildAntiClusterSequenceWithHead: buildAntiClusterSequenceWithHead,
         createDefaultShuffleState: createDefaultShuffleState,
         nextPlaylistStep: nextPlaylistStep,
         shouldAdvanceOnEnded: shouldAdvanceOnEnded,

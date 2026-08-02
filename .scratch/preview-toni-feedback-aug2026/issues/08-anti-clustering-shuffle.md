@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Anti-clustering shuffle (no repeat participant, no long city runs)
 
@@ -21,12 +21,12 @@ This generalizes for free to single-city filtered playlists (step 2 is a no-op w
 
 ## Acceptance criteria
 
-- [ ] New pure function(s) implementing the two-phase algorithm, alongside `buildShuffledSequence`/`buildShuffledSequenceWithHead` in `vimeo_playlist_logic.js`
-- [ ] The base "one per city" playlist and every filtered/shuffled playlist (sign language, typology, tag, edition, or combinations) use the new algorithm in place of plain Fisher–Yates
-- [ ] No two consecutive videos share the same participant, except at an unavoidable single-city tail
-- [ ] No long unbroken run of videos from a single city while more than one city's bucket still has videos remaining
-- [ ] Single-city and single-participant pools are unaffected in ways that would change their existing tested behavior beyond the participant-adjacency improvement
-- [ ] Unit tests cover: multi-city interleaving, within-city participant ordering, and graceful behavior when a bucket is exhausted early
+- [x] New pure function(s) implementing the two-phase algorithm, alongside `buildShuffledSequence`/`buildShuffledSequenceWithHead` in `vimeo_playlist_logic.js`
+- [x] The base "one per city" playlist and every filtered/shuffled playlist (sign language, typology, tag, edition, or combinations) use the new algorithm in place of plain Fisher–Yates
+- [x] No two consecutive videos share the same participant, except at an unavoidable single-city tail
+- [x] No long unbroken run of videos from a single city while more than one city's bucket still has videos remaining
+- [x] Single-city and single-participant pools are unaffected in ways that would change their existing tested behavior beyond the participant-adjacency improvement
+- [x] Unit tests cover: multi-city interleaving, within-city participant ordering, and graceful behavior when a bucket is exhausted early
 
 ## Blocked by
 
