@@ -24,7 +24,7 @@ for ($i = 1; $i < $argc; $i++) {
     }
 }
 
-function writeStatus(string $status, int $synced, int $total, ?string $statusFile): void
+function writeStatus(string $status, int $synced, int $total, ?string $statusFile, int $skipped = 0, ?string $error = null): void
 {
     if ($statusFile === null) {
         return;
@@ -33,6 +33,8 @@ function writeStatus(string $status, int $synced, int $total, ?string $statusFil
         'status' => $status,
         'synced' => $synced,
         'total' => $total,
+        'skipped' => $skipped,
+        'error' => $error,
     ]));
 }
 
@@ -72,14 +74,22 @@ foreach ($videos as $idx => $entry) {
     echo '[' . ($idx + 1) . "/$total] $vimeoId … ";
 
     $result = $sync->syncVideo($entry);
+
+    if (isset($result['abort'])) {
+        echo "ABORT: {$result['abort']}\n";
+        writeStatus('error', $synced, $total, $statusFile, $skipped, $result['abort']);
+        exit(1);
+    }
+
     if (($result['skipped'] ?? false) === true) {
         echo "SKIP (not found on Vimeo)\n";
         $skipped++;
+        writeStatus('running', $synced, $total, $statusFile, $skipped);
         continue;
     }
 
     $synced++;
-    writeStatus('running', $synced, $total, $statusFile);
+    writeStatus('running', $synced, $total, $statusFile, $skipped);
 
     $captionCount = count($entry['captions'] ?? []);
     $tagCount = count($entry['tags'] ?? []);
@@ -87,5 +97,5 @@ foreach ($videos as $idx => $entry) {
     echo "title=\"" . ($entry['title'] ?? '') . "\", $tagCount tag(s), $captionCount caption(s)$thumbNote\n";
 }
 
-writeStatus('done', $synced, $total, $statusFile);
+writeStatus('done', $synced, $total, $statusFile, $skipped);
 echo "\nDone. $synced/$total video(s) pushed, $skipped skipped.\n";

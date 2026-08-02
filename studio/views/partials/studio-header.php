@@ -81,16 +81,20 @@ $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
                 .then(function (data) {
                     var synced = data.synced || 0;
                     var total = data.total || 0;
+                    var skipped = data.skipped || 0;
                     if (data.status === 'done') {
                         btn.disabled = false;
                         btn.innerHTML = 'Sincronitzar a Vimeo';
                         msg.className = 'studio-sync-status is-done';
-                        msg.textContent = 'Última sincronització: ' + synced + ' enviats de ' + total;
+                        msg.textContent = 'Última sincronització: ' + synced + ' enviats de ' + total
+                            + (skipped > 0 ? ' (' + skipped + ' omesos)' : '');
                     } else if (data.status === 'error') {
                         btn.disabled = false;
                         btn.innerHTML = 'Sincronitzar a Vimeo';
                         msg.className = 'studio-sync-status is-error';
-                        msg.textContent = 'Error en la sincronització. Torneu-ho a provar.';
+                        msg.textContent = data.error
+                            ? 'Error en la sincronització: ' + data.error
+                            : 'Error en la sincronització. Torneu-ho a provar.';
                     } else {
                         msg.textContent = 'Sincronitzant… (' + synced + '/' + total + ')';
                         setTimeout(poll, 2000);

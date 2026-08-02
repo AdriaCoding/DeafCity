@@ -22,8 +22,18 @@ final class StudioHeader
         if ($status === 'done') {
             $n = (int) ($syncStatus['synced'] ?? 0);
             $t = (int) ($syncStatus['total'] ?? 0);
+            $skipped = (int) ($syncStatus['skipped'] ?? 0);
 
-            return "Última sincronització: $n enviats de $t";
+            return $skipped > 0
+                ? "Última sincronització: $n enviats de $t ($skipped omesos)"
+                : "Última sincronització: $n enviats de $t";
+        }
+        if ($status === 'error') {
+            $error = trim((string) ($syncStatus['error'] ?? ''));
+
+            return $error !== ''
+                ? "Error en la sincronització: $error"
+                : 'Error en la sincronització.';
         }
 
         return '';

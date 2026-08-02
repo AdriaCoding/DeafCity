@@ -117,10 +117,7 @@ class VimeoClient
     {
         $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
         $response = $client->request('/videos/' . $id . '?fields=pictures', [], 'GET');
-        $status = $response['status'] ?? 0;
-        if ($status < 200 || $status >= 300) {
-            return null;
-        }
+        $this->assertOkOrThrow($response);
         return $this->pickThumbnailUrl($response['body']['pictures']['sizes'] ?? []);
     }
 
@@ -218,10 +215,7 @@ class VimeoClient
     {
         $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
         $response = $client->request('/videos/' . $videoId, ['name' => $title], 'PATCH');
-        $status = $response['status'] ?? 0;
-        if ($status < 200 || $status >= 300) {
-            throw new \RuntimeException("Error en actualitzar el títol del vídeo $videoId.");
-        }
+        $this->assertOkOrThrow($response);
     }
 
     /** @param string[] $tags */

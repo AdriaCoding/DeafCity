@@ -8,6 +8,8 @@ use Studio\StudioConfig;
 use Studio\VimeoClient;
 use Studio\VimeoNotFoundException;
 use Studio\VimeoPushSync;
+use Studio\VimeoRateLimitedException;
+use Studio\VimeoUnauthorizedException;
 
 class VimeoPushSyncTest extends TestCase
 {
@@ -196,13 +198,76 @@ class VimeoPushSyncTest extends TestCase
         $this->assertTrue($result['skipped']);
     }
 
-    private function makeSync(VimeoClient $vimeo): VimeoPushSync
+    public function test_retries_after_rate_limit_instead_of_skipping(): void
+    {
+        file_put_contents($this->catalogFile, json_encode(['videos' => [
+            [
+                'id' => 'lse_444',
+                'vimeo_id' => '444',
+                'title' => 'Title',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [],
+            ],
+        ]]));
+
+        $calls = 0;
+        $slept = [];
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getTextTracks')->willReturn([]);
+        $vimeo->expects($this->exactly(2))->method('updateTitle')
+            ->willReturnCallback(function () use (&$calls): void {
+                $calls++;
+                if ($calls === 1) {
+                    throw new VimeoRateLimitedException('rate', time() + 5);
+                }
+            });
+        $vimeo->method('setTags');
+        $vimeo->method('getThumbnailUrl')->willReturn('https://example.com/t.jpg');
+
+        $result = $this->makeSync($vimeo, static function (int $seconds) use (&$slept): void {
+            $slept[] = $seconds;
+        })->syncVideo([
+            'vimeo_id' => '444',
+            'title' => 'Title',
+            'tags' => [],
+            'captions' => [],
+        ]);
+
+        $this->assertTrue($result['ok']);
+        $this->assertNotEmpty($slept);
+        $this->assertGreaterThanOrEqual(5, $slept[0]);
+    }
+
+    public function test_unauthorized_aborts_instead_of_skipping(): void
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->expects($this->once())->method('updateTitle')
+            ->willThrowException(new VimeoUnauthorizedException('bad token'));
+        $vimeo->expects($this->never())->method('setTags');
+
+        $result = $this->makeSync($vimeo)->syncVideo([
+            'vimeo_id' => '555',
+            'title' => 'Title',
+            'tags' => [],
+            'captions' => [],
+        ]);
+
+        $this->assertFalse($result['ok']);
+        $this->assertFalse($result['skipped']);
+        $this->assertStringContainsString('bad token', $result['abort']);
+    }
+
+    private function makeSync(VimeoClient $vimeo, ?callable $sleeper = null): VimeoPushSync
     {
         return new VimeoPushSync(
             $vimeo,
             $this->config,
             new CatalogEditor($this->catalogFile),
             $this->captionsDir,
+            $sleeper,
         );
     }
 
