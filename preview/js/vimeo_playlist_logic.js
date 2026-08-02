@@ -447,15 +447,17 @@
      * @param {VpcFilterState} filterState
      * @param {Array<{ value?: string, label?: string, short_label?: string }>} options
      * @param {string} genericLabel
-     * @returns {{ label: string, short_label: string, fixed: boolean }}
+     * @param {boolean} [derivedActive] true when other filters strictly narrow this facet
+     * @returns {{ label: string, short_label: string, fixed: boolean, active: boolean }}
      */
-    function resolveFilterPickerReadout(item, facet, filterState, options, genericLabel) {
+    function resolveFilterPickerReadout(item, facet, filterState, options, genericLabel, derivedActive) {
         var fixedValue = filterState[facet];
         if (fixedValue !== null && fixedValue !== undefined && fixedValue !== '') {
             return {
                 label: labelForFacetValue(facet, fixedValue, options),
                 short_label: compactFacetLabel(facet, fixedValue, options),
                 fixed: true,
+                active: true,
             };
         }
         var liveValue = itemFacetValue(item, facet);
@@ -464,9 +466,15 @@
                 label: labelForFacetValue(facet, liveValue, options),
                 short_label: compactFacetLabel(facet, liveValue, options),
                 fixed: false,
+                active: !!derivedActive,
             };
         }
-        return { label: genericLabel, short_label: genericLabel, fixed: false };
+        return {
+            label: genericLabel,
+            short_label: genericLabel,
+            fixed: false,
+            active: false,
+        };
     }
 
     /**
@@ -507,6 +515,33 @@
             }
         }
         return out;
+    }
+
+    /**
+     * Whether other active filters leave exactly one possible value for a facet.
+     * @param {Array<{ signLanguage?: string, edition?: string, typology?: string, tags?: string[] }>} fullPlaylistItems
+     * @param {VpcFilterState} filterState
+     * @param {string} facet
+     * @returns {boolean}
+     */
+    function isFacetNarrowedByOtherFilters(fullPlaylistItems, filterState, facet) {
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var state = filterState || emptyFilterState();
+        var relaxed = {
+            sign_language: state.sign_language !== undefined ? state.sign_language : null,
+            edition: state.edition !== undefined ? state.edition : null,
+            typology: state.typology !== undefined ? state.typology : null,
+            tag: state.tag !== undefined ? state.tag : null,
+        };
+        relaxed[facet] = null;
+
+        var allIndices = items.map(function (_, ix) { return ix; });
+        var fullValues = distinctFacetValuesInSubset(items, allIndices, facet);
+        if (fullValues.length === 0) return false;
+
+        var narrowedIndices = recomputeFilteredMasterIndices(items, relaxed);
+        var narrowedValues = distinctFacetValuesInSubset(items, narrowedIndices, facet);
+        return narrowedValues.length === 1;
     }
 
     /**
@@ -1701,6 +1736,7 @@
         compactFacetLabel: compactFacetLabel,
         resolveFilterPickerReadout: resolveFilterPickerReadout,
         distinctFacetValuesInSubset: distinctFacetValuesInSubset,
+        isFacetNarrowedByOtherFilters: isFacetNarrowedByOtherFilters,
         buildCascadingFilterOptions: buildCascadingFilterOptions,
         buildShuffledSequenceWithHead: buildShuffledSequenceWithHead,
         buildOneVideoPerCityPool: buildOneVideoPerCityPool,

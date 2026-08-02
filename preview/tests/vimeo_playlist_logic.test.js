@@ -706,6 +706,30 @@ var allOptionsByFacet = {
     ],
 };
 
+// Derived active state: other filters leave exactly one possible live value.
+(function () {
+    var narrowedBySign = logic.isFacetNarrowedByOtherFilters(
+        samplePlaylist,
+        { sign_language: 'lse', edition: null, typology: null },
+        'edition'
+    );
+    assert.strictEqual(narrowedBySign, false, 'LSE leaves multiple live editions available');
+
+    var narrowedToOne = logic.isFacetNarrowedByOtherFilters(
+        samplePlaylist,
+        { sign_language: 'gss', edition: null, typology: null },
+        'edition'
+    );
+    assert.strictEqual(narrowedToOne, true, 'GSS leaves one live edition available');
+
+    var notNarrowed = logic.isFacetNarrowedByOtherFilters(
+        samplePlaylist,
+        { sign_language: null, edition: null, typology: null },
+        'edition'
+    );
+    assert.strictEqual(notNarrowed, false, 'neutral filters do not narrow live edition');
+})();
+
 // D14′: live readout is neutral; green only when fixed
 // Face carries full + short so CSS can swap at the maketa breakpoint (≤1024).
 (function () {
@@ -718,6 +742,7 @@ var allOptionsByFacet = {
         'Sign language'
     );
     assert.strictEqual(readout.fixed, false, 'passive readout is not fixed');
+    assert.strictEqual(readout.active, false, 'unconstrained live readout is not active');
     assert.strictEqual(
         readout.label,
         'LIBRAS Brazilian Sign Language',
@@ -733,6 +758,7 @@ var allOptionsByFacet = {
         'Sign language'
     );
     assert.strictEqual(fixed.fixed, true, 'fixed filter is pinned');
+    assert.strictEqual(fixed.active, true, 'fixed readout remains active');
     assert.strictEqual(
         fixed.label,
         'LIBRAS Brazilian Sign Language',
@@ -749,6 +775,32 @@ var allOptionsByFacet = {
     );
     assert.strictEqual(empty.label, 'Sign language', 'generic full face');
     assert.strictEqual(empty.short_label, 'Sign language', 'generic short face matches full');
+
+    var derived = logic.resolveFilterPickerReadout(
+        samplePlaylist[1],
+        'edition',
+        { sign_language: 'lse', edition: null, typology: null },
+        allOptionsByFacet.edition,
+        'City / Edition',
+        logic.isFacetNarrowedByOtherFilters(
+            samplePlaylist,
+            { sign_language: 'lse', edition: null, typology: null },
+            'edition'
+        )
+    );
+    assert.strictEqual(derived.fixed, false, 'derived city readout remains live');
+    assert.strictEqual(derived.active, false, 'multi-value narrowing does not activate live city');
+
+    var singleDerivedState = { sign_language: 'gss', edition: null, typology: null };
+    var singleDerived = logic.resolveFilterPickerReadout(
+        samplePlaylist[4],
+        'edition',
+        singleDerivedState,
+        allOptionsByFacet.edition,
+        'City / Edition',
+        logic.isFacetNarrowedByOtherFilters(samplePlaylist, singleDerivedState, 'edition')
+    );
+    assert.strictEqual(singleDerived.active, true, 'single-value narrowing activates live city');
 })();
 
 // Issue #16: compactFacetLabel — explicit short_label wins (D14″)
@@ -909,6 +961,29 @@ var allOptionsByFacet = {
     assert.strictEqual(plan.keepCurrentVideo, true, 'clearing filters keeps current video');
     assert.strictEqual(plan.loadMasterIndex, 2, 'still on same master index');
     assert.strictEqual(plan.filteredCursor, 2, 'cursor follows catalog position');
+})();
+
+// D22: clearing an already-unfixed redundant facet is a no-op for playback.
+(function () {
+    var plan = logic.planFilterPlaylistRebuild({
+        fullPlaylistItems: samplePlaylist,
+        filterState: { sign_language: 'lse', edition: null, typology: null },
+        currentMasterIndex: 1,
+        shuffleMode: true,
+        randomFn: function () { return 0; },
+    });
+    assert.ok(plan);
+    assert.strictEqual(plan.keepCurrentVideo, true, 'clearing redundant edition keeps current video');
+    assert.strictEqual(plan.loadMasterIndex, 1, 'clearing redundant edition does not change video');
+    assert.strictEqual(
+        logic.isFacetNarrowedByOtherFilters(
+            samplePlaylist,
+            { sign_language: 'lse', edition: null, typology: null },
+            'edition'
+        ),
+        false,
+        'multi-option edition remains neutral after clear'
+    );
 })();
 
 // D18′: fixing R2 filter clears participant collection

@@ -1408,7 +1408,8 @@
             }
 
             /**
-             * Update one R2 filter picker: live readout (neutral) or green when fixed (D14′, D21).
+             * Update one R2 filter picker: live readout, fixed green, or green when
+             * other filters leave only one possible value for the live facet (D14′, D21).
              * @param {string} facet
              */
             function updateFilterPickerReadout(facet) {
@@ -1420,16 +1421,22 @@
 
                 var genericLabel = btn.getAttribute('data-generic-label') || facet;
                 var item = fullPlaylistItems[playlistIndex];
+                var derivedActive = L.isFacetNarrowedByOtherFilters(
+                    fullPlaylistItems,
+                    filterState,
+                    facet
+                );
                 var readout = L.resolveFilterPickerReadout(
                     item,
                     facet,
                     filterState,
                     filterOptionCatalog[facet] || [],
-                    genericLabel
+                    genericLabel,
+                    derivedActive
                 );
 
                 setChromeBtnLabel(btn, readout.label, readout.short_label);
-                pickerEl.setAttribute('data-active', readout.fixed ? 'true' : 'false');
+                pickerEl.setAttribute('data-active', readout.active ? 'true' : 'false');
             }
 
             function updateAllFilterPickerReadouts() {

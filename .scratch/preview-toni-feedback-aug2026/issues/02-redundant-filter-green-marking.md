@@ -1,4 +1,4 @@
-Status: ready-for-agent
+Status: done
 
 # Redundant-filter green marking
 
@@ -16,11 +16,11 @@ No change is needed to click handling: clicking the clear/"all" option on such a
 
 ## Acceptance criteria
 
-- [ ] Selecting LSC alone shows the city picker as active/green with "Barcelona", without the user explicitly picking a city
-- [ ] Selecting LSE alone shows the city picker as active/green, with the readout following whichever city the currently displayed video belongs to (Bilbao or València) as playback advances
-- [ ] A facet whose possible values are *not* narrowed by other active filters (e.g. city picker with no sign-language filter active) does not get the active/green styling
-- [ ] Clicking the clear/"all" option on a redundant-but-not-fixed field is confirmed to be a no-op: dropdown closes, filter state and displayed video are unchanged, badge remains green
-- [ ] Unit tests cover the narrowed-set computation and its interaction with `resolveFilterPickerReadout`'s existing `fixed`/`liveValue` logic
+- [x] Selecting LSC alone shows the city picker as active/green with "Barcelona", without the user explicitly picking a city
+- [x] Selecting LSE alone shows the city picker as active/green, with the readout following whichever city the currently displayed video belongs to (Bilbao or València) as playback advances
+- [x] A facet whose possible values are *not* narrowed by other active filters (e.g. city picker with no sign-language filter active) does not get the active/green styling
+- [x] Clicking the clear/"all" option on a redundant-but-not-fixed field is confirmed to be a no-op: dropdown closes, filter state and displayed video are unchanged, badge remains green
+- [x] Unit tests cover the narrowed-set computation and its interaction with `resolveFilterPickerReadout`'s existing `fixed`/`liveValue` logic
 
 ## Blocked by
 
