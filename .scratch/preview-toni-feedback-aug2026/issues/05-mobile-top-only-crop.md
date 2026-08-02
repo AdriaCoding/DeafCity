@@ -16,11 +16,16 @@ Add a top-only height crop at the same `≤650px` breakpoint: scale/position the
 
 ## Acceptance criteria
 
-- [ ] A single global CSS custom property controls the top-crop amount at the `≤650px` breakpoint, independent of the existing width-crop aspect-ratio change
-- [ ] The crop only ever removes content from the top of the frame; the bottom edge of the video is never clipped by this change
-- [ ] Default value ships conservatively (visibly present but modest) so the mechanism can be demonstrated before final tuning
-- [ ] Existing width-crop behavior at the same breakpoint is unaffected
-- [ ] Follow-up noted/tracked for Toni to review and adjust the value against Mahieddine's and Mustapha's videos before considering this fully resolved
+- [x] A single global CSS custom property controls the top-crop amount at the `≤650px` breakpoint, independent of the existing width-crop aspect-ratio change
+- [x] The crop only ever removes content from the top of the frame; the bottom edge of the video is never clipped by this change
+- [x] Default value ships conservatively (visibly present but modest) so the mechanism can be demonstrated before final tuning
+- [x] Existing width-crop behavior at the same breakpoint is unaffected
+- [x] Follow-up noted/tracked for Toni to review and adjust the value against Mahieddine's and Mustapha's videos before considering this fully resolved
+
+Current state: mechanism is implemented and visually checked against Mahieddine
+at mobile width. The final `--vpc-top-crop` value remains pending Toni's review
+against both tall-framed Participants. See ADR-0014:
+`docs/adr/0014-preview-mobile-top-only-video-crop.md`.
 
 ## Blocked by
 

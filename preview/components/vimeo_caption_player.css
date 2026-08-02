@@ -91,6 +91,14 @@
 @media screen and (max-width: 650px) {
     .video-shell {
         aspect-ratio: 1.2 / 1;
+        --vpc-top-crop: 5%;
+    }
+    .video-shell iframe,
+    .vpc-poster-cover {
+        height: calc(100% + var(--vpc-top-crop));
+        bottom: 0;
+        top: auto;
+        transform: translateX(-50%);
     }
 }
 .vpc-video-hitarea {

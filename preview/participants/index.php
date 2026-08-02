@@ -30,7 +30,7 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=66">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=67">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=8">
     <link rel="stylesheet" href="/preview/css/participants-page.css?v=12">
     <style>

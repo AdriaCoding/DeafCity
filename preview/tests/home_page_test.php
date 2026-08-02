@@ -578,6 +578,15 @@ if (is_file($playerCssPath)) {
         exit(1);
     }
     echo "PASS: square chrome buttons share one fixed width (no stretch)\n";
+    assert_contains('--vpc-top-crop', $playerCss, 'mobile video top crop uses one global custom property');
+    if (!preg_match(
+        '~@media screen and \(max-width: 650px\)\s*\{.*?--vpc-top-crop:\s*[^;]+;.*?\.video-shell iframe,\s*\.vpc-poster-cover\s*\{.*?height:\s*calc\(100%\s*\+\s*var\(--vpc-top-crop\)\).*?bottom:\s*0;.*?top:\s*auto;.*?transform:\s*translateX\(-50%\)~s',
+        $playerCss
+    )) {
+        fwrite(STDERR, "FAIL: mobile video crop should grow and bottom-anchor both video layers\n");
+        exit(1);
+    }
+    echo "PASS: mobile video crop grows and bottom-anchors both video layers\n";
     assert_contains('vpc-poster-cover', $playerCss, 'loading cover CSS');
     assert_contains('vpc-load-scrim', $playerCss, 'solid white load scrim CSS');
     assert_not_contains(
