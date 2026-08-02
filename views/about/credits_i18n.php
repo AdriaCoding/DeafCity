@@ -99,7 +99,7 @@ $ct  = htmlspecialchars(preview_t('about.credits.contact'), ENT_QUOTES, 'UTF-8')
   <?= $itp ?> Carmen Tos
   <?= $tt ?> Matteo Sisti Sette, Roc Parés, Maribel Domènech, Salomé Cuesta, Justina Pérez Cantos.</p>
 
-<p><b>DEAF.city 2.0</b> <b>ONLINE ARCHIVE AND AI CODE</b> by Adrià Lisa, <b>Video editing</b> by Inma Alcario Westudio, <b>International Sign Clock code</b> by Daniel Julià, <b>English subtitle correction</b> by Inès David</p>
+<p><b>DEAF.city 2.0</b> <b>ONLINE ARCHIVE AND AI CODE</b> by Adrià Lisa Bou, <b>Video editing</b> by Inma Alcario Westudio, <b>International Sign Clock code</b> by Daniel Julià, <b>English subtitle correction</b> by Inès David</p>
 
 <p><b><?= $__credits_participant_count ?></b> participants <b><?= $__credits_video_count ?></b> videos DEAF.city contents under <u>CC BY-NC-ND 4.0</u></p>
 

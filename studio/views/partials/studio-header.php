@@ -40,6 +40,9 @@ $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
             <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_LOCALIZATIONS ? ' is-active' : '' ?>"
                href="?action=localitzacions"
                <?= $activeNav === StudioHeader::NAV_LOCALIZATIONS ? 'aria-current="page"' : '' ?>>Localitzacions</a>
+            <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_CREDITS_EDITOR ? ' is-active' : '' ?>"
+               href="?action=credits-editor"
+               <?= $activeNav === StudioHeader::NAV_CREDITS_EDITOR ? 'aria-current="page"' : '' ?>>Crèdits</a>
         </nav>
         <div class="studio-header-utilities">
             <form method="POST" action="?action=sync" class="studio-sync-form" id="sync-form">

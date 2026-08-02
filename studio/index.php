@@ -11,6 +11,7 @@ if (!defined('STUDIO_LOCAL_TRANSCRIBE_MODEL')) { define('STUDIO_LOCAL_TRANSCRIBE
 
 use Studio\Actions\BulkAction;
 use Studio\Actions\CatalogAction;
+use Studio\Actions\CreditsEditorAction;
 use Studio\Actions\DownloadAction;
 use Studio\Actions\IntakeAction;
 use Studio\Actions\LocalizationAction;
@@ -104,6 +105,9 @@ match ($action) {
     'localitzacions',
     'localitzacions-save',
     'localitzacions-seed'               => (new LocalizationAction($container))->handle($action),
+    'credits-editor',
+    'credits-editor-save',
+    'credits-editor-revert'             => (new CreditsEditorAction($container))->handle($action),
     'sync'                                => (new SyncAction($container))->launch(),
     'sync-status'                         => (new SyncAction($container))->status(),
     'resume-job'                          => (new ShellAction($container))->handle('resume-job'),

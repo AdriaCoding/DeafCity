@@ -7,6 +7,7 @@ final class StudioHeader
     public const NAV_CATALOG = 'catalog';
     public const NAV_TRANSCRIPTION_INTAKE = 'transcription-intake';
     public const NAV_LOCALIZATIONS = 'localizations';
+    public const NAV_CREDITS_EDITOR = 'credits-editor';
 
     /** @param array<string, mixed>|null $syncStatus */
     public static function syncStatusMessage(?array $syncStatus): string
@@ -41,6 +42,9 @@ final class StudioHeader
         }
         if ($action === 'localitzacions' || str_starts_with($action, 'localitzacions-')) {
             return self::NAV_LOCALIZATIONS;
+        }
+        if ($action === 'credits-editor' || str_starts_with($action, 'credits-editor-')) {
+            return self::NAV_CREDITS_EDITOR;
         }
 
         return null;
