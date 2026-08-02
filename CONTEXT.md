@@ -102,3 +102,7 @@ _Avoid_: Deleted, archived, unpublished, hidden (alone — say Invisible Video)
 **Language switch resume intent**:
 When a visitor changes Website language from the Preview player chrome, playback state must carry across the navigation. If the current Video is actively playing, or has already progressed beyond start and is not loading, the language switch sets a restore intent to resume playback with sound after reload. This prevents paused restore on a thumbnail with an in-cue Subtitle text ("ghost caption").
 _Avoid_: Treating language switch as always neutral UI navigation
+
+**DEAF+HEARING filter**:
+A chrome toggle on the Preview player that narrows the Playlist to Videos carrying the Catalog Tag `DEAF&HEARING` (curated deaf–hearing crossover humour). Modeled as a generic single-slot Tag facet (array membership), not a bespoke boolean, so it reuses the same mutual-exclusion, Reset, and session machinery as other filters. Mutually exclusive with Participants collection mode. Session-persisted as a one-shot handoff, not a sticky preference — a cold load always starts inactive. See ADR-0015.
+_Avoid_: Confusing the chrome label (`DEAF+HEARING`) with the Catalog Tag it targets (`DEAF&HEARING`) — the mismatch is intentional
