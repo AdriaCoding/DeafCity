@@ -17,6 +17,7 @@ use Studio\CatalogEditor;
 use Studio\CatalogSheetSync;
 use Studio\GoogleSheetsClient;
 use Studio\SheetCatalogParser;
+use Studio\StudioConfig;
 use Studio\VimeoClient;
 
 $replace = false;
@@ -52,11 +53,17 @@ if ($catalogPath === false) {
     exit(1);
 }
 
+$studioConfigPath = realpath(__DIR__ . '/../../data/studio-config.json');
+if ($studioConfigPath === false) {
+    fwrite(STDERR, "studio-config.json not found.\n");
+    exit(1);
+}
+
 $sync = new CatalogSheetSync(
     new GoogleSheetsClient($serviceAccountPath, SPREADSHEET_ID),
     new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN),
     new CatalogEditor($catalogPath),
-    new SheetCatalogParser(),
+    new SheetCatalogParser((new StudioConfig($studioConfigPath))->getTypologies()),
 );
 
 $result = $sync->run(['replace' => $replace, 'dryRun' => $dryRun]);

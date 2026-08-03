@@ -17,14 +17,28 @@ class SheetCatalogParser
         '2026 TUNIS' => ['edition' => '2026-tunis', 'sign_language' => 'tunisian-sl'],
     ];
 
-    /** @var array<string, string> */
-    private const TYPOLOGY_MAP = [
-        'JOKES' => 'acudits',
-        'ANECDOTES' => 'anecdotes',
-        'MEMORIES' => 'memories',
-        'MISUNDERSTANDINGS' => 'malentesos',
-        'RIDDLES' => 'endevinalles',
-    ];
+    /** @var array<string, string> normalized label => typology id */
+    private readonly array $typologyMap;
+
+    /**
+     * @param list<array{id?: string, label?: string}> $typologies Typology config
+     *   entries (see StudioConfig::getTypologies()). Sheet rows are matched against
+     *   their 'label' field, case- and accent-insensitively, so the Google Sheet's
+     *   typology column must use the same labels configured in Studio.
+     */
+    public function __construct(array $typologies = [])
+    {
+        $map = [];
+        foreach ($typologies as $typology) {
+            $id = (string) ($typology['id'] ?? '');
+            $label = (string) ($typology['label'] ?? '');
+            if ($id === '' || $label === '') {
+                continue;
+            }
+            $map[$this->normalizeLabelKey($label)] = $id;
+        }
+        $this->typologyMap = $map;
+    }
 
     /**
      * @param list<list<string|int|float|null>> $rows
@@ -91,9 +105,9 @@ class SheetCatalogParser
             $typologyId = null;
             $unknownTypology = false;
             if ($typologyRaw !== '') {
-                $typoKey = strtoupper($typologyRaw);
-                if (isset(self::TYPOLOGY_MAP[$typoKey])) {
-                    $typologyId = self::TYPOLOGY_MAP[$typoKey];
+                $typoKey = $this->normalizeLabelKey($typologyRaw);
+                if (isset($this->typologyMap[$typoKey])) {
+                    $typologyId = $this->typologyMap[$typoKey];
                 } else {
                     $unknownTypology = true;
                     $warnings[] = "Unknown typology \"$typologyRaw\" for Vimeo ID $vimeoId";
@@ -170,13 +184,23 @@ class SheetCatalogParser
 
     private function normalizeCityKey(string $city): string
     {
-        $city = trim($city);
-        if ($city === '') {
+        return $this->normalizeLabelKey($city);
+    }
+
+    /** Case- and accent-insensitive key used to match both city and typology labels. */
+    private function normalizeLabelKey(string $value): string
+    {
+        $value = trim($value);
+        if ($value === '') {
             return '';
         }
-        $city = str_replace(['à', 'á', 'è', 'é', 'í', 'ò', 'ó', 'ú', 'ã', 'õ', 'ç'], ['a', 'a', 'e', 'e', 'i', 'o', 'o', 'u', 'a', 'o', 'c'], mb_strtolower($city, 'UTF-8'));
-        $city = preg_replace('/\s+/', ' ', $city) ?? $city;
-        return strtoupper($city);
+        $value = str_replace(
+            ['à', 'á', 'è', 'é', 'í', 'ò', 'ó', 'ú', 'ã', 'õ', 'ç', 'ï', 'ü', 'ñ'],
+            ['a', 'a', 'e', 'e', 'i', 'o', 'o', 'u', 'a', 'o', 'c', 'i', 'u', 'n'],
+            mb_strtolower($value, 'UTF-8'),
+        );
+        $value = preg_replace('/\s+/', ' ', $value) ?? $value;
+        return strtoupper($value);
     }
 
     /**

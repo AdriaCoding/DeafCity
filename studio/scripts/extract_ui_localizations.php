@@ -176,6 +176,7 @@ if (is_array($cfg)) {
         'malentesos' => 'Misunderstandings',
         'endevinalles' => 'Riddles',
         'memories' => 'Memories',
+        'pensaments' => 'Thoughts',
     ];
     foreach ($cfg['typologies'] ?? [] as $item) {
         $id = $item['id'] ?? '';

@@ -53,7 +53,7 @@ class Container
             new GoogleSheetsClient($serviceAccountPath, SPREADSHEET_ID),
             $this->vimeoClient(),
             $this->catalogEditor(),
-            new SheetCatalogParser(),
+            new SheetCatalogParser($this->studioConfig->getTypologies()),
         );
     }
 

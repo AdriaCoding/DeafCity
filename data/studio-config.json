@@ -161,32 +161,32 @@
     "typologies": [
         {
             "id": "acudits",
-            "label": "ACUDITS",
+            "label": "JOKES",
             "short_label": "Acudits"
         },
         {
             "id": "anecdotes",
-            "label": "ANÈCDOTES",
+            "label": "ANECDOTES",
             "short_label": "Anècdotes"
         },
         {
             "id": "malentesos",
-            "label": "MALENTESOS",
+            "label": "MISUNDERSTANDINGS",
             "short_label": "Malentesos"
         },
         {
             "id": "endevinalles",
-            "label": "ENDEVINALLES",
+            "label": "RIDDLES",
             "short_label": "Endevinalles"
         },
         {
             "id": "memories",
-            "label": "MEMÒRIES",
+            "label": "MEMORIES",
             "short_label": "Memòries"
         },
         {
             "id": "pensaments",
-            "label": "PENSAMENTS"
+            "label": "THOUGHTS"
         }
     ]
 }

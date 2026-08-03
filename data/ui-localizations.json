@@ -1104,6 +1104,13 @@
             "eu": true
         }
     },
+    "content.typology.pensaments": {
+        "section": "content",
+        "context": "Typology (pensaments)",
+        "translations": {
+            "en": "Thoughts"
+        }
+    },
     "gallery.caption.01": {
         "section": "about",
         "context": "Gallery image 1 caption",
@@ -1361,7 +1368,7 @@
         "section": "player",
         "context": "Default option in City\/Edition dropdown",
         "translations": {
-            "en": "Cities",
+            "en": "All cities",
             "fr": "Villes",
             "ca": "Ciutats",
             "es": "Ciudades",
@@ -1384,7 +1391,7 @@
         "section": "player",
         "context": "Default option in Sign language dropdown",
         "translations": {
-            "en": "Sign Languages",
+            "en": "All sign languages",
             "fr": "Langues des Signes",
             "ca": "Llengües de Signes",
             "es": "Lenguas de Signos",
@@ -1402,7 +1409,7 @@
         "section": "player",
         "context": "Default option in Typology dropdown",
         "translations": {
-            "en": "Typologies",
+            "en": "All typologies",
             "fr": "Typologies",
             "ca": "Tipologies",
             "es": "Tipologías",
@@ -1444,11 +1451,34 @@
             "eu": true
         }
     },
+    "player.filter.deaf_hearing": {
+        "section": "player",
+        "context": "Accessible name for DEAF+HEARING toggle (not the glyph label)",
+        "translations": {
+            "en": "Deaf and hearing crossover videos",
+            "fr": "Interactions Sourds et Entendants",
+            "ca": "Interaccions de sords i oïdors",
+            "es": "Interacciones entre Sordos y Oyentes",
+            "it": "Interazioni tra Sordi e Udenti",
+            "pt": "Interações entre Surdos e Ouvintes",
+            "ar": "تفاعلات الصم والسامعين",
+            "eu": "Gorren eta entzuleen harremanak"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true,
+            "ca": true,
+            "fr": true,
+            "it": true,
+            "pt": true,
+            "es": true
+        }
+    },
     "player.filter.sign_language": {
         "section": "player",
         "context": "Sign language filter generic label",
         "translations": {
-            "en": "Sign Language",
+            "en": "Sign language",
             "fr": "Langue des Signes",
             "ca": "Llengua de Signes",
             "es": "Lengua de Signos",
@@ -1484,29 +1514,6 @@
             "pt": true,
             "ar": true,
             "eu": true
-        }
-    },
-    "player.filter.deaf_hearing": {
-        "section": "player",
-        "context": "Accessible name for DEAF+HEARING toggle (not the glyph label)",
-        "translations": {
-            "en": "Deaf & Hearing interactions",
-            "fr": "Interactions Sourds et Entendants",
-            "ca": "Interaccions de sords i oïdors",
-            "es": "Interacciones entre Sordos y Oyentes",
-            "it": "Interazioni tra Sordi e Udenti",
-            "pt": "Interações entre Surdos e Ouvintes",
-            "ar": "تفاعلات الصم والسامعين",
-            "eu": "Gorren eta entzuleen harremanak"
-        },
-        "seeded": {
-            "ar": true,
-            "eu": true,
-            "ca": true,
-            "fr": true,
-            "it": true,
-            "pt": true,
-            "es": true
         }
     },
     "player.nav.about": {
@@ -1651,7 +1658,7 @@
         "section": "player",
         "context": "Next button aria-label",
         "translations": {
-            "en": "Next video",
+            "en": "Next video in playlist",
             "fr": "Vidéo suivante",
             "ca": "Següent vídeo",
             "es": "Siguiente video",
@@ -1811,7 +1818,7 @@
         "section": "player",
         "context": "Shuffle button aria-label",
         "translations": {
-            "en": "Shuffle",
+            "en": "Shuffle playlist",
             "fr": "Mélanger",
             "ca": "Aleatori",
             "es": "Barajar",
@@ -1830,16 +1837,9 @@
             "es": true
         }
     },
-    "content.typology.pensaments": {
-        "section": "content",
-        "context": "Typology (pensaments)",
-        "translations": {
-            "en": "PENSAMENTS"
-        }
-    },
     "player.transport.space_key": {
         "section": "player",
-        "context": "Name of the spacebar key, used in the Play/Pause keyboard-shortcut hint appended to its title/aria-label, e.g. \"Play video (Space)\"",
+        "context": "Name of the spacebar key, used in the Play\/Pause keyboard-shortcut hint appended to its title\/aria-label, e.g. \"Play video (Space)\"",
         "translations": {
             "en": "Space",
             "fr": "Espace",

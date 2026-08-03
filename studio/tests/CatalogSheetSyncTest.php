@@ -412,7 +412,14 @@ class CatalogSheetSyncTest extends TestCase
             $sheets,
             $vimeo,
             $editor,
-            new SheetCatalogParser(),
+            new SheetCatalogParser([
+                ['id' => 'acudits', 'label' => 'JOKES'],
+                ['id' => 'anecdotes', 'label' => 'ANECDOTES'],
+                ['id' => 'malentesos', 'label' => 'MISUNDERSTANDINGS'],
+                ['id' => 'endevinalles', 'label' => 'RIDDLES'],
+                ['id' => 'memories', 'label' => 'MEMORIES'],
+                ['id' => 'pensaments', 'label' => 'THOUGHTS'],
+            ]),
             $sleeper ?? static function (int $seconds): void {},
         );
     }

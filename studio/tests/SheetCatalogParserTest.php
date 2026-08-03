@@ -7,6 +7,24 @@ use Studio\SheetCatalogParser;
 
 class SheetCatalogParserTest extends TestCase
 {
+    /** @return list<array{id: string, label: string}> */
+    private function typologies(): array
+    {
+        return [
+            ['id' => 'acudits', 'label' => 'JOKES'],
+            ['id' => 'anecdotes', 'label' => 'ANECDOTES'],
+            ['id' => 'malentesos', 'label' => 'MISUNDERSTANDINGS'],
+            ['id' => 'endevinalles', 'label' => 'RIDDLES'],
+            ['id' => 'memories', 'label' => 'MEMORIES'],
+            ['id' => 'pensaments', 'label' => 'THOUGHTS'],
+        ];
+    }
+
+    private function parser(): SheetCatalogParser
+    {
+        return new SheetCatalogParser($this->typologies());
+    }
+
     public function test_forward_fills_city_and_participant(): void
     {
         $rows = [
@@ -16,7 +34,7 @@ class SheetCatalogParserTest extends TestCase
             ['003', '', 'Dani', '1211615982', '1', '#HEARING AID', 'ANECDOTES', ''],
         ];
 
-        $result = (new SheetCatalogParser())->parse($rows);
+        $result = $this->parser()->parse($rows);
 
         $this->assertCount(3, $result['rows']);
         $this->assertSame('2020-valencia', $result['rows'][0]->editionId);
@@ -36,7 +54,7 @@ class SheetCatalogParserTest extends TestCase
             ['003', '2023 São Paulo', 'Ana', '333', '1', '', 'MISUNDERSTANDINGS', 'yes'],
         ];
 
-        $result = (new SheetCatalogParser())->parse($rows);
+        $result = $this->parser()->parse($rows);
 
         $this->assertSame(['APPLAUSE', 'DEAF&HEARING'], $result['rows'][0]->tags);
         $this->assertSame('acudits', $result['rows'][0]->typologyId);
@@ -53,6 +71,22 @@ class SheetCatalogParserTest extends TestCase
         $this->assertSame('malentesos', $result['rows'][2]->typologyId);
     }
 
+    public function test_matches_typology_labels_case_insensitively(): void
+    {
+        $rows = [
+            ['', 'Ciutats', 'Participants', 'Vimeo', '', 'TÍTOLS', 'ANECDOTES', 'DEAF+HEARING'],
+            ['001', '2020 València', 'Aurora', '111', '1', '#A', 'jokes', ''],
+            ['002', '', 'Dani', '222', '1', '#B', 'Thoughts', ''],
+        ];
+
+        $result = $this->parser()->parse($rows);
+
+        $this->assertSame('acudits', $result['rows'][0]->typologyId);
+        $this->assertFalse($result['rows'][0]->unknownTypology);
+        $this->assertSame('pensaments', $result['rows'][1]->typologyId);
+        $this->assertFalse($result['rows'][1]->unknownTypology);
+    }
+
     public function test_stops_before_stats_exports_junk_rows(): void
     {
         $rows = [
@@ -62,7 +96,7 @@ class SheetCatalogParserTest extends TestCase
             ['002', '2021 Mexico', 'Beto', '222', '1', '#B', 'MEMORIES', ''],
         ];
 
-        $result = (new SheetCatalogParser())->parse($rows);
+        $result = $this->parser()->parse($rows);
 
         $this->assertCount(1, $result['rows']);
         $this->assertSame('111', $result['rows'][0]->vimeoId);
@@ -77,7 +111,7 @@ class SheetCatalogParserTest extends TestCase
             ['003', '', 'Dani', '111', '1', '#C', 'JOKES', ''],
         ];
 
-        $result = (new SheetCatalogParser())->parse($rows);
+        $result = $this->parser()->parse($rows);
 
         $this->assertCount(1, $result['rows']);
         $this->assertSame('111', $result['rows'][0]->vimeoId);
@@ -95,7 +129,7 @@ class SheetCatalogParserTest extends TestCase
             ['003', '', 'Dani', '111', '1', '#C', 'JOKES', ''],
         ];
 
-        $result = (new SheetCatalogParser())->parse($rows);
+        $result = $this->parser()->parse($rows);
 
         $this->assertCount(1, $result['rows']);
         $this->assertSame('111', $result['rows'][0]->vimeoId);
@@ -110,7 +144,7 @@ class SheetCatalogParserTest extends TestCase
             ['002', '2099 Atlantis', 'X', '222', '1', '#B', 'JOKES', ''],
         ];
 
-        $result = (new SheetCatalogParser())->parse($rows);
+        $result = $this->parser()->parse($rows);
 
         $this->assertCount(1, $result['rows']);
         $this->assertSame('111', $result['rows'][0]->vimeoId);
