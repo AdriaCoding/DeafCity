@@ -88,10 +88,9 @@
 .vpc-load-scrim.is-hidden {
     opacity: 0;
 }
-@media screen and (max-width: 650px) {
+@media screen and (min-width: 651px) {
     .video-shell {
-        aspect-ratio: 1.2 / 1;
-        --vpc-top-crop: 5%;
+        --vpc-top-crop: 12%;
     }
     .video-shell iframe,
     .vpc-poster-cover {
@@ -99,6 +98,11 @@
         bottom: 0;
         top: auto;
         transform: translateX(-50%);
+    }
+}
+@media screen and (max-width: 650px) {
+    .video-shell {
+        aspect-ratio: 1.2 / 1;
     }
 }
 .vpc-video-hitarea {

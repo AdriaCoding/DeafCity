@@ -249,7 +249,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Pepa",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181844489-c68128e0f28f8cb9e89036120baf0bac1501a01580793130276cd7e051d9a7a5-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186250564-6d676e4c0507b0b5b481e49e30f11fc318acb50a8210bf48ad2d63e8502b79ec-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211612212?h=36a3534e50"
         },
         {
@@ -324,11 +324,48 @@
                 "FAREWELL",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2020_VALENCIA_Riutort_1_EN.vtt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2020_VALENCIA_Riutort_1_AR.vtt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2020_VALENCIA_Riutort_1_EU.vtt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2020_VALENCIA_Riutort_1_FR.vtt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2020_VALENCIA_Riutort_1_IT.vtt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2020_VALENCIA_Riutort_1_PT.vtt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2020_VALENCIA_Riutort_1_ES.vtt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Riutort",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181842888-8a6ee3ce6558349bc9902d844c88ab03f5ba27fda903b516065bf9240e1aa4ab-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211611135?h=2c4c3495ea"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211611135?h=2c4c3495ea",
+            "master_caption_lang": "en"
         },
         {
             "id": "lse_1211611063",
@@ -438,7 +475,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Beto",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860793-abaacc423daf29f854227f0b491a1578f78ad346fac8befad490211beb9541e5-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251019-088cd6d569ec5776b2974b487793e265b449abae9258258dfca96c34b4e1e9de-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211638604?h=09ebda30d9"
         },
         {
@@ -453,7 +490,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Beto",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860806-7f0be46bcf3106fbe621cb86d9c1e59cd3251d299fab037e968ff0dfc02b6bdc-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186253301-ee4d5422e0df56f49fc854b1b1906b5f25487d6426011d7acb485b54c2bf9ee9-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211638605?h=25c31ca460"
         },
         {
@@ -484,7 +521,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Gustavo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860176-f251255a4f0fdf98b9cd48c418bbd3a5d57fb51228d359cb8efe6b55ed4d9a4d-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186253594-e590cc530bd98a8a837a2c40cbc08a38641176b8e42752424404751d25881bfa-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211637952?h=e865093f2f"
         },
         {
@@ -500,7 +537,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Gustavo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860234-5eef39a2f8eea948e6dca1a9f0e0e101aaa64fcab443458619752e37aa86db3c-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251329-aaeb914f7e3d28912cff6fccf2158fc545073cade839ea8f120b4cb73e6c2441-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211637968?h=3282c455bb"
         },
         {
@@ -515,7 +552,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Gustavo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860380-556492572b09c7ddc981d8c88d19df8080563767576ca0b2ba25464e039785c1-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186254218-ba57ca2d84a8e5bad176f6f97c73f294179737a739691af4a6cc1d854c6ccf50-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211638032?h=e4ffa3a12d"
         },
         {
@@ -530,7 +567,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Gustavo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860211-7f74f06a8638d504da10fecbd6a10a70f37f7e027909a20e8e223b84c1a4ade5-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186254715-15516042f348414a0ff1f7cb573625c740fcdd4d459d7e690a7f9110fa492acd-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211638121?h=67afaa86ad"
         },
         {
@@ -545,7 +582,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Indy",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181859286-9ca7fe0a714aea095c6953f6420636a465c75be5b446f588a34d3f578750ec93-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251694-4bbe19fbe803da46cbd6f9224ba69af4bdd5509b938fa5bbba89cc821000ece9-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636809?h=82fbbe98b2"
         },
         {
@@ -560,7 +597,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Indy",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181859390-8ec32fb9711a8ecff1ec5286fd096846aa568cfa2314e1d0f250743401278cb4-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186255464-036b1f5c88968c91a7c874d03a61a26e01585062e927e3ad4fe4b4225620dc3e-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636813?h=154f715e00"
         },
         {
@@ -575,7 +612,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Indy",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181859177-7accca1da7608aeb982b7cc90259bd390675b5b2c922cf95052f99fc7076eb9d-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186256370-70382cc8f45c53853c02a5f7543b0bb65ea08c0d71c044de094d280f7da9253d-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636810?h=d7962921c9"
         },
         {
@@ -591,7 +628,7 @@
             "captions": [],
             "typology": "malentesos",
             "participant": "Indy",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181859015-8aeeb8c3de052707efbcceb3f5aa08a78c5b9c0f7b4da4615b74b9bff30e60c6-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186257107-f21a43ae4ee74856bcdab68a1e171f4f70b1f45f26c6469d65e37cb7a628fbf6-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636807?h=53d57f9857"
         },
         {
@@ -606,7 +643,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Ixchel",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181858175-cc5fd9136b324d91acf166b77b78a2a69076c6d2659e1798b1b98c9ef95265e1-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251886-da62d78259478e634b46e604c3a7f1e54730d05af5e8765a6c2ec8e64bcb0f4d-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636243?h=0f8fafc723"
         },
         {
@@ -621,7 +658,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Ixchel",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181858277-5e41b3a240d186d14d50b4eb0d193886c7daff63027b3e069cb08ad074d4807e-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186252649-fe08f76ac126f2372f52ca930b11fc1fffde54a534fc5007afeb840a8c0c3fe6-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636245?h=83dde52b2c"
         },
         {
@@ -637,7 +674,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Luis",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181858579-63abee18863748a5a818e7f53bb82bcd810bdabeae97a11038b4865109628c31-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186252261-8a199e6fae68d3690baf6d21f8514161796abbed9518f10f57190b25fba1bbd9-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211636244?h=5b1157b36c"
         },
         {
@@ -652,7 +689,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Miguel",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181857624-cd4a1ddaa29b3c1be718d668ffe7b5808b436aef37b792b4df8b45901d46c231-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186257667-5d8e9f7e2d87ac4d611c8096e0a65d2b7669ac978bc36325b8a3cf7c621d717d-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211635871?h=b419b74d20"
         },
         {
@@ -667,7 +704,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Miguel",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181857924-23c5e6782d2ec185f6976dcc9c60b3202b61feb6cbd8220610a999687f07fc93-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186257910-4d153cea5e353090ff475eb15dbc752e53e88a8100f1c05f648014609af4d634-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211635870?h=0c4029ba41"
         },
         {
@@ -682,7 +719,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Miguel",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181857670-e066bed53b052b4f3f3f4df066611a675e81f0f96774c4052120f1a9c4b8dbbb-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186258172-7aa7b11ee1eed56801101f8754e7224a4be9eb2f2d7594cf97154b4b06d89203-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211635872?h=27fc1f8e29"
         },
         {
@@ -698,7 +735,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Ole",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181857067-d294608c70b84721942c04d06a19231c27ce6a1b66c40d1a8d9bb0764f799c4b-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186258746-f82f4adba86d3e0b6da5d74804d89a7bfb174fbafcc93c755ab385a760d12ada-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211635509?h=2c69fe4eb0"
         },
         {
@@ -714,7 +751,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Ole",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181857235-bf4519463ff4c9cccde59396812dae627352fc12f9bbdbfb1586bf4ff8b9468c-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186259151-fe5e3dbe636b7fad599c33268a3677367d9170c55888b11818135e180cdc882c-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211635522?h=cad1bfd0f5"
         },
         {
@@ -729,7 +766,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Titi",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181855438-92187969f9977547409c118116941496bc08905f4e3c72027f179f2ebd83d357-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186259407-8a19275bab5c1ab57cc80071c0a60a3ec49808b524da30caa0daad7c5d437f10-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211634222?h=34624b0275"
         },
         {
@@ -744,7 +781,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Titi",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181855473-c4bdf2bcbe0df3610923281ed1e22f7ff27358f8b65eaef2cda43ad7a9d1f267-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186259801-259d917b4257c2132ce0ab025fa573030363e079b6be33531a16d691e9ce567c-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211634223?h=12bf2202c7"
         },
         {
@@ -792,7 +829,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Aitor",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867271-cfc76318572d24cb6b5806d67281b0bf5bfaaace1e398a79bec6ad36d054a895-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186276746-d882ee30372c9e84babdd28560ade75a11d15218097a1354d04df56419f5605e-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644032?h=5b3c6d2619"
         },
         {
@@ -824,7 +861,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Aitor",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867180-31671bf3c8c1a2a52531e06c13ebc20d216f930ee3409a861de4ff8fa075ffef-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186286269-b3a9994612d67eb5fca71a7e99bd722f3e02c1a4abaf93e257523dbca2a9573c-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644029?h=ed794dbf0c"
         },
         {
@@ -855,7 +892,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Aitor",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867301-76c90dd16b64a25cc82036c16777e83c0f504b9ded86be9930ddfd98351712e8-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186286798-7fdf0b618584adde70b6e75f01f1a697f6b229e6f865b79b9edd3ffc03ab3bc9-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644150?h=985bb65254"
         },
         {
@@ -871,7 +908,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Aitor",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867467-90f0b5b10bd2013314d1ea7fcd1e5e554dad8104a4b9379a0a0ba49a2ffa09ac-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186287068-65765e4ecfd13d6df7efbd9c127661fc6b17d76638afe581678df550160ad1ce-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644218?h=b42e8e0c53"
         },
         {
@@ -887,7 +924,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Amaia",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867392-4e108029f0fd9234c71be055d47eddb47b4bd71a0037b9273b3e98a3b10289d0-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186277343-5c748a245f62df632d75a0c7d49064fa4f5c77d8c51f3173ded25997cb13acf4-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644220?h=fbc310305f"
         },
         {
@@ -902,7 +939,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Amaia",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867399-2a14ad002ea3341247bf3ab6164e7c767d99930b19867df2b9aca7d6ca6d4205-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186287696-8319d8a8d100c970ca4406dda5743bb19caad0f5a64cf13530b478ba868b17ba-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644227?h=0dff087655"
         },
         {
@@ -933,7 +970,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Amaia",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867460-a43b6422bdbf2a30f227e16d6cfe10c4fe7930a5bb8f278aa82fc974deaedb17-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186288075-777411f15b8c7a047ef2920733ebe025c0cf3181c354987d5032af368a2a1634-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644331?h=a02d97c5b3"
         },
         {
@@ -948,7 +985,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Eduardo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867454-f44598f574286b1243cb6f16fb3d079f30dcc97c8c36cee4997cd21a3c8a9cd4-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186284688-eb970d594f95ff343451aab61dccce0c3a41aaed3083884ebb0e3f836124d240-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644344?h=03d8643bd7"
         },
         {
@@ -964,7 +1001,7 @@
             "captions": [],
             "typology": "malentesos",
             "participant": "Eduardo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867489-df075f3e66a57f8fe0ff1ce0c7dfbc84d2e4a214406696371c985851d2f89b2c-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186288646-fc3cb85f7d10407a200ddaec27399fbd13df3bcd31c751658ab64650340685a0-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644372?h=b6d8aaa721"
         },
         {
@@ -980,7 +1017,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Iñaqui",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867544-5be41e444e5b4b806ca546080a23122a5eb884c0b32f431ae2e5d2ba63ef736a-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186285178-7298d037b421c6f59e5cafdef2539f8e091bd391d4560c62f0336a62a3d0d97d-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644397?h=ac0588a1d3"
         },
         {
@@ -1012,7 +1049,7 @@
             "captions": [],
             "typology": "memories",
             "participant": "Iñaqui",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181867615-c8d570779c8465e732343bbbf61788e8a03c0f507469104abf05e6ecbdcbea5d-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186288380-c8eba328a0816f8599ec357724ba011e60c86db1275126bdf86dcef69f220dc1-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211644409?h=f317a10478"
         },
         {
@@ -1463,7 +1500,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Hassen",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930435-aac22cadece1d0d646174b2d55cf10073e65398d25bc5a1486f13c42a7158d45-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186305708-aa745728278bbfabac43172701601c392c7af7d74c1948222b0dce36e74908cb-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211695913?h=d52ce60eca"
         },
         {
@@ -1542,7 +1579,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Lamine",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930718-42394e023bc342f19cedd25f17c173599ae030549502ccc30c6b736b94144c65-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186306184-565ee1cc7a22e7e27c2031db6dd853d18bf9d397470daf0dddab9756d4b4dc74-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211696232?h=c8e0bd0794"
         },
         {
@@ -1632,11 +1669,53 @@
             "tags": [
                 "RAMADAN"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_1_EN.vtt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mahieddine_1_AR.vtt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mahieddine_1_EU.vtt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mahieddine_1_CA.vtt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_1_FR.vtt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mahieddine_1_IT.vtt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mahieddine_1_PT.vtt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mahieddine_1_ES.vtt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Mahieddine",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181931140-8024facffcc970bfa3f48b17e8b01dddc546d63fb4540b6914aa2f6fb0d1aeb5-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696516?h=10095806f1"
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186306803-2dbe131d5add8cdc17259892e288b8dc88258edcc867c9cb10bb0827fefa03c1-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696516?h=10095806f1",
+            "master_caption_lang": "en"
         },
         {
             "id": "algerian-sl_1211696545",
@@ -1722,11 +1801,53 @@
             "tags": [
                 "TRAIN"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mustapha_1_EN.vtt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mustapha_1_AR.vtt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mustapha_1_EU.vtt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mustapha_1_CA.vtt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mustapha_1_FR.vtt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mustapha_1_IT.vtt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mustapha_1_PT.vtt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mustapha_1_ES.vtt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Mustapha",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181931474-f48ca3429aefc47e0ac248cee013dac4d4f196dc8c9c1f0cc7b68739539ef421-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696766?h=e7917fcac9"
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186307299-0792958170eadabfa91385ee67d363ac7ce36b94a484530c123927fb11cea5df-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696766?h=e7917fcac9",
+            "master_caption_lang": "en"
         },
         {
             "id": "algerian-sl_1211696779",
@@ -1786,7 +1907,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Carlota",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181892551-cc18cd6eea4765ce66e558dfe8840cb5d96a22a83222d8ad6e642dc9723f00ba-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186289571-ee2a26551e7335d1529039f164c433d989c2562e8724d18d4734e752c702ccd2-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211664592?h=e5adfcaee8"
         },
         {
@@ -1876,7 +1997,7 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "NEW SIGH",
+                "NEW SIGN",
                 "DEAF&HEARING"
             ],
             "captions": [],
@@ -1898,7 +2019,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Frank",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893017-183c9d4f398ff2c0adf16159bd209a011f1d96d56c053663977e74c9e45e9497-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186290392-60e7e98829dd7978cbd02e9bdbd3eb91ef276bfce586aea85daaebbcb3cf4897-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211664797?h=76ad755eea"
         },
         {
@@ -1961,7 +2082,7 @@
             ],
             "captions": [],
             "participant": "Raquel",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181895391-69cfbf1f88af0814cf3e2946ecc18cbc3242ccc87743aea1a181bd73b7d309cf-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186291957-d78f3c628a8fe1f0c706a452429bfee86cc440066a58f987174892dbcced4a91-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211667039?h=39249b6ae2",
             "typology": "malentesos"
         },
@@ -2052,7 +2173,8 @@
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184334621-77659a9ea7384d7a3c7c6da53f5ab135c244440fa749e5b662231c0eb6e149d9-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690992?h=e7ac8a87cd"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690992?h=e7ac8a87cd",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211690991",
@@ -2081,7 +2203,8 @@
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184343256-f26e7fafb07c571c59c55f70b6727f25eb21ce7a4cbcc711d2320d84923b98ff-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690990?h=b2b08922f9"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690990?h=b2b08922f9",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211690989",
@@ -2095,7 +2218,8 @@
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184343742-31de314d0a0156fdfabb8f5d77c73fe0b0ca76219391f2f2aa59c068df384442-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690989?h=aa6ce13ba2"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211690989?h=aa6ce13ba2",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211691187",
@@ -2109,7 +2233,8 @@
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181924476-e618624e029b6de1054c260460882612538ce5375948ec73a183f93251ee6ce4-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691187?h=c552e232ef"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691187?h=c552e232ef",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211691220",
@@ -2123,7 +2248,8 @@
             "captions": [],
             "participant": "Hugo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184331761-1e2edf80f40c0031de9855b79285c6b66850d1fe59e0cdcbdb7b6537393beb33-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691220?h=331b693280"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691220?h=331b693280",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211691224",
@@ -2286,7 +2412,8 @@
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184335820-554043ee157ba3711d2e1d4cb5fb7a51dfa89efa3202e9941924d08b289ed28d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692225?h=7db58de7fa"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692225?h=7db58de7fa",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211692573",
@@ -2315,7 +2442,8 @@
             "captions": [],
             "participant": "Lola",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184341998-63791d8fe298cfb0bdbd5b83a761979f5f10e5b63daca771646af5ca74adaca5-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692820?h=5a3e6cee44"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211692820?h=5a3e6cee44",
+            "typology": "pensaments"
         },
         {
             "id": "lis_1211703432",
@@ -2329,7 +2457,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Carolina",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181939596-cc1be6456a174805ae033f0cb40ca1f9d2137ab6a14c3fed94956d7c440eb1e4-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186292878-5d93dd02ca78d893b0e59cdec2668a80ef005474f92eed7f59ecb4e3124c1026-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211703432?h=4ea6273b23"
         },
         {
@@ -2423,7 +2551,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Lorenzo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181940043-a05409e696895359fc2a8bbb28a8a4fba8fdc84ce2fb46424251cf06cd6b2ac8-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186293452-bd02f1a5ae3600bdb8f75b8c34b98c9d39ea58070344e8cd0d0f24145776b70d-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211703683?h=25d958100b"
         },
         {
@@ -2575,7 +2703,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Olivier",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181941287-bf7e5f147110beedea1e5e0ba00367c22263c255152d4f928536ee61c4d09ae7-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186296205-9e570734740878078aad2dbb0027d9200227d61df888883966bb1f58209e7f3a-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211704756?h=f4e77fd35e"
         },
         {
@@ -2620,7 +2748,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Paola",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181942477-e9ce22084668bb28a65303d7473aaa18a2dedb1e83f1ebb8855459f66c7190d4-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186295121-9d884bfd242f78181e50eb00acbd329394c4db2834da5fc5534c5a5b0b1fae61-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211704953?h=ace40da826"
         },
         {
@@ -2695,7 +2823,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Serena",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181942149-7beb2617cb924c13007b13484bf290517a9158a55e97208f0efab29ec2db4bb0-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186295797-9ff67c20302be522292711e0084be5d3983aa0f0f4cd3df1f7299d9edd2d2793-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211705280?h=2f2c3dc332"
         },
         {
@@ -2782,7 +2910,7 @@
             ],
             "captions": [],
             "participant": "Aya",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949695-b2ef8dad5c407074ac3f9956941f30c936aad683ddfb26613e9ec01f4c8becf2-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186298994-ed2628affde4ee4bcfd453ada3ff05e50ea9adb281354ecfb4458ea37352ac85-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211711234?h=21b62c5c34",
             "typology": "memories"
         },
@@ -2845,8 +2973,9 @@
             ],
             "captions": [],
             "participant": "Ayoub",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181949843-d72cfeb31d98a1cc84b2c795e6aa2cfd989b353e3bc43d63c09552ec546579c8-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711370?h=8ff32779ff"
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186299378-ce9ae33c10526856cb81dcb35add8f0315df3837e98dbdd35aad9ccbf5bf577a-d_960x540?&r=pad&region=us",
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711370?h=8ff32779ff",
+            "typology": "pensaments"
         },
         {
             "id": "tunisian-sl_1211711391",
@@ -2969,7 +3098,8 @@
             "captions": [],
             "participant": "NourAlislem",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950881-0d9f4571aed453921650c93ea3b606509f45cf3594db689f3296ae1a41432602-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712216?h=88833001a5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211712216?h=88833001a5",
+            "typology": "pensaments"
         },
         {
             "id": "tunisian-sl_1211711542",
@@ -2983,7 +3113,7 @@
             ],
             "captions": [],
             "participant": "Imen",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950115-49c12c6ecda7a7891db39d8f69a48e553650bec4d5e11d734fb14418338dc1c3-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186300012-56528e8a84387aa30e2e1ddbd768b63c048f78c66e7451e9a2160d7ff22a6077-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211711542?h=4c89a816a1",
             "typology": "anecdotes"
         },
@@ -2999,7 +3129,8 @@
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950046-97213769ef313ccc54b8131d23200ddb1b5cc605623c69cf37bcf0ccc480a5d0-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711580?h=7247e95d90"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711580?h=7247e95d90",
+            "typology": "pensaments"
         },
         {
             "id": "tunisian-sl_1211711607",
@@ -3013,7 +3144,8 @@
             "captions": [],
             "participant": "Imen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950169-8c1568d4bbf863d9e1abb18494331ac1b8bc05523465166a884678d54b2a3f83-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711607?h=aad70c4ff2"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711607?h=aad70c4ff2",
+            "typology": "pensaments"
         },
         {
             "id": "tunisian-sl_1211711622",
@@ -3056,7 +3188,7 @@
             ],
             "captions": [],
             "participant": "Malek",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2185883383-979e0194f725354812ffb6c3eb8b0957479de6a780834e1f3d1ce7d9a213a6a5-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186301716-6d330913d5654111164914f03e6ba82ba66f96fb7418bcda6767297049cd45a0-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211711696?h=2b9dc594c0",
             "typology": "memories"
         },
@@ -3117,7 +3249,8 @@
             "captions": [],
             "participant": "Malek",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950446-4283f9023b26cf005bf4d7d5b7279126dcac4eb04edc7796a6fc6c08704299e3-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711828?h=f658b6f198"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211711828?h=f658b6f198",
+            "typology": "pensaments"
         },
         {
             "id": "tunisian-sl_1211711873",
@@ -3130,7 +3263,7 @@
             ],
             "captions": [],
             "participant": "Nour",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950488-3224a6499a4eee467bce4a2f6e6dbece355bd57026234a332336b4bf49ae3117-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186302989-60d0213e0c5b58751538cbf46fa92c30a7f97deee2e49ecb8f9269bd1627f252-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211711873?h=c9645efb93",
             "typology": "memories"
         },
@@ -3208,7 +3341,7 @@
             ],
             "captions": [],
             "participant": "NourAlislem",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181950743-5c72dc8f1495c4d972012abf11353531c6b154500973dd48b88cbb36a42b9321-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186304010-3ae705f0eebfcd0b5c090728a5b922bd84053b70ba739f48898700d6dbed0a10-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211712035?h=a0e7253fb5",
             "typology": "memories"
         },
@@ -3381,7 +3514,7 @@
             ],
             "captions": [],
             "participant": "Laura",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893982-6ece5a516aea956873f973b8a2f00e8f80fa2c89623c6735d3cb25d308f5b355-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186291095-343558a919cfabfcb7ddc904138d0b38d55d58990bcec7d25b91e71807580d95-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665716?h=2a68ef8e5c",
             "typology": "anecdotes"
         },
@@ -3477,7 +3610,7 @@
             ],
             "captions": [],
             "participant": "Pepita",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181894635-214843057cd8fd951ffaf4286165fa8a2a34943841f9805b50abc8cc50a81051-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186291523-24be0f8ff8393cc59e7195971f781df3489a5acd6e817b253cefeb08be447555-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666120?h=88926fd452",
             "typology": "malentesos"
         },
@@ -3668,7 +3801,7 @@
             "captions": [],
             "typology": "acudits",
             "participant": "Hamida",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930050-a66bd774230469a3be6362f44d9807c97b319619884ab17147667e917b705b69-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186304816-d756a7d47ba710e1ffe80417a2c5a4ddda67bc79bd954c5b80abf9fe591bbd87-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211695579?h=64e2715b7b"
         },
         {
@@ -3775,7 +3908,7 @@
             ],
             "captions": [],
             "participant": "Isaac",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893634-4afbecba26777ad94a247e21bd536207dfb1c46e5aab070180b2003b2645d781-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186290685-307d7e2c6298f6a4ff584dffa80938726f9d231db2b66e4a94213d09e503efe8-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665292?h=5334e055cd",
             "typology": "memories"
         },
@@ -3807,7 +3940,8 @@
             "captions": [],
             "participant": "Alysone",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184344362-0d116f95596c128a73a8be21c68cf2f3b836d7c609e554dafad7dea1e19581d8-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691213?h=d8b4312dc0"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211691213?h=d8b4312dc0",
+            "typology": "pensaments"
         },
         {
             "id": "lsf_1211691765",
@@ -3852,7 +3986,7 @@
             "captions": [],
             "typology": "malentesos",
             "participant": "Massimo",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181940574-3ef8aaa3218f11448841d72aa0073f70ce97615f6557f2709f5f3e9c2714412c-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186293993-4594cb82a0a17e1807707beaff3387c18638fdb1a0fb5a7bc57f5cdd41826f13-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211704075?h=1c9d9889f8"
         },
         {
