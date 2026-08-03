@@ -90,7 +90,7 @@
 }
 @media screen and (min-width: 651px) {
     .video-shell {
-        --vpc-top-crop: 12%;
+        --vpc-top-crop: 10%;
     }
     .video-shell iframe,
     .vpc-poster-cover {

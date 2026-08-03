@@ -13,7 +13,7 @@ The tuning value needs to be easy to find and consistent across all Videos.
 ## Decision
 
 At the `≥651px` breakpoint, the desktop `.video-shell` defines the single
-global CSS custom property `--vpc-top-crop`. It currently defaults to `12%`.
+global CSS custom property `--vpc-top-crop`. It currently defaults to `10%`.
 
 The iframe and poster use:
 
