@@ -1108,7 +1108,23 @@
         "section": "content",
         "context": "Typology (pensaments)",
         "translations": {
-            "en": "Thoughts"
+            "en": "Thoughts",
+            "ar": "أفكار",
+            "eu": "Gogoetak",
+            "ca": "Pensaments",
+            "fr": "Pensées",
+            "it": "Pensieri",
+            "pt": "Pensamentos",
+            "es": "Pensamientos"
+        },
+        "seeded": {
+            "ar": true,
+            "eu": true,
+            "ca": true,
+            "fr": true,
+            "it": true,
+            "pt": true,
+            "es": true
         }
     },
     "gallery.caption.01": {
