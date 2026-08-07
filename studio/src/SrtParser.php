@@ -60,6 +60,27 @@ class SrtParser
     }
 
     /**
+     * Serialise cues into a SubRip document.
+     *
+     * Indices are renumbered sequentially from 1: SubRip requires them to be
+     * sequential, so any incoming `id` is deliberately ignored.
+     *
+     * @param list<array{start: float, end: float, text: string, opaque?: string, id?: string}> $cues
+     */
+    public function write(array $cues): string
+    {
+        $blocks = [];
+        foreach (array_values($cues) as $i => $cue) {
+            $timing = $this->formatTime((float) $cue['start'])
+                . ' --> '
+                . $this->formatTime((float) $cue['end']);
+            $blocks[] = ($i + 1) . "\n" . $timing . "\n" . $cue['text'];
+        }
+
+        return implode("\n\n", $blocks) . "\n";
+    }
+
+    /**
      * @return array{start: float, end: float, text: string, opaque: string, id: string}
      */
     private function parseBlock(string $block): array
@@ -97,6 +118,27 @@ class SrtParser
             'opaque' => '',
             'id' => $indexLine,
         ];
+    }
+
+    /**
+     * Whole-millisecond arithmetic throughout, so a float that lands a hair under
+     * a second boundary (4.9999…) can never round up into a 4-digit millisecond
+     * field and emit a timestamp SubRip cannot parse back.
+     */
+    private function formatTime(float $seconds): string
+    {
+        $ms = (int) round($seconds * 1000);
+        if ($ms < 0) {
+            $ms = 0;
+        }
+
+        return sprintf(
+            '%02d:%02d:%02d,%03d',
+            intdiv($ms, 3_600_000),
+            intdiv($ms % 3_600_000, 60_000),
+            intdiv($ms % 60_000, 1000),
+            $ms % 1000,
+        );
     }
 
     private function parseTime(string $ts): float
