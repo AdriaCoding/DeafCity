@@ -16,6 +16,7 @@ use Studio\Actions\DownloadAction;
 use Studio\Actions\IntakeAction;
 use Studio\Actions\LocalizationAction;
 use Studio\Actions\ShellAction;
+use Studio\Actions\ShortenAction;
 use Studio\Actions\SyncAction;
 use Studio\AuthGuard;
 use Studio\BackgroundJobLauncher;
@@ -71,6 +72,14 @@ match ($action) {
     'bulk-progress'                       => (new BulkAction($container))->progress(),
     'bulk-status'                         => (new BulkAction($container))->status(),
     'bulk-download'                       => (new BulkAction($container))->download(),
+    'shorten-intake'                      => (new ShortenAction($container))->intake(),
+    'resume-shorten-job'                  => (new ShortenAction($container))->resume(),
+    'shorten-cancel'                      => (new ShortenAction($container))->cancel(),
+    'shorten-download-vtt'                => (new ShortenAction($container))->downloadVtt(),
+    'shorten-download-srt'                => (new ShortenAction($container))->downloadSrt(),
+    'shorten-bulk-progress'               => (new ShortenAction($container))->bulkProgress(),
+    'shorten-bulk-status'                 => (new ShortenAction($container))->bulkStatus(),
+    'shorten-bulk-download'               => (new ShortenAction($container))->bulkDownload(),
     'download-vtt'                        => (new DownloadAction($container))->downloadVtt(),
     'download-srt'                        => (new DownloadAction($container))->downloadSrt(),
     'add-sign-language'                   => (new CatalogAction($container))->addSignLanguage(),

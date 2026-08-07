@@ -178,6 +178,41 @@ class TranscriptionPipelineStatusTest extends TestCase
         $this->assertSame('download_ready', (new TranscriptionPipelineStatus($this->jobManager))->getState());
     }
 
+    public function test_always_skip_translation_goes_straight_to_download_ready_for_non_english(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
+
+        $status = new TranscriptionPipelineStatus($this->jobManager, alwaysSkipTranslation: true);
+        $this->assertSame('download_ready', $status->getState());
+    }
+
+    public function test_always_skip_translation_still_reports_revising_while_pending(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'pending']));
+
+        $status = new TranscriptionPipelineStatus($this->jobManager, alwaysSkipTranslation: true);
+        $this->assertSame('revising', $status->getState());
+    }
+
+    public function test_always_skip_translation_still_reports_revision_error(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'error']));
+
+        $status = new TranscriptionPipelineStatus($this->jobManager, alwaysSkipTranslation: true);
+        $this->assertSame('revision_error', $status->getState());
+    }
+
+    public function test_default_behavior_unchanged_when_flag_omitted(): void
+    {
+        file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
+
+        $this->assertSame('translating', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
     public function test_translation_error_when_en_vtt_absent_despite_done_status(): void
     {
         file_put_contents($this->jobsDir . '/current/draft.vtt', "WEBVTT\n");

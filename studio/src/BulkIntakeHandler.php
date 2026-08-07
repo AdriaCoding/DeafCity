@@ -10,6 +10,7 @@ class BulkIntakeHandler
         private readonly BulkIntakeQueue $bulkQueue,
         private readonly BackgroundJobLauncher $launcher,
         private readonly string $dataDir,
+        private readonly bool $allowAudio = true,
     ) {}
 
     /**
@@ -26,7 +27,9 @@ class BulkIntakeHandler
         }
 
         if ($this->bulkQueue->exists()) {
-            $errors['_form'] = 'Ja hi ha una transcripció en massa en curs.';
+            $errors['_form'] = $this->allowAudio
+                ? 'Ja hi ha una transcripció en massa en curs.'
+                : 'Ja hi ha un processament en massa en curs.';
             return ['errors' => $errors, 'values' => $values];
         }
 
@@ -68,8 +71,11 @@ class BulkIntakeHandler
 
             $originalName = (string) ($upload['name'][$i] ?? 'audio');
             $kind = TranscriptionIntakeFileKind::fromFilename($originalName);
-            if ($kind !== 'audio' && $kind !== 'subtitle') {
-                $errors['intake_file'] = 'La transcripció en massa només accepta fitxers d\'àudio o subtítols.';
+            $kindAllowed = $this->allowAudio ? ($kind === 'audio' || $kind === 'subtitle') : $kind === 'subtitle';
+            if (!$kindAllowed) {
+                $errors['intake_file'] = $this->allowAudio
+                    ? 'La transcripció en massa només accepta fitxers d\'àudio o subtítols.'
+                    : 'En massa, només s\'accepten fitxers de subtítols (.vtt / .srt).';
                 return ['errors' => $errors, 'values' => $values];
             }
 
@@ -121,7 +127,11 @@ class BulkIntakeHandler
             return ['errors' => $errors, 'values' => $values];
         }
 
-        $this->launcher->launchBulkQueue($this->dataDir);
+        if ($this->allowAudio) {
+            $this->launcher->launchBulkQueue($this->dataDir);
+        } else {
+            $this->launcher->launchShortenBulkQueue($this->dataDir);
+        }
 
         return ['errors' => [], 'values' => $values, 'created' => true];
     }

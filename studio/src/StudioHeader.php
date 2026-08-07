@@ -6,6 +6,7 @@ final class StudioHeader
 {
     public const NAV_CATALOG = 'catalog';
     public const NAV_TRANSCRIPTION_INTAKE = 'transcription-intake';
+    public const NAV_SHORTEN = 'shorten';
     public const NAV_LOCALIZATIONS = 'localizations';
     public const NAV_CREDITS_EDITOR = 'credits-editor';
 
@@ -49,6 +50,9 @@ final class StudioHeader
         }
         if ($action === 'transcription-intake') {
             return self::NAV_TRANSCRIPTION_INTAKE;
+        }
+        if ($action === 'shorten-intake' || $action === 'resume-shorten-job' || str_starts_with($action, 'shorten-')) {
+            return self::NAV_SHORTEN;
         }
         if ($action === 'localitzacions' || str_starts_with($action, 'localitzacions-')) {
             return self::NAV_LOCALIZATIONS;

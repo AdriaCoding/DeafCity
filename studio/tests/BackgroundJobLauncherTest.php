@@ -166,6 +166,20 @@ class BackgroundJobLauncherTest extends TestCase
         $this->assertStringContainsString(escapeshellarg('/data/sync-status.json'), $captured);
     }
 
+    public function test_launch_shorten_bulk_queue_calls_shorten_bulk_script(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'gemini-key', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchShortenBulkQueue('/data');
+
+        $this->assertStringContainsString('run_shorten_bulk.sh', $captured);
+        $this->assertStringContainsString(escapeshellarg('/data'), $captured);
+        $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
+    }
+
     public function test_launch_transcription_pipeline_passes_translation_status_path(): void
     {
         $captured = null;

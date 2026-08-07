@@ -37,6 +37,9 @@ $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
             <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_TRANSCRIPTION_INTAKE ? ' is-active' : '' ?>"
                href="?action=transcription-intake"
                <?= $activeNav === StudioHeader::NAV_TRANSCRIPTION_INTAKE ? 'aria-current="page"' : '' ?>>Nova transcripció</a>
+            <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_SHORTEN ? ' is-active' : '' ?>"
+               href="?action=shorten-intake"
+               <?= $activeNav === StudioHeader::NAV_SHORTEN ? 'aria-current="page"' : '' ?>>Polir subtítols</a>
             <a class="studio-nav-link<?= $activeNav === StudioHeader::NAV_LOCALIZATIONS ? ' is-active' : '' ?>"
                href="?action=localitzacions"
                <?= $activeNav === StudioHeader::NAV_LOCALIZATIONS ? 'aria-current="page"' : '' ?>>Localitzacions</a>

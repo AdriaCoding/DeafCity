@@ -7,6 +7,7 @@ class Container
     private ?VimeoClient $vimeoClient = null;
     private ?CatalogEditor $catalogEditor = null;
     private ?StudioConfigMutation $configMutation = null;
+    private ?JobManager $shortenJobManager = null;
 
     public function __construct(
         public readonly string $dataDir,
@@ -60,6 +61,21 @@ class Container
     public function bulkIntakeQueue(): BulkIntakeQueue
     {
         return new BulkIntakeQueue($this->dataDir . '/jobs');
+    }
+
+    /**
+     * Independent job slot for the Polir subtítols tab, kept separate from the
+     * transcription JobManager so the two features never contend for the
+     * same "current job" directory.
+     */
+    public function shortenJobManager(): JobManager
+    {
+        return $this->shortenJobManager ??= new JobManager($this->dataDir . '/shorten-jobs');
+    }
+
+    public function shortenBulkIntakeQueue(): BulkIntakeQueue
+    {
+        return new BulkIntakeQueue($this->dataDir . '/shorten-jobs');
     }
 
     /** @return array<string, mixed> */

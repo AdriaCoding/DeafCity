@@ -191,4 +191,74 @@ class BulkIntakeHandlerTest extends TestCase
         $this->assertArrayHasKey('intake_file', $result['errors']);
         $this->assertFalse($this->bulkQueue->exists());
     }
+
+    // ── allowAudio: false (Polir subtítols bulk mode) ──────────────────────────
+
+    private function shortenHandler(?callable $captureCmd = null): BulkIntakeHandler
+    {
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'test-key', $captureCmd ?? function (string $cmd): void {
+            $this->launched[] = $cmd;
+        });
+
+        return new BulkIntakeHandler(
+            studioConfig: $this->config,
+            jobManager: $this->jobManager,
+            bulkQueue: $this->bulkQueue,
+            launcher: $launcher,
+            dataDir: dirname($this->jobsDir),
+            allowAudio: false,
+        );
+    }
+
+    public function test_allow_audio_false_accepts_subtitle_only_bulk_and_launches_shorten_script(): void
+    {
+        $vtt1 = tempnam(sys_get_temp_dir(), 'vtt');
+        $vtt2 = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt1, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nOne\n");
+        file_put_contents($vtt2, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nTwo\n");
+        $upload = [
+            'name' => ['talk_ca.vtt', 'session_es.srt'],
+            'type' => ['text/vtt', 'application/x-subrip'],
+            'tmp_name' => [$vtt1, $vtt2],
+            'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
+            'size' => [20, 20],
+        ];
+
+        $result = $this->shortenHandler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $upload],
+        );
+
+        $this->assertTrue($result['created'] ?? false);
+        $this->assertNotEmpty($this->launched);
+        $this->assertStringContainsString('run_shorten_bulk.sh', $this->launched[0]);
+    }
+
+    public function test_allow_audio_false_rejects_audio_files(): void
+    {
+        $result = $this->shortenHandler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $this->multiFileUpload(['talk_ca.mp3', 'session_es.wav'])],
+        );
+
+        $this->assertArrayHasKey('intake_file', $result['errors']);
+        $this->assertFalse($this->bulkQueue->exists());
+    }
+
+    public function test_allow_audio_false_rejects_mixed_audio_and_subtitle(): void
+    {
+        $vtt = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
+        $upload = $this->multiFileUpload(['talk_ca.mp3', 'session_es.wav']);
+        $upload['name'][1] = 'session_es.vtt';
+        $upload['tmp_name'][1] = $vtt;
+
+        $result = $this->shortenHandler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $upload],
+        );
+
+        $this->assertArrayHasKey('intake_file', $result['errors']);
+        $this->assertFalse($this->bulkQueue->exists());
+    }
 }

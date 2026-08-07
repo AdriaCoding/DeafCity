@@ -36,6 +36,9 @@ class StudioHeaderTest extends TestCase
             StudioHeader::NAV_TRANSCRIPTION_INTAKE,
             StudioHeader::resolveActiveNavFromAction('transcription-intake'),
         );
+        $this->assertSame(StudioHeader::NAV_SHORTEN, StudioHeader::resolveActiveNavFromAction('shorten-intake'));
+        $this->assertSame(StudioHeader::NAV_SHORTEN, StudioHeader::resolveActiveNavFromAction('resume-shorten-job'));
+        $this->assertSame(StudioHeader::NAV_SHORTEN, StudioHeader::resolveActiveNavFromAction('shorten-bulk-progress'));
         $this->assertNull(StudioHeader::resolveActiveNavFromAction('translation'));
     }
 
@@ -53,6 +56,7 @@ class StudioHeaderTest extends TestCase
         $this->assertStringContainsString('aria-label="Torna al catàleg"', $html);
         $this->assertStringContainsString('>Catàleg</a>', $html);
         $this->assertStringContainsString('>Nova transcripció</a>', $html);
+        $this->assertStringContainsString('>Polir subtítols</a>', $html);
         $this->assertStringNotContainsString('Nova feina', $html);
         $this->assertStringContainsString('aria-current="page"', $html);
         $this->assertStringContainsString('class="studio-sync-btn"', $html);

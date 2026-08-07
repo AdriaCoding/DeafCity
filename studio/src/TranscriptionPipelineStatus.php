@@ -4,7 +4,10 @@ namespace Studio;
 
 class TranscriptionPipelineStatus
 {
-    public function __construct(private readonly JobManager $jobManager) {}
+    public function __construct(
+        private readonly JobManager $jobManager,
+        private readonly bool $alwaysSkipTranslation = false,
+    ) {}
 
     /** @return 'transcribing'|'revising'|'revision_error'|'translating'|'translation_error'|'download_ready' */
     public function getState(): string
@@ -25,7 +28,7 @@ class TranscriptionPipelineStatus
             }
         }
 
-        if ($this->isEnglishSource()) {
+        if ($this->alwaysSkipTranslation || $this->isEnglishSource()) {
             return 'download_ready';
         }
 
