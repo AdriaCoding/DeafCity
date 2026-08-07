@@ -5,14 +5,19 @@ namespace Studio;
 class VttToSrtConverter
 {
     public function __construct(
-        private readonly VttParser $vttParser = new VttParser(),
+        private readonly CaptionReader $reader = new CaptionReader(),
         private readonly SrtParser $srtParser = new SrtParser(),
     ) {
     }
 
-    public function convert(string $vttFilePath): string
+    /**
+     * Accepts WebVTT or SubRip and always emits SubRip. Feeding it a file that
+     * is already SRT is a lossless no-op, which is what keeps the download and
+     * ZIP paths working while data/ is mid-migration.
+     */
+    public function convert(string $captionFilePath): string
     {
-        $parsed = $this->vttParser->parse($vttFilePath);
+        $parsed = $this->reader->read($captionFilePath);
 
         return $this->writeCues($parsed['cues']);
     }

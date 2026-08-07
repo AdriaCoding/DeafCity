@@ -19,6 +19,7 @@ class TranslationRunner
         callable $logger,
         private CaptionFileIntegrityChecker $integrityChecker = new CaptionFileIntegrityChecker(),
         private WebVttValidator $vttValidator = new WebVttValidator(),
+        private CaptionReader $reader = new CaptionReader(),
     ) {
         $this->logger = $logger;
     }
@@ -33,7 +34,7 @@ class TranslationRunner
         $this->state->markRunning();
         $this->log("Starting translation {$srcLang}→" . implode(',', $targetLangs) . " master={$masterVttPath}");
 
-        $parsed = $this->vttParser->parse($masterVttPath);
+        $parsed = $this->reader->read($masterVttPath);
         $cues = $parsed['cues'];
 
         if ($cues === []) {

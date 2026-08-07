@@ -657,7 +657,6 @@ class CatalogAction
                     $result = ['ok' => false, 'errors' => ['Cos de la sol·licitud no vàlid.']];
                 } else {
                     $handler = new \Studio\SubtitleEditorHandler(
-                        new \Studio\VttParser(),
                         new \Studio\CaptionFileIntegrityChecker(),
                         $this->c->jobManager,
                     );
@@ -672,8 +671,8 @@ class CatalogAction
             exit;
         }
 
-        $vttParser = new \Studio\VttParser();
-        $translatedCues = $vttParser->parse($vttPath)['cues'];
+        $captionReader = new \Studio\CaptionReader();
+        $translatedCues = $captionReader->read($vttPath)['cues'];
         $masterLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
         $masterCues = $translatedCues;
         if ($lang !== $masterLang) {
@@ -688,7 +687,7 @@ class CatalogAction
             if ($masterFile !== null) {
                 $masterPath = $captionsDir . '/' . $masterFile;
                 if (is_file($masterPath)) {
-                    $masterCues = $vttParser->parse($masterPath)['cues'];
+                    $masterCues = $captionReader->read($masterPath)['cues'];
                 }
             }
         }

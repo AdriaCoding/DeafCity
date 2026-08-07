@@ -64,7 +64,14 @@ bugs in the current preview endpoint get fixed, ahead of any data moving.
 
 - New `Studio\CaptionReader` — `read(string $path)` / `readString(string)` sniffs
   SRT vs VTT by content and delegates to `SrtParser` / `VttParser`. Returns the
-  existing cue shape.
+  existing cue shape plus a `format` key.
+- New `Studio\CaptionWriter` — serialises back to the format `CaptionReader`
+  detected. **Added during implementation**, not in the original plan: reading
+  format-agnostically is only half the fix. `SubtitleEditorHandler` reads a file,
+  swaps its cues, and writes it back, so without format preservation the caption
+  editor would rewrite every `.srt` as WebVTT for the whole stretch between M4
+  (storage flips) and M5 (pipeline flips) — the same straddle bug this plan was
+  built to avoid, one layer down.
 - Swap every **read** site to it: `SubtitleEditorHandler` (both `handle()` and
   `handleForFilePath()`), `CatalogAction::captionReview()` (`CatalogAction.php:675,
   691`), `TranslationRunner::run()`, `VttToSrtConverter::convert()`.
