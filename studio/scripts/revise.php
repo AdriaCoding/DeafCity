@@ -4,7 +4,7 @@
  *
  * Usage:
  *   GEMINI_API_KEY=<key> php revise.php \
- *     --vtt_path <path> \
+ *     --draft_path <path> \
  *     --revision_status <path> \
  *     --source_lang <lang> \
  *     --job_dir <path>
@@ -15,19 +15,21 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Studio\CaptionReader;
+use Studio\CaptionWriter;
 use Studio\GeminiRevisionException;
 use Studio\GeminiReviser;
 use Studio\VttParser;
 use Studio\WebVttValidator;
 
 $opts = getopt('', [
-    'vtt_path:',
+    'draft_path:',
     'revision_status:',
     'source_lang:',
     'job_dir:',
 ]);
 
-$vttPath        = $opts['vtt_path']         ?? '';
+$vttPath        = $opts['draft_path']       ?? '';
 $revisionStatus = $opts['revision_status']  ?? '';
 $sourceLang     = $opts['source_lang']      ?? '';
 $jobDir         = $opts['job_dir']          ?? '';
@@ -80,13 +82,24 @@ try {
     $writeRevisionStatus(['status' => 'running']);
     $logger(date('Y-m-d H:i:s') . " [revise.php] Starting revision source={$sourceLang} vtt={$vttPath}");
 
-    $rawVtt = file_get_contents($vttPath);
-    if ($rawVtt === false || $rawVtt === '') {
-        throw new GeminiRevisionException('No s\'ha pogut llegir el fitxer VTT.');
+    /*
+     * The draft is SubRip but GeminiReviser still speaks WebVTT, so the file is
+     * translated across the boundary in both directions here. This bridge goes
+     * away when the reviser itself moves to SubRip; the format the draft
+     * arrived in is what it is written back as.
+     */
+    $reader = new CaptionReader();
+    $parsed = $reader->read($vttPath);
+    if ($parsed['cues'] === []) {
+        throw new GeminiRevisionException('No s\'ha pogut llegir el fitxer de subtítols.');
     }
+    $sourceFormat = $parsed['format'];
+
+    $vttParser = new VttParser();
+    $rawVtt = $vttParser->write($parsed);
 
     $reviser = new GeminiReviser(apiKey: $apiKey);
-    $revisedVtt = (new VttParser())->canonicalize($reviser->revise($rawVtt, $sourceLang));
+    $revisedVtt = $vttParser->canonicalize($reviser->revise($rawVtt, $sourceLang));
 
     $tmpPath = $jobDir . '/.revision_tmp.vtt';
     if (file_put_contents($tmpPath, $revisedVtt) === false) {
@@ -100,9 +113,12 @@ try {
         throw new GeminiRevisionException('VTT revisat no vàlid: ' . $e->getMessage());
     }
 
-    if (file_put_contents($vttPath, $revisedVtt) === false) {
+    $revisedParsed = $reader->readString($revisedVtt);
+    $revisedParsed['format'] = $sourceFormat;
+
+    if (file_put_contents($vttPath, (new CaptionWriter())->write($revisedParsed)) === false) {
         unlink($tmpPath);
-        throw new GeminiRevisionException('No s\'ha pogut sobreescriure draft.vtt.');
+        throw new GeminiRevisionException('No s\'ha pogut sobreescriure el fitxer de subtítols.');
     }
     unlink($tmpPath);
 

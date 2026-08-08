@@ -23,12 +23,12 @@ if [ $EXIT -ne 0 ]; then
 fi
 
 # Chain translation on success when target languages are provided.
-VTT_PATH="" REVISION_STATUS="" SOURCE_LANG="" JOB_DIR=""
+DRAFT_PATH="" REVISION_STATUS="" SOURCE_LANG="" JOB_DIR=""
 TRANSLATION_STATUS="" TARGET_LANGS=""
 PREV=""
 for ARG in "$@"; do
     case "$PREV" in
-        --vtt_path)          VTT_PATH="$ARG" ;;
+        --draft_path)        DRAFT_PATH="$ARG" ;;
         --revision_status)   REVISION_STATUS="$ARG" ;;
         --source_lang)       SOURCE_LANG="$ARG" ;;
         --job_dir)           JOB_DIR="$ARG" ;;
@@ -47,7 +47,7 @@ printf '%s [run_revise.sh] Revision done, spawning translation %s -> %s\n' \
     "$(date '+%Y-%m-%d %H:%M:%S')" "$SOURCE_LANG" "$TARGET_LANGS" >> "$LOG_FILE"
 
 GEMINI_API_KEY="$GEMINI_API_KEY" exec bash "$SCRIPTS_DIR/run_translate.sh" \
-    --master_vtt  "$VTT_PATH" \
+    --master_captions "$DRAFT_PATH" \
     --status_file "$TRANSLATION_STATUS" \
     --source_lang "$SOURCE_LANG" \
     --job_dir     "$JOB_DIR" \

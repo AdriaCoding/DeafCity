@@ -16,7 +16,7 @@ class JobManager
         return is_dir($this->currentDir);
     }
 
-    public function createWithContent(array $fields, string $vttContent): void
+    public function createWithContent(array $fields, string $content): void
     {
         if ($this->exists()) {
             throw new \RuntimeException('Ja hi ha una feina en curs.');
@@ -28,30 +28,9 @@ class JobManager
 
         $this->writeJson($fields);
 
-        if (file_put_contents($this->draftVttPath(), $vttContent) === false) {
+        if (file_put_contents($this->draftPath(), $content) === false) {
             $this->cancel();
             throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols generat.');
-        }
-    }
-
-    public function create(array $fields, UploadedFile $vtt): void
-    {
-        if ($this->exists()) {
-            throw new \RuntimeException('Ja hi ha una feina en curs.');
-        }
-
-        if (!mkdir($this->currentDir, 0775, true) && !is_dir($this->currentDir)) {
-            throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
-        }
-
-        $this->writeJson($fields);
-
-        $destination = $this->currentDir . '/draft.vtt';
-        if (!move_uploaded_file($vtt->tmpPath, $destination)) {
-            if (!rename($vtt->tmpPath, $destination)) {
-                $this->cancel();
-                throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols pujat.');
-            }
         }
     }
 
@@ -82,9 +61,9 @@ class JobManager
         file_put_contents($this->transcriptionStatusPath(), json_encode(['status' => 'pending']));
     }
 
-    public function hasDraftVtt(): bool
+    public function hasDraft(): bool
     {
-        return is_file($this->draftVttPath());
+        return is_file($this->draftPath());
     }
 
     public function transcriptionStatusPath(): string
@@ -120,24 +99,24 @@ class JobManager
         $this->writeJson(array_merge($job, $fields));
     }
 
-    public function draftVttPath(): string
+    public function draftPath(): string
     {
-        return $this->currentDir . '/draft.vtt';
+        return $this->currentDir . '/draft.srt';
     }
 
-    public function writeDraftVtt(string $content): void
+    public function writeDraft(string $content): void
     {
-        file_put_contents($this->draftVttPath(), $content);
+        file_put_contents($this->draftPath(), $content);
     }
 
-    public function draftVttPathForLang(string $lang): string
+    public function draftPathForLang(string $lang): string
     {
-        return $this->currentDir . '/draft_' . $lang . '.vtt';
+        return $this->currentDir . '/draft_' . $lang . '.srt';
     }
 
-    public function writeDraftVttForLang(string $lang, string $content): void
+    public function writeDraftForLang(string $lang, string $content): void
     {
-        file_put_contents($this->draftVttPathForLang($lang), $content);
+        file_put_contents($this->draftPathForLang($lang), $content);
     }
 
     public function revisionStatePath(): string

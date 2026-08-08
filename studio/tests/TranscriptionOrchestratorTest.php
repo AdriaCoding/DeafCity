@@ -9,7 +9,7 @@ use Studio\GroqTranscriber;
 use Studio\GroqTranscriptionException;
 use Studio\JobManager;
 use Studio\TranscriptionOrchestrator;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 class TranscriptionOrchestratorTest extends TestCase
 {
@@ -106,7 +106,7 @@ class TranscriptionOrchestratorTest extends TestCase
             groqTranscriber: $fakeGroq,
             audioPreprocessor: $preprocessor,
             launcher: $launcher,
-            vttParser: new VttParser(),
+            srtParser: new SrtParser(),
             groqApiKey: 'test-key',
             groqModel: 'whisper-large-v3-turbo',
             localModel: 'whisper-large-v3-turbo',
@@ -117,7 +117,7 @@ class TranscriptionOrchestratorTest extends TestCase
         );
     }
 
-    public function test_success_writes_draft_vtt_stamps_engine_returns_editor(): void
+    public function test_success_writes_draft_stamps_engine_returns_editor(): void
     {
         $orch = $this->makeOrchestrator(
             fn() => [
@@ -128,10 +128,11 @@ class TranscriptionOrchestratorTest extends TestCase
         $result = $orch->run();
 
         $this->assertSame('editor', $result['result']);
-        $this->assertTrue($this->jobManager->hasDraftVtt());
-        $vtt = file_get_contents($this->jobManager->draftVttPath());
-        $this->assertStringContainsString('Hola', $vtt);
-        $this->assertStringContainsString('WEBVTT', $vtt);
+        $this->assertTrue($this->jobManager->hasDraft());
+        $draft = file_get_contents($this->jobManager->draftPath());
+        $this->assertStringContainsString('Hola', $draft);
+        $this->assertStringNotContainsString('WEBVTT', $draft);
+        $this->assertStringStartsWith("1\n00:00:00,000 --> ", $draft);
         $job = $this->jobManager->read();
         $this->assertSame('groq:whisper-large-v3-turbo', $job['transcription_engine']);
     }
@@ -156,7 +157,7 @@ class TranscriptionOrchestratorTest extends TestCase
         $this->assertStringContainsString('run_transcribe.sh', $launched);
         $this->assertStringContainsString('--model', $launched);
         $this->assertTrue($this->jobManager->exists(), 'Job must survive a fallback');
-        $this->assertFalse($this->jobManager->hasDraftVtt());
+        $this->assertFalse($this->jobManager->hasDraft());
     }
 
     public function test_empty_result_spawns_local_and_returns_loading(): void
@@ -253,7 +254,7 @@ class TranscriptionOrchestratorTest extends TestCase
             launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) use (&$launched) {
                 $launched = $cmd;
             }),
-            vttParser: new VttParser(),
+            srtParser: new SrtParser(),
             groqApiKey: '',
             groqModel: 'whisper-large-v3-turbo',
             localModel: 'whisper-large-v3-turbo',
@@ -290,7 +291,7 @@ class TranscriptionOrchestratorTest extends TestCase
         $result = $orch->run();
 
         $this->assertSame('pipeline_transcribed', $result['result']);
-        $this->assertTrue($this->jobManager->hasDraftVtt());
+        $this->assertTrue($this->jobManager->hasDraft());
     }
 
     public function test_normal_mode_groq_success_still_returns_editor(): void
@@ -419,7 +420,7 @@ class TranscriptionOrchestratorTest extends TestCase
             }),
             launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) {
             }),
-            vttParser: new VttParser(),
+            srtParser: new SrtParser(),
             groqApiKey: 'k',
             groqModel: 'whisper-large-v3-turbo',
             localModel: 'whisper-large-v3-turbo',

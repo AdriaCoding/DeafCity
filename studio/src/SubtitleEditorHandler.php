@@ -31,17 +31,17 @@ class SubtitleEditorHandler
 
         $lang = $options['lang'] ?? null;
         $readPath = $lang !== null
-            ? $this->jobManager->draftVttPathForLang($lang)
-            : $this->jobManager->draftVttPath();
+            ? $this->jobManager->draftPathForLang($lang)
+            : $this->jobManager->draftPath();
 
         $existing = $this->reader->read($readPath);
         $existing['cues'] = $cues;
         $content = $this->writer->write($existing);
 
         if ($lang !== null) {
-            $this->jobManager->writeDraftVttForLang($lang, $content);
+            $this->jobManager->writeDraftForLang($lang, $content);
         } else {
-            $this->jobManager->writeDraftVtt($content);
+            $this->jobManager->writeDraft($content);
         }
 
         if (!empty($options['advanceStep'])) {

@@ -22,7 +22,7 @@ use Studio\StudioConfig;
 use Studio\TranslationJobState;
 use Studio\TranslationRunner;
 use Studio\VimeoClient;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 $statusFile = null;
 for ($i = 1; $i < $argc; $i++) {
@@ -83,7 +83,7 @@ $logger = static function (string $line) use ($rawLog): void {
 $catalogEditor   = new CatalogEditor($catalogPath);
 $studioConfig    = new StudioConfig($configPath);
 $vimeoClient     = new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN);
-$vttParser       = new VttParser();
+$srtParser       = new SrtParser();
 $captionFilename = new CaptionFilename();
 
 $langLabels = [];
@@ -176,7 +176,7 @@ foreach ($videos as $entry) {
     $runner = new TranslationRunner(
         jobManager: $jobManager,
         state: $state,
-        vttParser: $vttParser,
+        srtParser: $srtParser,
         translator: $translator,
         logger: $rawLog,
     );
@@ -197,26 +197,11 @@ foreach ($videos as $entry) {
             continue;
         }
 
-        $srcPath      = $jobDir . '/current/draft_' . $langStr . '.vtt';
+        $srcPath      = $jobDir . '/current/draft_' . $langStr . '.srt';
         $destFilename = $captionFilename->forVideo((string) ($entry['title'] ?? $vimeoId), $langStr);
         $destPath     = $captionsDir . '/' . $destFilename;
 
-        /*
-         * The draft is still WebVTT while the job pipeline waits its turn,
-         * but the destination is now SubRip. Convert on the way across;
-         * this bridge goes away when the drafts migrate.
-         */
-        if (!is_file($srcPath)) {
-            $errorLangs[] = $langStr;
-            continue;
-        }
-        try {
-            $converted = (new \Studio\VttToSrtConverter())->convert($srcPath);
-        } catch (\Throwable $e) {
-            $errorLangs[] = $langStr;
-            continue;
-        }
-        if (file_put_contents($destPath, $converted) === false) {
+        if (!is_file($srcPath) || !copy($srcPath, $destPath)) {
             $errorLangs[] = $langStr;
             continue;
         }

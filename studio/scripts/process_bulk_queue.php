@@ -20,7 +20,7 @@ use Studio\TranslationJobState;
 use Studio\TranscriptionOrchestrator;
 use Studio\GroqTranscriber;
 use Studio\AudioPreprocessor;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 $dataDir = '';
 $prev = null;
@@ -58,7 +58,7 @@ $orchestrator = new TranscriptionOrchestrator(
     ),
     audioPreprocessor: new AudioPreprocessor(),
     launcher: $launcher,
-    vttParser: new VttParser(),
+    srtParser: new SrtParser(),
     groqApiKey: GROQ_API_KEY,
     groqModel: GROQ_TRANSCRIBE_MODEL,
     localModel: STUDIO_LOCAL_TRANSCRIBE_MODEL,

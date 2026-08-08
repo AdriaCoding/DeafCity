@@ -114,33 +114,7 @@ class CaptionIntakeNormalizerTest extends TestCase
         $this->assertSame('Un grupo de personas', $parsed['cues'][0]['text']);
     }
 
-    public function test_vtt_target_passes_webvtt_through_unchanged(): void
-    {
-        $content = "WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\nHola\n";
-        $path = $this->writeTemp($content, 'vtt');
-
-        $this->assertSame($content, $this->normalizer->normalize(
-            $path,
-            'subtitles.vtt',
-            CaptionIntakeNormalizer::FORMAT_VTT
-        ));
-    }
-
-    public function test_vtt_target_converts_subrip(): void
-    {
-        $path = $this->writeTemp("1\n00:00:01,000 --> 00:00:04,000\nHola\n", 'srt');
-
-        $output = $this->normalizer->normalize($path, 'subtitles.srt', CaptionIntakeNormalizer::FORMAT_VTT);
-
-        $this->assertStringStartsWith("WEBVTT\n", $output);
-        $this->assertStringContainsString('00:00:01.000 --> 00:00:04.000', $output);
-    }
-
-    /**
-     * Both stores must see the same cues regardless of which format the upload
-     * arrived in — this is what makes the two targets interchangeable while the
-     * migration straddles them.
-     */
+    /** Both upload formats must land on the same cues once stored. */
     public function test_both_targets_agree_on_cues_for_either_upload_format(): void
     {
         $srt = $this->writeTemp("1\n00:00:01,000 --> 00:00:04,000\nHola\n", 'srt');

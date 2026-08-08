@@ -10,7 +10,7 @@ namespace Studio;
  *
  * Reuses BulkIntakeQueue as-is: since there is no separate translated
  * output here, the single revised file is recorded under both the
- * enVttPath and srcVttPath slots of markDone()/doneEntries() (they're
+ * enSrtPath and srcSrtPath slots of markDone()/doneEntries() (they're
  * identical for a shorten item) rather than forking the queue's storage
  * format.
  */
@@ -58,8 +58,8 @@ class ShortenBulkItemProcessor
                 throw new \RuntimeException($wait['reason'] ?? 'Error en el processament.');
             }
 
-            $vttSource = $this->jobManager->draftVttPath();
-            if (!is_file($vttSource)) {
+            $srcSource = $this->jobManager->draftPath();
+            if (!is_file($srcSource)) {
                 throw new \RuntimeException('No s\'ha generat el fitxer de subtítols.');
             }
 
@@ -67,8 +67,8 @@ class ShortenBulkItemProcessor
                 mkdir($this->bulkQueue->bulkOutputDir(), 0775, true);
             }
 
-            $dest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '.vtt';
-            if (!copy($vttSource, $dest)) {
+            $dest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '.srt';
+            if (!copy($srcSource, $dest)) {
                 throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida.');
             }
 
@@ -100,7 +100,6 @@ class ShortenBulkItemProcessor
                 $this->normalizer->normalize(
                     $item['tmpAudioPath'],
                     $originalName,
-                    CaptionIntakeNormalizer::FORMAT_VTT,
                 ),
             );
         } catch (\InvalidArgumentException $e) {
@@ -118,11 +117,11 @@ class ShortenBulkItemProcessor
         $this->translationState->initiate([], $sourceLang);
 
         $this->launcher->launchRevisionAndTranslation(
-            $this->jobManager->draftVttPath(),
+            $this->jobManager->draftPath(),
             $revisionPath,
             $this->jobManager->translationStatePath(),
             $sourceLang,
-            dirname($this->jobManager->draftVttPath()),
+            dirname($this->jobManager->draftPath()),
             [],
         );
     }

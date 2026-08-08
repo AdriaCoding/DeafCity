@@ -112,7 +112,6 @@ class TranscriptionIntakeHandler
                 $this->normalizer->normalize(
                     $upload['tmp_name'],
                     $originalName,
-                    CaptionIntakeNormalizer::FORMAT_VTT,
                 ),
             );
         } catch (\InvalidArgumentException $e) {
@@ -144,11 +143,11 @@ class TranscriptionIntakeHandler
         }
 
         $this->launcher->launchRevisionAndTranslation(
-            $this->jobManager->draftVttPath(),
+            $this->jobManager->draftPath(),
             $revisionPath,
             $this->jobManager->translationStatePath(),
             $values['subtitle_language'],
-            dirname($this->jobManager->draftVttPath()),
+            dirname($this->jobManager->draftPath()),
             $targetLangs,
         );
 

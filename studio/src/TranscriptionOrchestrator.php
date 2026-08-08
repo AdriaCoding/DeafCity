@@ -9,7 +9,7 @@ namespace Studio;
  * It transcodes the Interpreter audio, tries the Groq cloud engine, and routes
  * per the fallback matrix (ADR-0006):
  *
- *   success            ⇒ write draft.vtt, stamp transcription_engine, return 'editor'
+ *   success            ⇒ write draft.srt, stamp transcription_engine, return 'editor'
  *   transport / empty  ⇒ spawn the async local engine, return 'loading'
  *   auth / bad_input   ⇒ destroy the Job, return 'error' with a Catalan message
  *   blank GROQ_API_KEY ⇒ skip Groq entirely, go straight to local
@@ -25,7 +25,7 @@ class TranscriptionOrchestrator
     private GroqTranscriber $groqTranscriber;
     private AudioPreprocessor $audioPreprocessor;
     private BackgroundJobLauncher $launcher;
-    private VttParser $vttParser;
+    private SrtParser $srtParser;
     private string $groqApiKey;
     private string $groqModel;
     private string $localModel;
@@ -45,7 +45,7 @@ class TranscriptionOrchestrator
         GroqTranscriber $groqTranscriber,
         AudioPreprocessor $audioPreprocessor,
         BackgroundJobLauncher $launcher,
-        VttParser $vttParser,
+        SrtParser $srtParser,
         string $groqApiKey,
         string $groqModel,
         string $localModel,
@@ -57,7 +57,7 @@ class TranscriptionOrchestrator
         $this->groqTranscriber = $groqTranscriber;
         $this->audioPreprocessor = $audioPreprocessor;
         $this->launcher = $launcher;
-        $this->vttParser = $vttParser;
+        $this->srtParser = $srtParser;
         $this->groqApiKey = $groqApiKey;
         $this->groqModel = $groqModel;
         $this->localModel = $localModel;
@@ -101,12 +101,7 @@ class TranscriptionOrchestrator
         $wall = ($this->clock)() - $start;
 
         // Success — write the draft Caption file and stamp provenance.
-        $vtt = $this->vttParser->write([
-            'header' => 'WEBVTT',
-            'opaque_blocks' => [],
-            'cues' => $cues,
-        ]);
-        $this->jobManager->writeDraftVtt($vtt);
+        $this->jobManager->writeDraft($this->srtParser->write($cues));
 
         $engine = 'groq:' . $this->groqModel;
         $this->jobManager->update(['transcription_engine' => $engine]);
@@ -152,11 +147,11 @@ class TranscriptionOrchestrator
         if ($this->pipelineTargetLang !== '') {
             $this->launcher->launchTranscriptionPipeline(
                 audioPath:            $this->jobManager->interpreterAudioPath(),
-                vttOutputPath:        $this->jobManager->draftVttPath(),
+                draftOutputPath:        $this->jobManager->draftPath(),
                 statusPath:           $this->jobManager->transcriptionStatusPath(),
                 revisionStatePath:    $this->jobManager->revisionStatePath(),
                 translationStatePath: $this->jobManager->translationStatePath(),
-                jobDir:               dirname($this->jobManager->draftVttPath()),
+                jobDir:               dirname($this->jobManager->draftPath()),
                 sourceLang:           $language,
                 targetLang:           $this->pipelineTargetLang,
                 model:                $this->localModel,
@@ -164,7 +159,7 @@ class TranscriptionOrchestrator
         } else {
             $this->launcher->launchTranscription(
                 $this->jobManager->interpreterAudioPath(),
-                $this->jobManager->draftVttPath(),
+                $this->jobManager->draftPath(),
                 $this->jobManager->transcriptionStatusPath(),
                 $language,
                 $this->localModel,

@@ -108,7 +108,7 @@ class BackgroundJobLauncherTest extends TestCase
 
         $launcher->launchTranscriptionPipeline(
             audioPath:            '/data/interview.mp3',
-            vttOutputPath:        '/data/draft.vtt',
+            draftOutputPath:        '/data/draft.vtt',
             statusPath:           '/data/transcription.json',
             revisionStatePath:    '/data/revision_status.json',
             translationStatePath: '/data/translation.json',
@@ -189,7 +189,7 @@ class BackgroundJobLauncherTest extends TestCase
 
         $launcher->launchTranscriptionPipeline(
             audioPath:            '/a.mp3',
-            vttOutputPath:        '/d.vtt',
+            draftOutputPath:        '/d.vtt',
             statusPath:           '/t.json',
             revisionStatePath:    '/rev.json',
             translationStatePath: '/tr.json',

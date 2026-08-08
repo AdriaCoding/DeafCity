@@ -10,7 +10,6 @@ use Studio\StudioHeader;
 use Studio\SubtitleOutputBasename;
 use Studio\TranscriptionPipelineStatus;
 use Studio\TranslationJobState;
-use Studio\VttToSrtConverter;
 
 class ShortenAction
 {
@@ -128,15 +127,15 @@ class ShortenAction
             http_response_code(404);
             exit;
         }
-        $vttPath = $jobManager->draftVttPath();
-        if (!is_file($vttPath)) {
+        $srtPath = $jobManager->draftPath();
+        if (!is_file($srtPath)) {
             http_response_code(404);
             exit;
         }
         $job = $jobManager->read();
         header('Content-Type: application/x-subrip; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $this->buildSrtFilename($job) . '"');
-        echo (new VttToSrtConverter())->convert($vttPath);
+        readfile($srtPath);
         exit;
     }
 

@@ -4,7 +4,6 @@ namespace Studio\Actions;
 
 use Studio\Container;
 use Studio\SubtitleOutputBasename;
-use Studio\VttToSrtConverter;
 
 class DownloadAction
 {
@@ -18,15 +17,15 @@ class DownloadAction
             exit;
         }
         $lang = trim((string) ($_GET['lang'] ?? ''));
-        $vttPath = $lang !== '' ? $c->jobManager->draftVttPathForLang($lang) : $c->jobManager->draftVttPath();
-        if (!is_file($vttPath)) {
+        $srtPath = $lang !== '' ? $c->jobManager->draftPathForLang($lang) : $c->jobManager->draftPath();
+        if (!is_file($srtPath)) {
             http_response_code(404);
             exit;
         }
         $job = $c->jobManager->read();
         header('Content-Type: application/x-subrip; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $this->buildSrtFilename($job, $lang) . '"');
-        echo (new VttToSrtConverter())->convert($vttPath);
+        readfile($srtPath);
         exit;
     }
 

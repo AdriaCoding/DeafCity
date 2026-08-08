@@ -53,13 +53,13 @@ class BulkItemProcessor
                 throw new \RuntimeException($wait['reason'] ?? 'Error en el processament.');
             }
 
-            $enVttSource = $this->resolveEnglishVttPath($item['language']);
-            if (!is_file($enVttSource)) {
+            $enSource = $this->resolveEnglishDraftPath($item['language']);
+            if (!is_file($enSource)) {
                 throw new \RuntimeException('No s\'ha generat el fitxer de subtítols.');
             }
 
-            $srcVttSource = $this->jobManager->draftVttPath();
-            if (!is_file($srcVttSource)) {
+            $srcSource = $this->jobManager->draftPath();
+            if (!is_file($srcSource)) {
                 throw new \RuntimeException('No s\'ha generat el fitxer de subtítols original.');
             }
 
@@ -67,13 +67,13 @@ class BulkItemProcessor
                 mkdir($this->bulkQueue->bulkOutputDir(), 0775, true);
             }
 
-            $enDest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_EN.vtt';
-            if (!copy($enVttSource, $enDest)) {
+            $enDest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_EN.srt';
+            if (!copy($enSource, $enDest)) {
                 throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida en anglès.');
             }
 
-            $srcDest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_SRC.vtt';
-            if (!copy($srcVttSource, $srcDest)) {
+            $srcDest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '_SRC.srt';
+            if (!copy($srcSource, $srcDest)) {
                 throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida original.');
             }
 
@@ -111,7 +111,7 @@ class BulkItemProcessor
 
         if ($outcome['result'] === 'pipeline_transcribed') {
             if ($this->reviser !== null) {
-                $draftPath = $this->jobManager->draftVttPath();
+                $draftPath = $this->jobManager->draftPath();
                 $revised = $this->reviser->revise(
                     (string) file_get_contents($draftPath),
                     $item['language'],
@@ -140,7 +140,6 @@ class BulkItemProcessor
                 $this->normalizer->normalize(
                     $item['tmpAudioPath'],
                     $originalName,
-                    CaptionIntakeNormalizer::FORMAT_VTT,
                 ),
             );
         } catch (\InvalidArgumentException $e) {
@@ -164,11 +163,11 @@ class BulkItemProcessor
         }
 
         $this->launcher->launchRevisionAndTranslation(
-            $this->jobManager->draftVttPath(),
+            $this->jobManager->draftPath(),
             $revisionPath,
             $this->jobManager->translationStatePath(),
             $sourceLang,
-            dirname($this->jobManager->draftVttPath()),
+            dirname($this->jobManager->draftPath()),
             $targetLangs,
         );
     }
@@ -183,21 +182,21 @@ class BulkItemProcessor
 
         $this->translationState->initiate(['en'], $sourceLang);
         $this->launcher->launchTranslation(
-            $this->jobManager->draftVttPath(),
+            $this->jobManager->draftPath(),
             $this->jobManager->translationStatePath(),
             $sourceLang,
-            dirname($this->jobManager->draftVttPath()),
+            dirname($this->jobManager->draftPath()),
             ['en'],
         );
     }
 
-    private function resolveEnglishVttPath(string $sourceLang): string
+    private function resolveEnglishDraftPath(string $sourceLang): string
     {
         if ($sourceLang === 'en') {
-            return $this->jobManager->draftVttPath();
+            return $this->jobManager->draftPath();
         }
 
-        return $this->jobManager->draftVttPathForLang('en');
+        return $this->jobManager->draftPathForLang('en');
     }
 
     /** @return array{success: bool, reason?: string} */

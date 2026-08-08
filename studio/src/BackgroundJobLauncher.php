@@ -27,13 +27,13 @@ class BackgroundJobLauncher
         };
     }
 
-    public function launchTranscription($audioPath, $vttOutputPath, $statusPath, $language, $model = 'whisper-large-v3-turbo')
+    public function launchTranscription($audioPath, $draftOutputPath, $statusPath, $language, $model = 'whisper-large-v3-turbo')
     {
         $cmd = sprintf(
-            'nohup %s --audio_file %s --vtt_output %s --status_file %s --language %s --model %s > /dev/null 2>&1 &',
+            'nohup %s --audio_file %s --draft_output %s --status_file %s --language %s --model %s > /dev/null 2>&1 &',
             escapeshellarg($this->scriptsDir . '/run_transcribe.sh'),
             escapeshellarg($audioPath),
-            escapeshellarg($vttOutputPath),
+            escapeshellarg($draftOutputPath),
             escapeshellarg($statusPath),
             escapeshellarg($language),
             escapeshellarg($model)
@@ -55,7 +55,7 @@ class BackgroundJobLauncher
 
     public function launchTranscriptionPipeline(
         string $audioPath,
-        string $vttOutputPath,
+        string $draftOutputPath,
         string $statusPath,
         string $revisionStatePath,
         string $translationStatePath,
@@ -65,12 +65,12 @@ class BackgroundJobLauncher
         string $model = 'whisper-large-v3-turbo',
     ): void {
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --audio_file %s --vtt_output %s --status_file %s'
+            'GEMINI_API_KEY=%s nohup %s --audio_file %s --draft_output %s --status_file %s'
             . ' --revision_status %s --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s > /dev/null 2>&1 &',
             escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_transcription_pipeline.sh'),
             escapeshellarg($audioPath),
-            escapeshellarg($vttOutputPath),
+            escapeshellarg($draftOutputPath),
             escapeshellarg($statusPath),
             escapeshellarg($revisionStatePath),
             escapeshellarg($translationStatePath),
@@ -83,19 +83,19 @@ class BackgroundJobLauncher
     }
 
     /**
-     * @param string $masterVttPath
+     * @param string $masterCaptionsPath
      * @param string $statusFilePath
      * @param string $sourceLang
      * @param string $jobDir
      * @param string[] $targetLangs
      */
-    public function launchTranslation($masterVttPath, $statusFilePath, $sourceLang, $jobDir, array $targetLangs)
+    public function launchTranslation($masterCaptionsPath, $statusFilePath, $sourceLang, $jobDir, array $targetLangs)
     {
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --master_vtt %s --status_file %s --source_lang %s --job_dir %s --target_langs %s > /dev/null 2>&1 &',
+            'GEMINI_API_KEY=%s nohup %s --master_captions %s --status_file %s --source_lang %s --job_dir %s --target_langs %s > /dev/null 2>&1 &',
             escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_translate.sh'),
-            escapeshellarg($masterVttPath),
+            escapeshellarg($masterCaptionsPath),
             escapeshellarg($statusFilePath),
             escapeshellarg($sourceLang),
             escapeshellarg($jobDir),
@@ -105,7 +105,7 @@ class BackgroundJobLauncher
     }
 
     /**
-     * @param string $masterVttPath
+     * @param string $masterCaptionsPath
      * @param string $revisionStatusPath
      * @param string $translationStatusPath
      * @param string $sourceLang
@@ -113,7 +113,7 @@ class BackgroundJobLauncher
      * @param string[] $targetLangs
      */
     public function launchRevisionAndTranslation(
-        $masterVttPath,
+        $masterCaptionsPath,
         $revisionStatusPath,
         $translationStatusPath,
         $sourceLang,
@@ -122,11 +122,11 @@ class BackgroundJobLauncher
     ): void {
         $targetLangsArg = implode(',', $targetLangs);
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --vtt_path %s --revision_status %s --source_lang %s --job_dir %s'
+            'GEMINI_API_KEY=%s nohup %s --draft_path %s --revision_status %s --source_lang %s --job_dir %s'
             . ' --translation_status %s --target_langs %s > /dev/null 2>&1 &',
             escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_revise.sh'),
-            escapeshellarg($masterVttPath),
+            escapeshellarg($masterCaptionsPath),
             escapeshellarg($revisionStatusPath),
             escapeshellarg($sourceLang),
             escapeshellarg($jobDir),

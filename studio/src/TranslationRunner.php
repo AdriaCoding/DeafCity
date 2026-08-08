@@ -14,11 +14,11 @@ class TranslationRunner
     public function __construct(
         private JobManager $jobManager,
         private TranslationJobState $state,
-        private VttParser $vttParser,
+        private SrtParser $srtParser,
         private object $translator,
         callable $logger,
         private CaptionFileIntegrityChecker $integrityChecker = new CaptionFileIntegrityChecker(),
-        private WebVttValidator $vttValidator = new WebVttValidator(),
+        private SrtValidator $srtValidator = new SrtValidator(),
         private CaptionReader $reader = new CaptionReader(),
     ) {
         $this->logger = $logger;
@@ -29,16 +29,16 @@ class TranslationRunner
      *
      * @param string[] $targetLangs
      */
-    public function run(string $masterVttPath, string $srcLang, array $targetLangs): void
+    public function run(string $masterPath, string $srcLang, array $targetLangs): void
     {
         $this->state->markRunning();
-        $this->log("Starting translation {$srcLang}→" . implode(',', $targetLangs) . " master={$masterVttPath}");
+        $this->log("Starting translation {$srcLang}→" . implode(',', $targetLangs) . " master={$masterPath}");
 
-        $parsed = $this->reader->read($masterVttPath);
+        $parsed = $this->reader->read($masterPath);
         $cues = $parsed['cues'];
 
         if ($cues === []) {
-            $this->log("No cues found in master VTT — marking all languages as error");
+            $this->log("No cues found in master captions — marking all languages as error");
             foreach ($targetLangs as $lang) {
                 $this->state->markLanguageError($lang, 'Error de traducció: no hi ha subtítols');
             }
@@ -67,23 +67,17 @@ class TranslationRunner
                     );
                 }
 
-                $outParsed = [
-                    'header' => $parsed['header'],
-                    'opaque_blocks' => $parsed['opaque_blocks'],
-                    'cues' => $translatedCues,
-                ];
-
-                $outPath = $this->jobManager->draftVttPathForLang($lang);
-                $bytes = file_put_contents($outPath, $this->vttParser->write($outParsed));
+                $outPath = $this->jobManager->draftPathForLang($lang);
+                $bytes = file_put_contents($outPath, $this->srtParser->write($translatedCues));
                 if ($bytes === false) {
-                    throw new \RuntimeException("Failed to write translated VTT to {$outPath}");
+                    throw new \RuntimeException("Failed to write translated captions to {$outPath}");
                 }
 
                 try {
-                    $this->vttValidator->validate($outPath, $outPath);
+                    $this->srtValidator->validate($outPath, $outPath);
                 } catch (\InvalidArgumentException $e) {
                     @unlink($outPath);
-                    throw new \RuntimeException('Translated VTT failed validation: ' . $e->getMessage());
+                    throw new \RuntimeException('Translated captions failed validation: ' . $e->getMessage());
                 }
 
                 $this->state->markLanguageDone($lang);

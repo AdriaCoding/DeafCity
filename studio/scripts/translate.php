@@ -4,7 +4,7 @@
  *
  * Usage:
  *   GEMINI_API_KEY=<key> php translate.php \
- *     --master_vtt <path> \
+ *     --master_captions <path> \
  *     --status_file <path> \
  *     --source_lang <lang> \
  *     --job_dir <path> \
@@ -21,17 +21,17 @@ use Studio\GeminiTranslator;
 use Studio\JobManager;
 use Studio\TranslationJobState;
 use Studio\TranslationRunner;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 $opts = getopt('', [
-    'master_vtt:',
+    'master_captions:',
     'status_file:',
     'source_lang:',
     'job_dir:',
     'target_langs:',
 ]);
 
-$masterVtt  = $opts['master_vtt']   ?? '';
+$masterVtt  = $opts['master_captions'] ?? '';
 $statusFile = $opts['status_file']  ?? '';
 $sourceLang = $opts['source_lang']  ?? '';
 $jobDir     = $opts['job_dir']      ?? '';
@@ -93,12 +93,12 @@ register_shutdown_function(static function () use ($statusFile, $logger): void {
 try {
     $jobManager = new JobManager(dirname($jobDir));
     $state      = new TranslationJobState($jobManager);
-    $vttParser  = new VttParser();
+    $srtParser  = new SrtParser();
     $translator = new GeminiTranslator(apiKey: $apiKey);
     $runner     = new TranslationRunner(
         jobManager: $jobManager,
         state: $state,
-        vttParser: $vttParser,
+        srtParser: $srtParser,
         translator: $translator,
         logger: $logger,
     );

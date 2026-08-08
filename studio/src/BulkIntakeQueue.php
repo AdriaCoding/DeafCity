@@ -72,12 +72,12 @@ class BulkIntakeQueue
         $this->updateItem($id, static fn (array $item): array => array_merge($item, ['status' => 'processing']));
     }
 
-    public function markDone(string $id, string $enVttPath, string $srcVttPath): void
+    public function markDone(string $id, string $enSrtPath, string $srcSrtPath): void
     {
         $this->updateItem($id, static fn (array $item): array => array_merge($item, [
             'status'     => 'done',
-            'enVttPath'  => $enVttPath,
-            'srcVttPath' => $srcVttPath,
+            'enSrtPath'  => $enSrtPath,
+            'srcSrtPath' => $srcSrtPath,
         ]));
     }
 
@@ -156,18 +156,18 @@ class BulkIntakeQueue
         return true;
     }
 
-    /** @return list<array{originalFilename: string, language: string, enVttPath: string, srcVttPath: string}> */
+    /** @return list<array{originalFilename: string, language: string, enSrtPath: string, srcSrtPath: string}> */
     public function doneEntries(): array
     {
         $queue = $this->read();
         $entries = [];
         foreach ($queue['items'] as $item) {
-            if (($item['status'] ?? '') === 'done' && isset($item['enVttPath']) && is_file($item['enVttPath'])) {
+            if (($item['status'] ?? '') === 'done' && isset($item['enSrtPath']) && is_file($item['enSrtPath'])) {
                 $entries[] = [
                     'originalFilename' => $item['originalFilename'],
                     'language'         => $item['language'],
-                    'enVttPath'        => $item['enVttPath'],
-                    'srcVttPath'       => $item['srcVttPath'] ?? $item['enVttPath'],
+                    'enSrtPath'        => $item['enSrtPath'],
+                    'srcSrtPath'       => $item['srcSrtPath'] ?? $item['enSrtPath'],
                 ];
             }
         }

@@ -65,7 +65,6 @@ class ShortenIntakeHandler
                 $this->normalizer->normalize(
                     $upload['tmp_name'],
                     $originalName,
-                    CaptionIntakeNormalizer::FORMAT_VTT,
                 ),
             );
         } catch (\InvalidArgumentException $e) {
@@ -89,11 +88,11 @@ class ShortenIntakeHandler
         $this->translationState->initiate([], $sourceLang);
 
         $this->launcher->launchRevisionAndTranslation(
-            $this->jobManager->draftVttPath(),
+            $this->jobManager->draftPath(),
             $revisionPath,
             $this->jobManager->translationStatePath(),
             $sourceLang,
-            dirname($this->jobManager->draftVttPath()),
+            dirname($this->jobManager->draftPath()),
             [],
         );
     }

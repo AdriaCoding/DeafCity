@@ -12,7 +12,7 @@ class TranscriptionPipelineStatus
     /** @return 'transcribing'|'revising'|'revision_error'|'translating'|'translation_error'|'download_ready' */
     public function getState(): string
     {
-        if (!$this->jobManager->hasDraftVtt()) {
+        if (!$this->jobManager->hasDraft()) {
             return 'transcribing';
         }
 
@@ -50,7 +50,7 @@ class TranscriptionPipelineStatus
             return 'translation_error';
         }
 
-        if ($enStatus === 'done' && is_file($this->jobManager->draftVttPathForLang('en'))) {
+        if ($enStatus === 'done' && is_file($this->jobManager->draftPathForLang('en'))) {
             return 'download_ready';
         }
 

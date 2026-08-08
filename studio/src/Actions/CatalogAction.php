@@ -977,26 +977,11 @@ class CatalogAction
                 continue;
             }
 
-            $srcPath      = $jobDir . '/draft_' . $langStr . '.vtt';
+            $srcPath      = $jobDir . '/draft_' . $langStr . '.srt';
             $destFilename = $captionFilename->forVideo($title, $langStr);
             $destPath     = $captionsDir . '/' . $destFilename;
 
-            /*
-             * The draft is still WebVTT while the job pipeline waits its turn,
-             * but the destination is now SubRip. Convert on the way across;
-             * this bridge goes away when the drafts migrate.
-             */
-            if (!is_file($srcPath)) {
-                $errorLangs[] = $langStr;
-                continue;
-            }
-            try {
-                $converted = (new \Studio\VttToSrtConverter())->convert($srcPath);
-            } catch (\Throwable $e) {
-                $errorLangs[] = $langStr;
-                continue;
-            }
-            if (file_put_contents($destPath, $converted) === false) {
+            if (!is_file($srcPath) || !copy($srcPath, $destPath)) {
                 $errorLangs[] = $langStr;
                 continue;
             }

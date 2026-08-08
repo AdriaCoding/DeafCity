@@ -4,7 +4,6 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\JobManager;
-use Studio\UploadedFile;
 
 class JobManagerTest extends TestCase
 {
@@ -28,10 +27,9 @@ class JobManagerTest extends TestCase
         $this->assertFalse($this->manager->exists());
     }
 
-    public function test_create_writes_job_json_and_draft_vtt(): void
+    public function test_create_writes_job_json_and_draft(): void
     {
-        $vttPath = $this->writeVtt('WEBVTT\n\nCue');
-        $this->manager->create(
+        $this->manager->createWithContent(
             [
                 'vimeo_id' => '123456789',
                 'video_title' => 'Test Video',
@@ -40,14 +38,14 @@ class JobManagerTest extends TestCase
                 'subtitle_language' => 'es',
                 'step' => 'subtitle-editor',
             ],
-            new UploadedFile($vttPath, 'draft.vtt')
+            "1\n00:00:01,000 --> 00:00:02,000\nCue\n"
         );
 
         $this->assertTrue($this->manager->exists());
         $job = $this->manager->read();
         $this->assertSame('123456789', $job['vimeo_id']);
         $this->assertSame('Test Video', $job['video_title']);
-        $this->assertFileExists($this->jobsDir . '/current/draft.vtt');
+        $this->assertFileExists($this->jobsDir . '/current/draft.srt');
     }
 
     public function test_update_merges_fields_into_job_json(): void
@@ -69,13 +67,13 @@ class JobManagerTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->jobsDir . '/current');
     }
 
-    public function test_draftVttPathForLang_returns_expected_path(): void
+    public function test_draftPathForLang_returns_expected_path(): void
     {
         $this->createSampleJob();
 
         $this->assertSame(
-            $this->jobsDir . '/current/draft_en.vtt',
-            $this->manager->draftVttPathForLang('en')
+            $this->jobsDir . '/current/draft_en.srt',
+            $this->manager->draftPathForLang('en')
         );
     }
 
@@ -91,8 +89,7 @@ class JobManagerTest extends TestCase
 
     private function createSampleJob(): void
     {
-        $vttPath = $this->writeVtt('WEBVTT');
-        $this->manager->create(
+        $this->manager->createWithContent(
             [
                 'vimeo_id' => '123456789',
                 'video_title' => 'Test Video',
@@ -101,16 +98,10 @@ class JobManagerTest extends TestCase
                 'subtitle_language' => 'es',
                 'step' => 'subtitle-editor',
             ],
-            new UploadedFile($vttPath, 'draft.vtt')
+            "1\n00:00:01,000 --> 00:00:02,000\nCue\n"
         );
     }
 
-    private function writeVtt(string $contents): string
-    {
-        $path = $this->jobsDir . '/upload-' . uniqid() . '.vtt';
-        file_put_contents($path, $contents);
-        return $path;
-    }
 
     private function removeDir(string $dir): void
     {

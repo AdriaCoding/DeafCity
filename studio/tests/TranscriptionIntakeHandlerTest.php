@@ -335,12 +335,12 @@ class TranscriptionIntakeHandlerTest extends TestCase
         $this->assertSame(0, $runState->count);
         $this->assertTrue($result['created'] ?? false);
         $this->assertSame('upload', $this->jobManager->read()['intake_mode']);
-        $this->assertFileExists($this->jobManager->draftVttPath());
+        $this->assertFileExists($this->jobManager->draftPath());
         $this->assertNotNull($launched);
         $this->assertStringContainsString('run_revise.sh', $launched);
     }
 
-    public function test_srt_upload_converts_to_vtt_and_launches_revision(): void
+    public function test_srt_upload_is_stored_as_srt_and_launches_revision(): void
     {
         $handler = $this->handlerWithFakeOrchestrator(['result' => 'pipeline_transcribed']);
         $result = $handler->handlePost(
@@ -349,7 +349,7 @@ class TranscriptionIntakeHandlerTest extends TestCase
         );
 
         $this->assertTrue($result['created'] ?? false);
-        $this->assertStringStartsWith("WEBVTT\n", (string) file_get_contents($this->jobManager->draftVttPath()));
+        $this->assertStringStartsWith("1\n", (string) file_get_contents($this->jobManager->draftPath()));
     }
 
     public function test_rejects_invalid_vtt_upload(): void

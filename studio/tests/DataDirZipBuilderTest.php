@@ -40,7 +40,7 @@ class DataDirZipBuilderTest extends TestCase
     public function test_zip_preserves_nested_directory_structure(): void
     {
         mkdir($this->rootDir . '/captions', 0777, true);
-        file_put_contents($this->rootDir . '/captions/111_EN.vtt', "WEBVTT\n\nHola\n");
+        file_put_contents($this->rootDir . '/captions/111_EN.srt', "1\n00:00:01,000 --> 00:00:02,000\nHola\n");
 
         $binary = (new DataDirZipBuilder())->build($this->rootDir);
 
@@ -49,7 +49,7 @@ class DataDirZipBuilderTest extends TestCase
         $zip = new \ZipArchive();
         $zip->open($zipPath);
 
-        $this->assertSame("WEBVTT\n\nHola\n", $zip->getFromName('captions/111_EN.vtt'));
+        $this->assertSame("1\n00:00:01,000 --> 00:00:02,000\nHola\n", $zip->getFromName('captions/111_EN.srt'));
 
         $zip->close();
         unlink($zipPath);

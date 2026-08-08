@@ -133,10 +133,10 @@ class IntakeAction
         $state = new TranslationJobState($c->jobManager);
         $state->resetLanguage($lang);
         $c->launcher->launchTranslation(
-            $c->jobManager->draftVttPath(),
+            $c->jobManager->draftPath(),
             $c->jobManager->translationStatePath(),
             $masterLang,
-            dirname($c->jobManager->draftVttPath()),
+            dirname($c->jobManager->draftPath()),
             [$lang],
         );
         echo json_encode(['ok' => true]);
