@@ -3,7 +3,7 @@
 /**
  * Read-only pre-flight for the VTT→SRT caption migration.
  *
- * Converts every data/captions/*.vtt in memory and asserts the round trip is
+ * Converts every caption file under data/captions/ in memory and asserts the round trip is
  * lossless at the cue level: same cue count, same timings (to the millisecond),
  * same text. Writes nothing, touches nothing — run this before the migration
  * script to prove the corpus survives conversion.
@@ -24,7 +24,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Studio\SrtParser;
-use Studio\VttParser;
+use Studio\CaptionReader;
 use Studio\VttToSrtConverter;
 
 const TIMING_TOLERANCE_SECONDS = 0.0005;
@@ -38,11 +38,11 @@ if ($dataDir === false || !is_dir($dataDir . '/captions')) {
 }
 
 $captionsDir = $dataDir . '/captions';
-$files = glob($captionsDir . '/*.vtt') ?: [];
+$files = array_merge(glob($captionsDir . '/*.vtt') ?: [], glob($captionsDir . '/*.srt') ?: []);
 sort($files);
 
 if ($files === []) {
-    fwrite(STDERR, "No .vtt files found in $captionsDir — nothing to verify.\n");
+    fwrite(STDERR, "No caption files found in $captionsDir — nothing to verify.\n");
     exit(1);
 }
 
@@ -60,7 +60,7 @@ if (is_file($catalogPath)) {
     }
 }
 
-$vttParser = new VttParser();
+$reader = new CaptionReader();
 $srtParser = new SrtParser();
 $converter = new VttToSrtConverter();
 
@@ -79,7 +79,7 @@ foreach ($files as $path) {
     }
 
     try {
-        $source = $vttParser->parse($path)['cues'];
+        $source = $reader->read($path)['cues'];
         $converted = $srtParser->parseString($converter->convert($path))['cues'];
     } catch (\Throwable $e) {
         $failures[] = "$name: conversion threw — " . $e->getMessage();
@@ -140,6 +140,7 @@ foreach ($files as $path) {
 echo "\nVTT→SRT conversion pre-flight\n";
 echo str_repeat('-', 60) . "\n";
 printf("Files scanned:            %d\n", count($files));
+printf("  WebVTT / SubRip:        %d / %d\n", count(glob($captionsDir . '/*.vtt') ?: []), count(glob($captionsDir . '/*.srt') ?: []));
 printf("Cues verified:            %d\n", $totalCues);
 printf("Catalog-referenced:       %d\n", count($files) - count($orphans));
 printf("Not in catalog (orphans): %d\n", count($orphans));

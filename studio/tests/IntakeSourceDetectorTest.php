@@ -35,13 +35,13 @@ class IntakeSourceDetectorTest extends TestCase
         $this->assertSame('upload', $this->detector->detect($path, 'ALGER_FR_Hamida_1.srt'));
     }
 
-    public function test_is_subrip_for_fixture_and_content_without_extension(): void
+    public function test_is_webvtt_for_fixture_and_content_without_extension(): void
     {
         $path = $this->fixturePath();
 
-        $this->assertTrue($this->detector->isSubRip($path, 'ALGER_FR_Hamida_1.srt'));
-        $this->assertTrue($this->detector->isSubRip($path, 'captions.txt'));
-        $this->assertFalse($this->detector->isSubRip(
+        $this->assertFalse($this->detector->isWebVtt($path, 'ALGER_FR_Hamida_1.srt'));
+        $this->assertFalse($this->detector->isWebVtt($path, 'captions.txt'));
+        $this->assertTrue($this->detector->isWebVtt(
             $this->writeTemp("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nHola\n", 'draft.vtt'),
             'draft.vtt'
         ));

@@ -31,7 +31,7 @@ class CaptionMigrationPlannerTest extends TestCase
                 'vimeoId' => '1211691420',
                 'lang' => 'fr',
                 'oldFile' => '1211691420.fr.vtt',
-                'newFile' => '2026_MARSEILLE_Hugo_3_FR.vtt',
+                'newFile' => '2026_MARSEILLE_Hugo_3_FR.srt',
             ],
         ], $this->planner->plan($videos));
     }
@@ -43,7 +43,7 @@ class CaptionMigrationPlannerTest extends TestCase
                 'vimeo_id' => '1211691420',
                 'title' => '2026_MARSEILLE_Hugo_3_4K',
                 'captions' => [
-                    ['lang' => 'fr', 'label' => 'French', 'file' => '2026_MARSEILLE_Hugo_3_FR.vtt'],
+                    ['lang' => 'fr', 'label' => 'French', 'file' => '2026_MARSEILLE_Hugo_3_FR.srt'],
                 ],
             ],
         ];
@@ -81,9 +81,9 @@ class CaptionMigrationPlannerTest extends TestCase
         ];
 
         $this->assertSame([
-            ['vimeoId' => '1211691420', 'lang' => 'fr', 'oldFile' => '1211691420.fr.vtt', 'newFile' => '2026_MARSEILLE_Hugo_3_FR.vtt'],
-            ['vimeoId' => '1211691420', 'lang' => 'en', 'oldFile' => '1211691420.en.vtt', 'newFile' => '2026_MARSEILLE_Hugo_3_EN.vtt'],
-            ['vimeoId' => '2', 'lang' => 'ca', 'oldFile' => '2.ca.vtt', 'newFile' => '2020_VALENCIA_Aurora_1_CA.vtt'],
+            ['vimeoId' => '1211691420', 'lang' => 'fr', 'oldFile' => '1211691420.fr.vtt', 'newFile' => '2026_MARSEILLE_Hugo_3_FR.srt'],
+            ['vimeoId' => '1211691420', 'lang' => 'en', 'oldFile' => '1211691420.en.vtt', 'newFile' => '2026_MARSEILLE_Hugo_3_EN.srt'],
+            ['vimeoId' => '2', 'lang' => 'ca', 'oldFile' => '2.ca.vtt', 'newFile' => '2020_VALENCIA_Aurora_1_CA.srt'],
         ], $this->planner->plan($videos));
     }
 
@@ -103,8 +103,8 @@ class CaptionMigrationPlannerTest extends TestCase
 
         $updated = $this->planner->applyRenames($videos, $renames);
 
-        $this->assertSame('2026_MARSEILLE_Hugo_3_FR.vtt', $updated[0]['captions'][0]['file']);
-        $this->assertSame('2026_MARSEILLE_Hugo_3_EN.vtt', $updated[0]['captions'][1]['file']);
+        $this->assertSame('2026_MARSEILLE_Hugo_3_FR.srt', $updated[0]['captions'][0]['file']);
+        $this->assertSame('2026_MARSEILLE_Hugo_3_EN.srt', $updated[0]['captions'][1]['file']);
         // Untouched fields survive.
         $this->assertSame('French', $updated[0]['captions'][0]['label']);
     }

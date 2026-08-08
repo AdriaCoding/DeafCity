@@ -62,7 +62,11 @@ class ShortenIntakeHandler
         try {
             $this->jobManager->createWithContent(
                 $meta,
-                $this->normalizer->normalize($upload['tmp_name'], $originalName),
+                $this->normalizer->normalize(
+                    $upload['tmp_name'],
+                    $originalName,
+                    CaptionIntakeNormalizer::FORMAT_VTT,
+                ),
             );
         } catch (\InvalidArgumentException $e) {
             $errors['intake_file'] = $e->getMessage();

@@ -201,7 +201,22 @@ foreach ($videos as $entry) {
         $destFilename = $captionFilename->forVideo((string) ($entry['title'] ?? $vimeoId), $langStr);
         $destPath     = $captionsDir . '/' . $destFilename;
 
-        if (!is_file($srcPath) || !copy($srcPath, $destPath)) {
+        /*
+         * The draft is still WebVTT while the job pipeline waits its turn,
+         * but the destination is now SubRip. Convert on the way across;
+         * this bridge goes away when the drafts migrate.
+         */
+        if (!is_file($srcPath)) {
+            $errorLangs[] = $langStr;
+            continue;
+        }
+        try {
+            $converted = (new \Studio\VttToSrtConverter())->convert($srcPath);
+        } catch (\Throwable $e) {
+            $errorLangs[] = $langStr;
+            continue;
+        }
+        if (file_put_contents($destPath, $converted) === false) {
             $errorLangs[] = $langStr;
             continue;
         }

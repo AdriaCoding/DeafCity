@@ -14,42 +14,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Aurora_1_CA.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Aurora_1_AR.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Aurora_1_EU.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Aurora_1_EN.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Aurora_1_FR.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Aurora_1_IT.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Aurora_1_PT.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Aurora_1_ES.vtt"
+                    "file": "2020_VALENCIA_Aurora_1_ES.srt"
                 }
             ],
             "typology": "acudits",
@@ -72,42 +72,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Aurora_2_CA.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Aurora_2_AR.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Aurora_2_EU.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Aurora_2_EN.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Aurora_2_FR.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Aurora_2_IT.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Aurora_2_PT.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Aurora_2_ES.vtt"
+                    "file": "2020_VALENCIA_Aurora_2_ES.srt"
                 }
             ],
             "typology": "malentesos",
@@ -129,42 +129,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Aurora_4_CA.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Aurora_4_AR.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Aurora_4_EU.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Aurora_4_EN.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Aurora_4_FR.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Aurora_4_IT.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Aurora_4_PT.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Aurora_4_ES.vtt"
+                    "file": "2020_VALENCIA_Aurora_4_ES.srt"
                 }
             ],
             "typology": "memories",
@@ -187,42 +187,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Dani_1_CA.vtt"
+                    "file": "2020_VALENCIA_Dani_1_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Dani_1_AR.vtt"
+                    "file": "2020_VALENCIA_Dani_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Dani_1_EU.vtt"
+                    "file": "2020_VALENCIA_Dani_1_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Dani_1_EN.vtt"
+                    "file": "2020_VALENCIA_Dani_1_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Dani_1_FR.vtt"
+                    "file": "2020_VALENCIA_Dani_1_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Dani_1_IT.vtt"
+                    "file": "2020_VALENCIA_Dani_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Dani_1_PT.vtt"
+                    "file": "2020_VALENCIA_Dani_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Dani_1_ES.vtt"
+                    "file": "2020_VALENCIA_Dani_1_ES.srt"
                 }
             ],
             "typology": "anecdotes",
@@ -245,42 +245,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Dani_2_CA.vtt"
+                    "file": "2020_VALENCIA_Dani_2_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Dani_2_AR.vtt"
+                    "file": "2020_VALENCIA_Dani_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Dani_2_EU.vtt"
+                    "file": "2020_VALENCIA_Dani_2_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Dani_2_EN.vtt"
+                    "file": "2020_VALENCIA_Dani_2_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Dani_2_FR.vtt"
+                    "file": "2020_VALENCIA_Dani_2_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Dani_2_IT.vtt"
+                    "file": "2020_VALENCIA_Dani_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Dani_2_PT.vtt"
+                    "file": "2020_VALENCIA_Dani_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Dani_2_ES.vtt"
+                    "file": "2020_VALENCIA_Dani_2_ES.srt"
                 }
             ],
             "typology": "anecdotes",
@@ -303,42 +303,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Dani_3_CA.vtt"
+                    "file": "2020_VALENCIA_Dani_3_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Dani_3_AR.vtt"
+                    "file": "2020_VALENCIA_Dani_3_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Dani_3_EU.vtt"
+                    "file": "2020_VALENCIA_Dani_3_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Dani_3_EN.vtt"
+                    "file": "2020_VALENCIA_Dani_3_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Dani_3_FR.vtt"
+                    "file": "2020_VALENCIA_Dani_3_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Dani_3_IT.vtt"
+                    "file": "2020_VALENCIA_Dani_3_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Dani_3_PT.vtt"
+                    "file": "2020_VALENCIA_Dani_3_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Dani_3_ES.vtt"
+                    "file": "2020_VALENCIA_Dani_3_ES.srt"
                 }
             ],
             "typology": "acudits",
@@ -360,42 +360,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Dani_4_CA.vtt"
+                    "file": "2020_VALENCIA_Dani_4_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Dani_4_AR.vtt"
+                    "file": "2020_VALENCIA_Dani_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Dani_4_EU.vtt"
+                    "file": "2020_VALENCIA_Dani_4_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Dani_4_EN.vtt"
+                    "file": "2020_VALENCIA_Dani_4_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Dani_4_FR.vtt"
+                    "file": "2020_VALENCIA_Dani_4_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Dani_4_IT.vtt"
+                    "file": "2020_VALENCIA_Dani_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Dani_4_PT.vtt"
+                    "file": "2020_VALENCIA_Dani_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Dani_4_ES.vtt"
+                    "file": "2020_VALENCIA_Dani_4_ES.srt"
                 }
             ],
             "typology": "anecdotes",
@@ -418,42 +418,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Monica_1_CA.vtt"
+                    "file": "2020_VALENCIA_Monica_1_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Monica_1_AR.vtt"
+                    "file": "2020_VALENCIA_Monica_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Monica_1_EU.vtt"
+                    "file": "2020_VALENCIA_Monica_1_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Monica_1_EN.vtt"
+                    "file": "2020_VALENCIA_Monica_1_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Monica_1_FR.vtt"
+                    "file": "2020_VALENCIA_Monica_1_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Monica_1_IT.vtt"
+                    "file": "2020_VALENCIA_Monica_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Monica_1_PT.vtt"
+                    "file": "2020_VALENCIA_Monica_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Monica_1_ES.vtt"
+                    "file": "2020_VALENCIA_Monica_1_ES.srt"
                 }
             ],
             "typology": "acudits",
@@ -476,42 +476,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Monica_2_CA.vtt"
+                    "file": "2020_VALENCIA_Monica_2_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Monica_2_AR.vtt"
+                    "file": "2020_VALENCIA_Monica_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Monica_2_EU.vtt"
+                    "file": "2020_VALENCIA_Monica_2_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Monica_2_EN.vtt"
+                    "file": "2020_VALENCIA_Monica_2_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Monica_2_FR.vtt"
+                    "file": "2020_VALENCIA_Monica_2_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Monica_2_IT.vtt"
+                    "file": "2020_VALENCIA_Monica_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Monica_2_PT.vtt"
+                    "file": "2020_VALENCIA_Monica_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Monica_2_ES.vtt"
+                    "file": "2020_VALENCIA_Monica_2_ES.srt"
                 }
             ],
             "typology": "anecdotes",
@@ -533,42 +533,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Pegolino_1_CA.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Pegolino_1_AR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Pegolino_1_EU.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Pegolino_1_EN.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Pegolino_1_FR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Pegolino_1_IT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Pegolino_1_PT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Pegolino_1_ES.vtt"
+                    "file": "2020_VALENCIA_Pegolino_1_ES.srt"
                 }
             ],
             "typology": "pensaments",
@@ -591,42 +591,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Pegolino_2_CA.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Pegolino_2_AR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Pegolino_2_EU.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Pegolino_2_EN.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Pegolino_2_FR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Pegolino_2_IT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Pegolino_2_PT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Pegolino_2_ES.vtt"
+                    "file": "2020_VALENCIA_Pegolino_2_ES.srt"
                 }
             ],
             "typology": "acudits",
@@ -648,42 +648,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Pegolino_3_CA.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Pegolino_3_AR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Pegolino_3_EU.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Pegolino_3_EN.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Pegolino_3_FR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Pegolino_3_IT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Pegolino_3_PT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Pegolino_3_ES.vtt"
+                    "file": "2020_VALENCIA_Pegolino_3_ES.srt"
                 }
             ],
             "typology": "malentesos",
@@ -706,42 +706,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Pegolino_4_CA.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Pegolino_4_AR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Pegolino_4_EU.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Pegolino_4_EN.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Pegolino_4_FR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Pegolino_4_IT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Pegolino_4_PT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Pegolino_4_ES.vtt"
+                    "file": "2020_VALENCIA_Pegolino_4_ES.srt"
                 }
             ],
             "typology": "anecdotes",
@@ -764,42 +764,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Pegolino_5_CA.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Pegolino_5_AR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Pegolino_5_EU.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Pegolino_5_EN.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Pegolino_5_FR.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Pegolino_5_IT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Pegolino_5_PT.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Pegolino_5_ES.vtt"
+                    "file": "2020_VALENCIA_Pegolino_5_ES.srt"
                 }
             ],
             "typology": "malentesos",
@@ -2225,42 +2225,42 @@
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_ALGER_Mahieddine_1_EN.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_EN.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_ALGER_Mahieddine_1_AR.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_ALGER_Mahieddine_1_EU.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_ALGER_Mahieddine_1_CA.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_CA.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_ALGER_Mahieddine_1_FR.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_ALGER_Mahieddine_1_IT.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_ALGER_Mahieddine_1_PT.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_ALGER_Mahieddine_1_ES.vtt"
+                    "file": "2026_ALGER_Mahieddine_1_ES.srt"
                 }
             ],
             "typology": "acudits",
@@ -2355,42 +2355,42 @@
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_ALGER_Mustapha_1_EN.vtt"
+                    "file": "2026_ALGER_Mustapha_1_EN.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_ALGER_Mustapha_1_AR.vtt"
+                    "file": "2026_ALGER_Mustapha_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_ALGER_Mustapha_1_EU.vtt"
+                    "file": "2026_ALGER_Mustapha_1_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_ALGER_Mustapha_1_CA.vtt"
+                    "file": "2026_ALGER_Mustapha_1_CA.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_ALGER_Mustapha_1_FR.vtt"
+                    "file": "2026_ALGER_Mustapha_1_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_ALGER_Mustapha_1_IT.vtt"
+                    "file": "2026_ALGER_Mustapha_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_ALGER_Mustapha_1_PT.vtt"
+                    "file": "2026_ALGER_Mustapha_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_ALGER_Mustapha_1_ES.vtt"
+                    "file": "2026_ALGER_Mustapha_1_ES.srt"
                 }
             ],
             "typology": "acudits",
@@ -2725,42 +2725,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Alysone_1_FR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Alysone_1_AR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Alysone_1_EU.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Alysone_1_CA.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Alysone_1_EN.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Alysone_1_IT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Alysone_1_PT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Alysone_1_ES.vtt"
+                    "file": "2026_MARSEILLE_Alysone_1_ES.srt"
                 }
             ],
             "participant": "Alysone",
@@ -2782,42 +2782,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Alysone_2_FR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Alysone_2_AR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Alysone_2_EU.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Alysone_2_CA.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Alysone_2_EN.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Alysone_2_IT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Alysone_2_PT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Alysone_2_ES.vtt"
+                    "file": "2026_MARSEILLE_Alysone_2_ES.srt"
                 }
             ],
             "participant": "Alysone",
@@ -2839,42 +2839,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Alysone_3_FR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Alysone_3_AR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Alysone_3_EU.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Alysone_3_CA.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Alysone_3_EN.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Alysone_3_IT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Alysone_3_PT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Alysone_3_ES.vtt"
+                    "file": "2026_MARSEILLE_Alysone_3_ES.srt"
                 }
             ],
             "participant": "Alysone",
@@ -2896,42 +2896,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Alysone_4_FR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Alysone_4_AR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Alysone_4_EU.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Alysone_4_CA.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Alysone_4_EN.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Alysone_4_IT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Alysone_4_PT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Alysone_4_ES.vtt"
+                    "file": "2026_MARSEILLE_Alysone_4_ES.srt"
                 }
             ],
             "participant": "Alysone",
@@ -2953,42 +2953,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Alysone_5_FR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Alysone_5_AR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Alysone_5_EU.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Alysone_5_CA.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Alysone_5_EN.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Alysone_5_IT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Alysone_5_PT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Alysone_5_ES.vtt"
+                    "file": "2026_MARSEILLE_Alysone_5_ES.srt"
                 }
             ],
             "participant": "Alysone",
@@ -3010,42 +3010,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Hugo_1_FR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Hugo_1_AR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Hugo_1_EU.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Hugo_1_CA.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Hugo_1_EN.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Hugo_1_IT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Hugo_1_PT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Hugo_1_ES.vtt"
+                    "file": "2026_MARSEILLE_Hugo_1_ES.srt"
                 }
             ],
             "participant": "Hugo",
@@ -3068,42 +3068,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Hugo_2_FR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Hugo_2_AR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Hugo_2_EU.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Hugo_2_CA.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Hugo_2_EN.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Hugo_2_IT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Hugo_2_PT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Hugo_2_ES.vtt"
+                    "file": "2026_MARSEILLE_Hugo_2_ES.srt"
                 }
             ],
             "participant": "Hugo",
@@ -3125,42 +3125,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Hugo_3_FR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Hugo_3_AR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Hugo_3_EU.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Hugo_3_CA.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Hugo_3_EN.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Hugo_3_IT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Hugo_3_PT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Hugo_3_ES.vtt"
+                    "file": "2026_MARSEILLE_Hugo_3_ES.srt"
                 }
             ],
             "participant": "Hugo",
@@ -3182,42 +3182,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Hugo_4_FR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Hugo_4_AR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Hugo_4_EU.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Hugo_4_CA.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Hugo_4_EN.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Hugo_4_IT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Hugo_4_PT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Hugo_4_ES.vtt"
+                    "file": "2026_MARSEILLE_Hugo_4_ES.srt"
                 }
             ],
             "participant": "Hugo",
@@ -3240,42 +3240,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Hugo_5_FR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Hugo_5_AR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Hugo_5_EU.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Hugo_5_CA.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Hugo_5_EN.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Hugo_5_IT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Hugo_5_PT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Hugo_5_ES.vtt"
+                    "file": "2026_MARSEILLE_Hugo_5_ES.srt"
                 }
             ],
             "participant": "Hugo",
@@ -3297,42 +3297,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Lola_1_FR.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Lola_1_AR.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Lola_1_EU.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Lola_1_CA.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Lola_1_EN.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Lola_1_IT.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Lola_1_PT.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Lola_1_ES.vtt"
+                    "file": "2026_MARSEILLE_Lola_1_ES.srt"
                 }
             ],
             "participant": "Lola",
@@ -3354,42 +3354,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Lola_2_FR.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Lola_2_AR.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Lola_2_EU.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Lola_2_CA.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Lola_2_EN.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Lola_2_IT.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Lola_2_PT.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Lola_2_ES.vtt"
+                    "file": "2026_MARSEILLE_Lola_2_ES.srt"
                 }
             ],
             "participant": "Lola",
@@ -3411,42 +3411,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Lola_3_FR.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Lola_3_AR.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Lola_3_EU.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Lola_3_CA.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Lola_3_EN.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Lola_3_IT.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Lola_3_PT.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Lola_3_ES.vtt"
+                    "file": "2026_MARSEILLE_Lola_3_ES.srt"
                 }
             ],
             "participant": "Lola",
@@ -3468,42 +3468,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Lola_4_FR.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Lola_4_AR.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Lola_4_EU.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Lola_4_CA.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Lola_4_EN.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Lola_4_IT.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Lola_4_PT.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Lola_4_ES.vtt"
+                    "file": "2026_MARSEILLE_Lola_4_ES.srt"
                 }
             ],
             "participant": "Lola",
@@ -3525,42 +3525,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Lola_5_FR.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Lola_5_AR.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Lola_5_EU.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Lola_5_CA.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Lola_5_EN.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Lola_5_IT.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Lola_5_PT.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Lola_5_ES.vtt"
+                    "file": "2026_MARSEILLE_Lola_5_ES.srt"
                 }
             ],
             "participant": "Lola",
@@ -3582,42 +3582,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Lola_6_FR.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Lola_6_AR.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Lola_6_EU.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Lola_6_CA.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Lola_6_EN.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Lola_6_IT.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Lola_6_PT.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Lola_6_ES.vtt"
+                    "file": "2026_MARSEILLE_Lola_6_ES.srt"
                 }
             ],
             "participant": "Lola",
@@ -4872,42 +4872,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Monica_3_CA.vtt"
+                    "file": "2020_VALENCIA_Monica_3_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Monica_3_AR.vtt"
+                    "file": "2020_VALENCIA_Monica_3_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Monica_3_EU.vtt"
+                    "file": "2020_VALENCIA_Monica_3_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Monica_3_EN.vtt"
+                    "file": "2020_VALENCIA_Monica_3_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Monica_3_FR.vtt"
+                    "file": "2020_VALENCIA_Monica_3_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Monica_3_IT.vtt"
+                    "file": "2020_VALENCIA_Monica_3_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Monica_3_PT.vtt"
+                    "file": "2020_VALENCIA_Monica_3_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Monica_3_ES.vtt"
+                    "file": "2020_VALENCIA_Monica_3_ES.srt"
                 }
             ],
             "typology": "malentesos",
@@ -4930,42 +4930,42 @@
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2020_VALENCIA_Monica_4_CA.vtt"
+                    "file": "2020_VALENCIA_Monica_4_CA.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2020_VALENCIA_Monica_4_AR.vtt"
+                    "file": "2020_VALENCIA_Monica_4_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2020_VALENCIA_Monica_4_EU.vtt"
+                    "file": "2020_VALENCIA_Monica_4_EU.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2020_VALENCIA_Monica_4_EN.vtt"
+                    "file": "2020_VALENCIA_Monica_4_EN.srt"
                 },
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2020_VALENCIA_Monica_4_FR.vtt"
+                    "file": "2020_VALENCIA_Monica_4_FR.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2020_VALENCIA_Monica_4_IT.vtt"
+                    "file": "2020_VALENCIA_Monica_4_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2020_VALENCIA_Monica_4_PT.vtt"
+                    "file": "2020_VALENCIA_Monica_4_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2020_VALENCIA_Monica_4_ES.vtt"
+                    "file": "2020_VALENCIA_Monica_4_ES.srt"
                 }
             ],
             "typology": "malentesos",
@@ -5206,42 +5206,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Alysone_6_FR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Alysone_6_AR.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Alysone_6_EU.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Alysone_6_CA.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Alysone_6_EN.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Alysone_6_IT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Alysone_6_PT.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Alysone_6_ES.vtt"
+                    "file": "2026_MARSEILLE_Alysone_6_ES.srt"
                 }
             ],
             "participant": "Alysone",
@@ -5263,42 +5263,42 @@
                 {
                     "lang": "fr",
                     "label": "French",
-                    "file": "2026_MARSEILLE_Hugo_6_FR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_FR.srt"
                 },
                 {
                     "lang": "ar",
                     "label": "Arabic",
-                    "file": "2026_MARSEILLE_Hugo_6_AR.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_AR.srt"
                 },
                 {
                     "lang": "eu",
                     "label": "Basque",
-                    "file": "2026_MARSEILLE_Hugo_6_EU.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_EU.srt"
                 },
                 {
                     "lang": "ca",
                     "label": "Catalan",
-                    "file": "2026_MARSEILLE_Hugo_6_CA.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_CA.srt"
                 },
                 {
                     "lang": "en",
                     "label": "English",
-                    "file": "2026_MARSEILLE_Hugo_6_EN.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_EN.srt"
                 },
                 {
                     "lang": "it",
                     "label": "Italian",
-                    "file": "2026_MARSEILLE_Hugo_6_IT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_IT.srt"
                 },
                 {
                     "lang": "pt",
                     "label": "Portuguese",
-                    "file": "2026_MARSEILLE_Hugo_6_PT.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_PT.srt"
                 },
                 {
                     "lang": "es",
                     "label": "Spanish",
-                    "file": "2026_MARSEILLE_Hugo_6_ES.vtt"
+                    "file": "2026_MARSEILLE_Hugo_6_ES.srt"
                 }
             ],
             "participant": "Hugo",

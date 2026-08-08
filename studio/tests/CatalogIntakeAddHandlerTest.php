@@ -74,7 +74,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
         );
 
         $this->assertTrue($result['ok']);
-        $this->assertFileExists($this->captionsDir . '/With Captions_ES.vtt');
+        $this->assertFileExists($this->captionsDir . '/With Captions_ES.srt');
         $this->assertCount(1, $result['video']['captions']);
 
         $catalog = json_decode(file_get_contents($this->catalogFile), true);
@@ -84,7 +84,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
     public function test_keeps_created_video_when_caption_upload_fails(): void
     {
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
-        file_put_contents($vtt, "WEBVTT\n\n");
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHola\n");
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');

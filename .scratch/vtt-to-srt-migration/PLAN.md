@@ -150,9 +150,20 @@ The first milestone that changes what is on disk and what the public site serves
 - `CaptionFilename::forVideo()` → `.srt`. This cascades automatically to
   `CaptionPublication`, `CaptionMigrationPlanner`, `CatalogEditor`, and the Vimeo
   mirror (all already extension-agnostic).
-- `CaptionIntakeNormalizer` flips to emitting SRT; wire in `SrtValidator`;
-  `IntakeSourceDetector::isSubRip()` → `isWebVtt()` (rename + invert, and invert
-  `IntakeSourceDetectorTest:38-48`'s assertions accordingly).
+- `CaptionIntakeNormalizer` gains an explicit target format; wire in
+  `SrtValidator`; `IntakeSourceDetector::isSubRip()` → `isWebVtt()` (rename +
+  invert, and invert `IntakeSourceDetectorTest:38-48`'s assertions accordingly).
+
+  **Refined during implementation:** flipping the normalizer wholesale was
+  wrong. It feeds two stores — published captions under `data/captions/` (SRT
+  from this milestone) and the job pipeline's drafts (VTT until M5) — so a
+  single flip would have put SRT bytes into `draft.vtt` while `revise.php` and
+  `TranscriptionOrchestrator` still expected VTT, and would have left subtitle
+  uploads and audio transcription producing different formats in the same job
+  directory. The target is a parameter instead: `CaptionUploadHandler` asks for
+  SRT, the four job-intake sites pass `FORMAT_VTT`. M5 drops those arguments and
+  the parameter can go in M7. This also means an uploaded `.srt` is stored
+  byte-identical rather than round-tripped through VTT.
 - **Bridge the two finalize copy sites** that would otherwise write VTT bytes into
   a `.srt` filename: `CatalogAction::finalizeCaptionTranslation()` (line 988) and
   `batch_translate_captions.php` (line 200) both `copy()` a job draft straight into

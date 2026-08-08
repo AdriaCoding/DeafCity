@@ -50,7 +50,7 @@ class CaptionUploadHandlerTest extends TestCase
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
-            ->with('111', $this->captionsDir . '/Test_ES.vtt', 'es', 'Spanish');
+            ->with('111', $this->captionsDir . '/Test_ES.srt', 'es', 'Spanish');
 
         $result = $this->makeHandler($vimeo)->handle('111', [[
             'lang' => 'es',
@@ -60,22 +60,22 @@ class CaptionUploadHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertSame([], $result['vimeoWarnings']);
-        $this->assertFileExists($this->captionsDir . '/Test_ES.vtt');
+        $this->assertFileExists($this->captionsDir . '/Test_ES.srt');
 
         $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
         $this->assertCount(1, $entry['captions']);
         $this->assertSame('es', $entry['captions'][0]['lang']);
-        $this->assertSame('Test_ES.vtt', $entry['captions'][0]['file']);
+        $this->assertSame('Test_ES.srt', $entry['captions'][0]['file']);
 
         $this->assertCount(1, $result['captions']);
         $this->assertSame('es', $result['captions'][0]['lang']);
-        $this->assertSame('Test_ES.vtt', $result['captions'][0]['file']);
+        $this->assertSame('Test_ES.srt', $result['captions'][0]['file']);
     }
 
     public function test_rejects_invalid_language(): void
     {
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
-        file_put_contents($vtt, "WEBVTT\n\n");
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHola\n");
 
         $result = $this->makeHandler($this->createMock(VimeoClient::class))->handle('111', [[
             'lang' => 'zz',
@@ -97,10 +97,10 @@ class CaptionUploadHandlerTest extends TestCase
                 'sign_language' => 'lse',
                 'edition' => '2020-valencia',
                 'tags' => [],
-                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => 'Test_ES.vtt']],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => 'Test_ES.srt']],
             ],
         ]]));
-        file_put_contents($this->captionsDir . '/Test_ES.vtt', "WEBVTT\n\nold\n");
+        file_put_contents($this->captionsDir . '/Test_ES.srt', "1\n00:00:00,000 --> 00:00:02,000\nold\n");
 
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nNou\n");
@@ -115,7 +115,7 @@ class CaptionUploadHandlerTest extends TestCase
         ]]);
 
         $this->assertTrue($result['ok']);
-        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.vtt'));
+        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.srt'));
 
         $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
         $this->assertCount(1, $entry['captions']);
@@ -150,7 +150,7 @@ class CaptionUploadHandlerTest extends TestCase
     public function test_vimeo_failure_still_saves_file_and_catalog(): void
     {
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
-        file_put_contents($vtt, "WEBVTT\n\n");
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHola\n");
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
@@ -164,7 +164,7 @@ class CaptionUploadHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertNotEmpty($result['vimeoWarnings']);
-        $this->assertFileExists($this->captionsDir . '/Test_EN.vtt');
+        $this->assertFileExists($this->captionsDir . '/Test_EN.srt');
     }
 
     public function test_upload_sends_caption_lang_directly_to_vimeo(): void
@@ -175,7 +175,7 @@ class CaptionUploadHandlerTest extends TestCase
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
-            ->with('111', $this->captionsDir . '/Test_AR.vtt', 'ar', 'Arabic');
+            ->with('111', $this->captionsDir . '/Test_AR.srt', 'ar', 'Arabic');
 
         $result = $this->makeHandler($vimeo)->handle('111', [[
             'lang' => 'ar',
@@ -207,10 +207,10 @@ class CaptionUploadHandlerTest extends TestCase
                 'sign_language' => 'lse',
                 'edition' => '2020-valencia',
                 'tags' => [],
-                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => 'Test_ES.vtt']],
+                'captions' => [['lang' => 'es', 'label' => 'Spanish', 'file' => 'Test_ES.srt']],
             ],
         ]]));
-        file_put_contents($this->captionsDir . '/Test_ES.vtt', "WEBVTT\n\nold\n");
+        file_put_contents($this->captionsDir . '/Test_ES.srt', "1\n00:00:00,000 --> 00:00:02,000\nold\n");
 
         $vtt = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nNou\n");
@@ -227,7 +227,7 @@ class CaptionUploadHandlerTest extends TestCase
 
         $this->assertTrue($result['ok']);
         $this->assertSame([], $result['vimeoWarnings']);
-        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.vtt'));
+        $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.srt'));
     }
 
     private function makeHandler(VimeoClient $vimeo): CaptionUploadHandler
@@ -263,8 +263,8 @@ class CaptionUploadHandlerTest extends TestCase
      */
     public function test_failed_upload_leaves_the_existing_caption_intact(): void
     {
-        $existing = $this->captionsDir . '/Test_ES.vtt';
-        $good = "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nBona\n";
+        $existing = $this->captionsDir . '/Test_ES.srt';
+        $good = "1\n00:00:00,000 --> 00:00:02,000\nBona\n";
         file_put_contents($existing, $good);
 
         $bad = tempnam(sys_get_temp_dir(), 'srt');

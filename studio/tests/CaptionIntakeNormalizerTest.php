@@ -4,7 +4,7 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\CaptionIntakeNormalizer;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 class CaptionIntakeNormalizerTest extends TestCase
 {
@@ -15,22 +15,32 @@ class CaptionIntakeNormalizerTest extends TestCase
         $this->normalizer = new CaptionIntakeNormalizer();
     }
 
-    public function test_passes_webvtt_through_unchanged(): void
+    public function test_passes_subrip_through_unchanged(): void
     {
-        $content = "WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\nHola\n";
-        $path = $this->writeTemp($content, 'vtt');
+        $content = "1\n00:00:01,000 --> 00:00:04,000\nHola\n";
+        $path = $this->writeTemp($content, 'srt');
 
-        $this->assertSame($content, $this->normalizer->normalize($path, 'subtitles.vtt'));
+        $this->assertSame($content, $this->normalizer->normalize($path, 'subtitles.srt'));
     }
 
-    public function test_converts_subrip_upload(): void
+    /** Content, not extension, decides the branch — a SubRip .txt is still accepted. */
+    public function test_accepts_subrip_content_under_any_extension(): void
     {
-        $path = $this->writeTemp("1\n00:00:01,000 --> 00:00:04,000\nHola\n", 'srt');
+        $content = "1\n00:00:01,000 --> 00:00:04,000\nHola\n";
+        $path = $this->writeTemp($content, 'txt');
 
-        $output = $this->normalizer->normalize($path, 'subtitles.srt');
+        $this->assertSame($content, $this->normalizer->normalize($path, 'captions.txt'));
+    }
 
-        $this->assertStringStartsWith("WEBVTT\n", $output);
-        $parsed = (new VttParser())->parseString($output);
+    public function test_converts_webvtt_upload(): void
+    {
+        $path = $this->writeTemp("WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\nHola\n", 'vtt');
+
+        $output = $this->normalizer->normalize($path, 'subtitles.vtt');
+
+        $this->assertStringNotContainsString('WEBVTT', $output);
+        $this->assertStringStartsWith("1\n00:00:01,000 --> 00:00:04,000\n", $output);
+        $parsed = (new SrtParser())->parseString($output);
         $this->assertCount(1, $parsed['cues']);
         $this->assertSame('Hola', $parsed['cues'][0]['text']);
         $this->assertSame(1.0, $parsed['cues'][0]['start']);
@@ -44,7 +54,10 @@ class CaptionIntakeNormalizerTest extends TestCase
     {
         $vttNamedSrt = $this->writeTemp("WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHi\n", 'srt');
 
-        $this->assertStringStartsWith("WEBVTT\n", $this->normalizer->normalize($vttNamedSrt, 'x.vtt'));
+        $output = $this->normalizer->normalize($vttNamedSrt, 'x.vtt');
+
+        $this->assertStringNotContainsString('WEBVTT', $output);
+        $this->assertStringStartsWith("1\n", $output);
     }
 
     public function test_rejects_webvtt_without_header(): void
@@ -79,16 +92,64 @@ class CaptionIntakeNormalizerTest extends TestCase
         $this->normalizer->normalize($path, 'subtitles.srt');
     }
 
-    public function test_converts_the_production_subrip_fixture(): void
+    public function test_passes_the_production_subrip_fixture_through(): void
     {
         $output = $this->normalizer->normalize(
             __DIR__ . '/ALGER_FR_Hamida_1.srt',
             'ALGER_FR_Hamida_1.srt'
         );
 
-        $parsed = (new VttParser())->parseString($output);
-        $this->assertCount(51, $parsed['cues']);
-        $this->assertSame('Un papa avec son fils.', $parsed['cues'][0]['text']);
+        $this->assertSame(file_get_contents(__DIR__ . '/ALGER_FR_Hamida_1.srt'), $output);
+    }
+
+    public function test_converts_the_production_webvtt_fixture(): void
+    {
+        $output = $this->normalizer->normalize(
+            __DIR__ . '/fixtures/production_sample.vtt',
+            'production_sample.vtt'
+        );
+
+        $parsed = (new SrtParser())->parseString($output);
+        $this->assertCount(19, $parsed['cues']);
+        $this->assertSame('Un grupo de personas', $parsed['cues'][0]['text']);
+    }
+
+    public function test_vtt_target_passes_webvtt_through_unchanged(): void
+    {
+        $content = "WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\nHola\n";
+        $path = $this->writeTemp($content, 'vtt');
+
+        $this->assertSame($content, $this->normalizer->normalize(
+            $path,
+            'subtitles.vtt',
+            CaptionIntakeNormalizer::FORMAT_VTT
+        ));
+    }
+
+    public function test_vtt_target_converts_subrip(): void
+    {
+        $path = $this->writeTemp("1\n00:00:01,000 --> 00:00:04,000\nHola\n", 'srt');
+
+        $output = $this->normalizer->normalize($path, 'subtitles.srt', CaptionIntakeNormalizer::FORMAT_VTT);
+
+        $this->assertStringStartsWith("WEBVTT\n", $output);
+        $this->assertStringContainsString('00:00:01.000 --> 00:00:04.000', $output);
+    }
+
+    /**
+     * Both stores must see the same cues regardless of which format the upload
+     * arrived in — this is what makes the two targets interchangeable while the
+     * migration straddles them.
+     */
+    public function test_both_targets_agree_on_cues_for_either_upload_format(): void
+    {
+        $srt = $this->writeTemp("1\n00:00:01,000 --> 00:00:04,000\nHola\n", 'srt');
+        $vtt = $this->writeTemp("WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\nHola\n", 'vtt');
+
+        $fromSrt = (new SrtParser())->parseString($this->normalizer->normalize($srt, 'a.srt'));
+        $fromVtt = (new SrtParser())->parseString($this->normalizer->normalize($vtt, 'b.vtt'));
+
+        $this->assertSame($fromSrt['cues'], $fromVtt['cues']);
     }
 
     private function writeTemp(string $contents, string $ext): string

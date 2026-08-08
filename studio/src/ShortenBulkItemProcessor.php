@@ -97,7 +97,11 @@ class ShortenBulkItemProcessor
         try {
             $this->jobManager->createWithContent(
                 $meta,
-                $this->normalizer->normalize($item['tmpAudioPath'], $originalName),
+                $this->normalizer->normalize(
+                    $item['tmpAudioPath'],
+                    $originalName,
+                    CaptionIntakeNormalizer::FORMAT_VTT,
+                ),
             );
         } catch (\InvalidArgumentException $e) {
             throw new \RuntimeException($e->getMessage(), 0, $e);
