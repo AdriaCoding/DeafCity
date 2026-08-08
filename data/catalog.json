@@ -822,7 +822,8 @@
             "typology": "anecdotes",
             "participant": "Pegolino",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181851824-a73930beed2e47275731043745b65e08585b6222e1da479e21825fc5b5cc78d3-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211614546?h=cc09a100e0"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211614546?h=cc09a100e0",
+            "invisible": true
         },
         {
             "id": "lse_1211612212",
@@ -2396,7 +2397,8 @@
             "participant": "Mustapha",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186307299-0792958170eadabfa91385ee67d363ac7ce36b94a484530c123927fb11cea5df-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211696766?h=e7917fcac9",
-            "master_caption_lang": "en"
+            "master_caption_lang": "en",
+            "invisible": true
         },
         {
             "id": "algerian-sl_1211696779",
