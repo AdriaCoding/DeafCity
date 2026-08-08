@@ -81,8 +81,7 @@ class CatalogAction
             'continguts-save-video'               => $this->saveVideo(),
             'continguts-set-video-invisible'      => $this->setVideoInvisible(),
             'continguts-set-master-caption'       => $this->setMasterCaption(),
-            'continguts-download-caption-vtt'     => $this->downloadCaption('vtt'),
-            'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
+            'continguts-download-caption-srt'     => $this->downloadCaption(),
             'continguts-download-data-zip'        => $this->downloadDataZip(),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
@@ -332,7 +331,7 @@ class CatalogAction
         exit;
     }
 
-    private function downloadCaption(string $format): never
+    private function downloadCaption(): never
     {
         $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
         $lang    = trim((string) ($_GET['lang'] ?? ''));
@@ -360,23 +359,17 @@ class CatalogAction
             exit;
         }
 
-        $vttPath = $this->c->dataDir . '/captions/' . $captionFile;
-        if (!is_file($vttPath)) {
+        $captionPath = $this->c->dataDir . '/captions/' . $captionFile;
+        if (!is_file($captionPath)) {
             http_response_code(404);
             exit;
         }
 
         $downloadBasename = $vimeoId . '_' . strtoupper($lang);
 
-        if ($format === 'srt') {
-            header('Content-Type: application/x-subrip; charset=utf-8');
-            header('Content-Disposition: attachment; filename="' . $downloadBasename . '.srt"');
-            echo (new \Studio\VttToSrtConverter())->convert($vttPath);
-        } else {
-            header('Content-Type: text/vtt; charset=utf-8');
-            header('Content-Disposition: attachment; filename="' . $downloadBasename . '.vtt"');
-            readfile($vttPath);
-        }
+        header('Content-Type: application/x-subrip; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $downloadBasename . '.srt"');
+        echo (new \Studio\VttToSrtConverter())->convert($captionPath);
         exit;
     }
 

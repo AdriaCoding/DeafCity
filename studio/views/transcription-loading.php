@@ -287,10 +287,8 @@
                 <span class="file-card-lang">Anglès</span>
                 <div class="file-download-btns">
                     <?php if (!empty($englishTranslationSkipped)): ?>
-                    <a class="file-download-btn" href="?action=download-vtt"><span class="material-icons">download</span>VTT</a>
                     <a class="file-download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
                     <?php else: ?>
-                    <a class="file-download-btn" href="?action=download-vtt&amp;lang=en"><span class="material-icons">download</span>VTT</a>
                     <a class="file-download-btn" href="?action=download-srt&amp;lang=en"><span class="material-icons">download</span>SRT</a>
                     <?php endif; ?>
                 </div>

@@ -9,7 +9,7 @@
     let translatedCues = JSON.parse(JSON.stringify(window.__translatedCues || []));
     let savedSnapshot = JSON.stringify(translatedCues);
 
-    let cueList, saveBtn, saveError, downloadVttBtn, downloadSrtBtn;
+    let cueList, saveBtn, saveError, downloadSrtBtn;
 
     function updateOverlapHighlights() {
         CaptionUtils.updateOverlapHighlights(translatedCues, '.pair-card');
@@ -126,12 +126,6 @@
         return JSON.stringify(translatedCues) !== savedSnapshot;
     }
 
-    function downloadVtt() {
-        var lang = window.__lang || '';
-        var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang.toUpperCase() : '');
-        CaptionUtils.triggerDownload(CaptionUtils.generateVtt(translatedCues), base + '.vtt', 'text/vtt');
-    }
-
     function downloadSrt() {
         var lang = window.__lang || '';
         var base = (window.__vimeoId || 'draft') + (lang ? '_' + lang.toUpperCase() : '');
@@ -177,13 +171,11 @@
         cueList = document.getElementById('cue-list');
         saveBtn = document.getElementById('save-btn');
         saveError = document.getElementById('save-error');
-        downloadVttBtn = document.getElementById('download-vtt-btn');
         downloadSrtBtn = document.getElementById('download-srt-btn');
 
         render();
 
         saveBtn.addEventListener('click', save);
-        if (downloadVttBtn) downloadVttBtn.addEventListener('click', downloadVtt);
         if (downloadSrtBtn) downloadSrtBtn.addEventListener('click', downloadSrt);
 
         window.addEventListener('beforeunload', function (e) {

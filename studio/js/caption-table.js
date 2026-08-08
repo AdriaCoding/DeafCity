@@ -167,14 +167,12 @@
             if (cap.file && vimeoId) {
                 var wrap = document.createElement('div');
                 wrap.className = 'caption-download-btns';
-                ['vtt', 'srt'].forEach(function (fmt) {
-                    var a = document.createElement('a');
-                    a.className = 'caption-download-btn';
-                    a.href = '?action=continguts-download-caption-' + fmt +
-                        '&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId);
-                    a.innerHTML = '<span class="material-icons">download</span>' + fmt.toUpperCase();
-                    wrap.appendChild(a);
-                });
+                var a = document.createElement('a');
+                a.className = 'caption-download-btn';
+                a.href = '?action=continguts-download-caption-srt' +
+                    '&vimeo_id=' + encodeURIComponent(vimeoId) + '&lang=' + encodeURIComponent(langId);
+                a.innerHTML = '<span class="material-icons">download</span>SRT';
+                wrap.appendChild(a);
                 tdDl.appendChild(wrap);
             }
 
