@@ -255,4 +255,32 @@ class CaptionUploadHandlerTest extends TestCase
         }
         rmdir($dir);
     }
+
+    /**
+     * A malformed upload must not take the existing caption with it. The
+     * pre-normalizer order unlinked the destination first and only then tried
+     * to convert, so a bad .srt destroyed the caption it was replacing.
+     */
+    public function test_failed_upload_leaves_the_existing_caption_intact(): void
+    {
+        $existing = $this->captionsDir . '/Test_ES.vtt';
+        $good = "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nBona\n";
+        file_put_contents($existing, $good);
+
+        $bad = tempnam(sys_get_temp_dir(), 'srt');
+        file_put_contents($bad, "1\n00:00:01,000 --> 00:00:04,000\n");
+
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->expects($this->never())->method('uploadAndActivateTextTrack');
+
+        $result = $this->makeHandler($vimeo)->handle('111', [[
+            'lang' => 'es',
+            'tmpPath' => $bad,
+            'originalName' => 'broken.srt',
+        ]]);
+
+        $this->assertFalse($result['ok']);
+        $this->assertFileExists($existing);
+        $this->assertSame($good, file_get_contents($existing));
+    }
 }

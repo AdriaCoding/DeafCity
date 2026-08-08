@@ -15,9 +15,7 @@ class ShortenIntakeHandler
         private readonly JobManager $jobManager,
         private readonly BackgroundJobLauncher $launcher,
         private readonly TranslationJobState $translationState,
-        private readonly IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
-        private readonly SrtToVttConverter $srtConverter = new SrtToVttConverter(),
-        private readonly WebVttValidator $vttValidator = new WebVttValidator(),
+        private readonly CaptionIntakeNormalizer $normalizer = new CaptionIntakeNormalizer(),
     ) {}
 
     /**
@@ -62,15 +60,10 @@ class ShortenIntakeHandler
         ];
 
         try {
-            if ($this->sourceDetector->isSubRip($upload['tmp_name'], $originalName)) {
-                $vttContent = $this->srtConverter->convert($upload['tmp_name']);
-                $vttLabel = pathinfo($originalName, PATHINFO_FILENAME) . '.vtt';
-                $this->validateVttContent($vttContent, $vttLabel);
-                $this->jobManager->createWithContent($meta, $vttContent);
-            } else {
-                $this->vttValidator->validate($upload['tmp_name'], $originalName);
-                $this->jobManager->create($meta, new UploadedFile($upload['tmp_name'], $originalName));
-            }
+            $this->jobManager->createWithContent(
+                $meta,
+                $this->normalizer->normalize($upload['tmp_name'], $originalName),
+            );
         } catch (\InvalidArgumentException $e) {
             $errors['intake_file'] = $e->getMessage();
             return ['errors' => $errors, 'values' => $values];
@@ -101,24 +94,6 @@ class ShortenIntakeHandler
         );
     }
 
-    private function validateVttContent(string $vttContent, string $label): void
-    {
-        $tmpPath = tempnam(sys_get_temp_dir(), 'studio-shorten-vtt-');
-        if ($tmpPath === false) {
-            throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
-        }
-
-        try {
-            if (file_put_contents($tmpPath, $vttContent) === false) {
-                throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
-            }
-            $this->vttValidator->validate($tmpPath, $label);
-        } finally {
-            if (is_file($tmpPath)) {
-                unlink($tmpPath);
-            }
-        }
-    }
 
     private function isValidLanguage(string $id): bool
     {

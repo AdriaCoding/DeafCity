@@ -19,9 +19,7 @@ class ShortenBulkItemProcessor
     /** @var callable(): array{success: bool, reason?: string} */
     private $waitForCompletion;
 
-    private readonly IntakeSourceDetector $sourceDetector;
-    private readonly SrtToVttConverter $srtConverter;
-    private readonly WebVttValidator $vttValidator;
+    private readonly CaptionIntakeNormalizer $normalizer;
 
     /**
      * @param callable(): array{success: bool, reason?: string}|null $waitForCompletion
@@ -32,15 +30,11 @@ class ShortenBulkItemProcessor
         private readonly BackgroundJobLauncher $launcher,
         private readonly TranslationJobState $translationState,
         ?callable $waitForCompletion = null,
-        ?IntakeSourceDetector $sourceDetector = null,
-        ?SrtToVttConverter $srtConverter = null,
-        ?WebVttValidator $vttValidator = null,
+        ?CaptionIntakeNormalizer $normalizer = null,
         private readonly int $pollTimeoutSeconds = 3600,
     ) {
         $this->waitForCompletion = $waitForCompletion ?? fn (): array => $this->pollUntilReady();
-        $this->sourceDetector = $sourceDetector ?? new IntakeSourceDetector();
-        $this->srtConverter = $srtConverter ?? new SrtToVttConverter();
-        $this->vttValidator = $vttValidator ?? new WebVttValidator();
+        $this->normalizer = $normalizer ?? new CaptionIntakeNormalizer();
     }
 
     public function processNext(): bool
@@ -101,15 +95,10 @@ class ShortenBulkItemProcessor
         ];
 
         try {
-            if ($this->sourceDetector->isSubRip($item['tmpAudioPath'], $originalName)) {
-                $vttContent = $this->srtConverter->convert($item['tmpAudioPath']);
-                $vttLabel = $item['originalFilename'] . '.vtt';
-                $this->validateVttContent($vttContent, $vttLabel);
-                $this->jobManager->createWithContent($meta, $vttContent);
-            } else {
-                $this->vttValidator->validate($item['tmpAudioPath'], $originalName);
-                $this->jobManager->create($meta, new UploadedFile($item['tmpAudioPath'], $originalName));
-            }
+            $this->jobManager->createWithContent(
+                $meta,
+                $this->normalizer->normalize($item['tmpAudioPath'], $originalName),
+            );
         } catch (\InvalidArgumentException $e) {
             throw new \RuntimeException($e->getMessage(), 0, $e);
         }
@@ -134,24 +123,6 @@ class ShortenBulkItemProcessor
         );
     }
 
-    private function validateVttContent(string $vttContent, string $label): void
-    {
-        $tmpPath = tempnam(sys_get_temp_dir(), 'studio-shorten-bulk-vtt-');
-        if ($tmpPath === false) {
-            throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
-        }
-
-        try {
-            if (file_put_contents($tmpPath, $vttContent) === false) {
-                throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
-            }
-            $this->vttValidator->validate($tmpPath, $label);
-        } finally {
-            if (is_file($tmpPath)) {
-                unlink($tmpPath);
-            }
-        }
-    }
 
     /** @return array{success: bool, reason?: string} */
     private function pollUntilReady(): array
