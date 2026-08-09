@@ -424,8 +424,8 @@ assert.strictEqual(logic.resolveSpokenLangId('arq', subtitleLanguagesFixture), '
 
 (function () {
     var tracks = [
-        { lang: 'es-MX', label: 'Veronica_03.srt', file: 'a.vtt' },
-        { lang: 'en', label: 'other.srt', file: 'b.vtt' },
+        { lang: 'es-MX', label: 'Veronica_03.srt', file: 'a.srt' },
+        { lang: 'en', label: 'other.srt', file: 'b.srt' },
     ];
     var opts = logic.buildSpokenOptionsForTracks(tracks, subtitleLanguagesFixture);
     assert.strictEqual(opts.length, 2, 'two distinct spoken languages');
@@ -435,8 +435,8 @@ assert.strictEqual(logic.resolveSpokenLangId('arq', subtitleLanguagesFixture), '
 
 (function () {
     var tracks = [
-        { lang: 'es-MX', label: 'a.srt', file: 'a.vtt' },
-        { lang: 'es-ES', label: 'b.srt', file: 'b.vtt' },
+        { lang: 'es-MX', label: 'a.srt', file: 'a.srt' },
+        { lang: 'es-ES', label: 'b.srt', file: 'b.srt' },
     ];
     var opts = logic.buildSpokenOptionsForTracks(tracks, subtitleLanguagesFixture);
     assert.strictEqual(opts.length, 1, 'region variants collapsed to one Spanish entry');
@@ -465,8 +465,8 @@ function simulateSpokenLanguageChange(spokenLangId, stickySpokenLangId, cueTrack
     assert.strictEqual(queueLengthBefore, 3, 'lse filter gives 3 videos before track change');
 
     var cueTracks = [
-        { lang: 'es', label: 'Spanish.srt', file: 'a.vtt' },
-        { lang: 'en', label: 'English.srt', file: 'b.vtt' },
+        { lang: 'es', label: 'Spanish.srt', file: 'a.srt' },
+        { lang: 'en', label: 'English.srt', file: 'b.srt' },
     ];
     var result = simulateSpokenLanguageChange('en', '', cueTracks, subtitleLanguagesFixture);
     assert.strictEqual(result.stickySpokenLangId, 'en', 'sticky language id updated');
@@ -480,13 +480,13 @@ function simulateSpokenLanguageChange(spokenLangId, stickySpokenLangId, cueTrack
 // Sticky-by-language via initialSubtitleLang (issue #19)
 (function () {
     var cueTracksMatch = [
-        { lang: 'es', label: 'a.srt', file: 'x.vtt' },
-        { lang: 'en', label: 'totally_different.srt', file: 'y.vtt' },
+        { lang: 'es', label: 'a.srt', file: 'x.srt' },
+        { lang: 'en', label: 'totally_different.srt', file: 'y.srt' },
     ];
     var idx = logic.resolveActiveCaptionTrackIndex(cueTracksMatch, 'es', subtitleLanguagesFixture);
     assert.strictEqual(idx, 0, 'initialSubtitleLang es selects Spanish track when present');
 
-    var cueTracksNoMatch = [{ lang: 'en', label: 'only_en.srt', file: 'x.vtt' }];
+    var cueTracksNoMatch = [{ lang: 'en', label: 'only_en.srt', file: 'x.srt' }];
     var idxFallback = logic.resolveActiveCaptionTrackIndex(cueTracksNoMatch, 'es', subtitleLanguagesFixture);
     assert.strictEqual(idxFallback, 0, 'initialSubtitleLang es falls back to index 0 when no Spanish track');
 })();
@@ -494,13 +494,13 @@ function simulateSpokenLanguageChange(spokenLangId, stickySpokenLangId, cueTrack
 // Sticky-by-language: filename labels differ but lang matches across videos
 (function () {
     var stickySpokenLangId = 'en';
-    var cueTracksNoMatch = [{ lang: 'es', label: 'Veronica_03.srt', file: 'x.vtt' }];
+    var cueTracksNoMatch = [{ lang: 'es', label: 'Veronica_03.srt', file: 'x.srt' }];
     var idx1 = logic.resolveActiveCaptionTrackIndex(cueTracksNoMatch, stickySpokenLangId, subtitleLanguagesFixture);
     assert.strictEqual(idx1, 0, 'falls back to first track when sticky language absent');
 
     var cueTracksMatch = [
-        { lang: 'es', label: 'a.srt', file: 'x.vtt' },
-        { lang: 'en', label: 'totally_different.srt', file: 'y.vtt' },
+        { lang: 'es', label: 'a.srt', file: 'x.srt' },
+        { lang: 'en', label: 'totally_different.srt', file: 'y.srt' },
     ];
     var idx2 = logic.resolveActiveCaptionTrackIndex(cueTracksMatch, stickySpokenLangId, subtitleLanguagesFixture);
     assert.strictEqual(idx2, 1, 'sticks to English by lang even when label differs');
@@ -509,8 +509,8 @@ function simulateSpokenLanguageChange(spokenLangId, stickySpokenLangId, cueTrack
 // Snap-back: after fallback, later video with sticky language restores it
 (function () {
     var sticky = 'en';
-    var videoA = [{ lang: 'es', label: 'only_es.srt', file: 'a.vtt' }];
-    var videoB = [{ lang: 'en', label: 'other_name.srt', file: 'b.vtt' }];
+    var videoA = [{ lang: 'es', label: 'only_es.srt', file: 'a.srt' }];
+    var videoB = [{ lang: 'en', label: 'other_name.srt', file: 'b.srt' }];
 
     var idxA = logic.resolveActiveCaptionTrackIndex(videoA, sticky, subtitleLanguagesFixture);
     assert.strictEqual(idxA, 0, 'video A uses first available (Spanish)');

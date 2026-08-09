@@ -22,7 +22,7 @@ $video = [
     'captions' => [[
         'lang' => 'es',
         'label' => 'Spanish',
-        'file' => '111.es.vtt',
+        'file' => '111.es.srt',
     ]],
 ];
 

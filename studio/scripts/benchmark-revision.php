@@ -1,6 +1,9 @@
 <?php
 /**
- * Benchmark: revise revision_input.vtt via Gemini and compare to revision_expected.vtt.
+ * Benchmark: revise revision_input via Gemini and compare to revision_expected.
+ *
+ * Fixtures are still WebVTT; they are converted to SubRip on the way in and the
+ * revised output is written as .srt, since GeminiReviser speaks SubRip.
  *
  * Usage:
  *   php benchmark-revision.php [--output /path/to/actual.vtt] [--input /path/to/input.vtt]
@@ -10,7 +13,7 @@
  *                            [--quiet] [--timeout 600]
  *
  * Batch mode (--models): runs each model sequentially, writes
- *   studio/tests/fixtures/revision_actual_{model}.vtt
+ *   studio/tests/fixtures/revision_actual_{model}.srt
  * and studio/tests/fixtures/revision_benchmark_RESULTS.md
  *
  * Override the model by setting GEMINI_REVISION_MODEL (or pass --model).
@@ -27,7 +30,9 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Studio\GeminiRevisionException;
 use Studio\GeminiReviser;
-use Studio\VttParser;
+use Studio\CaptionReader;
+use Studio\SrtParser;
+use Studio\VttToSrtConverter;
 
 /** @var array<string, array{input: float, output: float, label: string}> */
 const MODEL_PRICING = [
@@ -124,7 +129,7 @@ function makeUsageCapturingHttpCallable(int $timeoutSeconds, ?array &$capturedUs
 function runBenchmark(
     string $apiKey,
     string $model,
-    string $inputVtt,
+    string $inputSrt,
     string $inputPath,
     string $outputPath,
     string $sourceLang,
@@ -165,7 +170,7 @@ function runBenchmark(
 
     try {
         $start = microtime(true);
-        $revised = (new VttParser())->canonicalize($reviser->revise($inputVtt, $sourceLang));
+        $revised = (new SrtParser())->canonicalize($reviser->revise($inputSrt, $sourceLang));
         $elapsed = microtime(true) - $start;
         $result['elapsed'] = $elapsed;
         $result['usage'] = $usage;
@@ -183,8 +188,7 @@ function runBenchmark(
     file_put_contents($outputPath, $revised);
     $result['outputPath'] = $outputPath;
 
-    $parser = new VttParser();
-    $actualCues = $parser->parse($outputPath)['cues'];
+    $actualCues = (new CaptionReader())->read($outputPath)['cues'];
 
     $overLimit = 0;
     foreach ($actualCues as $cue) {
@@ -300,7 +304,7 @@ function runBenchmark(
 function writeResultsMarkdown(string $path, string $inputPath, string $expectedPath, array $results): void
 {
     $lines = [
-        '# Revision benchmark — Gemini models on revision_input.vtt',
+        '# Revision benchmark — Gemini models on revision_input',
         '',
         '**Input:** `' . basename($inputPath) . '`',
         '**Expected reference:** `' . basename($expectedPath) . '`',
@@ -401,9 +405,10 @@ if (!is_file($inputPath)) {
     exit(1);
 }
 
-$inputVtt = file_get_contents($inputPath);
-$expectedVtt = is_file($expectedPath) ? file_get_contents($expectedPath) : null;
-$expectedCues = $expectedVtt !== null ? (new VttParser())->parse($expectedPath)['cues'] : null;
+/* Fixtures on disk are WebVTT; the reviser takes SubRip. */
+$inputSrt = (new VttToSrtConverter())->convert($inputPath);
+$expectedExists = is_file($expectedPath);
+$expectedCues = $expectedExists ? (new CaptionReader())->read($expectedPath)['cues'] : null;
 
 if (isset($opts['models'])) {
     $models = array_values(array_filter(array_map('trim', explode(',', $opts['models']))));
@@ -415,17 +420,17 @@ if (isset($opts['models'])) {
     if (!$quiet) {
         echo "Batch benchmark: " . count($models) . " models\n";
         echo "Input:    $inputPath\n";
-        echo "Expected: " . ($expectedVtt !== null ? $expectedPath : '(none)') . "\n";
+        echo "Expected: " . ($expectedExists ? $expectedPath : '(none)') . "\n";
         echo "Results:  $resultsPath\n\n";
     }
 
     $results = [];
     foreach ($models as $model) {
-        $outputPath = $fixturesDir . '/revision_actual_' . $model . '.vtt';
+        $outputPath = $fixturesDir . '/revision_actual_' . $model . '.srt';
         $results[] = runBenchmark(
             $apiKey,
             $model,
-            $inputVtt,
+            $inputSrt,
             $inputPath,
             $outputPath,
             $sourceLang,
@@ -443,7 +448,7 @@ if (isset($opts['models'])) {
     exit($successes === [] ? 1 : 0);
 }
 
-$outputPath = $opts['output'] ?? $fixturesDir . '/revision_actual.vtt';
+$outputPath = $opts['output'] ?? $fixturesDir . '/revision_actual.srt';
 $model = $opts['model']
     ?? getenv('GEMINI_REVISION_MODEL')
     ?: 'gemini-3.5-flash';
@@ -451,13 +456,13 @@ $model = $opts['model']
 if (!$quiet) {
     echo "API key:  " . (getenv('GEMINI_API_KEY') ? 'env' : 'config/config.php') . "\n";
     echo "Input:    $inputPath\n";
-    echo "Expected: " . ($expectedVtt !== null ? $expectedPath : '(none)') . "\n";
+    echo "Expected: " . ($expectedExists ? $expectedPath : '(none)') . "\n";
 }
 
 $result = runBenchmark(
     $apiKey,
     $model,
-    $inputVtt,
+    $inputSrt,
     $inputPath,
     $outputPath,
     $sourceLang,

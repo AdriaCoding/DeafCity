@@ -3,7 +3,7 @@
 /**
  * Manual integration test: upload caption files to Vimeo text tracks.
  *
- * Uploads every .vtt file in data/captions/ to a sample video (delete-then-upload,
+ * Uploads every .srt file in data/captions/ to a sample video (delete-then-upload,
  * matching PublicationHandler). Does not print credentials or full API bodies.
  *
  * Usage: php studio/scripts/test_vimeo_publish.php
@@ -31,9 +31,9 @@ foreach ((new StudioConfig($studioConfigPath))->getSubtitleLanguages() as $lang)
 
 /** @var list<array{path: string, file: string, vimeoLang: string, label: string}> */
 $captions = [];
-foreach (glob($captionsDir . '/*.vtt') ?: [] as $path) {
+foreach (glob($captionsDir . '/*.srt') ?: [] as $path) {
     $file = basename($path);
-    if (!preg_match('/^[^.]+\.([^.]+)\.vtt$/', $file, $m)) {
+    if (!preg_match('/^[^.]+\.([^.]+)\.srt$/', $file, $m)) {
         fwrite(STDERR, "Skipping unrecognised filename: $file\n");
         continue;
     }
@@ -51,7 +51,7 @@ foreach (glob($captionsDir . '/*.vtt') ?: [] as $path) {
 }
 
 if ($captions === []) {
-    fwrite(STDERR, "No .vtt files found in data/captions/.\n");
+    fwrite(STDERR, "No .srt files found in data/captions/.\n");
     exit(1);
 }
 

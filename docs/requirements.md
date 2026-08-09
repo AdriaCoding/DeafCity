@@ -48,7 +48,7 @@ Since launching in Valencia (2020), the project has expanded to Mexico City (202
 
 The Studio follows this pipeline:
 
-1. **Intake** — Producer pastes a Vimeo URL or ID for a Video already on Vimeo ([ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)), uploads a WebVTT subtitle file (shipped today), and selects Sign language, Edition, and Subtitle language from `data/studio-config.json`. Creates `data/jobs/current/` with `job.json` and `draft.vtt`. Interpreter audio at intake and Tagging are deferred (Slices 3 and 5).
+1. **Intake** — Producer pastes a Vimeo URL or ID for a Video already on Vimeo ([ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)), uploads a subtitle file — WebVTT or SubRip, stored as SubRip ([ADR-0016](adr/0016-srt-primary-caption-format.md)) — and selects Sign language, Edition, and Subtitle language from `data/studio-config.json`. Creates `data/jobs/current/` with `job.json` and `draft.srt`. Interpreter audio at intake and Tagging are deferred (Slices 3 and 5).
 2. **Subtitle generation** — If Interpreter audio is provided (Slice 3), auto-generate Subtitles using Blind Wiki tools or Gemini with format validation. Skip if a subtitle file was uploaded at Intake.
 3. **Subtitle editing** — Interface to edit Subtitle text and timestamps, with video playback and real-time Subtitle preview.
 4. **Translation** — From the validated **Master subtitle**, generate Subtitles in other Subtitle languages. Each translation is reviewable and editable via the same editor (step 3).
@@ -60,7 +60,7 @@ The Studio follows this pipeline:
 ### Producer — subtitle pipeline
 
 - As a **Producer**, I want to register a Vimeo video I already uploaded and provide Interpreter audio so that Subtitles are generated automatically and I don't have to transcribe from scratch.
-- As a **Producer**, I want to register a Vimeo video I already uploaded with an existing WebVTT subtitle file so that I can skip generation and go straight to review.
+- As a **Producer**, I want to register a Vimeo video I already uploaded with an existing subtitle file (WebVTT or SubRip) so that I can skip generation and go straight to review.
 - As a **Producer**, I want to edit Subtitle text and timing while watching the Video with live preview so that I can verify the Subtitles match the performance.
 - As a **Producer**, I want to generate Subtitles in additional Subtitle languages from the Master subtitle so that the joke reaches a global audience.
 - As a **Producer**, I want to review and edit translated Subtitles in the same editor so that translations are accurate and well-timed.
@@ -98,12 +98,12 @@ The Studio follows this pipeline:
 ## Subtitle delivery
 
 - Vimeo hosts Video files (CDN, encoding).
-- **Subtitles** are served as caption files (WebVTT) from our server, synced by the player — not pulled from Vimeo native text tracks ([ADR-0001](adr/0001-server-hosted-subtitles.md)).
+- **Subtitles** are served as caption files (SubRip) from our server, synced by the player — not pulled from Vimeo native text tracks ([ADR-0001](adr/0001-server-hosted-subtitles.md)).
 - The legacy homepage still uses Vimeo `?texttrack=` today; the Preview site player replaces this approach.
 
 ## Vimeo upload at Publication
 
-The Studio uploads to Vimeo automatically as part of **Publication**: every reviewed caption file (WebVTT) as Vimeo text tracks — one track per Subtitle language via the [text tracks API](https://developer.vimeo.com/api/upload/texttracks). The Video file is already on Vimeo before Intake ([ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)); Publication does not upload the video. The same WebVTT files are also saved on the server for Preview playback ([ADR-0001](adr/0001-server-hosted-subtitles.md)). The Catalog and server caption files are always written; Vimeo uploads are best-effort per language.
+The Studio uploads to Vimeo automatically as part of **Publication**: every reviewed caption file (SubRip) as Vimeo text tracks — one track per Subtitle language via the [text tracks API](https://developer.vimeo.com/api/upload/texttracks). The Video file is already on Vimeo before Intake ([ADR-0003](adr/0003-producer-uploads-video-to-vimeo-directly.md)); Publication does not upload the video. The same SubRip files are also saved on the server for Preview playback ([ADR-0001](adr/0001-server-hosted-subtitles.md)). The Catalog and server caption files are always written; Vimeo uploads are best-effort per language.
 
 If any Vimeo text-track upload fails, Publication still writes the Catalog and server caption files, deletes the Job, and re-renders the Publication screen with a warning listing the affected languages. A hard failure (e.g. catalog not writable) shows an error on the Publication screen instead of a generic 500.
 

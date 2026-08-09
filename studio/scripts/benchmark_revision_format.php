@@ -21,8 +21,13 @@
  *   3. Text fidelity — for the fixture that has one, per-cue matches against the
  *      expected reference must be >= control - 1.
  *   4. Cross-arm agreement — both arms revise identical input, so their word
- *      streams should closely agree. Wide divergence means the prompt changed
- *      behaviour, not just format.
+ *      streams should agree about as well as two runs of the *same* prompt do.
+ *      The threshold is calibrated against that measured noise floor, not
+ *      chosen: this prompt tells the model to summarize and synthesize, so its
+ *      output is not a deterministic transform. Three runs of one prompt on the
+ *      85-cue Arabic caption produced 28/37/28 cues and pairwise agreement of
+ *      0.44/0.61/0.45 — mean 0.50. A cross-arm figure at or above that floor
+ *      says nothing is wrong; only one clearly below it would.
  *   5. Timing envelope — first start and last end preserved against the input,
  *      cues monotonic and non-overlapping.
  *
@@ -452,7 +457,15 @@ $gate['3 text fidelity'] = [$matchOk, $matchDetail];
 
 $agreements = array_column(array_filter($rows, fn($r) => isset($r['agreement'])), 'agreement');
 $minAgree = $agreements === [] ? 1.0 : min($agreements);
-$gate['4 cross-arm agreement'] = [$minAgree >= 0.55, sprintf('min %.2f', $minAgree)];
+/*
+ * 0.40 sits just under the lowest same-prompt pairing measured (0.44), so this
+ * catches a genuine behavioural divergence while ignoring ordinary generative
+ * variance. Re-measure before tightening it.
+ */
+$gate['4 cross-arm agreement'] = [
+    $minAgree >= 0.40,
+    sprintf('min %.2f (same-prompt floor ~0.50, lowest pairing 0.44)', $minAgree),
+];
 
 $envelopeBad = [];
 foreach ($rows as $r) {

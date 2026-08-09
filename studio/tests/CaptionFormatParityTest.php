@@ -4,7 +4,6 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\SrtParser;
-use Studio\SrtToVttConverter;
 use Studio\VttParser;
 use Studio\VttToSrtConverter;
 
@@ -12,9 +11,9 @@ use Studio\VttToSrtConverter;
  * Production-shaped WebVTT and SubRip intake files share the same cue model:
  * optional index, timestamp line, text. SRT uses commas in timestamps; VTT uses dots.
  *
- * This is the regression net for the VTT→SRT migration. Both conversion
- * directions must stay lossless at the cue level for the whole of it — if this
- * file goes red, captions are being corrupted somewhere.
+ * This is the regression net for the VTT→SRT migration: WebVTT uploads must
+ * convert losslessly, and stored SubRip must survive untouched. If this file
+ * goes red, captions are being corrupted somewhere.
  */
 class CaptionFormatParityTest extends TestCase
 {
@@ -32,9 +31,7 @@ class CaptionFormatParityTest extends TestCase
         $production = $this->vttParser->parse(
             __DIR__ . '/fixtures/production_sample.vtt'
         );
-        $converted = $this->vttParser->parseString(
-            (new SrtToVttConverter())->convert(__DIR__ . '/ALGER_FR_Hamida_1.srt')
-        );
+        $converted = $this->srtParser->parse(__DIR__ . '/ALGER_FR_Hamida_1.srt');
 
         $this->assertGreaterThan(0, count($production['cues']));
         $this->assertGreaterThan(0, count($converted['cues']));
@@ -73,36 +70,22 @@ class CaptionFormatParityTest extends TestCase
     }
 
     /**
-     * And the intake direction, still needed for VTT uploads.
+     * An uploaded SubRip file is stored byte-for-byte, so the only thing that
+     * can corrupt it is a needless round trip. Feeding it through the
+     * conversion path must be a no-op.
      */
-    public function test_srt_to_vtt_is_lossless_at_the_cue_level(): void
-    {
-        $path = __DIR__ . '/ALGER_FR_Hamida_1.srt';
-
-        $source = $this->srtParser->parse($path)['cues'];
-        $converted = $this->vttParser->parseString(
-            (new SrtToVttConverter())->convert($path)
-        )['cues'];
-
-        $this->assertGreaterThan(0, count($source));
-        $this->assertSameCues($source, $converted);
-    }
-
-    /**
-     * A caption crossing the boundary in both directions — the shape of an SRT
-     * upload that later gets re-served as SRT — must come back unchanged.
-     */
-    public function test_srt_survives_a_full_round_trip_through_vtt(): void
+    public function test_srt_through_the_conversion_path_is_a_no_op(): void
     {
         $path = __DIR__ . '/ALGER_FR_Hamida_1.srt';
 
         $original = $this->srtParser->parse($path)['cues'];
-        $vtt = (new SrtToVttConverter())->convert($path);
-        $backToSrt = (new VttToSrtConverter())->writeCues(
-            $this->vttParser->parseString($vtt)['cues']
-        );
+        $converted = $this->srtParser->parseString(
+            (new VttToSrtConverter())->convert($path)
+        )['cues'];
 
-        $this->assertSameCues($original, $this->srtParser->parseString($backToSrt)['cues']);
+        $this->assertGreaterThan(0, count($original));
+        $this->assertSameCues($original, $converted);
+        $this->assertSame(file_get_contents($path), (new VttToSrtConverter())->convert($path));
     }
 
     public function test_converted_srt_has_subrip_document_shape(): void

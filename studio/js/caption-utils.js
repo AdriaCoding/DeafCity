@@ -39,20 +39,6 @@
         );
     }
 
-    function generateVtt(cues) {
-        var parts = ['WEBVTT'];
-        cues.forEach(function (cue) {
-            var opaque = cue.opaque ? ' ' + cue.opaque : '';
-            var timing = formatTime(cue.start) + ' --> ' + formatTime(cue.end) + opaque;
-            var block = timing + '\n' + cue.text;
-            if (cue.id && cue.id !== '') {
-                block = cue.id + '\n' + block;
-            }
-            parts.push(block);
-        });
-        return parts.join('\n\n') + '\n';
-    }
-
     function generateSrt(cues) {
         var blocks = [];
         cues.forEach(function (cue, i) {
@@ -92,7 +78,6 @@
         formatTime: formatTime,
         parseTime: parseTime,
         formatTimeSrt: formatTimeSrt,
-        generateVtt: generateVtt,
         generateSrt: generateSrt,
         triggerDownload: triggerDownload,
         updateOverlapHighlights: updateOverlapHighlights,
