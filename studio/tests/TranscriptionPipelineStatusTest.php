@@ -4,6 +4,7 @@ namespace Studio\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Studio\JobManager;
+use Studio\StudioConfig;
 use Studio\TranscriptionPipelineStatus;
 
 class TranscriptionPipelineStatusTest extends TestCase
@@ -223,5 +224,51 @@ class TranscriptionPipelineStatusTest extends TestCase
         ]));
 
         $this->assertSame('translation_error', (new TranscriptionPipelineStatus($this->jobManager))->getState());
+    }
+
+    public function test_download_ready_when_dialect_source_reduces_to_english(): void
+    {
+        $configPath = sys_get_temp_dir() . '/studio-tps-config-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+        $studioConfig = new StudioConfig($configPath);
+        $studioConfig->addInputLanguage('en-us', 'Anglès (EUA)', 'en');
+
+        file_put_contents($this->jobsDir . '/current/job.json', json_encode([
+            'job_type'          => 'transcription',
+            'subtitle_language' => 'en-us',
+            'original_filename' => 'talk',
+            'intake_mode'       => 'generate',
+        ]));
+        file_put_contents($this->jobsDir . '/current/draft.srt', "1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
+
+        $status = new TranscriptionPipelineStatus($this->jobManager, $studioConfig);
+        $this->assertSame('download_ready', $status->getState());
+
+        unlink($configPath);
+        @unlink($configPath . '.lock');
+    }
+
+    public function test_translating_when_dialect_source_does_not_reduce_to_english(): void
+    {
+        $configPath = sys_get_temp_dir() . '/studio-tps-config-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+        $studioConfig = new StudioConfig($configPath);
+        $studioConfig->addInputLanguage('es-mx', 'Espanyol (Mèxic)', 'es');
+
+        file_put_contents($this->jobsDir . '/current/job.json', json_encode([
+            'job_type'          => 'transcription',
+            'subtitle_language' => 'es-mx',
+            'original_filename' => 'talk',
+            'intake_mode'       => 'generate',
+        ]));
+        file_put_contents($this->jobsDir . '/current/draft.srt', "1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        file_put_contents($this->jobsDir . '/current/revision_status.json', json_encode(['status' => 'done']));
+
+        $status = new TranscriptionPipelineStatus($this->jobManager, $studioConfig);
+        $this->assertSame('translating', $status->getState());
+
+        unlink($configPath);
+        @unlink($configPath . '.lock');
     }
 }

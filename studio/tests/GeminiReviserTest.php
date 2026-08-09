@@ -182,4 +182,33 @@ class GeminiReviserTest extends TestCase
         $this->assertStringContainsString('no header', $prompt);
         $this->assertStringNotContainsString('valid WebVTT file', $prompt);
     }
+
+    public function test_language_name_override_replaces_prompt_language_lookup(): void
+    {
+        $captured = null;
+        $reviser = $this->makeReviser(function (string $url, array $payload) use (&$captured): array {
+            $captured = $payload;
+            return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        });
+
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'es', 'Mexican Spanish (not Peninsular Spanish)');
+
+        $prompt = $captured['systemInstruction']['parts'][0]['text'];
+        $this->assertStringContainsString('Mexican Spanish (not Peninsular Spanish)', $prompt);
+        $this->assertStringNotContainsString('a Spanish subtitle file', $prompt);
+    }
+
+    public function test_empty_language_name_override_falls_back_to_lookup(): void
+    {
+        $captured = null;
+        $reviser = $this->makeReviser(function (string $url, array $payload) use (&$captured): array {
+            $captured = $payload;
+            return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        });
+
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'es', '');
+
+        $prompt = $captured['systemInstruction']['parts'][0]['text'];
+        $this->assertStringContainsString('a Spanish subtitle file', $prompt);
+    }
 }

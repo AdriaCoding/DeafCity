@@ -27,16 +27,17 @@ class BackgroundJobLauncher
         };
     }
 
-    public function launchTranscription($audioPath, $draftOutputPath, $statusPath, $language, $model = 'whisper-large-v3-turbo')
+    public function launchTranscription($audioPath, $draftOutputPath, $statusPath, $language, $model = 'whisper-large-v3-turbo', string $promptHint = '')
     {
         $cmd = sprintf(
-            'nohup %s --audio_file %s --draft_output %s --status_file %s --language %s --model %s > /dev/null 2>&1 &',
+            'nohup %s --audio_file %s --draft_output %s --status_file %s --language %s --model %s --initial_prompt %s > /dev/null 2>&1 &',
             escapeshellarg($this->scriptsDir . '/run_transcribe.sh'),
             escapeshellarg($audioPath),
             escapeshellarg($draftOutputPath),
             escapeshellarg($statusPath),
             escapeshellarg($language),
-            escapeshellarg($model)
+            escapeshellarg($model),
+            escapeshellarg($promptHint)
         );
         call_user_func($this->exec, $cmd);
     }
@@ -63,10 +64,13 @@ class BackgroundJobLauncher
         string $sourceLang,
         string $targetLang,
         string $model = 'whisper-large-v3-turbo',
+        string $promptHint = '',
+        string $dialectName = '',
     ): void {
         $cmd = sprintf(
             'GEMINI_API_KEY=%s nohup %s --audio_file %s --draft_output %s --status_file %s'
-            . ' --revision_status %s --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s > /dev/null 2>&1 &',
+            . ' --revision_status %s --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s'
+            . ' --initial_prompt %s --dialect_name %s > /dev/null 2>&1 &',
             escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_transcription_pipeline.sh'),
             escapeshellarg($audioPath),
@@ -78,6 +82,8 @@ class BackgroundJobLauncher
             escapeshellarg($sourceLang),
             escapeshellarg($targetLang),
             escapeshellarg($model),
+            escapeshellarg($promptHint),
+            escapeshellarg($dialectName),
         );
         call_user_func($this->exec, $cmd);
     }
@@ -108,9 +114,11 @@ class BackgroundJobLauncher
      * @param string $masterCaptionsPath
      * @param string $revisionStatusPath
      * @param string $translationStatusPath
-     * @param string $sourceLang
+     * @param string $sourceLang            passed to the revision prompt — may be a dialect id
      * @param string $jobDir
      * @param string[] $targetLangs
+     * @param string $translateSourceLang   base language forwarded to translation; defaults to $sourceLang
+     * @param string $dialectName           human-readable dialect name override for the revision prompt
      */
     public function launchRevisionAndTranslation(
         $masterCaptionsPath,
@@ -119,11 +127,14 @@ class BackgroundJobLauncher
         $sourceLang,
         $jobDir,
         array $targetLangs,
+        string $translateSourceLang = '',
+        string $dialectName = '',
     ): void {
         $targetLangsArg = implode(',', $targetLangs);
+        $effectiveTranslateSourceLang = $translateSourceLang !== '' ? $translateSourceLang : $sourceLang;
         $cmd = sprintf(
             'GEMINI_API_KEY=%s nohup %s --draft_path %s --revision_status %s --source_lang %s --job_dir %s'
-            . ' --translation_status %s --target_langs %s > /dev/null 2>&1 &',
+            . ' --translation_status %s --target_langs %s --translate_source_lang %s --dialect_name %s > /dev/null 2>&1 &',
             escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_revise.sh'),
             escapeshellarg($masterCaptionsPath),
@@ -132,6 +143,8 @@ class BackgroundJobLauncher
             escapeshellarg($jobDir),
             escapeshellarg($translationStatusPath),
             escapeshellarg($targetLangsArg),
+            escapeshellarg($effectiveTranslateSourceLang),
+            escapeshellarg($dialectName),
         );
         call_user_func($this->exec, $cmd);
     }

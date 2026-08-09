@@ -18,6 +18,7 @@ class BulkItemProcessor
         private readonly object $orchestrator,
         private readonly BackgroundJobLauncher $launcher,
         private readonly TranslationJobState $translationState,
+        private readonly StudioConfig $studioConfig,
         ?callable $waitForCompletion = null,
         private readonly ?GeminiReviser $reviser = null,
         ?CaptionIntakeNormalizer $normalizer = null,
@@ -112,9 +113,13 @@ class BulkItemProcessor
         if ($outcome['result'] === 'pipeline_transcribed') {
             if ($this->reviser !== null) {
                 $draftPath = $this->jobManager->draftPath();
+                $dialectId = $item['language'];
+                $baseLang = $this->studioConfig->getBaseLanguageFor($dialectId);
+                $dialectName = $dialectId !== $baseLang ? $this->studioConfig->languageLabelFor($dialectId) : '';
                 $revised = $this->reviser->revise(
                     (string) file_get_contents($draftPath),
-                    $item['language'],
+                    $dialectId,
+                    $dialectName,
                 );
                 file_put_contents($draftPath, $revised);
             }
@@ -154,11 +159,14 @@ class BulkItemProcessor
         $revisionPath = $this->jobManager->revisionStatePath();
         file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
 
-        if ($sourceLang === 'en') {
-            $this->translationState->initiate([], $sourceLang);
+        $baseLang = $this->studioConfig->getBaseLanguageFor($sourceLang);
+        $dialectName = $sourceLang !== $baseLang ? $this->studioConfig->languageLabelFor($sourceLang) : '';
+
+        if ($baseLang === 'en') {
+            $this->translationState->initiate([], $baseLang);
             $targetLangs = [];
         } else {
-            $this->translationState->initiate(['en'], $sourceLang);
+            $this->translationState->initiate(['en'], $baseLang);
             $targetLangs = ['en'];
         }
 
@@ -169,22 +177,26 @@ class BulkItemProcessor
             $sourceLang,
             dirname($this->jobManager->draftPath()),
             $targetLangs,
+            $baseLang,
+            $dialectName,
         );
     }
 
 
     private function startTranslationIfNeeded(string $sourceLang): void
     {
-        if ($sourceLang === 'en') {
-            $this->translationState->initiate([], $sourceLang);
+        $baseLang = $this->studioConfig->getBaseLanguageFor($sourceLang);
+
+        if ($baseLang === 'en') {
+            $this->translationState->initiate([], $baseLang);
             return;
         }
 
-        $this->translationState->initiate(['en'], $sourceLang);
+        $this->translationState->initiate(['en'], $baseLang);
         $this->launcher->launchTranslation(
             $this->jobManager->draftPath(),
             $this->jobManager->translationStatePath(),
-            $sourceLang,
+            $baseLang,
             dirname($this->jobManager->draftPath()),
             ['en'],
         );
@@ -192,7 +204,7 @@ class BulkItemProcessor
 
     private function resolveEnglishDraftPath(string $sourceLang): string
     {
-        if ($sourceLang === 'en') {
+        if ($this->studioConfig->getBaseLanguageFor($sourceLang) === 'en') {
             return $this->jobManager->draftPath();
         }
 
@@ -202,7 +214,7 @@ class BulkItemProcessor
     /** @return array{success: bool, reason?: string} */
     private function pollUntilReady(): array
     {
-        $status = new TranscriptionPipelineStatus($this->jobManager);
+        $status = new TranscriptionPipelineStatus($this->jobManager, $this->studioConfig);
         $deadline = time() + $this->pollTimeoutSeconds;
 
         while (time() < $deadline) {

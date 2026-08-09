@@ -71,6 +71,20 @@ class CatalogAction
         exit;
     }
 
+    public function addInputLanguage(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $result = (new \Studio\InputLanguageAddHandler(
+            $this->c->configMutation(),
+        ))->handle(
+            (string) ($_POST['input_language_code'] ?? ''),
+            (string) ($_POST['input_language_name'] ?? ''),
+            (string) ($_POST['input_language_base'] ?? ''),
+        );
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     public function handle(string $action): never
     {
         match ($action) {
@@ -89,6 +103,7 @@ class CatalogAction
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
+            'continguts-delete-input-language'       => $this->deleteItem('input_language'),
             'continguts-delete-typology'             => $this->deleteItem('typology'),
             'continguts-delete-caption'              => $this->deleteCaption(),
             'continguts-replace-caption'             => $this->replaceCaption(),
@@ -120,6 +135,7 @@ class CatalogAction
         $editions = $c->studioConfig->getEditions();
         $signLanguages = $c->studioConfig->getSignLanguages();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        $inputLanguages = $c->studioConfig->getInputLanguages();
         $typologies = $c->studioConfig->getTypologies();
         $catalogEditor = $c->catalogEditor();
         $catalogVideos = $catalogEditor->getAllVideos();
@@ -136,6 +152,7 @@ class CatalogAction
                 'editions',
                 'signLanguages',
                 'subtitleLanguages',
+                'inputLanguages',
                 'typologies',
                 'catalogEditor',
                 'referencedEditionIds',
@@ -729,6 +746,7 @@ class CatalogAction
                 'edition' => $this->c->configMutation()->removeEdition($id),
                 'sign_language' => $this->c->configMutation()->removeSignLanguage($id),
                 'subtitle_language' => $this->c->configMutation()->removeSubtitleLanguage($id),
+                'input_language' => $this->c->configMutation()->removeInputLanguage($id),
                 'typology' => $this->c->configMutation()->removeTypology($id),
                 default => throw new \InvalidArgumentException('Unknown delete type.'),
             };

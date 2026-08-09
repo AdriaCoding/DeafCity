@@ -120,7 +120,7 @@
                 <label for="subtitle_language">Llengua d'entrada (d'on ve l'àudio o el text)</label>
                 <select id="subtitle_language" name="subtitle_language" required>
                     <option value="">Seleccioneu…</option>
-                    <?php foreach ($subtitleLanguages as $option): ?>
+                    <?php foreach ($inputLanguages as $option): ?>
                         <option value="<?= htmlspecialchars($option['id']) ?>"
                             <?= ($values['subtitle_language'] ?? '') === $option['id'] ? 'selected' : '' ?>>
                             <?= htmlspecialchars($option['label']) ?>
@@ -155,7 +155,7 @@
                     'id' => $lang['id'] ?? '',
                     'label' => $lang['label'] ?? '',
                 ],
-                $subtitleLanguages
+                $inputLanguages
             ),
             JSON_UNESCAPED_UNICODE
         ) ?>;

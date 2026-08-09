@@ -26,6 +26,7 @@ class TranscriptionOrchestrator
     private AudioPreprocessor $audioPreprocessor;
     private BackgroundJobLauncher $launcher;
     private SrtParser $srtParser;
+    private StudioConfig $studioConfig;
     private string $groqApiKey;
     private string $groqModel;
     private string $localModel;
@@ -46,6 +47,7 @@ class TranscriptionOrchestrator
         AudioPreprocessor $audioPreprocessor,
         BackgroundJobLauncher $launcher,
         SrtParser $srtParser,
+        StudioConfig $studioConfig,
         string $groqApiKey,
         string $groqModel,
         string $localModel,
@@ -58,6 +60,7 @@ class TranscriptionOrchestrator
         $this->audioPreprocessor = $audioPreprocessor;
         $this->launcher = $launcher;
         $this->srtParser = $srtParser;
+        $this->studioConfig = $studioConfig;
         $this->groqApiKey = $groqApiKey;
         $this->groqModel = $groqModel;
         $this->localModel = $localModel;
@@ -73,11 +76,20 @@ class TranscriptionOrchestrator
     {
         $job = $this->jobManager->read();
         $language = $job['subtitle_language'] ?? 'es';
+        // Whisper (Groq and local) only understands base ISO-639-1 codes — a
+        // dialect id like 'es-mx' is reduced here before it reaches the ASR
+        // engine or the fallback launcher. Everything downstream in this
+        // class (logging, local fallback) works off that reduced value.
+        $baseLanguage = $this->studioConfig->getBaseLanguageFor($language);
+        // Best-effort vocabulary/spelling hint for the ASR prompt fields, and
+        // the display name forwarded to the local-fallback pipeline's own
+        // chained revision step. Empty for every non-dialect job.
+        $dialectHint = $language !== $baseLanguage ? $this->studioConfig->languageLabelFor($language) : '';
         $audioPath = $this->jobManager->interpreterAudioPath();
 
         // Blank key ⇒ no egress, go straight to local.
         if ($this->groqApiKey === '') {
-            return $this->fallbackToLocal($language, 'blank_key', 0.0);
+            return $this->fallbackToLocal($baseLanguage, 'blank_key', 0.0, $dialectHint);
         }
 
         $start = ($this->clock)();
@@ -85,16 +97,16 @@ class TranscriptionOrchestrator
 
         try {
             $flacPath = $this->audioPreprocessor->toGroqUpload($audioPath, dirname($audioPath));
-            $cues = $this->groqTranscriber->transcribe($flacPath, $this->groqModel, $language);
+            $cues = $this->groqTranscriber->transcribe($flacPath, $this->groqModel, $baseLanguage, $dialectHint);
         } catch (GroqTranscriptionException $e) {
             $this->deleteFlac($flacPath);
             $wall = ($this->clock)() - $start;
-            return $this->routeFailure($e, $language, $wall);
+            return $this->routeFailure($e, $baseLanguage, $wall, $dialectHint);
         } catch (\RuntimeException $e) {
             // ffmpeg preprocessing failed — local engine would read the same
             // bytes and reject them too. Fail loud.
             $this->deleteFlac($flacPath);
-            return $this->failLoud('bad_input', $language, ($this->clock)() - $start);
+            return $this->failLoud('bad_input', $baseLanguage, ($this->clock)() - $start);
         }
 
         $this->deleteFlac($flacPath);
@@ -106,7 +118,7 @@ class TranscriptionOrchestrator
         $engine = 'groq:' . $this->groqModel;
         $this->jobManager->update(['transcription_engine' => $engine]);
 
-        $this->log($engine, $this->groqModel, $language, $wall, null);
+        $this->log($engine, $this->groqModel, $baseLanguage, $wall, null);
 
         return $this->pipelineTargetLang !== ''
             ? ['result' => 'pipeline_transcribed']
@@ -116,23 +128,23 @@ class TranscriptionOrchestrator
     /**
      * @return Result
      */
-    private function routeFailure(GroqTranscriptionException $e, string $language, float $wall): array
+    private function routeFailure(GroqTranscriptionException $e, string $language, float $wall, string $dialectHint = ''): array
     {
         return match ($e->category()) {
             GroqTranscriptionException::CATEGORY_TRANSPORT,
             GroqTranscriptionException::CATEGORY_EMPTY
-                => $this->fallbackToLocal($language, $e->category(), $wall),
+                => $this->fallbackToLocal($language, $e->category(), $wall, $dialectHint),
             GroqTranscriptionException::CATEGORY_AUTH,
             GroqTranscriptionException::CATEGORY_BAD_INPUT
                 => $this->failLoud($e->category(), $language, $wall),
-            default => $this->fallbackToLocal($language, 'transport', $wall),
+            default => $this->fallbackToLocal($language, 'transport', $wall, $dialectHint),
         };
     }
 
     /**
      * @return Result
      */
-    private function fallbackToLocal(string $language, string $category, float $wall): array
+    private function fallbackToLocal(string $language, string $category, float $wall, string $dialectHint = ''): array
     {
         // Reset the status so the loading screen polls a clean 'pending'.
         file_put_contents(
@@ -155,6 +167,8 @@ class TranscriptionOrchestrator
                 sourceLang:           $language,
                 targetLang:           $this->pipelineTargetLang,
                 model:                $this->localModel,
+                promptHint:           $dialectHint,
+                dialectName:          $dialectHint,
             );
         } else {
             $this->launcher->launchTranscription(
@@ -163,6 +177,7 @@ class TranscriptionOrchestrator
                 $this->jobManager->transcriptionStatusPath(),
                 $language,
                 $this->localModel,
+                $dialectHint,
             );
         }
 

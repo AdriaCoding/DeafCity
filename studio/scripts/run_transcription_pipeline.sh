@@ -14,6 +14,7 @@ SCRIPTS_DIR="$(dirname "$0")"
 # ── Parse args ───────────────────────────────────────────────────────────────
 AUDIO_FILE="" DRAFT_OUTPUT="" STATUS_FILE="" REVISION_STATUS="" TRANSLATION_STATUS=""
 JOB_DIR="" SOURCE_LANG="" TARGET_LANG="" MODEL="whisper-large-v3-turbo"
+INITIAL_PROMPT="" DIALECT_NAME=""
 PREV=""
 for ARG in "$@"; do
     case "$PREV" in
@@ -26,6 +27,8 @@ for ARG in "$@"; do
         --source_lang)        SOURCE_LANG="$ARG" ;;
         --target_lang)        TARGET_LANG="$ARG" ;;
         --model)              MODEL="$ARG" ;;
+        --initial_prompt)     INITIAL_PROMPT="$ARG" ;;
+        --dialect_name)       DIALECT_NAME="$ARG" ;;
     esac
     PREV="$ARG"
 done
@@ -39,7 +42,8 @@ python /srv/www/deaf.city/public_html/studio/scripts/transcribe.py \
     --draft_output "$DRAFT_OUTPUT" \
     --status_file "$STATUS_FILE" \
     --language    "$SOURCE_LANG" \
-    --model       "$MODEL"
+    --model       "$MODEL" \
+    --initial_prompt "$INITIAL_PROMPT"
 EXIT=$?
 
 if [ $EXIT -ne 0 ]; then
@@ -77,4 +81,5 @@ GEMINI_API_KEY="$GEMINI_API_KEY" nohup bash "$SCRIPTS_DIR/run_revise.sh" \
     --job_dir           "$JOB_DIR" \
     --translation_status "$TRANSLATION_STATUS" \
     --target_langs      "$TARGET_LANGS_ARG" \
+    --dialect_name      "$DIALECT_NAME" \
     > /dev/null 2>&1 &

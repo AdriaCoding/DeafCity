@@ -141,14 +141,23 @@ class BulkIntakeHandler
         return bin2hex(random_bytes(8));
     }
 
+    /**
+     * The Shorten bulk flow (allowAudio: false) stays on base languages only —
+     * it has no ASR step and its own intake dropdown never offers dialects.
+     * The transcription bulk flow accepts the combined dialect+base list.
+     */
     private function isValidLanguage(string $id): bool
     {
-        foreach ($this->studioConfig->getSubtitleLanguages() as $lang) {
-            if (($lang['id'] ?? '') === $id) {
-                return true;
+        if (!$this->allowAudio) {
+            foreach ($this->studioConfig->getSubtitleLanguages() as $lang) {
+                if (($lang['id'] ?? '') === $id) {
+                    return true;
+                }
             }
+
+            return false;
         }
 
-        return false;
+        return $this->studioConfig->isValidInputLanguage($id);
     }
 }

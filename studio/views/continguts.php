@@ -643,6 +643,7 @@
         <button class="tab-btn" data-tab="editions">Ciutats</button>
         <button class="tab-btn" data-tab="languages">Llengues de signes</button>
         <button class="tab-btn" data-tab="subtitle-languages">Llengues verbals</button>
+        <button class="tab-btn" data-tab="input-languages">Dialectes d'entrada</button>
         <button class="tab-btn" data-tab="typologies">Tipologies</button>
     </div>
 
@@ -914,6 +915,58 @@
             </div>
         </div>
     </div>
+
+    <!-- ══ Dialectes d'entrada ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-input-languages">
+        <table class="subtitle-lang-table">
+            <thead>
+                <tr>
+                    <th class="col-name">Llengua</th>
+                    <th class="col-code">Codi</th>
+                    <th class="col-code">Llengua base</th>
+                    <th class="col-actions" aria-label="Accions"></th>
+                </tr>
+            </thead>
+            <tbody class="config-list">
+            <?php foreach ($inputLanguages as $il): ?>
+            <tr class="config-entry" data-id="<?= htmlspecialchars($il['id'], ENT_QUOTES) ?>" data-type="input-language">
+                <td class="config-entry-label"><?= htmlspecialchars($il['label']) ?></td>
+                <td class="config-id"><?= htmlspecialchars($il['id']) ?></td>
+                <td class="config-id"><?= htmlspecialchars($il['base_language'] ?? '') ?></td>
+                <td class="actions-cell">
+                    <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <!-- Add input language -->
+        <button class="add-trigger-btn" id="input-lang-add-trigger">+ Afegir dialecte d'entrada…</button>
+        <div class="config-new-panel" id="input-lang-new-panel">
+            <h3>Nou dialecte d'entrada</h3>
+            <p class="config-add-error" id="input-lang-add-error" role="alert"></p>
+
+            <label class="field-label" for="input_lang_code_c">Codi (p. ex. es-mx)</label>
+            <input type="text" id="input_lang_code_c" class="config-input" autocomplete="off" placeholder="es-mx">
+
+            <label class="field-label" for="input_lang_name_c">Nom</label>
+            <input type="text" id="input_lang_name_c" class="config-input" autocomplete="off" placeholder="Espanyol (Mèxic)">
+
+            <label class="field-label" for="input_lang_base_c">Llengua base</label>
+            <select id="input_lang_base_c" class="config-input">
+                <option value="">Seleccioneu…</option>
+                <?php foreach ($subtitleLanguages as $sl): ?>
+                <option value="<?= htmlspecialchars($sl['id'], ENT_QUOTES) ?>"><?= htmlspecialchars($sl['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
+
+            <div class="config-new-actions">
+                <button type="button" class="btn-secondary" id="input-lang-add-btn-c">Afegir</button>
+                <button type="button" class="btn-secondary" id="input-lang-cancel-btn-c" style="color:var(--studio-text-muted)">Cancel·la</button>
+            </div>
+        </div>
+    </div>
 </main>
 
 <div class="modal-overlay" id="video-add-modal" hidden aria-hidden="true">
@@ -1089,6 +1142,9 @@
         },
         'subtitle-language': {
             delete: 'continguts-delete-subtitle-language'
+        },
+        'input-language': {
+            delete: 'continguts-delete-input-language'
         },
         'typology': {
             save: 'continguts-save-typology-label',
@@ -2375,6 +2431,73 @@
             })
             .catch(function () { subtitleLangAddError.textContent = 'Error de connexió.'; })
             .finally(function () { subtitleLangAddBtn.disabled = false; });
+    });
+
+    // ── Add input language ──────────────────────────────────────────────────
+    var inputLangTrigger = document.getElementById('input-lang-add-trigger');
+    var inputLangPanel = document.getElementById('input-lang-new-panel');
+    var inputLangAddBtn = document.getElementById('input-lang-add-btn-c');
+    var inputLangCancelBtn = document.getElementById('input-lang-cancel-btn-c');
+    var inputLangAddError = document.getElementById('input-lang-add-error');
+    var inputLangCode = document.getElementById('input_lang_code_c');
+    var inputLangName = document.getElementById('input_lang_name_c');
+    var inputLangBase = document.getElementById('input_lang_base_c');
+
+    function resetInputLangForm() {
+        inputLangAddError.textContent = '';
+        inputLangCode.value = '';
+        inputLangName.value = '';
+        inputLangBase.value = '';
+    }
+
+    inputLangTrigger.addEventListener('click', function () {
+        inputLangPanel.classList.add('is-open');
+        resetInputLangForm();
+        inputLangCode.focus();
+    });
+    inputLangCancelBtn.addEventListener('click', function () {
+        inputLangPanel.classList.remove('is-open');
+        resetInputLangForm();
+    });
+
+    inputLangAddBtn.addEventListener('click', function () {
+        inputLangAddError.textContent = '';
+        var code = inputLangCode.value.trim();
+        var name = inputLangName.value.trim();
+        var base = inputLangBase.value;
+        if (!code || !name || !base) {
+            inputLangAddError.textContent = 'Indiqueu un codi, un nom i una llengua base.';
+            return;
+        }
+        inputLangAddBtn.disabled = true;
+        var body = new FormData();
+        body.append('input_language_code', code);
+        body.append('input_language_name', name);
+        body.append('input_language_base', base);
+        fetch('?action=add-input-language', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) {
+                    inputLangAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir el dialecte d\'entrada.';
+                    return;
+                }
+                var list = document.querySelector('#tab-input-languages .config-list');
+                var row = document.createElement('tr');
+                row.className = 'config-entry';
+                row.dataset.id = data.id;
+                row.dataset.type = 'input-language';
+                row.innerHTML = '<td class="config-entry-label">' + escHtml(data.label) + '</td>' +
+                    '<td class="config-id">' + escHtml(data.id) + '</td>' +
+                    '<td class="config-id">' + escHtml(data.baseLanguage) + '</td>' +
+                    '<td class="actions-cell">' +
+                    '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>' +
+                    '</td>';
+                list.appendChild(row);
+                attachConfigEntryListeners(row);
+                inputLangCancelBtn.click();
+            })
+            .catch(function () { inputLangAddError.textContent = 'Error de connexió.'; })
+            .finally(function () { inputLangAddBtn.disabled = false; });
     });
 
     // ── Helpers ───────────────────────────────────────────────────────────────

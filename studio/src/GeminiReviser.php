@@ -103,20 +103,24 @@ PROMPT;
     }
 
     /**
+     * @param string $languageNameOverride  when non-empty, used verbatim as the
+     *   prompt's language name instead of the PROMPT_LANGUAGE_NAMES lookup —
+     *   lets a dialect's admin-entered label (e.g. "Mexican Spanish") drive
+     *   the prompt without a code change per dialect.
      * @throws GeminiRevisionException
      */
-    public function revise(string $srt, string $sourceLang): string
+    public function revise(string $srt, string $sourceLang, string $languageNameOverride = ''): string
     {
-        return $this->callWithRetry($srt, $sourceLang);
+        return $this->callWithRetry($srt, $sourceLang, $languageNameOverride);
     }
 
     /**
      * @throws GeminiRevisionException
      */
-    private function callWithRetry(string $srt, string $sourceLang): string
+    private function callWithRetry(string $srt, string $sourceLang, string $languageNameOverride = ''): string
     {
         $url = sprintf(self::ENDPOINT_TEMPLATE, $this->model) . '?key=' . urlencode($this->apiKey);
-        $payload = $this->buildPayload($srt, $sourceLang);
+        $payload = $this->buildPayload($srt, $sourceLang, $languageNameOverride);
         $lastError = '';
 
         for ($attempt = 0; $attempt < self::MAX_ATTEMPTS; $attempt++) {
@@ -143,9 +147,10 @@ PROMPT;
         throw new GeminiRevisionException("Gemini API failed after " . self::MAX_ATTEMPTS . " attempts: $lastError");
     }
 
-    private function buildPayload(string $srt, string $sourceLang): array
+    private function buildPayload(string $srt, string $sourceLang, string $languageNameOverride = ''): array
     {
-        $systemPrompt = sprintf(self::SYSTEM_PROMPT_TEMPLATE, $this->promptLanguageName($sourceLang));
+        $languageName = $languageNameOverride !== '' ? $languageNameOverride : $this->promptLanguageName($sourceLang);
+        $systemPrompt = sprintf(self::SYSTEM_PROMPT_TEMPLATE, $languageName);
 
         return [
             'systemInstruction' => [

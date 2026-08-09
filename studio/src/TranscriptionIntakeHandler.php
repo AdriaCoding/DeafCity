@@ -134,11 +134,15 @@ class TranscriptionIntakeHandler
         $revisionPath = $this->jobManager->revisionStatePath();
         file_put_contents($revisionPath, json_encode(['status' => 'pending']) . "\n");
 
-        if ($this->shouldSkipEnglishTranslation($values['subtitle_language'])) {
-            $this->translationState->initiate([], $values['subtitle_language']);
+        $dialectId = $values['subtitle_language'];
+        $baseLang = $this->studioConfig->getBaseLanguageFor($dialectId);
+        $dialectName = $dialectId !== $baseLang ? $this->studioConfig->languageLabelFor($dialectId) : '';
+
+        if ($this->shouldSkipEnglishTranslation($dialectId)) {
+            $this->translationState->initiate([], $baseLang);
             $targetLangs = [];
         } else {
-            $this->translationState->initiate(['en'], $values['subtitle_language']);
+            $this->translationState->initiate(['en'], $baseLang);
             $targetLangs = ['en'];
         }
 
@@ -146,9 +150,11 @@ class TranscriptionIntakeHandler
             $this->jobManager->draftPath(),
             $revisionPath,
             $this->jobManager->translationStatePath(),
-            $values['subtitle_language'],
+            $dialectId,
             dirname($this->jobManager->draftPath()),
             $targetLangs,
+            $baseLang,
+            $dialectName,
         );
 
         return ['errors' => [], 'values' => $values, 'created' => true];
@@ -157,16 +163,11 @@ class TranscriptionIntakeHandler
 
     private function isValidLanguage(string $id): bool
     {
-        foreach ($this->studioConfig->getSubtitleLanguages() as $lang) {
-            if (($lang['id'] ?? '') === $id) {
-                return true;
-            }
-        }
-        return false;
+        return $this->studioConfig->isValidInputLanguage($id);
     }
 
     private function shouldSkipEnglishTranslation(string $sourceLang): bool
     {
-        return $sourceLang === 'en';
+        return $this->studioConfig->getBaseLanguageFor($sourceLang) === 'en';
     }
 }

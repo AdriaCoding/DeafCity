@@ -83,6 +83,7 @@ def main() -> None:
     parser.add_argument("--status_file", required=True)
     parser.add_argument("--language", required=True)
     parser.add_argument("--model", default="whisper-large-v3-turbo")
+    parser.add_argument("--initial_prompt", default="")
     args = parser.parse_args()
 
     model_name = resolve_model(args.model)
@@ -116,6 +117,7 @@ def main() -> None:
             word_timestamps=True,
             vad_filter=True,
             vad_parameters=dict(min_silence_duration_ms=500),
+            initial_prompt=args.initial_prompt or None,
         )
 
         # Flatten word-level timestamps from all segments.

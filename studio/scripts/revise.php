@@ -26,12 +26,14 @@ $opts = getopt('', [
     'revision_status:',
     'source_lang:',
     'job_dir:',
+    'dialect_name:',
 ]);
 
 $draftPath      = $opts['draft_path']       ?? '';
 $revisionStatus = $opts['revision_status']  ?? '';
 $sourceLang     = $opts['source_lang']      ?? '';
 $jobDir         = $opts['job_dir']          ?? '';
+$dialectName    = $opts['dialect_name']     ?? '';
 
 if ($draftPath === '' || $revisionStatus === '' || $sourceLang === '' || $jobDir === '') {
     fwrite(STDERR, "Missing required arguments.\n");
@@ -94,7 +96,7 @@ try {
      * dropped blank lines, restarted numbering, the odd WebVTT habit — and all
      * of that is recoverable without failing the whole revision.
      */
-    $revised = $srtParser->canonicalize($reviser->revise($srtParser->write($parsed['cues']), $sourceLang));
+    $revised = $srtParser->canonicalize($reviser->revise($srtParser->write($parsed['cues']), $sourceLang, $dialectName));
 
     $tmpPath = $jobDir . '/.revision_tmp.srt';
     if (file_put_contents($tmpPath, $revised) === false) {

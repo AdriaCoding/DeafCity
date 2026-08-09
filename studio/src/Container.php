@@ -96,6 +96,7 @@ class Container
             audioPreprocessor: new AudioPreprocessor(),
             launcher: $this->launcher,
             srtParser: new SrtParser(),
+            studioConfig: $this->studioConfig,
             groqApiKey: GROQ_API_KEY,
             groqModel: GROQ_TRANSCRIBE_MODEL,
             localModel: STUDIO_LOCAL_TRANSCRIBE_MODEL,

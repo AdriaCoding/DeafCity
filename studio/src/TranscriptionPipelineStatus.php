@@ -6,6 +6,7 @@ class TranscriptionPipelineStatus
 {
     public function __construct(
         private readonly JobManager $jobManager,
+        private readonly ?StudioConfig $studioConfig = null,
         private readonly bool $alwaysSkipTranslation = false,
     ) {}
 
@@ -60,7 +61,10 @@ class TranscriptionPipelineStatus
     private function isEnglishSource(): bool
     {
         $job = $this->jobManager->read();
+        $lang = $job['subtitle_language'] ?? '';
 
-        return ($job['subtitle_language'] ?? '') === 'en';
+        return $this->studioConfig !== null
+            ? $this->studioConfig->getBaseLanguageFor($lang) === 'en'
+            : $lang === 'en';
     }
 }

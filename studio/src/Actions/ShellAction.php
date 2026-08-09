@@ -46,23 +46,12 @@ class ShellAction
             exit;
         }
 
-        $pipelineStatus = (new TranscriptionPipelineStatus($c->jobManager))->getState();
+        $pipelineStatus = (new TranscriptionPipelineStatus($c->jobManager, $c->studioConfig))->getState();
         $originalFilename = $job['original_filename'] ?? 'transcripció';
-        $englishTranslationSkipped = ($job['subtitle_language'] ?? '') === 'en';
-        $sourceLanguageLabel = $this->languageLabel((string) ($job['subtitle_language'] ?? ''));
+        $englishTranslationSkipped = $c->studioConfig->getBaseLanguageFor($job['subtitle_language'] ?? '') === 'en';
+        $sourceLanguageLabel = $c->studioConfig->languageLabelFor((string) ($job['subtitle_language'] ?? ''));
         require $this->view('transcription-loading.php');
         exit;
-    }
-
-    private function languageLabel(string $id): string
-    {
-        foreach ($this->c->studioConfig->getSubtitleLanguages() as $lang) {
-            if (($lang['id'] ?? '') === $id) {
-                return (string) ($lang['label'] ?? $id);
-            }
-        }
-
-        return $id;
     }
 
     private function view(string $name): string

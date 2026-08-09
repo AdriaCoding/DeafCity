@@ -89,6 +89,7 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: $waitForCompletion ?? function (): array {
                 return ['success' => true];
             },
@@ -174,6 +175,7 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: function (): array {
                 file_put_contents($this->jobManager->draftPath(), "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
                 file_put_contents($this->jobManager->draftPathForLang('en'), "1\n00:00:01,000 --> 00:00:04,000\nHello\n");
@@ -221,6 +223,7 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: function (): array {
                 file_put_contents($this->jobManager->draftPathForLang('en'), "1\n00:00:01,000 --> 00:00:04,000\nHello\n");
                 return ['success' => true];
@@ -272,6 +275,7 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: null,
             pollTimeoutSeconds: 4,
         );

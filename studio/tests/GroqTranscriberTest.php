@@ -62,6 +62,36 @@ class GroqTranscriberTest extends TestCase
         $this->assertSame('', $cues[0]['opaque']);
     }
 
+    public function test_prompt_defaults_to_empty_string_in_request(): void
+    {
+        $captured = null;
+        $http = function (array $req) use (&$captured) {
+            $captured = $req;
+            return ['status' => 200, 'body' => $this->wordsJson([
+                ['word' => 'Hola', 'start' => 0.0, 'end' => 0.5],
+            ])];
+        };
+
+        $this->transcriber($http)->transcribe($this->audioPath, 'whisper-large-v3-turbo', 'es');
+
+        $this->assertSame('', $captured['prompt']);
+    }
+
+    public function test_prompt_is_forwarded_in_request_when_provided(): void
+    {
+        $captured = null;
+        $http = function (array $req) use (&$captured) {
+            $captured = $req;
+            return ['status' => 200, 'body' => $this->wordsJson([
+                ['word' => 'Hola', 'start' => 0.0, 'end' => 0.5],
+            ])];
+        };
+
+        $this->transcriber($http)->transcribe($this->audioPath, 'whisper-large-v3-turbo', 'es', 'Mexican Spanish');
+
+        $this->assertSame('Mexican Spanish', $captured['prompt']);
+    }
+
     public function test_pause_between_words_produces_two_cues(): void
     {
         $http = fn(array $req) => [
