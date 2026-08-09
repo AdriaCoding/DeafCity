@@ -30,29 +30,37 @@ The content is humorous in nature. You must optimize for comedic timing—ensure
 ---
 
 # Objective
-Review the provided subtitle text and output a perfectly timed, semantically coherent, and strictly formatted WebVTT file.
+Review the provided subtitle text and output a perfectly timed, semantically coherent, and strictly formatted SubRip (.srt) file.
 
 ---
 
 # Strict Constraints
 
-### 1. Formatting & Length
+### 1. SubRip Structure (MANDATORY)
+Each cue consists of exactly three parts, on consecutive lines with no blank line between them:
+1. **Sequential index** on its own line. The first cue is `1` and every following cue increases by exactly one, with no gaps or repeats — renumber from scratch after any merge or split.
+2. **Timing line** of the form `HH:MM:SS,mmm --> HH:MM:SS,mmm`. The separator before the milliseconds is a **comma**, never a period. Hours, minutes and seconds are always two digits; milliseconds always three.
+3. **Cue text.**
+
+Cues are separated by exactly one blank line. The file has **no header**: it must begin directly with the index `1`, never with `WEBVTT` or any other preamble. Do not emit cue settings such as `align:` or `position:` — SubRip has no equivalent and they would corrupt the timing line.
+
+### 2. Formatting & Length
 * **Single Line Only:** Each subtitle cue MUST consist of a single line of text (absolutely no internal line breaks/newlines within a cue).
 * **Character Limit:** Each line MUST be less than or equal to 60 characters (<= 60 chars). When in doubt about whether a line is at the limit, split it. A 55-character line is always safe; a 61-character line always fails.
 
-### 2. Linguistic Segmentation
+### 3. Linguistic Segmentation
 * **Avoid Fragmentation:** Do not keep unnatural, mid-sentence breaks. Merge consecutive cues if they form a single coherent sentence or idea, provided they stay under the 60-character limit. **Default to merging**—split only when the combined text would exceed 60 characters or a meaningful pause clearly warrants it.
 * **Natural Splits:** If a caption exceeds 60 characters and must be split, the split must occur only at natural linguistic boundaries (e.g., clauses, commas, or phrase boundaries).
 * **No Hanging Connectors:** NEVER end a subtitle line with a conjunction (e.g., and, but, or), a relative pronoun/adverb (e.g., that, when, who, which), or a preposition (e.g., about, with, for) if the phrase or clause continues onto the next line. Either push the connector word to the beginning of the next line, or pull enough text up to complete the grammatical thought.
 * **No Stranded Subjects:** NEVER end a cue on a subject or object noun phrase whose main verb appears in the next cue. For example, do not split "and the family" / "buried him"—keep "and the family buried him" together, or move the split point earlier so the cue ends at a clause boundary.
 
-### 3. Timing & Chronology
+### 4. Timing & Chronology
 * **Merged Cues:** New Start Timestamp = Start of first cue | New End Timestamp = End of last cue.
 * **Split Cues:** The End timestamp of the first part MUST perfectly match the Start timestamp of the next part.
 * **Proportional Splitting:** Divide the time duration proportionally based on the character count of each split relative to the total character count of the original cue.
 * **Overlap Correction:** Scan for, flag, and eliminate any chronological timestamp overlaps between consecutive cues.
 
-### 4. Synthesis & Natural Phrasing (CRITICAL)
+### 5. Synthesis & Natural Phrasing (CRITICAL)
 * **Summarize and Synthesize:** The input is a literal voiceover interpretation of sign language, which is often wordy or repetitive. You MUST summarize and synthesize the text to be concise, punchy, and natural.
 * **Cut the Fluff:** Remove filler words, false starts, and unnecessary repetitions. Say the same thing with fewer words.
 * **Preserve Meaning & Humor:** While shortening the text, you must retain the exact narrative meaning, the tone, and the comedic punchlines.
@@ -64,8 +72,8 @@ Review the provided subtitle text and output a perfectly timed, semantically coh
 
 # Output Format
 Return JSON only. Use the following schema:
-{"revised_vtt": "<the complete corrected WebVTT file as a string>"}
-The value of revised_vtt must be a valid WebVTT file beginning with WEBVTT.
+{"revised_srt": "<the complete corrected SubRip file as a string>"}
+The value of revised_srt must be a valid SubRip file: it begins with the index `1`, uses comma millisecond separators, and contains no WEBVTT header.
 PROMPT;
 
     private string $apiKey;
@@ -97,18 +105,18 @@ PROMPT;
     /**
      * @throws GeminiRevisionException
      */
-    public function revise(string $vtt, string $sourceLang): string
+    public function revise(string $srt, string $sourceLang): string
     {
-        return $this->callWithRetry($vtt, $sourceLang);
+        return $this->callWithRetry($srt, $sourceLang);
     }
 
     /**
      * @throws GeminiRevisionException
      */
-    private function callWithRetry(string $vtt, string $sourceLang): string
+    private function callWithRetry(string $srt, string $sourceLang): string
     {
         $url = sprintf(self::ENDPOINT_TEMPLATE, $this->model) . '?key=' . urlencode($this->apiKey);
-        $payload = $this->buildPayload($vtt, $sourceLang);
+        $payload = $this->buildPayload($srt, $sourceLang);
         $lastError = '';
 
         for ($attempt = 0; $attempt < self::MAX_ATTEMPTS; $attempt++) {
@@ -135,7 +143,7 @@ PROMPT;
         throw new GeminiRevisionException("Gemini API failed after " . self::MAX_ATTEMPTS . " attempts: $lastError");
     }
 
-    private function buildPayload(string $vtt, string $sourceLang): array
+    private function buildPayload(string $srt, string $sourceLang): array
     {
         $systemPrompt = sprintf(self::SYSTEM_PROMPT_TEMPLATE, $this->promptLanguageName($sourceLang));
 
@@ -144,16 +152,16 @@ PROMPT;
                 'parts' => [['text' => $systemPrompt]],
             ],
             'contents' => [[
-                'parts' => [['text' => $vtt]],
+                'parts' => [['text' => $srt]],
             ]],
             'generationConfig' => [
                 'responseMimeType' => 'application/json',
                 'responseSchema' => [
                     'type' => 'OBJECT',
                     'properties' => [
-                        'revised_vtt' => ['type' => 'STRING'],
+                        'revised_srt' => ['type' => 'STRING'],
                     ],
-                    'required' => ['revised_vtt'],
+                    'required' => ['revised_srt'],
                 ],
             ],
         ];
@@ -175,15 +183,15 @@ PROMPT;
         }
 
         $parsed = json_decode($text, true);
-        if (!is_array($parsed) || !isset($parsed['revised_vtt']) || !is_string($parsed['revised_vtt'])) {
-            throw new GeminiRevisionException("Gemini response JSON missing 'revised_vtt' string: $text");
+        if (!is_array($parsed) || !isset($parsed['revised_srt']) || !is_string($parsed['revised_srt'])) {
+            throw new GeminiRevisionException("Gemini response JSON missing 'revised_srt' string: $text");
         }
 
-        if ($parsed['revised_vtt'] === '') {
-            throw new GeminiRevisionException("Gemini returned empty revised_vtt");
+        if ($parsed['revised_srt'] === '') {
+            throw new GeminiRevisionException("Gemini returned empty revised_srt");
         }
 
-        return $parsed['revised_vtt'];
+        return $parsed['revised_srt'];
     }
 
     private function promptLanguageName(string $code): string

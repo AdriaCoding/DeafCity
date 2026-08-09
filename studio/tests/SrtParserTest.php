@@ -193,6 +193,64 @@ class SrtParserTest extends TestCase
         }
     }
 
+    public function test_canonicalize_recovers_missing_blank_line_separators(): void
+    {
+        $loose = "1\n00:00:01,000 --> 00:00:02,000\nOne\n2\n00:00:03,000 --> 00:00:04,000\nTwo\n";
+
+        $cues = $this->parser->parseString($this->parser->canonicalize($loose))['cues'];
+
+        $this->assertCount(2, $cues);
+        $this->assertSame('One', $cues[0]['text']);
+        $this->assertSame('Two', $cues[1]['text']);
+        $this->assertSame(3.0, $cues[1]['start']);
+    }
+
+    public function test_canonicalize_renumbers_wrong_indices(): void
+    {
+        $loose = "7\n00:00:01,000 --> 00:00:02,000\nOne\n\n7\n00:00:03,000 --> 00:00:04,000\nTwo\n";
+
+        $output = $this->parser->canonicalize($loose);
+
+        $this->assertStringStartsWith("1\n", $output);
+        $this->assertStringContainsString("\n\n2\n", $output);
+    }
+
+    public function test_canonicalize_accepts_missing_indices(): void
+    {
+        $loose = "00:00:01,000 --> 00:00:02,000\nOne\n\n00:00:03,000 --> 00:00:04,000\nTwo\n";
+
+        $cues = $this->parser->parseString($this->parser->canonicalize($loose))['cues'];
+
+        $this->assertCount(2, $cues);
+        $this->assertSame('1', $cues[0]['id']);
+        $this->assertSame('2', $cues[1]['id']);
+    }
+
+    /**
+     * If the model ignores the format instruction and emits WebVTT anyway, the
+     * cues are still recoverable rather than the whole revision failing.
+     */
+    public function test_canonicalize_recovers_webvtt_flavoured_output(): void
+    {
+        $loose = "WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.500\nOne\n\n2\n00:00:03.000 --> 00:00:04.000\nTwo\n";
+
+        $output = $this->parser->canonicalize($loose);
+
+        $this->assertStringNotContainsString('WEBVTT', $output);
+        $this->assertStringContainsString('00:00:01,000 --> 00:00:02,500', $output);
+        $this->assertCount(2, $this->parser->parseString($output)['cues']);
+    }
+
+    public function test_canonicalize_preserves_a_well_formed_file(): void
+    {
+        $good = file_get_contents(__DIR__ . '/ALGER_FR_Hamida_1.srt');
+
+        $this->assertSame(
+            $this->parser->parseString($good)['cues'],
+            $this->parser->parseString($this->parser->canonicalize($good))['cues']
+        );
+    }
+
     private function writeTemp(string $contents): string
     {
         $path = sys_get_temp_dir() . '/studio-srt-' . uniqid() . '.srt';

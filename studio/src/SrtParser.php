@@ -60,6 +60,80 @@ class SrtParser
     }
 
     /**
+     * Normalise loose model output into canonical SubRip.
+     *
+     * The counterpart to VttParser::canonicalize(). Generative output drifts in
+     * predictable ways — blank-line separators dropped, indices missing or out
+     * of sequence, dot separators borrowed from WebVTT, a stray WEBVTT header —
+     * none of which parseString() tolerates, and all of which are recoverable.
+     * Indices are reassigned on the way out, so an incorrectly numbered file
+     * comes back correctly numbered.
+     */
+    public function canonicalize(string $content): string
+    {
+        return $this->write($this->parseLoose($content)['cues']);
+    }
+
+    /**
+     * Lenient parse: anything that is not a recognisable timing line is either a
+     * cue index, a header, or cue text, decided by position.
+     *
+     * @return array{cues: list<array{start: float, end: float, text: string, opaque: string, id: string}>}
+     */
+    public function parseLoose(string $content): array
+    {
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
+        $content = str_replace(["\r\n", "\r"], "\n", $content);
+        $lines = explode("\n", trim($content));
+        $count = count($lines);
+
+        $timing = '/^\s*((?:\d{1,3}:)?\d{1,2}:\d{2}[.,]\d{1,3})\s*-->\s*((?:\d{1,3}:)?\d{1,2}:\d{2}[.,]\d{1,3})/';
+
+        $cues = [];
+        $i = 0;
+        while ($i < $count) {
+            if (!preg_match($timing, $lines[$i], $m)) {
+                $i++;
+                continue;
+            }
+
+            $start = $this->parseTime($m[1]);
+            $end = $this->parseTime($m[2]);
+            $i++;
+
+            $textLines = [];
+            while ($i < $count && !preg_match($timing, $lines[$i])) {
+                // A lone number immediately before a timing line indexes the *next* cue.
+                if (preg_match('/^\d+$/', trim($lines[$i]))
+                    && $i + 1 < $count
+                    && preg_match($timing, $lines[$i + 1])) {
+                    break;
+                }
+                if (trim($lines[$i]) !== '') {
+                    $textLines[] = trim($lines[$i]);
+                }
+                $i++;
+            }
+
+            if ($textLines === []) {
+                continue;
+            }
+
+            $cues[] = [
+                'start' => $start,
+                'end' => $end,
+                'text' => implode("\n", $textLines),
+                'opaque' => '',
+                'id' => (string) (count($cues) + 1),
+            ];
+        }
+
+        return ['cues' => $cues];
+    }
+
+    /**
      * Serialise cues into a SubRip document.
      *
      * Indices are renumbered sequentially from 1: SubRip requires them to be

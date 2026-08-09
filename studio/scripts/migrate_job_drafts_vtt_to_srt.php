@@ -1,12 +1,19 @@
 <?php
 
 /**
- * One-time migration: convert the job pipeline's translation drafts from
- * WebVTT to SubRip.
+ * One-time migration: convert the job pipeline's drafts from WebVTT to SubRip.
  *
- * Walks data/caption-translation/<vimeoId>/current/draft_*.vtt, converts each
- * to .srt and removes the original. Nothing else needs updating: the sibling
+ * Covers every JobManager root, because there are three and they are easy to
+ * miss: data/jobs (transcription), data/shorten-jobs, and
+ * data/caption-translation/<vimeoId>. Each holds current/draft.srt plus
+ * current/draft_{lang}.srt. Nothing else needs updating: the sibling
  * translation.json records per-language status only, never filenames.
+ *
+ * Scope matters here — an earlier version of this script globbed only
+ * caption-translation and only draft_*.vtt, which stranded a finished
+ * transcription job in data/jobs: its files stayed WebVTT while the renamed
+ * JobManager looked for SubRip, so hasDraft() returned false and the pipeline
+ * reported "transcribing" forever.
  *
  * Must ship in the same deploy as the JobManager rename — after that rename the
  * code looks for draft_{lang}.srt, and any leftover .vtt is orphaned job state.
@@ -42,13 +49,43 @@ foreach ($argv as $arg) {
 }
 
 $dataDir = realpath($dataDirArg ?? (__DIR__ . '/../../data'));
-if ($dataDir === false || !is_dir($dataDir . '/caption-translation')) {
-    fwrite(STDERR, "data/caption-translation not found.\n");
+if ($dataDir === false || !is_dir($dataDir)) {
+    fwrite(STDERR, "data dir not found.\n");
     exit(1);
 }
 
-$drafts = glob($dataDir . '/caption-translation/*/current/draft_*.vtt') ?: [];
+/* Both naming patterns, since draft_*.vtt does not match a bare draft.vtt. */
+$patterns = [
+    '/jobs/current/draft.vtt',
+    '/jobs/current/draft_*.vtt',
+    '/shorten-jobs/current/draft.vtt',
+    '/shorten-jobs/current/draft_*.vtt',
+    '/caption-translation/*/current/draft.vtt',
+    '/caption-translation/*/current/draft_*.vtt',
+];
+
+$drafts = [];
+foreach ($patterns as $pattern) {
+    foreach (glob($dataDir . $pattern) ?: [] as $path) {
+        $drafts[$path] = true;
+    }
+}
+$drafts = array_keys($drafts);
 sort($drafts);
+
+/* Anything left behind would be invisible to the code after the rename. */
+$strays = [];
+foreach (glob($dataDir . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
+    if (basename($dir) === 'captions') {
+        continue;
+    }
+    $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
+    foreach ($it as $file) {
+        if ($file->isFile() && strtolower($file->getExtension()) === 'vtt' && !isset(array_flip($drafts)[$file->getPathname()])) {
+            $strays[] = $file->getPathname();
+        }
+    }
+}
 
 /** @return array{ok: true, srt: string}|array{ok: false, reason: string} */
 function convertVerified(string $path): array
@@ -109,11 +146,21 @@ foreach ($drafts as $oldPath) {
     $planned[] = ['oldPath' => $oldPath, 'newPath' => $newPath, 'srt' => $result['srt'], 'label' => $label];
 }
 
-$existingSrt = count(glob($dataDir . '/caption-translation/*/current/draft_*.srt') ?: []);
+$existingSrt = 0;
+foreach ($patterns as $pattern) {
+    $existingSrt += count(glob($dataDir . str_replace('.vtt', '.srt', $pattern)) ?: []);
+}
 
 echo ($apply ? 'Applying' : 'Planned (dry run — pass --apply to execute)')
     . ' ' . count($planned) . " conversion(s)"
     . ($existingSrt > 0 ? ", $existingSrt already SubRip" : '') . ".\n";
+
+if ($strays !== []) {
+    printf("\n%d WebVTT file(s) under data/ outside the known draft patterns:\n", count($strays));
+    foreach ($strays as $stray) {
+        echo '  - ' . str_replace($dataDir . '/', '', $stray) . "\n";
+    }
+}
 
 if ($errors !== []) {
     fwrite(STDERR, "\n" . count($errors) . " problem(s) found — nothing has been changed:\n");
