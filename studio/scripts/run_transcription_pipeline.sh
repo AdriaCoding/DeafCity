@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Fire-and-forget pipeline: transcribe audio then chain translation to a target language.
 #
-# Args: --audio_file, --vtt_output, --status_file, --revision_status,
+# Args: --audio_file, --draft_output, --status_file, --revision_status,
 #       --translation_status, --job_dir, --source_lang, --target_lang, --model
 
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgomp.so.1
@@ -12,13 +12,14 @@ LOG_FILE="/srv/www/deaf.city/public_html/data/logs/studio.log"
 SCRIPTS_DIR="$(dirname "$0")"
 
 # ── Parse args ───────────────────────────────────────────────────────────────
-AUDIO_FILE="" VTT_OUTPUT="" STATUS_FILE="" REVISION_STATUS="" TRANSLATION_STATUS=""
+AUDIO_FILE="" DRAFT_OUTPUT="" STATUS_FILE="" REVISION_STATUS="" TRANSLATION_STATUS=""
 JOB_DIR="" SOURCE_LANG="" TARGET_LANG="" MODEL="whisper-large-v3-turbo"
+INITIAL_PROMPT="" DIALECT_NAME=""
 PREV=""
 for ARG in "$@"; do
     case "$PREV" in
         --audio_file)         AUDIO_FILE="$ARG" ;;
-        --vtt_output)         VTT_OUTPUT="$ARG" ;;
+        --draft_output)       DRAFT_OUTPUT="$ARG" ;;
         --status_file)        STATUS_FILE="$ARG" ;;
         --revision_status)    REVISION_STATUS="$ARG" ;;
         --translation_status) TRANSLATION_STATUS="$ARG" ;;
@@ -26,6 +27,8 @@ for ARG in "$@"; do
         --source_lang)        SOURCE_LANG="$ARG" ;;
         --target_lang)        TARGET_LANG="$ARG" ;;
         --model)              MODEL="$ARG" ;;
+        --initial_prompt)     INITIAL_PROMPT="$ARG" ;;
+        --dialect_name)       DIALECT_NAME="$ARG" ;;
     esac
     PREV="$ARG"
 done
@@ -36,10 +39,11 @@ source /srv/www/deaf.city/public_html/studio/.venv/bin/activate
 
 python /srv/www/deaf.city/public_html/studio/scripts/transcribe.py \
     --audio_file  "$AUDIO_FILE" \
-    --vtt_output  "$VTT_OUTPUT" \
+    --draft_output "$DRAFT_OUTPUT" \
     --status_file "$STATUS_FILE" \
     --language    "$SOURCE_LANG" \
-    --model       "$MODEL"
+    --model       "$MODEL" \
+    --initial_prompt "$INITIAL_PROMPT"
 EXIT=$?
 
 if [ $EXIT -ne 0 ]; then
@@ -71,10 +75,11 @@ else
 fi
 
 GEMINI_API_KEY="$GEMINI_API_KEY" nohup bash "$SCRIPTS_DIR/run_revise.sh" \
-    --vtt_path          "$VTT_OUTPUT" \
+    --draft_path        "$DRAFT_OUTPUT" \
     --revision_status   "$REVISION_STATUS" \
     --source_lang       "$SOURCE_LANG" \
     --job_dir           "$JOB_DIR" \
     --translation_status "$TRANSLATION_STATUS" \
     --target_langs      "$TARGET_LANGS_ARG" \
+    --dialect_name      "$DIALECT_NAME" \
     > /dev/null 2>&1 &

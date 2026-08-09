@@ -40,7 +40,7 @@ All three actions are **local only**. Vimeo sync is triggered explicitly via the
 - Edit action: fullscreen `<dialog>` containing an `<iframe>` pointing to `continguts-caption-review`
 - New backend action `continguts-caption-review` (GET + POST) that:
   - GET: reads `vimeo_id` + `lang` from query, loads cues from `data/captions/`, renders `translation-review.php` in embed mode with master cues from the catalog master track
-  - POST: saves edited cues back to `data/captions/{vimeo_id}.{lang}.vtt` via `SubtitleEditorHandler::handleForFilePath()`; returns `{ok: true}` or `{ok: false, errors: [...]}`
+  - POST: saves edited cues back to `data/captions/{Title}_{LANG}.srt` via `SubtitleEditorHandler::handleForFilePath()`; returns `{ok: true}` or `{ok: false, errors: [...]}`
 - New backend action `continguts-delete-caption` (POST: `vimeo_id` + `lang`) — delegates to `CaptionDeleteHandler`
 - New backend action `continguts-replace-caption` (POST: `vimeo_id` + `lang` + file upload)
 - `CatalogEditor::deleteCaption(string $vimeoId, string $lang): void` — removes entry and auto-promotes master
@@ -65,7 +65,7 @@ All three actions are **local only**. Vimeo sync is triggered explicitly via the
 | 2 | **Implementation order**: Delete → Replace → Edit (vertical TDD slices) |
 | 3 | **Master auto-promotion**: when the deleted track was master, set `master_caption_lang` to `captions[0]['lang']` after removal (catalog array order, same rule as `upsertCaptions`) |
 | 4 | **`deleteCaption` errors**: `RuntimeException` if video not found; `InvalidArgumentException` if lang not in `captions[]`; unset `master_caption_lang` when the last caption is removed |
-| 5 | **Replace lang**: fixed by the table row (`vimeo_id` + `lang`); always overwrites `data/captions/{vimeo_id}.{lang}.vtt` for an existing catalog entry — not a path for adding new tracks |
+| 5 | **Replace lang**: fixed by the table row (`vimeo_id` + `lang`); always overwrites the caption file for an existing catalog entry — not a path for adding new tracks |
 | 6 | **Replace Vimeo skip**: add `bool $syncToVimeo = true` to `CaptionUploadHandler::handle()`; replace passes `false` |
 | 7 | **Replace validation**: reject with 422 if `lang` is not already in the video's `captions[]` |
 | 8 | **Edit save path**: add `SubtitleEditorHandler::handleForFilePath(string $vttPath, …)` — reuse integrity checks + `VttParser::write`, no `JobManager` |
@@ -82,7 +82,7 @@ All three actions are **local only**. Vimeo sync is triggered explicitly via the
 ### Table columns (updated)
 | Master | Language | File on server | Download | Actions |
 |--------|----------|----------------|----------|---------|
-| ● radio | Català | 638736137.ca.vtt | ↓ VTT  ↓ SRT | ✏ Edita  ↑ Reemplaça  🗑 Elimina |
+| ● radio | Català | 2020_VALENCIA_Aurora_1_CA.srt | ↓ SRT | ✏ Edita  ↑ Reemplaça  🗑 Elimina |
 
 Actions column contains three small buttons styled like the existing download buttons (border, small font, icon + text).
 

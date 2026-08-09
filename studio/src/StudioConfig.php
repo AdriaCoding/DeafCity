@@ -57,6 +57,26 @@ class StudioConfig
         $this->appendConfigEntry('subtitle_languages', $id, $label);
     }
 
+    public function addInputLanguage(string $id, string $label, string $baseLanguage): void
+    {
+        if (!preg_match('/^[a-z0-9]+(-[a-z0-9]+)*$/', $id)) {
+            throw new \InvalidArgumentException('Invalid input language id.');
+        }
+
+        $baseLanguageExists = false;
+        foreach ($this->list('subtitle_languages') as $entry) {
+            if (($entry['id'] ?? '') === $baseLanguage) {
+                $baseLanguageExists = true;
+                break;
+            }
+        }
+        if (!$baseLanguageExists) {
+            throw new \InvalidArgumentException('Unknown base language.');
+        }
+
+        $this->appendConfigEntry('input_languages', $id, $label, ['base_language' => $baseLanguage]);
+    }
+
     public function updateEditionLabel(string $id, string $label): void
     {
         $this->updateConfigEntryLabel('editions', $id, $label);
@@ -102,6 +122,11 @@ class StudioConfig
             throw new \RuntimeException("Subtitle language '$id' is still referenced by one or more catalog videos.");
         }
         $this->removeConfigEntry('subtitle_languages', $id);
+    }
+
+    public function removeInputLanguage(string $id): void
+    {
+        $this->removeConfigEntry('input_languages', $id);
     }
 
     public function getSignLanguages(): array
@@ -155,6 +180,92 @@ class StudioConfig
         return $entry;
     }
 
+    public function getInputLanguages(): array
+    {
+        return $this->listSortedByLabel('input_languages');
+    }
+
+    /**
+     * Maps a dialect id (e.g. 'es-mx') back to its base language (e.g. 'es').
+     * A subtitle-language id is its own base language; an unknown id is
+     * returned unchanged.
+     */
+    public function getBaseLanguageFor(string $id): string
+    {
+        foreach ($this->list('subtitle_languages') as $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                return $id;
+            }
+        }
+
+        foreach ($this->list('input_languages') as $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                return (string) ($entry['base_language'] ?? $id);
+            }
+        }
+
+        return $id;
+    }
+
+    /** Human-readable label for a subtitle- or input-language id, falling back to the raw id. */
+    public function languageLabelFor(string $id): string
+    {
+        foreach ($this->list('input_languages') as $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                return (string) ($entry['label'] ?? $id);
+            }
+        }
+
+        foreach ($this->list('subtitle_languages') as $entry) {
+            if (($entry['id'] ?? '') === $id) {
+                return (string) ($entry['label'] ?? $id);
+            }
+        }
+
+        return $id;
+    }
+
+    public function isValidInputLanguage(string $id): bool
+    {
+        foreach ($this->getCombinedInputLanguageOptions() as $lang) {
+            if (($lang['id'] ?? '') === $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * The intake dropdown's option list: every subtitle (base) language plus
+     * every dialect variant, sorted by label.
+     */
+    public function getCombinedInputLanguageOptions(): array
+    {
+        $options = [];
+        foreach ($this->getSubtitleLanguages() as $entry) {
+            $options[] = [
+                'id' => $entry['id'] ?? '',
+                'label' => $entry['label'] ?? '',
+                'base_language' => $entry['id'] ?? '',
+            ];
+        }
+        foreach ($this->getInputLanguages() as $entry) {
+            $options[] = [
+                'id' => $entry['id'] ?? '',
+                'label' => $entry['label'] ?? '',
+                'base_language' => $entry['base_language'] ?? '',
+            ];
+        }
+
+        usort(
+            $options,
+            fn(array $a, array $b): int => strcasecmp((string) $a['label'], (string) $b['label']),
+        );
+
+        return $options;
+    }
+
     private function list(string $key): array
     {
         return $this->data[$key] ?? [];
@@ -204,9 +315,10 @@ class StudioConfig
         });
     }
 
-    private function appendConfigEntry(string $listKey, string $id, string $label): void
+    /** @param array<string, mixed> $extra */
+    private function appendConfigEntry(string $listKey, string $id, string $label, array $extra = []): void
     {
-        $this->withLockedConfig(function (array &$data) use ($listKey, $id, $label): void {
+        $this->withLockedConfig(function (array &$data) use ($listKey, $id, $label, $extra): void {
             $entries = $data[$listKey] ?? [];
             foreach ($entries as $entry) {
                 if (($entry['id'] ?? '') === $id) {
@@ -214,7 +326,7 @@ class StudioConfig
                 }
             }
 
-            $entries[] = ['id' => $id, 'label' => $label];
+            $entries[] = ['id' => $id, 'label' => $label] + $extra;
             $data[$listKey] = $entries;
         });
     }

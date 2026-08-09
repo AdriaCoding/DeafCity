@@ -9,7 +9,7 @@
     var translatedCues = JSON.parse(JSON.stringify(window.__translatedCues || []));
     var savedSnapshot = JSON.stringify(translatedCues);
 
-    var cueList, saveBtn, cancelBtn, saveError, downloadVttBtn, downloadSrtBtn;
+    var cueList, saveBtn, cancelBtn, saveError, downloadSrtBtn;
     var exitingWithoutSave = false;
 
     function setButtonLoading(btn, loading, label) {
@@ -37,7 +37,7 @@
 
     function setEditorBusy(loading, activeBtn, activeLabel) {
         document.body.classList.toggle('editor-busy', loading);
-        [saveBtn, cancelBtn, downloadVttBtn, downloadSrtBtn].forEach(function (btn) {
+        [saveBtn, cancelBtn, downloadSrtBtn].forEach(function (btn) {
             if (!btn) return;
             if (loading && btn === activeBtn) {
                 setButtonLoading(btn, true, activeLabel);
@@ -164,12 +164,6 @@
         return JSON.stringify(translatedCues) !== savedSnapshot;
     }
 
-    function downloadVtt() {
-        var lang = window.__lang || '';
-        var base = (window.__vimeoId || 'caption') + (lang ? '_' + lang.toUpperCase() : '');
-        CaptionUtils.triggerDownload(CaptionUtils.generateVtt(translatedCues), base + '.vtt', 'text/vtt');
-    }
-
     function downloadSrt() {
         var lang = window.__lang || '';
         var base = (window.__vimeoId || 'caption') + (lang ? '_' + lang.toUpperCase() : '');
@@ -222,14 +216,12 @@
         saveBtn = document.getElementById('save-btn');
         cancelBtn = document.getElementById('cancel-btn');
         saveError = document.getElementById('save-error');
-        downloadVttBtn = document.getElementById('download-vtt-btn');
         downloadSrtBtn = document.getElementById('download-srt-btn');
 
         render();
 
         saveBtn.addEventListener('click', save);
         if (cancelBtn) cancelBtn.addEventListener('click', exitWithoutSaving);
-        if (downloadVttBtn) downloadVttBtn.addEventListener('click', downloadVtt);
         if (downloadSrtBtn) downloadSrtBtn.addEventListener('click', downloadSrt);
 
         window.addEventListener('beforeunload', function (e) {

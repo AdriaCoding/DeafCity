@@ -8,8 +8,9 @@ use Studio\BackgroundJobLauncher;
 use Studio\GroqTranscriber;
 use Studio\GroqTranscriptionException;
 use Studio\JobManager;
+use Studio\StudioConfig;
 use Studio\TranscriptionOrchestrator;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 class TranscriptionOrchestratorTest extends TestCase
 {
@@ -83,9 +84,9 @@ class TranscriptionOrchestratorTest extends TestCase
                 parent::__construct('k', 'https://x', 20, fn() => ['status' => 0, 'body' => '']);
                 $this->fn = $fn;
             }
-            public function transcribe(string $audioPath, string $model, string $language): array
+            public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
             {
-                return ($this->fn)($audioPath, $model, $language);
+                return ($this->fn)($audioPath, $model, $language, $prompt);
             }
         };
 
@@ -106,7 +107,8 @@ class TranscriptionOrchestratorTest extends TestCase
             groqTranscriber: $fakeGroq,
             audioPreprocessor: $preprocessor,
             launcher: $launcher,
-            vttParser: new VttParser(),
+            srtParser: new SrtParser(),
+            studioConfig: new StudioConfig(__DIR__ . '/fixtures/studio-config.json'),
             groqApiKey: 'test-key',
             groqModel: 'whisper-large-v3-turbo',
             localModel: 'whisper-large-v3-turbo',
@@ -117,7 +119,7 @@ class TranscriptionOrchestratorTest extends TestCase
         );
     }
 
-    public function test_success_writes_draft_vtt_stamps_engine_returns_editor(): void
+    public function test_success_writes_draft_stamps_engine_returns_editor(): void
     {
         $orch = $this->makeOrchestrator(
             fn() => [
@@ -128,10 +130,11 @@ class TranscriptionOrchestratorTest extends TestCase
         $result = $orch->run();
 
         $this->assertSame('editor', $result['result']);
-        $this->assertTrue($this->jobManager->hasDraftVtt());
-        $vtt = file_get_contents($this->jobManager->draftVttPath());
-        $this->assertStringContainsString('Hola', $vtt);
-        $this->assertStringContainsString('WEBVTT', $vtt);
+        $this->assertTrue($this->jobManager->hasDraft());
+        $draft = file_get_contents($this->jobManager->draftPath());
+        $this->assertStringContainsString('Hola', $draft);
+        $this->assertStringNotContainsString('WEBVTT', $draft);
+        $this->assertStringStartsWith("1\n00:00:00,000 --> ", $draft);
         $job = $this->jobManager->read();
         $this->assertSame('groq:whisper-large-v3-turbo', $job['transcription_engine']);
     }
@@ -156,7 +159,7 @@ class TranscriptionOrchestratorTest extends TestCase
         $this->assertStringContainsString('run_transcribe.sh', $launched);
         $this->assertStringContainsString('--model', $launched);
         $this->assertTrue($this->jobManager->exists(), 'Job must survive a fallback');
-        $this->assertFalse($this->jobManager->hasDraftVtt());
+        $this->assertFalse($this->jobManager->hasDraft());
     }
 
     public function test_empty_result_spawns_local_and_returns_loading(): void
@@ -238,9 +241,9 @@ class TranscriptionOrchestratorTest extends TestCase
                 parent::__construct('k', 'https://x', 20, fn() => ['status' => 0, 'body' => '']);
                 $this->fn = $fn;
             }
-            public function transcribe(string $audioPath, string $model, string $language): array
+            public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
             {
-                return ($this->fn)($audioPath, $model, $language);
+                return ($this->fn)($audioPath, $model, $language, $prompt);
             }
         };
 
@@ -253,7 +256,8 @@ class TranscriptionOrchestratorTest extends TestCase
             launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) use (&$launched) {
                 $launched = $cmd;
             }),
-            vttParser: new VttParser(),
+            srtParser: new SrtParser(),
+            studioConfig: new StudioConfig(__DIR__ . '/fixtures/studio-config.json'),
             groqApiKey: '',
             groqModel: 'whisper-large-v3-turbo',
             localModel: 'whisper-large-v3-turbo',
@@ -290,7 +294,7 @@ class TranscriptionOrchestratorTest extends TestCase
         $result = $orch->run();
 
         $this->assertSame('pipeline_transcribed', $result['result']);
-        $this->assertTrue($this->jobManager->hasDraftVtt());
+        $this->assertTrue($this->jobManager->hasDraft());
     }
 
     public function test_normal_mode_groq_success_still_returns_editor(): void
@@ -403,7 +407,7 @@ class TranscriptionOrchestratorTest extends TestCase
             {
                 parent::__construct('k', 'https://x', 20, fn() => ['status' => 0, 'body' => '']);
             }
-            public function transcribe(string $audioPath, string $model, string $language): array
+            public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
             {
                 throw new GroqTranscriptionException(
                     GroqTranscriptionException::CATEGORY_TRANSPORT,
@@ -419,7 +423,8 @@ class TranscriptionOrchestratorTest extends TestCase
             }),
             launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) {
             }),
-            vttParser: new VttParser(),
+            srtParser: new SrtParser(),
+            studioConfig: new StudioConfig(__DIR__ . '/fixtures/studio-config.json'),
             groqApiKey: 'k',
             groqModel: 'whisper-large-v3-turbo',
             localModel: 'whisper-large-v3-turbo',
@@ -435,5 +440,100 @@ class TranscriptionOrchestratorTest extends TestCase
         $joined = implode("\n", $lines);
         $this->assertStringContainsString('engine=local:whisper-large-v3-turbo', $joined);
         $this->assertStringContainsString('fallback=transport', $joined);
+    }
+
+    public function test_dialect_source_reduces_to_base_language_and_sends_prompt_hint(): void
+    {
+        file_put_contents(
+            $this->jobsDir . '/current/job.json',
+            json_encode([
+                'subtitle_language' => 'es-mx',
+                'intake_mode' => 'generate',
+                'interpreter_audio' => 'interpreter_audio.wav',
+            ])
+        );
+
+        $configPath = sys_get_temp_dir() . '/orch-test-config-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+        $studioConfig = new StudioConfig($configPath);
+        $studioConfig->addInputLanguage('es-mx', 'Espanyol (Mèxic)', 'es');
+
+        $captured = [];
+        $fakeGroq = new class ($captured) extends GroqTranscriber {
+            public array $captured = [];
+            public function __construct(array $captured)
+            {
+                parent::__construct('k', 'https://x', 20, fn() => ['status' => 0, 'body' => '']);
+                $this->captured = $captured;
+            }
+            public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
+            {
+                $this->captured = ['language' => $language, 'prompt' => $prompt];
+                return [['start' => 0.0, 'end' => 1.0, 'text' => 'Hola', 'opaque' => '']];
+            }
+        };
+
+        $orch = new TranscriptionOrchestrator(
+            jobManager: $this->jobManager,
+            groqTranscriber: $fakeGroq,
+            audioPreprocessor: new AudioPreprocessor(function (string $cmd, array &$out, int &$code) {
+                $code = 0;
+            }),
+            launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) {
+            }),
+            srtParser: new SrtParser(),
+            studioConfig: $studioConfig,
+            groqApiKey: 'k',
+            groqModel: 'whisper-large-v3-turbo',
+            localModel: 'whisper-large-v3-turbo',
+            clock: fn() => 0.0,
+        );
+
+        $result = $orch->run();
+
+        $this->assertSame('editor', $result['result']);
+        $this->assertSame('es', $fakeGroq->captured['language']);
+        $this->assertSame('Espanyol (Mèxic)', $fakeGroq->captured['prompt']);
+
+        unlink($configPath);
+        @unlink($configPath . '.lock');
+    }
+
+    public function test_non_dialect_source_sends_no_prompt_hint(): void
+    {
+        // The base job.json fixture already uses 'ca', which has no registered dialect.
+        $fakeGroq = new class () extends GroqTranscriber {
+            public array $captured = [];
+            public function __construct()
+            {
+                parent::__construct('k', 'https://x', 20, fn() => ['status' => 0, 'body' => '']);
+            }
+            public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
+            {
+                $this->captured = ['language' => $language, 'prompt' => $prompt];
+                return [['start' => 0.0, 'end' => 1.0, 'text' => 'Hola', 'opaque' => '']];
+            }
+        };
+
+        $orch = new TranscriptionOrchestrator(
+            jobManager: $this->jobManager,
+            groqTranscriber: $fakeGroq,
+            audioPreprocessor: new AudioPreprocessor(function (string $cmd, array &$out, int &$code) {
+                $code = 0;
+            }),
+            launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) {
+            }),
+            srtParser: new SrtParser(),
+            studioConfig: new StudioConfig(__DIR__ . '/fixtures/studio-config.json'),
+            groqApiKey: 'k',
+            groqModel: 'whisper-large-v3-turbo',
+            localModel: 'whisper-large-v3-turbo',
+            clock: fn() => 0.0,
+        );
+
+        $orch->run();
+
+        $this->assertSame('ca', $fakeGroq->captured['language']);
+        $this->assertSame('', $fakeGroq->captured['prompt']);
     }
 }

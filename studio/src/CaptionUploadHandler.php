@@ -12,9 +12,7 @@ class CaptionUploadHandler
         private StudioConfig $studioConfig,
         private string $captionsDirPath,
         private string $captionTranslationDirPath,
-        private WebVttValidator $vttValidator = new WebVttValidator(),
-        private SrtToVttConverter $srtConverter = new SrtToVttConverter(),
-        private IntakeSourceDetector $sourceDetector = new IntakeSourceDetector(),
+        private CaptionIntakeNormalizer $normalizer = new CaptionIntakeNormalizer(),
         private CaptionFilename $captionFilename = new CaptionFilename(),
     ) {
         $this->publication = new CaptionPublication(
@@ -63,8 +61,13 @@ class CaptionUploadHandler
                 return ['ok' => false, 'error' => 'Seleccioneu una llengua vàlida per a cada fitxer de subtítols.', 'vimeoWarnings' => []];
             }
 
+            /*
+             * Normalise before touching the destination. The previous order
+             * unlinked the existing caption first and only then converted, so a
+             * malformed upload destroyed the caption it was meant to replace.
+             */
             try {
-                $this->validateCaptionFile($upload['tmpPath'], $upload['originalName']);
+                $content = $this->normalizer->normalize($upload['tmpPath'], $upload['originalName']);
             } catch (\InvalidArgumentException $e) {
                 return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
             }
@@ -73,18 +76,8 @@ class CaptionUploadHandler
             $destPath = $this->captionsDirPath . '/' . $filename;
 
             try {
-                if (is_file($destPath)) {
-                    unlink($destPath);
-                }
-                if ($this->sourceDetector->isSubRip($upload['tmpPath'], $upload['originalName'])) {
-                    $vttContent = $this->srtConverter->convert($upload['tmpPath']);
-                    if (file_put_contents($destPath, $vttContent) === false) {
-                        throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols.');
-                    }
-                } else {
-                    if (!copy($upload['tmpPath'], $destPath)) {
-                        throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols.');
-                    }
+                if (file_put_contents($destPath, $content) === false) {
+                    throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols.');
                 }
             } catch (\Throwable $e) {
                 return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
@@ -116,13 +109,5 @@ class CaptionUploadHandler
         ];
     }
 
-    private function validateCaptionFile(string $tmpPath, string $originalName): void
-    {
-        if ($this->sourceDetector->isSubRip($tmpPath, $originalName)) {
-            return;
-        }
-
-        $this->vttValidator->validate($tmpPath, $originalName);
-    }
 
 }

@@ -11,7 +11,7 @@
  *     'embed_url' => 'https://player.vimeo.com/video/123?title=0&controls=0&autoplay=1&muted=1',
  *
  *     'caption_tracks' => array(
- *       array('file' => 'foo.en.vtt', 'label' => 'English'),
+ *       array('file' => 'foo.en.srt', 'label' => 'English'),
  *     ),
  *
  *     'instance_id' => 'main',                   // sanitized; used for HTML ids (default: random)
@@ -21,7 +21,7 @@
  *
  *     // Optional ordered playlist (each entry: video_id OR embed_url; optional caption_tracks, embed_params).
  *     // Omit to use single video_id / embed_url at the top level. Prev/Next appear when length > 1.
- *     // Canonical metadata: data/videos.json plus data/captions/*.vtt (videos_catalog.php).
+ *     // Canonical metadata: data/videos.json plus data/captions/*.srt (videos_catalog.php).
  *     //
  *     // Optional: R2 filter row — sign language, city/edition, typology custom pickers (D15, D17, D18).
  *     // options: populated-from-present only (D17). Client composable filter state.
@@ -37,7 +37,7 @@
  *     'playlist' => array(
  *       array(
  *         'video_id' => '639494119',
- *         'caption_tracks' => array( array('file' => 'foo.vtt', 'label' => 'English') ),
+ *         'caption_tracks' => array( array('file' => 'foo.srt', 'label' => 'English') ),
  *       ),
  *       array( 'video_id' => '1128906791' ),
  *     ),

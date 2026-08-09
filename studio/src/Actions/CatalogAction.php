@@ -71,6 +71,20 @@ class CatalogAction
         exit;
     }
 
+    public function addInputLanguage(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $result = (new \Studio\InputLanguageAddHandler(
+            $this->c->configMutation(),
+        ))->handle(
+            (string) ($_POST['input_language_code'] ?? ''),
+            (string) ($_POST['input_language_name'] ?? ''),
+            (string) ($_POST['input_language_base'] ?? ''),
+        );
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     public function handle(string $action): never
     {
         match ($action) {
@@ -81,8 +95,7 @@ class CatalogAction
             'continguts-save-video'               => $this->saveVideo(),
             'continguts-set-video-invisible'      => $this->setVideoInvisible(),
             'continguts-set-master-caption'       => $this->setMasterCaption(),
-            'continguts-download-caption-vtt'     => $this->downloadCaption('vtt'),
-            'continguts-download-caption-srt'     => $this->downloadCaption('srt'),
+            'continguts-download-caption-srt'     => $this->downloadCaption(),
             'continguts-download-data-zip'        => $this->downloadDataZip(),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
@@ -90,6 +103,7 @@ class CatalogAction
             'continguts-delete-edition'              => $this->deleteItem('edition'),
             'continguts-delete-sign-language'        => $this->deleteItem('sign_language'),
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
+            'continguts-delete-input-language'       => $this->deleteItem('input_language'),
             'continguts-delete-typology'             => $this->deleteItem('typology'),
             'continguts-delete-caption'              => $this->deleteCaption(),
             'continguts-replace-caption'             => $this->replaceCaption(),
@@ -121,6 +135,7 @@ class CatalogAction
         $editions = $c->studioConfig->getEditions();
         $signLanguages = $c->studioConfig->getSignLanguages();
         $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        $inputLanguages = $c->studioConfig->getInputLanguages();
         $typologies = $c->studioConfig->getTypologies();
         $catalogEditor = $c->catalogEditor();
         $catalogVideos = $catalogEditor->getAllVideos();
@@ -137,6 +152,7 @@ class CatalogAction
                 'editions',
                 'signLanguages',
                 'subtitleLanguages',
+                'inputLanguages',
                 'typologies',
                 'catalogEditor',
                 'referencedEditionIds',
@@ -332,7 +348,7 @@ class CatalogAction
         exit;
     }
 
-    private function downloadCaption(string $format): never
+    private function downloadCaption(): never
     {
         $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
         $lang    = trim((string) ($_GET['lang'] ?? ''));
@@ -360,23 +376,17 @@ class CatalogAction
             exit;
         }
 
-        $vttPath = $this->c->dataDir . '/captions/' . $captionFile;
-        if (!is_file($vttPath)) {
+        $captionPath = $this->c->dataDir . '/captions/' . $captionFile;
+        if (!is_file($captionPath)) {
             http_response_code(404);
             exit;
         }
 
         $downloadBasename = $vimeoId . '_' . strtoupper($lang);
 
-        if ($format === 'srt') {
-            header('Content-Type: application/x-subrip; charset=utf-8');
-            header('Content-Disposition: attachment; filename="' . $downloadBasename . '.srt"');
-            echo (new \Studio\VttToSrtConverter())->convert($vttPath);
-        } else {
-            header('Content-Type: text/vtt; charset=utf-8');
-            header('Content-Disposition: attachment; filename="' . $downloadBasename . '.vtt"');
-            readfile($vttPath);
-        }
+        header('Content-Type: application/x-subrip; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $downloadBasename . '.srt"');
+        echo (new \Studio\VttToSrtConverter())->convert($captionPath);
         exit;
     }
 
@@ -657,7 +667,6 @@ class CatalogAction
                     $result = ['ok' => false, 'errors' => ['Cos de la sol·licitud no vàlid.']];
                 } else {
                     $handler = new \Studio\SubtitleEditorHandler(
-                        new \Studio\VttParser(),
                         new \Studio\CaptionFileIntegrityChecker(),
                         $this->c->jobManager,
                     );
@@ -672,8 +681,8 @@ class CatalogAction
             exit;
         }
 
-        $vttParser = new \Studio\VttParser();
-        $translatedCues = $vttParser->parse($vttPath)['cues'];
+        $captionReader = new \Studio\CaptionReader();
+        $translatedCues = $captionReader->read($vttPath)['cues'];
         $masterLang = $video['master_caption_lang'] ?? ($video['captions'][0]['lang'] ?? '');
         $masterCues = $translatedCues;
         if ($lang !== $masterLang) {
@@ -688,7 +697,7 @@ class CatalogAction
             if ($masterFile !== null) {
                 $masterPath = $captionsDir . '/' . $masterFile;
                 if (is_file($masterPath)) {
-                    $masterCues = $vttParser->parse($masterPath)['cues'];
+                    $masterCues = $captionReader->read($masterPath)['cues'];
                 }
             }
         }
@@ -737,6 +746,7 @@ class CatalogAction
                 'edition' => $this->c->configMutation()->removeEdition($id),
                 'sign_language' => $this->c->configMutation()->removeSignLanguage($id),
                 'subtitle_language' => $this->c->configMutation()->removeSubtitleLanguage($id),
+                'input_language' => $this->c->configMutation()->removeInputLanguage($id),
                 'typology' => $this->c->configMutation()->removeTypology($id),
                 default => throw new \InvalidArgumentException('Unknown delete type.'),
             };
@@ -985,7 +995,7 @@ class CatalogAction
                 continue;
             }
 
-            $srcPath      = $jobDir . '/draft_' . $langStr . '.vtt';
+            $srcPath      = $jobDir . '/draft_' . $langStr . '.srt';
             $destFilename = $captionFilename->forVideo($title, $langStr);
             $destPath     = $captionsDir . '/' . $destFilename;
 

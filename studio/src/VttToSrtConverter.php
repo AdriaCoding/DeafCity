@@ -5,38 +5,28 @@ namespace Studio;
 class VttToSrtConverter
 {
     public function __construct(
-        private readonly VttParser $vttParser = new VttParser(),
+        private readonly CaptionReader $reader = new CaptionReader(),
+        private readonly SrtParser $srtParser = new SrtParser(),
     ) {
     }
 
-    public function convert(string $vttFilePath): string
+    /**
+     * Accepts WebVTT or SubRip and always emits SubRip. Feeding it a file that
+     * is already SRT is a lossless no-op, which is what keeps the download and
+     * ZIP paths working while data/ is mid-migration.
+     */
+    public function convert(string $captionFilePath): string
     {
-        $parsed = $this->vttParser->parse($vttFilePath);
+        $parsed = $this->reader->read($captionFilePath);
 
         return $this->writeCues($parsed['cues']);
     }
 
     /**
-     * @param list<array{start: float, end: float, text: string, opaque: string, id: string}> $cues
+     * @param list<array{start: float, end: float, text: string, opaque?: string, id?: string}> $cues
      */
     public function writeCues(array $cues): string
     {
-        $blocks = [];
-        foreach ($cues as $i => $cue) {
-            $timing = $this->formatTime($cue['start']) . ' --> ' . $this->formatTime($cue['end']);
-            $blocks[] = ($i + 1) . "\n" . $timing . "\n" . $cue['text'];
-        }
-
-        return implode("\n\n", $blocks) . "\n";
-    }
-
-    private function formatTime(float $seconds): string
-    {
-        $h  = (int) ($seconds / 3600);
-        $m  = (int) (fmod($seconds, 3600) / 60);
-        $s  = (int) fmod($seconds, 60);
-        $ms = (int) round(fmod($seconds, 1) * 1000);
-
-        return sprintf('%02d:%02d:%02d,%03d', $h, $m, $s, $ms);
+        return $this->srtParser->write($cues);
     }
 }

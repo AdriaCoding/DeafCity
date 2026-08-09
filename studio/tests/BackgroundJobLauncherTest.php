@@ -108,7 +108,7 @@ class BackgroundJobLauncherTest extends TestCase
 
         $launcher->launchTranscriptionPipeline(
             audioPath:            '/data/interview.mp3',
-            vttOutputPath:        '/data/draft.vtt',
+            draftOutputPath:        '/data/draft.vtt',
             statusPath:           '/data/transcription.json',
             revisionStatePath:    '/data/revision_status.json',
             translationStatePath: '/data/translation.json',
@@ -153,6 +153,98 @@ class BackgroundJobLauncherTest extends TestCase
         $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
     }
 
+    public function test_launch_revision_and_translation_defaults_translate_source_lang_to_source_lang(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'my-secret-key', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchRevisionAndTranslation(
+            '/master.vtt',
+            '/revision.json',
+            '/translation.json',
+            'ca',
+            '/jobdir',
+            ['en'],
+        );
+
+        $this->assertStringContainsString('--translate_source_lang ' . escapeshellarg('ca'), $captured);
+        $this->assertStringContainsString('--dialect_name ' . escapeshellarg(''), $captured);
+    }
+
+    public function test_launch_revision_and_translation_forks_dialect_from_base_language(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'my-secret-key', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchRevisionAndTranslation(
+            '/master.vtt',
+            '/revision.json',
+            '/translation.json',
+            'es-mx',
+            '/jobdir',
+            ['en'],
+            'es',
+            'Mexican Spanish (not Peninsular Spanish)',
+        );
+
+        $this->assertStringContainsString('--source_lang ' . escapeshellarg('es-mx'), $captured);
+        $this->assertStringContainsString('--translate_source_lang ' . escapeshellarg('es'), $captured);
+        $this->assertStringContainsString('--dialect_name ' . escapeshellarg('Mexican Spanish (not Peninsular Spanish)'), $captured);
+    }
+
+    public function test_launch_transcription_passes_prompt_hint(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchTranscription('/audio.mp3', '/out.srt', '/status.json', 'es', 'whisper-large-v3-turbo', 'Mexican Spanish');
+
+        $this->assertStringContainsString('--initial_prompt ' . escapeshellarg('Mexican Spanish'), $captured);
+    }
+
+    public function test_launch_transcription_prompt_hint_defaults_empty(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchTranscription('/audio.mp3', '/out.srt', '/status.json', 'es');
+
+        $this->assertStringContainsString('--initial_prompt ' . escapeshellarg(''), $captured);
+    }
+
+    public function test_launch_transcription_pipeline_passes_prompt_hint_and_dialect_name(): void
+    {
+        $captured = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'gemini-key', function ($cmd) use (&$captured) {
+            $captured = $cmd;
+        });
+
+        $launcher->launchTranscriptionPipeline(
+            audioPath:            '/data/interview.mp3',
+            draftOutputPath:        '/data/draft.srt',
+            statusPath:           '/data/transcription.json',
+            revisionStatePath:    '/data/revision_status.json',
+            translationStatePath: '/data/translation.json',
+            jobDir:               '/data',
+            sourceLang:           'es',
+            targetLang:           'en',
+            model:                'whisper-large-v3-turbo',
+            promptHint:           'Mexican Spanish',
+            dialectName:          'Mexican Spanish (not Peninsular Spanish)',
+        );
+
+        $this->assertStringContainsString('--initial_prompt ' . escapeshellarg('Mexican Spanish'), $captured);
+        $this->assertStringContainsString('--dialect_name ' . escapeshellarg('Mexican Spanish (not Peninsular Spanish)'), $captured);
+    }
+
     public function test_launch_sync_uses_push_script(): void
     {
         $captured = null;
@@ -189,7 +281,7 @@ class BackgroundJobLauncherTest extends TestCase
 
         $launcher->launchTranscriptionPipeline(
             audioPath:            '/a.mp3',
-            vttOutputPath:        '/d.vtt',
+            draftOutputPath:        '/d.vtt',
             statusPath:           '/t.json',
             revisionStatePath:    '/rev.json',
             translationStatePath: '/tr.json',

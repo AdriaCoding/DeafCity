@@ -49,10 +49,10 @@ PRDs: `docs/prd-continguts.md`, `docs/prd-caption-track-management.md`, `docs/pr
 
 | State | Condition |
 |---|---|
-| `transcribing` | `draft.vtt` does not yet exist |
-| `translating` | `draft.vtt` exists; translation state is `pending` or `running` |
+| `transcribing` | `draft.srt` does not yet exist |
+| `translating` | `draft.srt` exists; translation state is `pending` or `running` |
 | `translation_error` | English translation failed |
-| `download_ready` | `draft_en.vtt` exists and English entry is `done` |
+| `download_ready` | `draft_en.srt` exists and English entry is `done` |
 
 Polls `?action=transcription-status` or `?action=translation-status` every 3 s. Retry posts to `?action=translation-retry` with `lang=en`. **Finalitza** calls `?action=cancel`.
 
@@ -66,7 +66,7 @@ Transcription (standalone and bulk) uses **Groq primary + local faster-whisper f
 
 1. **Preprocess** — `AudioPreprocessor` → 16 kHz mono FLAC.
 2. **Groq** — `GroqTranscriber` (`whisper-large-v3-turbo` default); 20 s timeout, one retry on 429/5xx.
-3. **Fallback matrix** — success writes `draft.vtt`; transport/empty spawns local engine; auth/bad-input destroys Job with Catalan error; blank `GROQ_API_KEY` skips Groq.
+3. **Fallback matrix** — success writes `draft.srt`; transport/empty spawns local engine; auth/bad-input destroys Job with Catalan error; blank `GROQ_API_KEY` skips Groq.
 
 **CueChunker** post-processes word-level timestamps into readable cues (`src/CueChunker.php` + `scripts/cue_chunker.py`, golden fixture at `tests/fixtures/cue_chunker_cases.json`).
 
@@ -108,7 +108,7 @@ The sections below document behaviour **as shipped before removal**, for archaeo
 <details>
 <summary>Slice 1 — Intake (retired)</summary>
 
-Single intake form at `?action=intake` (nav: **Nova feina**). Producer pasted Vimeo URL/ID, selected sign language, edition, subtitle language from `studio-config.json`, and uploaded WebVTT/SRT or interpreter audio. Created `data/jobs/current/` with `job.json` and `draft.vtt`.
+Single intake form at `?action=intake` (nav: **Nova feina**). Producer pasted Vimeo URL/ID, selected sign language, edition, subtitle language from `studio-config.json`, and uploaded WebVTT/SRT or interpreter audio. Created `data/jobs/current/` with `job.json` and `draft.srt` ([ADR-0016](adr/0016-srt-primary-caption-format.md)).
 
 </details>
 

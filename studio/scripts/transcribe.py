@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Transcribe interpreter audio to WebVTT using local faster-whisper (CTranslate2,
+Transcribe interpreter audio to SubRip using local faster-whisper (CTranslate2,
 int8) as the fallback engine for Subtitle Generation.
 
 Runs in the dedicated Studio venv (studio/.venv) and reads CT2 models from
@@ -9,7 +9,7 @@ this script only runs when the orchestrator falls back to the local engine.
 
 Arguments:
     --audio_file   Absolute path to the audio file
-    --vtt_output   Absolute path where the WebVTT file will be written
+    --draft_output Absolute path where the SubRip file will be written
     --status_file  Absolute path to the JSON status file (updated during run)
     --language     ISO 639-1 code for the spoken language (e.g. es, en, fr)
     --model        Model id (default: whisper-large-v3-turbo)
@@ -47,32 +47,43 @@ def write_status(path: str, status: str, message: str = "") -> None:
 
 
 def fmt_ts(seconds: float) -> str:
-    h = int(seconds // 3600)
-    m = int((seconds % 3600) // 60)
-    s = seconds % 60
-    return f"{h:02d}:{m:02d}:{s:06.3f}"
+    """SubRip timestamp: HH:MM:SS,mmm.
+
+    Whole-millisecond arithmetic, mirroring SrtParser::formatTime() on the PHP
+    side: a float landing a hair under a second boundary must not round up into
+    a 60-second or 4-digit field and emit a timestamp SubRip cannot parse back.
+    """
+    total_ms = max(0, round(seconds * 1000))
+    h, rem = divmod(total_ms, 3_600_000)
+    m, rem = divmod(rem, 60_000)
+    s, ms = divmod(rem, 1000)
+    return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
 
-def words_to_vtt(words: list) -> str:
-    """Convert word-level timestamp dicts to WebVTT via CueChunker.
+def words_to_srt(words: list) -> str:
+    """Convert word-level timestamp dicts to SubRip via CueChunker.
 
     Each element: {"start": float, "end": float, "text": str}
     Mirrors the PHP Groq path so both engines produce identical-shaped cues.
+    Indices are sequential from 1 and the millisecond separator is a comma,
+    both of which SubRip requires and WebVTT did not.
     """
     cues = chunk_words(words)
-    parts = ["WEBVTT"]
-    for cue in cues:
-        parts.append(f"\n{fmt_ts(cue['start'])} --> {fmt_ts(cue['end'])}\n{cue['text']}")
-    return "\n".join(parts) + "\n"
+    blocks = [
+        f"{i}\n{fmt_ts(cue['start'])} --> {fmt_ts(cue['end'])}\n{cue['text']}"
+        for i, cue in enumerate(cues, start=1)
+    ]
+    return "\n\n".join(blocks) + "\n"
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--audio_file", required=True)
-    parser.add_argument("--vtt_output", required=True)
+    parser.add_argument("--draft_output", required=True)
     parser.add_argument("--status_file", required=True)
     parser.add_argument("--language", required=True)
     parser.add_argument("--model", default="whisper-large-v3-turbo")
+    parser.add_argument("--initial_prompt", default="")
     args = parser.parse_args()
 
     model_name = resolve_model(args.model)
@@ -83,7 +94,7 @@ def main() -> None:
         model_name,
         args.language,
         args.audio_file,
-        args.vtt_output,
+        args.draft_output,
         LOG_FILE,
     )
     write_status(args.status_file, "running")
@@ -106,6 +117,7 @@ def main() -> None:
             word_timestamps=True,
             vad_filter=True,
             vad_parameters=dict(min_silence_duration_ms=500),
+            initial_prompt=args.initial_prompt or None,
         )
 
         # Flatten word-level timestamps from all segments.
@@ -118,21 +130,21 @@ def main() -> None:
                     "text": str(w.word),
                 })
 
-        vtt = words_to_vtt(flat_words)
+        srt = words_to_srt(flat_words)
 
-        if vtt.strip() == "WEBVTT":
+        if not srt.strip():
             logger.error("No speech recognized in audio file")
             write_status(args.status_file, "error", "El format de l'àudio no es reconeix")
             sys.exit(1)
 
-        with open(args.vtt_output, "w", encoding="utf-8") as f:
-            f.write(vtt)
+        with open(args.draft_output, "w", encoding="utf-8") as f:
+            f.write(srt)
 
         logger.info(
             "Transcription complete engine=local:%s cues=%d output=%s",
             args.model,
-            vtt.count("-->"),
-            args.vtt_output,
+            srt.count("-->"),
+            args.draft_output,
         )
         write_status(args.status_file, "done")
 

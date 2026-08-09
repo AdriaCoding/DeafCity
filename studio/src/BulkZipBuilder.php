@@ -6,15 +6,13 @@ class BulkZipBuilder
 {
     private readonly SubtitleOutputBasename $basename;
 
-    public function __construct(
-        private readonly VttToSrtConverter $converter = new VttToSrtConverter(),
-        ?SubtitleOutputBasename $basename = null,
-    ) {
+    public function __construct(?SubtitleOutputBasename $basename = null)
+    {
         $this->basename = $basename ?? new SubtitleOutputBasename();
     }
 
     /**
-     * @param list<array{originalFilename: string, language: string, enVttPath: string, srcVttPath: string}> $entries
+     * @param list<array{originalFilename: string, language: string, enSrtPath: string, srcSrtPath: string}> $entries
      */
     public function build(array $entries): string
     {
@@ -37,11 +35,11 @@ class BulkZipBuilder
                         'en',
                         'srt',
                     ),
-                    $this->converter->convert($entry['enVttPath']),
+                    $this->readOrFail($entry['enSrtPath']),
                 );
             } catch (\RuntimeException $e) {
                 $zip->close();
-                throw new \RuntimeException('No s\'ha pogut convertir el fitxer VTT: ' . $e->getMessage());
+                throw new \RuntimeException('No s\'ha pogut llegir el fitxer de subtítols: ' . $e->getMessage());
             }
         }
 
@@ -54,5 +52,15 @@ class BulkZipBuilder
         }
 
         return $binary;
+    }
+
+    private function readOrFail(string $path): string
+    {
+        $content = file_get_contents($path);
+        if ($content === false) {
+            throw new \RuntimeException($path);
+        }
+
+        return $content;
     }
 }

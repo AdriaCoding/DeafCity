@@ -277,6 +277,78 @@ class TranscriptionIntakeHandlerTest extends TestCase
         $this->assertSame([], $state['languages'] ?? null);
     }
 
+    public function test_dialect_source_forks_revision_and_translation_languages(): void
+    {
+        $configPath = sys_get_temp_dir() . '/tc-intake-dialect-config-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+        $dialectConfig = new StudioConfig($configPath);
+        $dialectConfig->addInputLanguage('es-mx', 'Espanyol (Mèxic)', 'es');
+
+        $launched = null;
+        $fakeOrchestrator = new class (['result' => 'pipeline_transcribed']) {
+            public function __construct(private array $result) {}
+            public function run(): array
+            {
+                return $this->result;
+            }
+        };
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'test-gemini-key', function ($cmd) use (&$launched) {
+            $launched = $cmd;
+        });
+        $handler = new TranscriptionIntakeHandler(
+            studioConfig: $dialectConfig,
+            jobManager:   $this->jobManager,
+            orchestrator: $fakeOrchestrator,
+            launcher:     $launcher,
+            translationState: new TranslationJobState($this->jobManager),
+        );
+
+        $handler->handlePost(['subtitle_language' => 'es-mx'], ['intake_file' => $this->audioUpload()]);
+
+        $this->assertStringContainsString('--source_lang ' . escapeshellarg('es-mx'), $launched);
+        $this->assertStringContainsString('--translate_source_lang ' . escapeshellarg('es'), $launched);
+        $this->assertStringContainsString('--dialect_name ' . escapeshellarg('Espanyol (Mèxic)'), $launched);
+
+        $state = json_decode($this->jobManager->readTranslationState() ?? '{}', true);
+        $this->assertSame('es', $state['master'] ?? null);
+        $this->assertArrayHasKey('en', $state['languages'] ?? []);
+
+        unlink($configPath);
+        @unlink($configPath . '.lock');
+    }
+
+    public function test_english_dialect_source_skips_translation(): void
+    {
+        $configPath = sys_get_temp_dir() . '/tc-intake-dialect-config-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+        $dialectConfig = new StudioConfig($configPath);
+        $dialectConfig->addInputLanguage('en-us', 'Anglès (EUA)', 'en');
+
+        $fakeOrchestrator = new class (['result' => 'pipeline_transcribed']) {
+            public function __construct(private array $result) {}
+            public function run(): array
+            {
+                return $this->result;
+            }
+        };
+        $handler = new TranscriptionIntakeHandler(
+            studioConfig: $dialectConfig,
+            jobManager:   $this->jobManager,
+            orchestrator: $fakeOrchestrator,
+            launcher:     new BackgroundJobLauncher('/srv/scripts', 'test-gemini-key', function ($cmd) {}),
+            translationState: new TranslationJobState($this->jobManager),
+        );
+
+        $handler->handlePost(['subtitle_language' => 'en-us'], ['intake_file' => $this->audioUpload()]);
+
+        $state = json_decode($this->jobManager->readTranslationState() ?? '{}', true);
+        $this->assertSame('done', $state['status'] ?? null);
+        $this->assertSame([], $state['languages'] ?? null);
+
+        unlink($configPath);
+        @unlink($configPath . '.lock');
+    }
+
     public function test_groq_success_writes_revision_status_pending_before_launch(): void
     {
         $handler = $this->handlerWithFakeOrchestrator(['result' => 'pipeline_transcribed']);
@@ -335,12 +407,12 @@ class TranscriptionIntakeHandlerTest extends TestCase
         $this->assertSame(0, $runState->count);
         $this->assertTrue($result['created'] ?? false);
         $this->assertSame('upload', $this->jobManager->read()['intake_mode']);
-        $this->assertFileExists($this->jobManager->draftVttPath());
+        $this->assertFileExists($this->jobManager->draftPath());
         $this->assertNotNull($launched);
         $this->assertStringContainsString('run_revise.sh', $launched);
     }
 
-    public function test_srt_upload_converts_to_vtt_and_launches_revision(): void
+    public function test_srt_upload_is_stored_as_srt_and_launches_revision(): void
     {
         $handler = $this->handlerWithFakeOrchestrator(['result' => 'pipeline_transcribed']);
         $result = $handler->handlePost(
@@ -349,7 +421,7 @@ class TranscriptionIntakeHandlerTest extends TestCase
         );
 
         $this->assertTrue($result['created'] ?? false);
-        $this->assertStringStartsWith("WEBVTT\n", (string) file_get_contents($this->jobManager->draftVttPath()));
+        $this->assertStringStartsWith("1\n", (string) file_get_contents($this->jobManager->draftPath()));
     }
 
     public function test_rejects_invalid_vtt_upload(): void

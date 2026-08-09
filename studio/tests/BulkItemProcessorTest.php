@@ -89,18 +89,19 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: $waitForCompletion ?? function (): array {
                 return ['success' => true];
             },
         );
     }
 
-    public function test_pipeline_transcribed_marks_item_done_and_saves_both_vtts(): void
+    public function test_pipeline_transcribed_marks_item_done_and_saves_both_drafts(): void
     {
         $item = $this->seedQueueItem();
         $processor = $this->processor(['result' => 'pipeline_transcribed'], function (): array {
-            file_put_contents($this->jobManager->draftVttPath(), "WEBVTT\n\n");
-            file_put_contents($this->jobManager->draftVttPathForLang('en'), "WEBVTT EN\n\n");
+            file_put_contents($this->jobManager->draftPath(), "1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+            file_put_contents($this->jobManager->draftPathForLang('en'), "1\n00:00:01,000 --> 00:00:02,000\nHello\n");
             return ['success' => true];
         });
 
@@ -108,8 +109,8 @@ class BulkItemProcessorTest extends TestCase
 
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('done', $snap['items'][0]['status']);
-        $this->assertTrue(is_file($this->jobsDir . '/bulk-output/item-1_EN.vtt'));
-        $this->assertTrue(is_file($this->jobsDir . '/bulk-output/item-1_SRC.vtt'));
+        $this->assertTrue(is_file($this->jobsDir . '/bulk-output/item-1_EN.srt'));
+        $this->assertTrue(is_file($this->jobsDir . '/bulk-output/item-1_SRC.srt'));
         $this->assertFalse($this->jobManager->exists());
     }
 
@@ -130,7 +131,7 @@ class BulkItemProcessorTest extends TestCase
     {
         $this->seedQueueItem();
         $processor = $this->processor(['result' => 'pipeline_transcribed'], function (): array {
-            file_put_contents($this->jobManager->draftVttPath(), "WEBVTT source only\n\n");
+            file_put_contents($this->jobManager->draftPath(), "1\n00:00:01,000 --> 00:00:02,000\nSource\n");
             return ['success' => true];
         });
 
@@ -138,14 +139,14 @@ class BulkItemProcessorTest extends TestCase
 
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('failed', $snap['items'][0]['status']);
-        $this->assertFalse(is_file($this->jobsDir . '/bulk-output/item-1_EN.vtt'));
+        $this->assertFalse(is_file($this->jobsDir . '/bulk-output/item-1_EN.srt'));
     }
 
-    public function test_subtitle_item_skips_orchestrator_and_saves_both_vtts(): void
+    public function test_subtitle_item_skips_orchestrator_and_saves_both_drafts(): void
     {
         $id = 'item-sub';
         $vttPath = $this->jobsDir . "/bulk-tmp/$id.vtt";
-        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+        file_put_contents($vttPath, "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
         $this->bulkQueue->create([[
             'id' => $id,
             'originalFilename' => 'talk_ca',
@@ -174,9 +175,10 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: function (): array {
-                file_put_contents($this->jobManager->draftVttPath(), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
-                file_put_contents($this->jobManager->draftVttPathForLang('en'), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
+                file_put_contents($this->jobManager->draftPath(), "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
+                file_put_contents($this->jobManager->draftPathForLang('en'), "1\n00:00:01,000 --> 00:00:04,000\nHello\n");
                 return ['success' => true];
             },
         );
@@ -186,14 +188,14 @@ class BulkItemProcessorTest extends TestCase
         $this->assertSame(0, $fakeOrchestrator->calls);
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('done', $snap['items'][0]['status']);
-        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_EN.vtt"));
-        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_SRC.vtt"));
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_EN.srt"));
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_SRC.srt"));
         $this->assertFalse($this->jobManager->exists());
         $this->assertNotEmpty($launched);
         $this->assertStringContainsString('run_revise.sh', $launched[0]);
     }
 
-    public function test_srt_subtitle_item_converts_and_marks_done(): void
+    public function test_srt_subtitle_item_is_stored_as_srt_and_marks_done(): void
     {
         $id = 'item-srt';
         $srtPath = $this->jobsDir . "/bulk-tmp/$id.srt";
@@ -221,8 +223,9 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: function (): array {
-                file_put_contents($this->jobManager->draftVttPathForLang('en'), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHello\n");
+                file_put_contents($this->jobManager->draftPathForLang('en'), "1\n00:00:01,000 --> 00:00:04,000\nHello\n");
                 return ['success' => true];
             },
         );
@@ -231,10 +234,10 @@ class BulkItemProcessorTest extends TestCase
 
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('done', $snap['items'][0]['status']);
-        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_EN.vtt"));
-        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_SRC.vtt"));
-        $src = file_get_contents($this->jobsDir . "/bulk-output/{$id}_SRC.vtt");
-        $this->assertStringContainsString('WEBVTT', $src);
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_EN.srt"));
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}_SRC.srt"));
+        $src = file_get_contents($this->jobsDir . "/bulk-output/{$id}_SRC.srt");
+        $this->assertStringNotContainsString('WEBVTT', $src);
         $this->assertStringContainsString('Hola', $src);
     }
 
@@ -242,7 +245,7 @@ class BulkItemProcessorTest extends TestCase
     {
         $id = 'item-rev-err';
         $vttPath = $this->jobsDir . "/bulk-tmp/$id.vtt";
-        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+        file_put_contents($vttPath, "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
         $this->bulkQueue->create([[
             'id' => $id,
             'originalFilename' => 'talk_ca',
@@ -272,6 +275,7 @@ class BulkItemProcessorTest extends TestCase
             orchestrator: $fakeOrchestrator,
             launcher: $launcher,
             translationState: new TranslationJobState($this->jobManager),
+            studioConfig: $this->config,
             waitForCompletion: null,
             pollTimeoutSeconds: 4,
         );

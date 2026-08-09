@@ -150,7 +150,7 @@ class ShortenIntakeHandlerTest extends TestCase
         $this->assertSame('shorten', $job['job_type']);
         $this->assertSame('ca', $job['subtitle_language']);
         $this->assertSame('talk_ca', $job['original_filename']);
-        $this->assertFileExists($this->jobManager->draftVttPath());
+        $this->assertFileExists($this->jobManager->draftPath());
 
         $this->assertNotNull($launched);
         $this->assertStringContainsString('run_revise.sh', $launched);
@@ -161,7 +161,7 @@ class ShortenIntakeHandlerTest extends TestCase
         $this->assertSame([], $state['languages'] ?? null);
     }
 
-    public function test_srt_upload_converts_to_vtt(): void
+    public function test_srt_upload_is_stored_as_srt(): void
     {
         $result = $this->handler()->handlePost(
             ['subtitle_language' => 'ca'],
@@ -169,7 +169,7 @@ class ShortenIntakeHandlerTest extends TestCase
         );
 
         $this->assertTrue($result['created'] ?? false);
-        $this->assertStringStartsWith("WEBVTT\n", (string) file_get_contents($this->jobManager->draftVttPath()));
+        $this->assertStringStartsWith("1\n", (string) file_get_contents($this->jobManager->draftPath()));
     }
 
     public function test_rejects_invalid_vtt_upload(): void

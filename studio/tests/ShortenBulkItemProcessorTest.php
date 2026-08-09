@@ -68,7 +68,7 @@ class ShortenBulkItemProcessorTest extends TestCase
     {
         $id = 'item-vtt';
         $vttPath = $this->jobsDir . "/bulk-tmp/$id.vtt";
-        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+        file_put_contents($vttPath, "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
         $this->bulkQueue->create([[
             'id' => $id,
             'originalFilename' => 'talk_ca',
@@ -80,7 +80,7 @@ class ShortenBulkItemProcessorTest extends TestCase
         $launched = [];
         $processor = $this->processor(
             waitForCompletion: function (): array {
-                file_put_contents($this->jobManager->draftVttPath(), "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola escurçada\n");
+                file_put_contents($this->jobManager->draftPath(), "1\n00:00:01,000 --> 00:00:04,000\nHola escurçada\n");
                 return ['success' => true];
             },
             exec: function (string $cmd) use (&$launched): void { $launched[] = $cmd; },
@@ -90,7 +90,7 @@ class ShortenBulkItemProcessorTest extends TestCase
 
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('done', $snap['items'][0]['status']);
-        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}.vtt"));
+        $this->assertTrue(is_file($this->jobsDir . "/bulk-output/{$id}.srt"));
         $this->assertFalse($this->jobManager->exists());
         $this->assertNotEmpty($launched);
         $this->assertStringContainsString('run_revise.sh', $launched[0]);
@@ -100,7 +100,7 @@ class ShortenBulkItemProcessorTest extends TestCase
         $this->assertSame('ca', $doneEntries[0]['language']);
     }
 
-    public function test_srt_item_converts_and_marks_done(): void
+    public function test_srt_item_is_stored_as_srt_and_marks_done(): void
     {
         $id = 'item-srt';
         $srtPath = $this->jobsDir . "/bulk-tmp/$id.srt";
@@ -121,8 +121,8 @@ class ShortenBulkItemProcessorTest extends TestCase
 
         $snap = $this->bulkQueue->statusSnapshot();
         $this->assertSame('done', $snap['items'][0]['status']);
-        $output = file_get_contents($this->jobsDir . "/bulk-output/{$id}.vtt");
-        $this->assertStringContainsString('WEBVTT', $output);
+        $output = file_get_contents($this->jobsDir . "/bulk-output/{$id}.srt");
+        $this->assertStringNotContainsString('WEBVTT', $output);
         $this->assertStringContainsString('Hola', $output);
     }
 
@@ -130,7 +130,7 @@ class ShortenBulkItemProcessorTest extends TestCase
     {
         $id = 'item-rev-err';
         $vttPath = $this->jobsDir . "/bulk-tmp/$id.vtt";
-        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:04.000\nHola\n");
+        file_put_contents($vttPath, "1\n00:00:01,000 --> 00:00:04,000\nHola\n");
         $this->bulkQueue->create([[
             'id' => $id,
             'originalFilename' => 'talk_ca',

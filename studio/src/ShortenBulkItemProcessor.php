@@ -10,7 +10,7 @@ namespace Studio;
  *
  * Reuses BulkIntakeQueue as-is: since there is no separate translated
  * output here, the single revised file is recorded under both the
- * enVttPath and srcVttPath slots of markDone()/doneEntries() (they're
+ * enSrtPath and srcSrtPath slots of markDone()/doneEntries() (they're
  * identical for a shorten item) rather than forking the queue's storage
  * format.
  */
@@ -19,9 +19,7 @@ class ShortenBulkItemProcessor
     /** @var callable(): array{success: bool, reason?: string} */
     private $waitForCompletion;
 
-    private readonly IntakeSourceDetector $sourceDetector;
-    private readonly SrtToVttConverter $srtConverter;
-    private readonly WebVttValidator $vttValidator;
+    private readonly CaptionIntakeNormalizer $normalizer;
 
     /**
      * @param callable(): array{success: bool, reason?: string}|null $waitForCompletion
@@ -32,15 +30,11 @@ class ShortenBulkItemProcessor
         private readonly BackgroundJobLauncher $launcher,
         private readonly TranslationJobState $translationState,
         ?callable $waitForCompletion = null,
-        ?IntakeSourceDetector $sourceDetector = null,
-        ?SrtToVttConverter $srtConverter = null,
-        ?WebVttValidator $vttValidator = null,
+        ?CaptionIntakeNormalizer $normalizer = null,
         private readonly int $pollTimeoutSeconds = 3600,
     ) {
         $this->waitForCompletion = $waitForCompletion ?? fn (): array => $this->pollUntilReady();
-        $this->sourceDetector = $sourceDetector ?? new IntakeSourceDetector();
-        $this->srtConverter = $srtConverter ?? new SrtToVttConverter();
-        $this->vttValidator = $vttValidator ?? new WebVttValidator();
+        $this->normalizer = $normalizer ?? new CaptionIntakeNormalizer();
     }
 
     public function processNext(): bool
@@ -64,8 +58,8 @@ class ShortenBulkItemProcessor
                 throw new \RuntimeException($wait['reason'] ?? 'Error en el processament.');
             }
 
-            $vttSource = $this->jobManager->draftVttPath();
-            if (!is_file($vttSource)) {
+            $srcSource = $this->jobManager->draftPath();
+            if (!is_file($srcSource)) {
                 throw new \RuntimeException('No s\'ha generat el fitxer de subtítols.');
             }
 
@@ -73,8 +67,8 @@ class ShortenBulkItemProcessor
                 mkdir($this->bulkQueue->bulkOutputDir(), 0775, true);
             }
 
-            $dest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '.vtt';
-            if (!copy($vttSource, $dest)) {
+            $dest = $this->bulkQueue->bulkOutputDir() . '/' . $item['id'] . '.srt';
+            if (!copy($srcSource, $dest)) {
                 throw new \RuntimeException('No s\'ha pogut desar el fitxer de sortida.');
             }
 
@@ -101,15 +95,13 @@ class ShortenBulkItemProcessor
         ];
 
         try {
-            if ($this->sourceDetector->isSubRip($item['tmpAudioPath'], $originalName)) {
-                $vttContent = $this->srtConverter->convert($item['tmpAudioPath']);
-                $vttLabel = $item['originalFilename'] . '.vtt';
-                $this->validateVttContent($vttContent, $vttLabel);
-                $this->jobManager->createWithContent($meta, $vttContent);
-            } else {
-                $this->vttValidator->validate($item['tmpAudioPath'], $originalName);
-                $this->jobManager->create($meta, new UploadedFile($item['tmpAudioPath'], $originalName));
-            }
+            $this->jobManager->createWithContent(
+                $meta,
+                $this->normalizer->normalize(
+                    $item['tmpAudioPath'],
+                    $originalName,
+                ),
+            );
         } catch (\InvalidArgumentException $e) {
             throw new \RuntimeException($e->getMessage(), 0, $e);
         }
@@ -125,33 +117,15 @@ class ShortenBulkItemProcessor
         $this->translationState->initiate([], $sourceLang);
 
         $this->launcher->launchRevisionAndTranslation(
-            $this->jobManager->draftVttPath(),
+            $this->jobManager->draftPath(),
             $revisionPath,
             $this->jobManager->translationStatePath(),
             $sourceLang,
-            dirname($this->jobManager->draftVttPath()),
+            dirname($this->jobManager->draftPath()),
             [],
         );
     }
 
-    private function validateVttContent(string $vttContent, string $label): void
-    {
-        $tmpPath = tempnam(sys_get_temp_dir(), 'studio-shorten-bulk-vtt-');
-        if ($tmpPath === false) {
-            throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
-        }
-
-        try {
-            if (file_put_contents($tmpPath, $vttContent) === false) {
-                throw new \RuntimeException('No s\'ha pogut validar el fitxer de subtítols.');
-            }
-            $this->vttValidator->validate($tmpPath, $label);
-        } finally {
-            if (is_file($tmpPath)) {
-                unlink($tmpPath);
-            }
-        }
-    }
 
     /** @return array{success: bool, reason?: string} */
     private function pollUntilReady(): array

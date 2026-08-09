@@ -4,7 +4,7 @@
  *
  * Usage:
  *   GEMINI_API_KEY=<key> php revise.php \
- *     --vtt_path <path> \
+ *     --draft_path <path> \
  *     --revision_status <path> \
  *     --source_lang <lang> \
  *     --job_dir <path>
@@ -15,24 +15,27 @@ declare(strict_types=1);
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Studio\CaptionReader;
 use Studio\GeminiRevisionException;
 use Studio\GeminiReviser;
-use Studio\VttParser;
-use Studio\WebVttValidator;
+use Studio\SrtParser;
+use Studio\SrtValidator;
 
 $opts = getopt('', [
-    'vtt_path:',
+    'draft_path:',
     'revision_status:',
     'source_lang:',
     'job_dir:',
+    'dialect_name:',
 ]);
 
-$vttPath        = $opts['vtt_path']         ?? '';
+$draftPath      = $opts['draft_path']       ?? '';
 $revisionStatus = $opts['revision_status']  ?? '';
 $sourceLang     = $opts['source_lang']      ?? '';
 $jobDir         = $opts['job_dir']          ?? '';
+$dialectName    = $opts['dialect_name']     ?? '';
 
-if ($vttPath === '' || $revisionStatus === '' || $sourceLang === '' || $jobDir === '') {
+if ($draftPath === '' || $revisionStatus === '' || $sourceLang === '' || $jobDir === '') {
     fwrite(STDERR, "Missing required arguments.\n");
     exit(1);
 }
@@ -78,31 +81,38 @@ register_shutdown_function(static function () use ($revisionStatus, $logger, $wr
 
 try {
     $writeRevisionStatus(['status' => 'running']);
-    $logger(date('Y-m-d H:i:s') . " [revise.php] Starting revision source={$sourceLang} vtt={$vttPath}");
+    $logger(date('Y-m-d H:i:s') . " [revise.php] Starting revision source={$sourceLang} draft={$draftPath}");
 
-    $rawVtt = file_get_contents($vttPath);
-    if ($rawVtt === false || $rawVtt === '') {
-        throw new GeminiRevisionException('No s\'ha pogut llegir el fitxer VTT.');
+    $parsed = (new CaptionReader())->read($draftPath);
+    if ($parsed['cues'] === []) {
+        throw new GeminiRevisionException('No s\'ha pogut llegir el fitxer de subtítols.');
     }
 
+    $srtParser = new SrtParser();
     $reviser = new GeminiReviser(apiKey: $apiKey);
-    $revisedVtt = (new VttParser())->canonicalize($reviser->revise($rawVtt, $sourceLang));
 
-    $tmpPath = $jobDir . '/.revision_tmp.vtt';
-    if (file_put_contents($tmpPath, $revisedVtt) === false) {
-        throw new GeminiRevisionException('No s\'ha pogut desar el VTT revisat temporalment.');
+    /*
+     * canonicalize() rather than a bare parse: generative output drifts —
+     * dropped blank lines, restarted numbering, the odd WebVTT habit — and all
+     * of that is recoverable without failing the whole revision.
+     */
+    $revised = $srtParser->canonicalize($reviser->revise($srtParser->write($parsed['cues']), $sourceLang, $dialectName));
+
+    $tmpPath = $jobDir . '/.revision_tmp.srt';
+    if (file_put_contents($tmpPath, $revised) === false) {
+        throw new GeminiRevisionException('No s\'ha pogut desar els subtítols revisats temporalment.');
     }
 
     try {
-        (new WebVttValidator())->validate($tmpPath, 'draft.vtt');
+        (new SrtValidator())->validate($tmpPath, 'draft.srt');
     } catch (\InvalidArgumentException $e) {
         unlink($tmpPath);
-        throw new GeminiRevisionException('VTT revisat no vàlid: ' . $e->getMessage());
+        throw new GeminiRevisionException('Subtítols revisats no vàlids: ' . $e->getMessage());
     }
 
-    if (file_put_contents($vttPath, $revisedVtt) === false) {
+    if (file_put_contents($draftPath, $revised) === false) {
         unlink($tmpPath);
-        throw new GeminiRevisionException('No s\'ha pogut sobreescriure draft.vtt.');
+        throw new GeminiRevisionException('No s\'ha pogut sobreescriure el fitxer de subtítols.');
     }
     unlink($tmpPath);
 

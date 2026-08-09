@@ -17,13 +17,13 @@ class GeminiReviserTest extends TestCase
         );
     }
 
-    private function okResponse(string $revisedVtt): array
+    private function okResponse(string $revisedSrt): array
     {
         $body = json_encode([
             'candidates' => [[
                 'content' => [
                     'parts' => [[
-                        'text' => json_encode(['revised_vtt' => $revisedVtt]),
+                        'text' => json_encode(['revised_srt' => $revisedSrt]),
                     ]],
                 ],
             ]],
@@ -31,15 +31,16 @@ class GeminiReviserTest extends TestCase
         return ['status' => 200, 'body' => $body];
     }
 
-    public function test_happy_path_returns_revised_vtt(): void
+    public function test_happy_path_returns_revised_srt(): void
     {
         $reviser = $this->makeReviser(function () {
-            return $this->okResponse("WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nHello");
+            return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHello");
         });
 
-        $result = $reviser->revise("WEBVTT\n\n00:00:01.000 --> 00:00:02.000\nhello", 'en');
+        $result = $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nhello", 'en');
 
-        $this->assertStringContainsString('WEBVTT', $result);
+        $this->assertStringStartsWith("1\n", $result);
+        $this->assertStringNotContainsString('WEBVTT', $result);
         $this->assertStringContainsString('Hello', $result);
     }
 
@@ -54,16 +55,16 @@ class GeminiReviserTest extends TestCase
                 if ($callCount === 1) {
                     return ['status' => 429, 'body' => '{"error":"rate limited"}'];
                 }
-                return $this->okResponse("WEBVTT\n");
+                return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
             },
             function (int $s) use (&$sleepArgs) {
                 $sleepArgs[] = $s;
             }
         );
 
-        $result = $reviser->revise("WEBVTT\n", 'ca');
+        $result = $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'ca');
 
-        $this->assertSame("WEBVTT\n", $result);
+        $this->assertSame("1\n00:00:01,000 --> 00:00:02,000\nHola\n", $result);
         $this->assertSame(2, $callCount);
         $this->assertSame([1], $sleepArgs);
     }
@@ -79,16 +80,16 @@ class GeminiReviserTest extends TestCase
                 if ($callCount < 3) {
                     return ['status' => 500, 'body' => '{"error":"server error"}'];
                 }
-                return $this->okResponse("WEBVTT\n");
+                return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
             },
             function (int $s) use (&$sleepArgs) {
                 $sleepArgs[] = $s;
             }
         );
 
-        $result = $reviser->revise("WEBVTT\n", 'es');
+        $result = $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'es');
 
-        $this->assertSame("WEBVTT\n", $result);
+        $this->assertSame("1\n00:00:01,000 --> 00:00:02,000\nHola\n", $result);
         $this->assertSame(3, $callCount);
         $this->assertSame([1, 2], $sleepArgs);
     }
@@ -100,7 +101,7 @@ class GeminiReviserTest extends TestCase
         });
 
         $this->expectException(GeminiRevisionException::class);
-        $reviser->revise("WEBVTT\n", 'en');
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'en');
     }
 
     public function test_4xx_other_than_429_fails_fast(): void
@@ -114,7 +115,7 @@ class GeminiReviserTest extends TestCase
 
         $this->expectException(GeminiRevisionException::class);
         try {
-            $reviser->revise("WEBVTT\n", 'en');
+            $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'en');
         } finally {
             $this->assertSame(1, $callCount);
         }
@@ -127,10 +128,10 @@ class GeminiReviserTest extends TestCase
         });
 
         $this->expectException(GeminiRevisionException::class);
-        $reviser->revise("WEBVTT\n", 'en');
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'en');
     }
 
-    public function test_missing_revised_vtt_key_throws_exception(): void
+    public function test_missing_revised_srt_key_throws_exception(): void
     {
         $reviser = $this->makeReviser(function () {
             $body = json_encode([
@@ -142,16 +143,72 @@ class GeminiReviserTest extends TestCase
         });
 
         $this->expectException(GeminiRevisionException::class);
-        $reviser->revise("WEBVTT\n", 'en');
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'en');
     }
 
-    public function test_empty_revised_vtt_throws_exception(): void
+    public function test_empty_revised_srt_throws_exception(): void
     {
         $reviser = $this->makeReviser(function () {
             return $this->okResponse('');
         });
 
         $this->expectException(GeminiRevisionException::class);
-        $reviser->revise("WEBVTT\n", 'en');
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'en');
+    }
+
+    /**
+     * The schema key alone does not make the model emit SubRip — WebVTT never
+     * required sequential indices or comma separators, so the prompt has to say
+     * so explicitly or the output comes back VTT-flavoured.
+     */
+    public function test_request_asks_for_subrip_in_both_schema_and_prompt(): void
+    {
+        $captured = null;
+        $reviser = $this->makeReviser(function (string $url, array $payload) use (&$captured): array {
+            $captured = $payload;
+            return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        });
+
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'en');
+
+        $schema = $captured['generationConfig']['responseSchema'];
+        $this->assertArrayHasKey('revised_srt', $schema['properties']);
+        $this->assertSame(['revised_srt'], $schema['required']);
+
+        $prompt = $captured['systemInstruction']['parts'][0]['text'];
+        $this->assertStringContainsString('SubRip', $prompt);
+        $this->assertStringContainsString('comma', $prompt);
+        $this->assertStringContainsString('Sequential index', $prompt);
+        $this->assertStringContainsString('no header', $prompt);
+        $this->assertStringNotContainsString('valid WebVTT file', $prompt);
+    }
+
+    public function test_language_name_override_replaces_prompt_language_lookup(): void
+    {
+        $captured = null;
+        $reviser = $this->makeReviser(function (string $url, array $payload) use (&$captured): array {
+            $captured = $payload;
+            return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        });
+
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'es', 'Mexican Spanish (not Peninsular Spanish)');
+
+        $prompt = $captured['systemInstruction']['parts'][0]['text'];
+        $this->assertStringContainsString('Mexican Spanish (not Peninsular Spanish)', $prompt);
+        $this->assertStringNotContainsString('a Spanish subtitle file', $prompt);
+    }
+
+    public function test_empty_language_name_override_falls_back_to_lookup(): void
+    {
+        $captured = null;
+        $reviser = $this->makeReviser(function (string $url, array $payload) use (&$captured): array {
+            $captured = $payload;
+            return $this->okResponse("1\n00:00:01,000 --> 00:00:02,000\nHola\n");
+        });
+
+        $reviser->revise("1\n00:00:01,000 --> 00:00:02,000\nHola\n", 'es', '');
+
+        $prompt = $captured['systemInstruction']['parts'][0]['text'];
+        $this->assertStringContainsString('a Spanish subtitle file', $prompt);
     }
 }

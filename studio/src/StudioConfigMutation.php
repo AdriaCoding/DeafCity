@@ -39,6 +39,11 @@ class StudioConfigMutation
         $this->config->addSubtitleLanguage($id, $label);
     }
 
+    public function addInputLanguage(string $id, string $label, string $baseLanguage): void
+    {
+        $this->config->addInputLanguage($id, $label, $baseLanguage);
+    }
+
     public function getEditions(): array
     {
         return $this->config->getEditions();
@@ -57,6 +62,11 @@ class StudioConfigMutation
     public function getSubtitleLanguages(): array
     {
         return $this->config->getSubtitleLanguages();
+    }
+
+    public function getInputLanguages(): array
+    {
+        return $this->config->getInputLanguages();
     }
 
     public function removeEdition(string $id): void
@@ -80,6 +90,11 @@ class StudioConfigMutation
     public function removeSubtitleLanguage(string $id): void
     {
         $this->config->removeSubtitleLanguage($id, $this->catalog);
+    }
+
+    public function removeInputLanguage(string $id): void
+    {
+        $this->config->removeInputLanguage($id);
     }
 
     public function updateEditionLabel(string $id, string $label): void

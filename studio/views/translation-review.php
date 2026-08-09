@@ -50,7 +50,7 @@
             padding: 0.4rem 0.65rem;
         }
         #save-error[hidden] { display: none; }
-        #download-vtt-btn, #download-srt-btn {
+        #download-srt-btn {
             display: flex;
             align-items: center;
             gap: 0.25rem;
@@ -62,8 +62,8 @@
             font-size: 0.82rem;
             cursor: pointer;
         }
-        #download-vtt-btn:hover, #download-srt-btn:hover { color: var(--studio-text-secondary); border-color: var(--studio-text-muted); }
-        #download-vtt-btn .material-icons, #download-srt-btn .material-icons { font-size: 1rem; }
+        #download-srt-btn:hover { color: var(--studio-text-secondary); border-color: var(--studio-text-muted); }
+        #download-srt-btn .material-icons { font-size: 1rem; }
         .cue-count {
             font-size: 0.78rem;
             color: var(--studio-text-secondary);
@@ -201,7 +201,6 @@
     <div class="toolbar">
         <button id="save-btn" type="button">Desa i tanca</button>
         <pre id="save-error" hidden></pre>
-        <button id="download-vtt-btn" type="button"><span class="material-icons">download</span>Descarrega VTT</button>
         <button id="download-srt-btn" type="button"><span class="material-icons">download</span>Descarrega SRT</button>
         <span class="cue-count"><?= count($translatedCues) ?> subtítols</span>
     </div>

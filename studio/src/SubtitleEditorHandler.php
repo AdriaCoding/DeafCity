@@ -5,9 +5,10 @@ namespace Studio;
 class SubtitleEditorHandler
 {
     public function __construct(
-        private VttParser $vttParser,
         private CaptionFileIntegrityChecker $checker,
         private JobManager $jobManager,
+        private CaptionReader $reader = new CaptionReader(),
+        private CaptionWriter $writer = new CaptionWriter(),
     ) {}
 
     /**
@@ -30,17 +31,17 @@ class SubtitleEditorHandler
 
         $lang = $options['lang'] ?? null;
         $readPath = $lang !== null
-            ? $this->jobManager->draftVttPathForLang($lang)
-            : $this->jobManager->draftVttPath();
+            ? $this->jobManager->draftPathForLang($lang)
+            : $this->jobManager->draftPath();
 
-        $existing = $this->vttParser->parse($readPath);
+        $existing = $this->reader->read($readPath);
         $existing['cues'] = $cues;
-        $vttContent = $this->vttParser->write($existing);
+        $content = $this->writer->write($existing);
 
         if ($lang !== null) {
-            $this->jobManager->writeDraftVttForLang($lang, $vttContent);
+            $this->jobManager->writeDraftForLang($lang, $content);
         } else {
-            $this->jobManager->writeDraftVtt($vttContent);
+            $this->jobManager->writeDraft($content);
         }
 
         if (!empty($options['advanceStep'])) {
@@ -70,11 +71,11 @@ class SubtitleEditorHandler
             ];
         }
 
-        $existing = $this->vttParser->parse($vttPath);
+        $existing = $this->reader->read($vttPath);
         $existing['cues'] = $cues;
-        $vttContent = $this->vttParser->write($existing);
+        $content = $this->writer->write($existing);
 
-        if (file_put_contents($vttPath, $vttContent) === false) {
+        if (file_put_contents($vttPath, $content) === false) {
             return ['ok' => false, 'errors' => ['No s\'ha pogut desar el fitxer de subtítols.']];
         }
 

@@ -33,7 +33,7 @@ class IntakeAction
                 header('Location: ?action=resume-job');
                 exit;
             }
-            $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+            $inputLanguages = $c->studioConfig->getCombinedInputLanguageOptions();
             $errors = [];
             $values = ['subtitle_language' => ''];
             extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
@@ -42,7 +42,7 @@ class IntakeAction
         }
 
         if ($bulkQueue->exists()) {
-            $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+            $inputLanguages = $c->studioConfig->getCombinedInputLanguageOptions();
             $errors = ['_form' => 'Ja hi ha una transcripció en massa en curs.'];
             $values = ['subtitle_language' => ''];
             extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
@@ -65,7 +65,7 @@ class IntakeAction
             }
             $errors = $result['errors'];
             $values = $result['values'];
-            $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+            $inputLanguages = $c->studioConfig->getCombinedInputLanguageOptions();
             extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
             require $this->view('transcription-intake.php');
             exit;
@@ -86,7 +86,7 @@ class IntakeAction
         }
         $errors = $result['errors'];
         $values = $result['values'];
-        $subtitleLanguages = $c->studioConfig->getSubtitleLanguages();
+        $inputLanguages = $c->studioConfig->getCombinedInputLanguageOptions();
         extract($c->headerContext(StudioHeader::NAV_TRANSCRIPTION_INTAKE));
         require $this->view('transcription-intake.php');
         exit;
@@ -129,14 +129,14 @@ class IntakeAction
             exit;
         }
         $job = $c->jobManager->read();
-        $masterLang = $job['subtitle_language'] ?? 'es';
+        $masterLang = $c->studioConfig->getBaseLanguageFor($job['subtitle_language'] ?? 'es');
         $state = new TranslationJobState($c->jobManager);
         $state->resetLanguage($lang);
         $c->launcher->launchTranslation(
-            $c->jobManager->draftVttPath(),
+            $c->jobManager->draftPath(),
             $c->jobManager->translationStatePath(),
             $masterLang,
-            dirname($c->jobManager->draftVttPath()),
+            dirname($c->jobManager->draftPath()),
             [$lang],
         );
         echo json_encode(['ok' => true]);

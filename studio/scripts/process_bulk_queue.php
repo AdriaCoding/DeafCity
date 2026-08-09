@@ -20,7 +20,7 @@ use Studio\TranslationJobState;
 use Studio\TranscriptionOrchestrator;
 use Studio\GroqTranscriber;
 use Studio\AudioPreprocessor;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 $dataDir = '';
 $prev = null;
@@ -44,6 +44,7 @@ if (!$bulkQueue->exists()) {
 }
 
 $jobManager = new JobManager($jobsDir);
+$studioConfig = new StudioConfig(rtrim($dataDir, '/') . '/studio-config.json');
 $launcher = new BackgroundJobLauncher(
     __DIR__,
     defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '',
@@ -58,7 +59,8 @@ $orchestrator = new TranscriptionOrchestrator(
     ),
     audioPreprocessor: new AudioPreprocessor(),
     launcher: $launcher,
-    vttParser: new VttParser(),
+    srtParser: new SrtParser(),
+    studioConfig: $studioConfig,
     groqApiKey: GROQ_API_KEY,
     groqModel: GROQ_TRANSCRIBE_MODEL,
     localModel: STUDIO_LOCAL_TRANSCRIBE_MODEL,
@@ -74,6 +76,7 @@ $processor = new BulkItemProcessor(
     orchestrator: $orchestrator,
     launcher: $launcher,
     translationState: new TranslationJobState($jobManager),
+    studioConfig: $studioConfig,
     reviser: $reviser,
 );
 

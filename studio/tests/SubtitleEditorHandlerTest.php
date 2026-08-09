@@ -21,7 +21,6 @@ class SubtitleEditorHandlerTest extends TestCase
 
         $this->jobManager = new JobManager($this->jobsDir);
         $this->handler = new SubtitleEditorHandler(
-            new VttParser(),
             new CaptionFileIntegrityChecker(),
             $this->jobManager,
         );
@@ -69,5 +68,40 @@ class SubtitleEditorHandlerTest extends TestCase
         $this->assertStringContainsString('Original', file_get_contents($vttPath));
 
         unlink($vttPath);
+    }
+
+    /**
+     * A draft that is already SubRip must stay SubRip when the editor saves it,
+     * otherwise the caption editor rewrites .srt files as WebVTT for as long as
+     * the storage flip and the pipeline flip are a milestone apart.
+     */
+    public function test_handle_for_file_path_preserves_subrip_format(): void
+    {
+        $path = $this->jobsDir . '/standalone.srt';
+        file_put_contents($path, "1\n00:00:01,000 --> 00:00:02,000\nBefore\n");
+
+        $result = $this->handler->handleForFilePath($path, [
+            ['start' => 1.0, 'end' => 2.0, 'text' => 'After', 'opaque' => '', 'id' => ''],
+        ]);
+
+        $this->assertTrue($result['ok']);
+        $saved = file_get_contents($path);
+        $this->assertStringNotContainsString('WEBVTT', $saved);
+        $this->assertSame("1\n00:00:01,000 --> 00:00:02,000\nAfter\n", $saved);
+    }
+
+    public function test_handle_for_file_path_preserves_webvtt_format(): void
+    {
+        $path = $this->jobsDir . '/standalone.vtt';
+        file_put_contents($path, "WEBVTT\n\n1\n00:00:01.000 --> 00:00:02.000\nBefore\n");
+
+        $result = $this->handler->handleForFilePath($path, [
+            ['start' => 1.0, 'end' => 2.0, 'text' => 'After', 'opaque' => '', 'id' => ''],
+        ]);
+
+        $this->assertTrue($result['ok']);
+        $saved = file_get_contents($path);
+        $this->assertStringStartsWith("WEBVTT\n", $saved);
+        $this->assertStringContainsString('00:00:01.000 --> 00:00:02.000', $saved);
     }
 }

@@ -9,14 +9,14 @@ use Studio\JobManager;
 use Studio\TranslationJobState;
 use Studio\TranslationRunner;
 use Studio\UploadedFile;
-use Studio\VttParser;
+use Studio\SrtParser;
 
 class TranslationRunnerTest extends TestCase
 {
     private string $jobsDir;
     private JobManager $jobManager;
     private TranslationJobState $state;
-    private VttParser $vttParser;
+    private SrtParser $srtParser;
     private array $logLines = [];
 
     protected function setUp(): void
@@ -26,13 +26,13 @@ class TranslationRunnerTest extends TestCase
 
         $this->jobManager = new JobManager($this->jobsDir);
         $this->state = new TranslationJobState($this->jobManager);
-        $this->vttParser = new VttParser();
+        $this->srtParser = new SrtParser();
         $this->logLines = [];
 
         // Create a job with a master VTT
         $vttPath = $this->jobsDir . '/upload.vtt';
-        file_put_contents($vttPath, "WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHello\n\n00:00:04.000 --> 00:00:06.000\nWorld\n");
-        $this->jobManager->create(
+        file_put_contents($vttPath, "1\n00:00:01,000 --> 00:00:03,000\nHello\n\n2\n00:00:04,000 --> 00:00:06,000\nWorld\n");
+        $this->jobManager->createWithContent(
             [
                 'vimeo_id' => '123456',
                 'video_title' => 'Test',
@@ -41,7 +41,7 @@ class TranslationRunnerTest extends TestCase
                 'subtitle_language' => 'en',
                 'step' => 'translation',
             ],
-            new UploadedFile($vttPath, 'draft.vtt')
+            file_get_contents($vttPath)
         );
 
         $this->state->initiate(['fr', 'it'], 'en');
@@ -85,7 +85,7 @@ class TranslationRunnerTest extends TestCase
 
     // ------------------------------------------------------------------ happy path
 
-    public function test_happy_path_writes_vtt_per_lang_and_marks_done(): void
+    public function test_happy_path_writes_captions_per_lang_and_marks_done(): void
     {
         $translator = $this->makeCallableTranslator(function (array $cues, string $src, string $tgt): array {
             return $tgt === 'fr'
@@ -96,29 +96,29 @@ class TranslationRunnerTest extends TestCase
         $runner = new TranslationRunner(
             jobManager: $this->jobManager,
             state: $this->state,
-            vttParser: $this->vttParser,
+            srtParser: $this->srtParser,
             translator: $translator,
             logger: $this->logger(),
         );
 
         $runner->run(
-            masterVttPath: $this->jobManager->draftVttPath(),
+            masterPath: $this->jobManager->draftPath(),
             srcLang: 'en',
             targetLangs: ['fr', 'it'],
         );
 
         // Check VTT files were written
-        $frPath = $this->jobManager->draftVttPathForLang('fr');
-        $itPath = $this->jobManager->draftVttPathForLang('it');
+        $frPath = $this->jobManager->draftPathForLang('fr');
+        $itPath = $this->jobManager->draftPathForLang('it');
         $this->assertFileExists($frPath);
         $this->assertFileExists($itPath);
 
         // Check VTT content
-        $frParsed = $this->vttParser->parse($frPath);
+        $frParsed = $this->srtParser->parse($frPath);
         $this->assertSame('Bonjour', $frParsed['cues'][0]['text']);
         $this->assertSame('Monde', $frParsed['cues'][1]['text']);
 
-        $itParsed = $this->vttParser->parse($itPath);
+        $itParsed = $this->srtParser->parse($itPath);
         $this->assertSame('Ciao', $itParsed['cues'][0]['text']);
         $this->assertSame('Mondo', $itParsed['cues'][1]['text']);
 
@@ -146,13 +146,13 @@ class TranslationRunnerTest extends TestCase
         $runner = new TranslationRunner(
             jobManager: $this->jobManager,
             state: $this->state,
-            vttParser: $this->vttParser,
+            srtParser: $this->srtParser,
             translator: $translator,
             logger: $this->logger(),
         );
 
         $runner->run(
-            masterVttPath: $this->jobManager->draftVttPath(),
+            masterPath: $this->jobManager->draftPath(),
             srcLang: 'en',
             targetLangs: ['fr', 'it'],
         );
@@ -177,13 +177,13 @@ class TranslationRunnerTest extends TestCase
         $runner = new TranslationRunner(
             jobManager: $this->jobManager,
             state: $this->state,
-            vttParser: $this->vttParser,
+            srtParser: $this->srtParser,
             translator: $translator,
             logger: $this->logger(),
         );
 
         $runner->run(
-            masterVttPath: $this->jobManager->draftVttPath(),
+            masterPath: $this->jobManager->draftPath(),
             srcLang: 'en',
             targetLangs: ['fr', 'it'],
         );
@@ -204,8 +204,8 @@ class TranslationRunnerTest extends TestCase
         // Master has two cues that already overlap; translation preserves
         // timestamps exactly, so the defect propagates into the output —
         // the integrity check must catch it before markLanguageDone.
-        $vttContent = "WEBVTT\n\n00:00:01.000 --> 00:00:05.000\nHello\n\n00:00:03.000 --> 00:00:06.000\nWorld\n";
-        file_put_contents($this->jobManager->draftVttPath(), $vttContent);
+        $vttContent = "1\n00:00:01,000 --> 00:00:05,000\nHello\n\n2\n00:00:03,000 --> 00:00:06,000\nWorld\n";
+        file_put_contents($this->jobManager->draftPath(), $vttContent);
         $this->state->initiate(['fr'], 'en');
 
         $translator = $this->makeCallableTranslator(fn(array $cues) => array_fill(0, count($cues), 'x'));
@@ -213,13 +213,13 @@ class TranslationRunnerTest extends TestCase
         $runner = new TranslationRunner(
             jobManager: $this->jobManager,
             state: $this->state,
-            vttParser: $this->vttParser,
+            srtParser: $this->srtParser,
             translator: $translator,
             logger: $this->logger(),
         );
 
         $runner->run(
-            masterVttPath: $this->jobManager->draftVttPath(),
+            masterPath: $this->jobManager->draftPath(),
             srcLang: 'en',
             targetLangs: ['fr'],
         );
@@ -227,16 +227,21 @@ class TranslationRunnerTest extends TestCase
         $data = $this->state->read();
         $this->assertSame('error', $data['languages']['fr']['status']);
         $this->assertStringContainsString('integrity check', $data['languages']['fr']['message']);
-        $this->assertFileDoesNotExist($this->jobManager->draftVttPathForLang('fr'));
+        $this->assertFileDoesNotExist($this->jobManager->draftPathForLang('fr'));
     }
 
     // ------------------------------------------------------------------ VTT round-trip
 
-    public function test_vtt_timestamps_and_opaque_are_preserved(): void
+    /**
+     * SubRip has no equivalent of WebVTT cue settings, so a master carrying
+     * them keeps its timings across translation but loses the settings. No
+     * production caption uses them (verified across all 288 by
+     * verify_caption_conversion.php).
+     */
+    public function test_timestamps_survive_translation_and_cue_settings_are_dropped(): void
     {
-        // Write a VTT with opaque data
         $vttContent = "WEBVTT\n\n00:00:01.000 --> 00:00:03.000 align:middle\nHello\n";
-        file_put_contents($this->jobManager->draftVttPath(), $vttContent);
+        file_put_contents($this->jobManager->draftPath(), $vttContent);
 
         $this->state->initiate(['ca'], 'en');
 
@@ -245,23 +250,23 @@ class TranslationRunnerTest extends TestCase
         $runner = new TranslationRunner(
             jobManager: $this->jobManager,
             state: $this->state,
-            vttParser: $this->vttParser,
+            srtParser: $this->srtParser,
             translator: $translator,
             logger: $this->logger(),
         );
 
         $runner->run(
-            masterVttPath: $this->jobManager->draftVttPath(),
+            masterPath: $this->jobManager->draftPath(),
             srcLang: 'en',
             targetLangs: ['ca'],
         );
 
-        $caPath = $this->jobManager->draftVttPathForLang('ca');
-        $parsed = $this->vttParser->parse($caPath);
+        $caPath = $this->jobManager->draftPathForLang('ca');
+        $parsed = $this->srtParser->parse($caPath);
 
         $this->assertSame(1.0, $parsed['cues'][0]['start']);
         $this->assertSame(3.0, $parsed['cues'][0]['end']);
-        $this->assertSame('align:middle', $parsed['cues'][0]['opaque']);
+        $this->assertSame('', $parsed['cues'][0]['opaque']);
         $this->assertSame('Hola', $parsed['cues'][0]['text']);
     }
 
@@ -274,13 +279,13 @@ class TranslationRunnerTest extends TestCase
         $runner = new TranslationRunner(
             jobManager: $this->jobManager,
             state: $this->state,
-            vttParser: $this->vttParser,
+            srtParser: $this->srtParser,
             translator: $translator,
             logger: $this->logger(),
         );
 
         $runner->run(
-            masterVttPath: $this->jobManager->draftVttPath(),
+            masterPath: $this->jobManager->draftPath(),
             srcLang: 'en',
             targetLangs: ['fr', 'it'],
         );

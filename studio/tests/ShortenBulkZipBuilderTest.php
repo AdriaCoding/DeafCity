@@ -20,7 +20,7 @@ class ShortenBulkZipBuilderTest extends TestCase
             [
                 'originalFilename' => 'BCN_Raquel_3_CA',
                 'language'         => 'ca',
-                'srcVttPath'       => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHola escurçada\n"),
+                'srcSrtPath'       => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHola escurçada\n"),
             ],
         ];
 
@@ -42,7 +42,7 @@ class ShortenBulkZipBuilderTest extends TestCase
             [
                 'originalFilename' => 'talk_en',
                 'language'         => 'en',
-                'srcVttPath'       => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHello\n"),
+                'srcSrtPath'       => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHello\n"),
             ],
         ];
 
@@ -64,12 +64,12 @@ class ShortenBulkZipBuilderTest extends TestCase
             [
                 'originalFilename' => 'talk_ca',
                 'language'         => 'ca',
-                'srcVttPath'       => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHola\n"),
+                'srcSrtPath'       => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHola\n"),
             ],
             [
                 'originalFilename' => 'xerrada_es',
                 'language'         => 'es',
-                'srcVttPath'       => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHola\n"),
+                'srcSrtPath'       => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHola\n"),
             ],
         ];
 
@@ -84,7 +84,7 @@ class ShortenBulkZipBuilderTest extends TestCase
         unlink($tmp);
     }
 
-    private function writeVtt(string $content): string
+    private function writeSrt(string $content): string
     {
         $path = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($path, $content);

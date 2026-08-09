@@ -175,7 +175,6 @@
             <div class="file-card">
                 <span class="file-card-lang"><?= htmlspecialchars($sourceLanguageLabel) ?></span>
                 <div class="file-download-btns">
-                    <a class="file-download-btn" href="?action=shorten-download-vtt"><span class="material-icons">download</span>VTT</a>
                     <a class="file-download-btn" href="?action=shorten-download-srt"><span class="material-icons">download</span>SRT</a>
                 </div>
             </div>

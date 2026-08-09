@@ -64,3 +64,102 @@ if (!function_exists('vpc_normalize_caption_display_text')) {
         return trim(preg_replace('/\s+/', ' ', $text));
     }
 }
+
+if (!function_exists('vpc_caption_timestamp_to_ms')) {
+    /**
+     * Timestamp to milliseconds, accepting either decimal separator.
+     *
+     * WebVTT writes 00:00:01.500, SubRip writes 00:00:01,500. PHP's (float)
+     * cast stops at the first non-numeric character, so casting an SRT
+     * fraction directly silently discards the milliseconds — 01,500 becomes
+     * 1.0. Normalise the separator before casting.
+     *
+     * @param string $ts
+     * @return int
+     */
+    function vpc_caption_timestamp_to_ms($ts) {
+        $ts = str_replace(',', '.', trim((string) $ts));
+        $parts = explode(':', $ts);
+
+        if (count($parts) === 3) {
+            return (int) round((((int) $parts[0]) * 3600 + ((int) $parts[1]) * 60 + (float) $parts[2]) * 1000);
+        }
+        if (count($parts) === 2) {
+            return (int) round((((int) $parts[0]) * 60 + (float) $parts[1]) * 1000);
+        }
+
+        return (int) round(((float) $ts) * 1000);
+    }
+}
+
+if (!function_exists('vpc_parse_caption_cues')) {
+    /**
+     * Parse WebVTT or SubRip into display cues: array('start','end','text') in ms.
+     *
+     * Format-agnostic on purpose — data/captions/ holds a mix of both during
+     * the VTT to SRT migration, and the player must render either.
+     *
+     * Neither format needs its non-cue lines handled specially: a WEBVTT
+     * header block carries no "-->" so it is skipped as a block, and a
+     * SubRip numeric index line sits before the timing line, which the
+     * scan below ignores.
+     *
+     * @param string $content
+     * @return array
+     */
+    function vpc_parse_caption_cues($content) {
+        $content = (string) $content;
+        if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+            $content = substr($content, 3);
+        }
+        $content = str_replace(array("\r\n", "\r"), "\n", $content);
+
+        $cues   = array();
+        $blocks = preg_split('/\n[ \t]*\n/', trim($content));
+
+        foreach ($blocks as $block) {
+            $block = trim($block);
+            if ($block === '') {
+                continue;
+            }
+
+            $lines    = explode("\n", $block);
+            $tsLine   = null;
+            $txtLines = array();
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if ($tsLine === null && strpos($line, ' --> ') !== false) {
+                    $tsLine = $line;
+                } elseif ($tsLine !== null && $line !== '') {
+                    $txtLines[] = $line;
+                }
+            }
+
+            if (!$tsLine || empty($txtLines)) {
+                continue;
+            }
+
+            /* Comma must be in the class or SubRip timings match nothing at all. */
+            if (!preg_match('/^([\d:\.,]+)\s+-->\s+([\d:\.,]+)/', $tsLine, $m)) {
+                continue;
+            }
+
+            $text = strip_tags(implode(' ', $txtLines));
+            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+            $text = vpc_normalize_caption_display_text($text);
+
+            if ($text === '') {
+                continue;
+            }
+
+            $cues[] = array(
+                'start' => vpc_caption_timestamp_to_ms($m[1]),
+                'end'   => vpc_caption_timestamp_to_ms($m[2]),
+                'text'  => $text,
+            );
+        }
+
+        return $cues;
+    }
+}

@@ -283,14 +283,20 @@
         <p class="filename"><?= htmlspecialchars($originalFilename) ?></p>
         <p class="done-msg">Subtítols generats</p>
         <div class="file-cards">
+            <?php if (!$englishTranslationSkipped): ?>
+            <div class="file-card">
+                <span class="file-card-lang"><?= htmlspecialchars($sourceLanguageLabel) ?></span>
+                <div class="file-download-btns">
+                    <a class="file-download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
+                </div>
+            </div>
+            <?php endif; ?>
             <div class="file-card">
                 <span class="file-card-lang">Anglès</span>
                 <div class="file-download-btns">
                     <?php if (!empty($englishTranslationSkipped)): ?>
-                    <a class="file-download-btn" href="?action=download-vtt"><span class="material-icons">download</span>VTT</a>
                     <a class="file-download-btn" href="?action=download-srt"><span class="material-icons">download</span>SRT</a>
                     <?php else: ?>
-                    <a class="file-download-btn" href="?action=download-vtt&amp;lang=en"><span class="material-icons">download</span>VTT</a>
                     <a class="file-download-btn" href="?action=download-srt&amp;lang=en"><span class="material-icons">download</span>SRT</a>
                     <?php endif; ?>
                 </div>

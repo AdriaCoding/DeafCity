@@ -6,7 +6,7 @@ class CaptionFilename
 {
     public function forVideo(string $title, string $lang): string
     {
-        return $this->stem($title) . '_' . strtoupper($lang) . '.vtt';
+        return $this->stem($title) . '_' . strtoupper($lang) . '.srt';
     }
 
     private function stem(string $title): string

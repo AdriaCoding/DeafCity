@@ -188,5 +188,22 @@
             "id": "pensaments",
             "label": "THOUGHTS"
         }
+    ],
+    "input_languages": [
+        {
+            "id": "es-mx",
+            "label": "Espanyol (Mèxic)",
+            "base_language": "es"
+        },
+        {
+            "id": "pt-br",
+            "label": "Portuguès (Brasil)",
+            "base_language": "pt"
+        },
+        {
+            "id": "es-es",
+            "label": "Espanyol (Espanya)",
+            "base_language": "es"
+        }
     ]
 }

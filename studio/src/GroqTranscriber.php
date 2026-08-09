@@ -47,7 +47,12 @@ class GroqTranscriber
      * @return list<array{start: float, end: float, text: string, opaque: string}>
      * @throws GroqTranscriptionException
      */
-    public function transcribe(string $audioPath, string $model, string $language): array
+    /**
+     * @param string $prompt  optional vocabulary/spelling hint (e.g. a dialect
+     *   cue) forwarded to Groq's Whisper-compatible `prompt` field; empty by
+     *   default, in which case the request body is unchanged from before.
+     */
+    public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
     {
         $request = [
             'url' => $this->baseUrl . '/audio/transcriptions',
@@ -55,6 +60,7 @@ class GroqTranscriber
             'audioPath' => $audioPath,
             'model' => $model,
             'language' => $language,
+            'prompt' => $prompt,
             'temperature' => 0,
             'response_format' => 'verbose_json',
             'timeout' => $this->timeoutSeconds,
@@ -194,6 +200,9 @@ class GroqTranscriber
                 'timestamp_granularities[]' => 'word',
                 'file' => new \CURLFile($request['audioPath']),
             ];
+            if (($request['prompt'] ?? '') !== '') {
+                $postFields['prompt'] = $request['prompt'];
+            }
             curl_setopt_array($ch, [
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_POST => true,

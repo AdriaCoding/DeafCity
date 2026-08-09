@@ -10,7 +10,6 @@ use Studio\StudioHeader;
 use Studio\SubtitleOutputBasename;
 use Studio\TranscriptionPipelineStatus;
 use Studio\TranslationJobState;
-use Studio\VttToSrtConverter;
 
 class ShortenAction
 {
@@ -121,25 +120,6 @@ class ShortenAction
         exit;
     }
 
-    public function downloadVtt(): never
-    {
-        $jobManager = $this->c->shortenJobManager();
-        if (!$jobManager->exists()) {
-            http_response_code(404);
-            exit;
-        }
-        $vttPath = $jobManager->draftVttPath();
-        if (!is_file($vttPath)) {
-            http_response_code(404);
-            exit;
-        }
-        $job = $jobManager->read();
-        header('Content-Type: text/vtt; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $this->buildDownloadFilename($job, 'vtt') . '"');
-        readfile($vttPath);
-        exit;
-    }
-
     public function downloadSrt(): never
     {
         $jobManager = $this->c->shortenJobManager();
@@ -147,15 +127,15 @@ class ShortenAction
             http_response_code(404);
             exit;
         }
-        $vttPath = $jobManager->draftVttPath();
-        if (!is_file($vttPath)) {
+        $srtPath = $jobManager->draftPath();
+        if (!is_file($srtPath)) {
             http_response_code(404);
             exit;
         }
         $job = $jobManager->read();
         header('Content-Type: application/x-subrip; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $this->buildDownloadFilename($job, 'srt') . '"');
-        echo (new VttToSrtConverter())->convert($vttPath);
+        header('Content-Disposition: attachment; filename="' . $this->buildSrtFilename($job) . '"');
+        readfile($srtPath);
         exit;
     }
 
@@ -248,14 +228,13 @@ class ShortenAction
     }
 
     /** @param array<string, mixed> $job */
-    private function buildDownloadFilename(array $job, string $ext): string
+    private function buildSrtFilename(array $job): string
     {
         $lang = (string) ($job['subtitle_language'] ?? '');
-        return (new SubtitleOutputBasename())->outputFilename(
+        return (new SubtitleOutputBasename())->srtFilename(
             $job['original_filename'] ?? 'subtitles',
             $lang,
             $lang,
-            $ext,
         );
     }
 

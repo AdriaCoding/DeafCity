@@ -22,7 +22,7 @@ class TranslationJobStateTest extends TestCase
 
         $vttPath = $this->jobsDir . '/upload.vtt';
         file_put_contents($vttPath, 'WEBVTT');
-        $this->jobManager->create(
+        $this->jobManager->createWithContent(
             [
                 'vimeo_id' => '123456789',
                 'video_title' => 'Test Video',
@@ -31,7 +31,7 @@ class TranslationJobStateTest extends TestCase
                 'subtitle_language' => 'es',
                 'step' => 'translation',
             ],
-            new UploadedFile($vttPath, 'draft.vtt')
+            file_get_contents($vttPath)
         );
     }
 

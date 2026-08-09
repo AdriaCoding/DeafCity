@@ -20,8 +20,8 @@ class BulkZipBuilderTest extends TestCase
             [
                 'originalFilename' => 'BCN_Raquel_3_CA',
                 'language'         => 'ca',
-                'srcVttPath'       => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHola\n"),
-                'enVttPath'        => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHello\n"),
+                'srcSrtPath'       => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHola\n"),
+                'enSrtPath'        => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHello\n"),
             ],
         ];
 
@@ -44,8 +44,8 @@ class BulkZipBuilderTest extends TestCase
             [
                 'originalFilename' => 'Roma_Serena_3_IT',
                 'language'         => 'it',
-                'srcVttPath'       => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nCiao\n"),
-                'enVttPath'        => $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHello\n"),
+                'srcSrtPath'       => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nCiao\n"),
+                'enSrtPath'        => $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHello\n"),
             ],
         ];
 
@@ -64,13 +64,13 @@ class BulkZipBuilderTest extends TestCase
 
     public function test_english_source_produces_only_en_srt(): void
     {
-        $vtt = $this->writeVtt("WEBVTT\n\n00:00:01.000 --> 00:00:03.000\nHello\n");
+        $srt = $this->writeSrt("1\n00:00:01,000 --> 00:00:03,000\nHello\n");
         $entries = [
             [
                 'originalFilename' => 'talk_en',
                 'language'         => 'en',
-                'srcVttPath'       => $vtt,
-                'enVttPath'        => $vtt,
+                'srcSrtPath'       => $srt,
+                'enSrtPath'        => $srt,
             ],
         ];
 
@@ -86,7 +86,7 @@ class BulkZipBuilderTest extends TestCase
         unlink($tmp);
     }
 
-    private function writeVtt(string $content): string
+    private function writeSrt(string $content): string
     {
         $path = tempnam(sys_get_temp_dir(), 'vtt');
         file_put_contents($path, $content);

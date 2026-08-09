@@ -64,7 +64,7 @@ Flow:
 
 Download endpoints (during an active transcription Job only):
 
-- `?action=download-vtt[&lang=XX]` — serves `draft.vtt` or `draft_{lang}.vtt`
+- `?action=download-srt[&lang=XX]` — serves `draft.srt` or `draft_{lang}.srt`
 - `?action=download-srt[&lang=XX]` — converts the same file to SubRip on the fly
 
 Translation progress for transcription Jobs uses `?action=translation-status` and `?action=translation-retry` (not to be confused with the removed pipeline translation hub).
