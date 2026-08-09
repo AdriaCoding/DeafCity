@@ -1613,11 +1613,53 @@
             "tags": [
                 "PERIOD"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2023_SaoPAULO_AnaLaura_1_PT.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2023_SaoPAULO_AnaLaura_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2023_SaoPAULO_AnaLaura_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2023_SaoPAULO_AnaLaura_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2023_SaoPAULO_AnaLaura_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2023_SaoPAULO_AnaLaura_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2023_SaoPAULO_AnaLaura_1_IT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2023_SaoPAULO_AnaLaura_1_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "AnaLaura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181890044-41f8bbea5d27f89bcd2a82bee9c668308596ea222dc35c06961f873d31d28df8-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648907?h=d283b2d224"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648907?h=d283b2d224",
+            "master_caption_lang": "pt"
         },
         {
             "id": "libras_1211648909",
@@ -1626,14 +1668,55 @@
             "sign_language": "libras",
             "edition": "2023-sao-paulo",
             "tags": [
-                "HORSE",
-                "DEAF&HEARING"
+                "HORSE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2023_SaoPAULO_AnaLaura_2_PT.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2023_SaoPAULO_AnaLaura_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2023_SaoPAULO_AnaLaura_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2023_SaoPAULO_AnaLaura_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2023_SaoPAULO_AnaLaura_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2023_SaoPAULO_AnaLaura_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2023_SaoPAULO_AnaLaura_2_IT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2023_SaoPAULO_AnaLaura_2_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "AnaLaura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181890474-b822303aeac5bb9679eed268ab9edf6594b6ce31fb8dc74d3afabfaa6886f876-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648909?h=cfa0dd0f69"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648909?h=cfa0dd0f69",
+            "master_caption_lang": "pt"
         },
         {
             "id": "libras_1211648908",
@@ -1645,11 +1728,53 @@
                 "SATURDAY",
                 "DEAF&HEARING"
             ],
-            "captions": [],
-            "typology": "anecdotes",
+            "captions": [
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2023_SaoPAULO_AnaLaura_3_PT.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2023_SaoPAULO_AnaLaura_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2023_SaoPAULO_AnaLaura_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2023_SaoPAULO_AnaLaura_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2023_SaoPAULO_AnaLaura_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2023_SaoPAULO_AnaLaura_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2023_SaoPAULO_AnaLaura_3_IT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2023_SaoPAULO_AnaLaura_3_ES.srt"
+                }
+            ],
+            "typology": "malentesos",
             "participant": "AnaLaura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181890252-b05935acca844de022a0bb439acc3dacdfef3b5d3a7ee31587fdb5d820a6cb64-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648908?h=fd28a678e6"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648908?h=fd28a678e6",
+            "master_caption_lang": "pt"
         },
         {
             "id": "libras_1211648906",
@@ -1658,14 +1783,56 @@
             "sign_language": "libras",
             "edition": "2023-sao-paulo",
             "tags": [
-                "DEAF",
+                "LITTLE EAR",
                 "DEAF&HEARING"
             ],
-            "captions": [],
-            "typology": "acudits",
+            "captions": [
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2023_SaoPAULO_Edinho_1_PT.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2023_SaoPAULO_Edinho_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2023_SaoPAULO_Edinho_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2023_SaoPAULO_Edinho_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2023_SaoPAULO_Edinho_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2023_SaoPAULO_Edinho_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2023_SaoPAULO_Edinho_1_IT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2023_SaoPAULO_Edinho_1_ES.srt"
+                }
+            ],
+            "typology": "pensaments",
             "participant": "Edinho",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181889802-267d08c2a352b0fa61bacb235826b2efb0a7b469fba6903792fffa848fd05731-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648906?h=f58fe11fde"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211648906?h=f58fe11fde",
+            "master_caption_lang": "pt"
         },
         {
             "id": "libras_1211649060",
