@@ -160,6 +160,57 @@ if (!function_exists('vpc_parse_caption_cues')) {
             );
         }
 
+        return vpc_align_caption_cues_to_playback($cues);
+    }
+}
+
+if (!function_exists('vpc_align_caption_cues_to_playback')) {
+    /**
+     * Map NLE programme timecode onto Vimeo playback time.
+     *
+     * Premiere / DaVinci sequences often start at 01:00:00,000. The Vimeo
+     * Player SDK reports seconds from 0, so a short Video whose Caption file
+     * still carries that hour never displays a Subtitle. If every cue sits
+     * inside a single hour-long window that itself starts at or after 01:00,
+     * drop whole hours from the start of the window.
+     *
+     * @param array<int, array{start: int, end: int, text: string}> $cues
+     * @return array<int, array{start: int, end: int, text: string}>
+     */
+    function vpc_align_caption_cues_to_playback(array $cues) {
+        if (count($cues) === 0) {
+            return $cues;
+        }
+
+        $minStart = $cues[0]['start'];
+        $maxEnd = $cues[0]['end'];
+        foreach ($cues as $cue) {
+            if ($cue['start'] < $minStart) {
+                $minStart = $cue['start'];
+            }
+            if ($cue['end'] > $maxEnd) {
+                $maxEnd = $cue['end'];
+            }
+        }
+
+        $hourMs = 3600000;
+        if ($minStart < $hourMs) {
+            return $cues;
+        }
+        if (($maxEnd - $minStart) >= $hourMs) {
+            return $cues;
+        }
+
+        $offset = ((int) floor($minStart / $hourMs)) * $hourMs;
+        if ($offset <= 0) {
+            return $cues;
+        }
+
+        foreach ($cues as $i => $cue) {
+            $cues[$i]['start'] = $cue['start'] - $offset;
+            $cues[$i]['end'] = $cue['end'] - $offset;
+        }
+
         return $cues;
     }
 }

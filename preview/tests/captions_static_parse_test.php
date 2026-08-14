@@ -72,4 +72,22 @@ ccp_assert(count($empty) === 1, 'drops cues with no text');
 
 ccp_assert(vpc_parse_caption_cues('') === array(), 'returns no cues for empty input');
 
+/*
+ * NLE / broadcast SubRip often starts the programme at 01:00:00,000.
+ * Vimeo's Player SDK reports 0-based playback time, so those cues never
+ * match a short video unless the hour is stripped for display.
+ */
+$nle = "1\n01:00:00,000 --> 01:00:02,199\n2026 TÚNEZ #SOCIABLE @Aya\n\n"
+     . "2\n01:00:03,199 --> 01:00:05,719\nCuando vivía en el sur de Túnez,\n";
+$nleCues = vpc_parse_caption_cues($nle);
+ccp_assert(count($nleCues) === 2, 'parses NLE hour-offset SubRip cues');
+ccp_assert($nleCues[0]['start'] === 0, 'aligns 01:00:00 start to video t=0 (got ' . $nleCues[0]['start'] . ')');
+ccp_assert($nleCues[0]['end'] === 2199, 'keeps duration after hour align (got ' . $nleCues[0]['end'] . ')');
+ccp_assert($nleCues[1]['start'] === 3199, 'preserves gap after hour align (got ' . $nleCues[1]['start'] . ')');
+ccp_assert($nleCues[1]['end'] === 5719, 'keeps second cue end after hour align');
+ccp_assert($nleCues[0]['text'] === '2026 TÚNEZ #SOCIABLE @Aya', 'keeps NLE cue text');
+
+$zeroBased = vpc_parse_caption_cues("1\n00:00:04,040 --> 00:00:07,599\nUn sordo está súper contento\n");
+ccp_assert($zeroBased[0]['start'] === 4040, 'leaves already-zero-based timings alone');
+
 echo "PASS: captions-static caption parsing\n";
