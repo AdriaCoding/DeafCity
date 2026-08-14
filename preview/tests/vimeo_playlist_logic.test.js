@@ -1129,6 +1129,34 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
     assert.strictEqual(logic.captionFitFontSizeFromWidths(4000, 38, 400), 3.8, 'scales very long cues to fit');
 })();
 
+// Narrow viewports: two-line wrap keeps base size longer before shrinking
+(function () {
+    assert.strictEqual(logic.CAPTION_TWO_LINE_MAX_WIDTH_PX, 650);
+    assert.strictEqual(logic.captionUsesTwoLineWrap(650), true, 'at breakpoint');
+    assert.strictEqual(logic.captionUsesTwoLineWrap(400), true, 'phone width');
+    assert.strictEqual(logic.captionUsesTwoLineWrap(651), false, 'above breakpoint');
+    assert.strictEqual(logic.captionUsesTwoLineWrap(0), false, 'invalid width');
+
+    assert.strictEqual(logic.captionBlockHeightPx(38, 1), 55, 'one line reserve');
+    assert.strictEqual(logic.captionBlockHeightPx(38, 2), 103, 'two line reserve');
+
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay(800, 38, 400, true),
+        38,
+        'two-line mode keeps base when cue fits two lines'
+    );
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay(800, 38, 400, false),
+        19,
+        'single-line mode still shrinks'
+    );
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay(1600, 38, 400, true),
+        19,
+        'two-line mode shrinks only when wider than two lines'
+    );
+})();
+
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #13)');
 
 // ── Issue #02: playback session + secondary-page nav intent ─────────────────

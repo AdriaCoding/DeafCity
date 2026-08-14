@@ -104,6 +104,16 @@
     .video-shell {
         aspect-ratio: 1.2 / 1;
     }
+    .caption-box.caption-box--two-line {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-box-pack: end;
+        -webkit-line-clamp: 2;
+        white-space: normal;
+        overflow: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
 }
 .vpc-video-hitarea {
     position: absolute;

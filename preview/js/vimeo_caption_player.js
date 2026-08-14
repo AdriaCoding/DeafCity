@@ -722,11 +722,20 @@
                 revealLoadedPosterVideo();
             }
 
-            /* One caption line at max font (38px): 1×1.28 + 0.15 ≈ 1.43× — fixed so layout never feeds back into font sizing. */
-            root.style.setProperty('--vpc-caption-block-height', '55px');
+            /* Fixed block height so layout never feeds back into font sizing. */
+            var captionTypography = { baseFontSize: 18, boxWidth: 0, twoLineMode: false };
 
-            var _appliedTypography = { fontSize: 0, w: 0 };
-            var captionTypography = { baseFontSize: 18, boxWidth: 0 };
+            function syncCaptionBlockLayout() {
+                var box = document.getElementById(captionBoxId);
+                var twoLine = L.captionUsesTwoLineWrap(captionTypography.boxWidth);
+                captionTypography.twoLineMode = twoLine;
+                var maxLines = twoLine ? 2 : 1;
+                var blockHeight = L.captionBlockHeightPx(captionTypography.baseFontSize, maxLines);
+                root.style.setProperty('--vpc-caption-block-height', blockHeight + 'px');
+                if (box) {
+                    box.classList.toggle('caption-box--two-line', twoLine);
+                }
+            }
 
             function captionTextAvailableWidth(box) {
                 if (!box) return captionTypography.boxWidth;
@@ -748,10 +757,11 @@
                 }
                 var available = captionTextAvailableWidth(box);
                 var textWidth = measureCaptionTextWidth(text, captionTypography.baseFontSize);
-                var fit = L.captionFitFontSizeFromWidths(
+                var fit = L.captionFitFontSizeForDisplay(
                     textWidth,
                     captionTypography.baseFontSize,
-                    available
+                    available,
+                    captionTypography.twoLineMode
                 );
                 box.style.fontSize = fit + 'px';
             }
@@ -780,19 +790,19 @@
                 if (w <= 0 && videoStack) {
                     w = videoStack.getBoundingClientRect().width;
                 }
-                var fontChanged = Math.abs(fontSize - _appliedTypography.fontSize) >= 0.5;
-                var widthChanged = Math.abs(w - _appliedTypography.w) >= 1;
+                var fontChanged = Math.abs(fontSize - captionTypography.baseFontSize) >= 0.5;
+                var widthChanged = Math.abs(w - captionTypography.boxWidth) >= 1;
+                var prevTwoLine = captionTypography.twoLineMode;
                 captionTypography.baseFontSize = fontSize;
                 captionTypography.boxWidth = w;
                 if (fontChanged) {
                     root.style.setProperty('--vpc-caption-font-size', fontSize + 'px');
-                    _appliedTypography.fontSize = fontSize;
                 }
                 if (widthChanged && w > 0) {
                     root.style.setProperty('--vpc-caption-width', w + 'px');
-                    _appliedTypography.w = w;
                 }
-                if (fontChanged || widthChanged) {
+                syncCaptionBlockLayout();
+                if (fontChanged || widthChanged || prevTwoLine !== captionTypography.twoLineMode) {
                     refitCaptionBox();
                 }
             }

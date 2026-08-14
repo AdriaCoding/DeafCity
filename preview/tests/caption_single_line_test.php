@@ -1,6 +1,6 @@
 <?php
 /**
- * Single-line preview captions — full text, shrink-to-fit in the player.
+ * Preview captions — single line on wide viewports; two-line wrap on narrow screens.
  *
  * Run: php8.4 preview/tests/caption_single_line_test.php
  */
@@ -43,7 +43,13 @@ if (strpos($css, 'white-space: nowrap') === false) {
     fwrite(STDERR, "FAIL: caption CSS missing white-space: nowrap\n");
     exit(1);
 }
-echo "PASS: caption CSS enforces single line\n";
+echo "PASS: caption CSS enforces single line on wide viewports\n";
+
+if (strpos($css, 'caption-box--two-line') === false) {
+    fwrite(STDERR, "FAIL: caption CSS missing narrow two-line modifier\n");
+    exit(1);
+}
+echo "PASS: caption CSS defines narrow two-line wrap\n";
 
 if (!preg_match('~\.caption-box\s*\{([^}]*)\}~s', $css, $captionBoxRule)) {
     fwrite(STDERR, "FAIL: caption CSS missing .caption-box rule\n");
@@ -63,6 +69,18 @@ echo "PASS: caption CSS uses 55px block height\n";
 
 $jsPath = dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js';
 $js = file_get_contents($jsPath);
+if (strpos($js, 'captionFitFontSizeForDisplay') === false) {
+    fwrite(STDERR, "FAIL: player JS missing two-line shrink-to-fit helper\n");
+    exit(1);
+}
+echo "PASS: player JS uses two-line shrink budget on narrow viewports\n";
+
+if (strpos($js, 'syncCaptionBlockLayout') === false) {
+    fwrite(STDERR, "FAIL: player JS missing dynamic caption block layout\n");
+    exit(1);
+}
+echo "PASS: player JS adjusts caption block height for line mode\n";
+
 if (strpos($js, 'refitCaptionBox') === false) {
     fwrite(STDERR, "FAIL: player JS missing refitCaptionBox shrink-to-fit\n");
     exit(1);

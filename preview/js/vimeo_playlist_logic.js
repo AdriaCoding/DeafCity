@@ -1847,6 +1847,10 @@
     var CAPTION_TARGET_MAX_CHARS = 60;
     var CAPTION_MAX_CHARS_TOLERANCE = 5;
     var CAPTION_MIN_FONT_SIZE_PX = 6;
+    /** Match preview/components/vimeo_caption_player.css narrow video breakpoint. */
+    var CAPTION_TWO_LINE_MAX_WIDTH_PX = 650;
+    var CAPTION_LINE_HEIGHT_RATIO = 1.28;
+    var CAPTION_PADDING_TOP_EM = 0.15;
 
     /**
      * Preferred display length before shrink-to-fit (target + tolerance).
@@ -1882,6 +1886,44 @@
         }
         var fitted = baseFontSizePx * (boxWidthPx / textWidthPx);
         return Math.round(fitted * 10) / 10;
+    }
+
+    /**
+     * Whether the caption box is narrow enough to wrap cues on two lines.
+     * @param {number} boxWidthPx
+     * @returns {boolean}
+     */
+    function captionUsesTwoLineWrap(boxWidthPx) {
+        if (!boxWidthPx || boxWidthPx <= 0) return false;
+        return boxWidthPx <= CAPTION_TWO_LINE_MAX_WIDTH_PX;
+    }
+
+    /**
+     * Fixed caption block height so font sizing never feeds back into layout.
+     * @param {number} baseFontSizePx
+     * @param {1|2} maxLines
+     * @returns {number}
+     */
+    function captionBlockHeightPx(baseFontSizePx, maxLines) {
+        var size = typeof baseFontSizePx === 'number' ? baseFontSizePx : parseFloat(baseFontSizePx);
+        if (!size || size <= 0 || !isFinite(size)) size = 18;
+        var lines = maxLines === 2 ? 2 : 1;
+        return Math.ceil(
+            size * CAPTION_LINE_HEIGHT_RATIO * lines + size * CAPTION_PADDING_TOP_EM
+        );
+    }
+
+    /**
+     * Shrink-to-fit with optional two-line budget on narrow viewports.
+     * @param {number} textWidthPx
+     * @param {number} baseFontSizePx
+     * @param {number} boxWidthPx
+     * @param {boolean} [twoLineMode]
+     * @returns {number}
+     */
+    function captionFitFontSizeForDisplay(textWidthPx, baseFontSizePx, boxWidthPx, twoLineMode) {
+        var budget = twoLineMode ? boxWidthPx * 2 : boxWidthPx;
+        return captionFitFontSizeFromWidths(textWidthPx, baseFontSizePx, budget);
     }
 
     /**
@@ -1969,9 +2011,13 @@
         CAPTION_TARGET_MAX_CHARS: CAPTION_TARGET_MAX_CHARS,
         CAPTION_MAX_CHARS_TOLERANCE: CAPTION_MAX_CHARS_TOLERANCE,
         CAPTION_MIN_FONT_SIZE_PX: CAPTION_MIN_FONT_SIZE_PX,
+        CAPTION_TWO_LINE_MAX_WIDTH_PX: CAPTION_TWO_LINE_MAX_WIDTH_PX,
         captionDisplayMaxLength: captionDisplayMaxLength,
         normalizeCaptionText: normalizeCaptionText,
         captionFitFontSizeFromWidths: captionFitFontSizeFromWidths,
+        captionUsesTwoLineWrap: captionUsesTwoLineWrap,
+        captionBlockHeightPx: captionBlockHeightPx,
+        captionFitFontSizeForDisplay: captionFitFontSizeForDisplay,
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
         buildWithinCityParticipantOrder: buildWithinCityParticipantOrder,
