@@ -106,6 +106,7 @@ class CatalogAction
             'continguts-delete-input-language'       => $this->deleteItem('input_language'),
             'continguts-delete-typology'             => $this->deleteItem('typology'),
             'continguts-delete-caption'              => $this->deleteCaption(),
+            'continguts-delete-all-translations'     => $this->deleteAllTranslations(),
             'continguts-replace-caption'             => $this->replaceCaption(),
             'continguts-caption-review'              => $this->captionReview(),
             'continguts-caption-translate-start'     => $this->captionTranslateStart(),
@@ -579,6 +580,29 @@ class CatalogAction
             $this->c->dataDir . '/captions',
             $this->c->dataDir . '/caption-translation',
         ))->handle($vimeoId, $lang);
+
+        if (!$result['ok']) {
+            http_response_code(422);
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private function deleteAllTranslations(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $vimeoId = trim((string) ($_POST['vimeo_id'] ?? ''));
+        if ($vimeoId === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Falten camps obligatoris.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        $result = (new CaptionDeleteHandler(
+            $this->c->catalogEditor(),
+            $this->c->dataDir . '/captions',
+            $this->c->dataDir . '/caption-translation',
+        ))->handleAllNonMaster($vimeoId);
 
         if (!$result['ok']) {
             http_response_code(422);

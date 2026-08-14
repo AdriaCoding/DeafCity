@@ -116,6 +116,59 @@ class CaptionDeleteHandlerTest extends TestCase
         $this->assertDirectoryDoesNotExist($jobDir);
     }
 
+    public function test_handleAllNonMaster_deletes_every_translation_but_keeps_master(): void
+    {
+        $this->writeCatalog([
+            'master_caption_lang' => 'ca',
+            'captions' => [
+                ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+                ['lang' => 'es', 'label' => 'Spanish', 'file' => '111.es.vtt'],
+                ['lang' => 'en', 'label' => 'English', 'file' => '111.en.vtt'],
+            ],
+        ]);
+        file_put_contents($this->captionsDir . '/111.ca.vtt', "WEBVTT\n\n");
+        file_put_contents($this->captionsDir . '/111.es.vtt', "WEBVTT\n\n");
+        file_put_contents($this->captionsDir . '/111.en.vtt', "WEBVTT\n\n");
+
+        $result = $this->makeHandler()->handleAllNonMaster('111');
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame(['es', 'en'], $result['deletedLangs']);
+        $this->assertFileExists($this->captionsDir . '/111.ca.vtt');
+        $this->assertFileDoesNotExist($this->captionsDir . '/111.es.vtt');
+        $this->assertFileDoesNotExist($this->captionsDir . '/111.en.vtt');
+
+        $video = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
+        $this->assertSame(['ca'], array_column($video['captions'], 'lang'));
+        $this->assertSame('ca', $video['master_caption_lang']);
+    }
+
+    public function test_handleAllNonMaster_is_a_noop_when_only_master_exists(): void
+    {
+        $this->writeCatalog([
+            'master_caption_lang' => 'ca',
+            'captions' => [
+                ['lang' => 'ca', 'label' => 'Catalan', 'file' => '111.ca.vtt'],
+            ],
+        ]);
+        file_put_contents($this->captionsDir . '/111.ca.vtt', "WEBVTT\n\n");
+
+        $result = $this->makeHandler()->handleAllNonMaster('111');
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame([], $result['deletedLangs']);
+        $this->assertFileExists($this->captionsDir . '/111.ca.vtt');
+    }
+
+    public function test_handleAllNonMaster_errors_when_video_missing(): void
+    {
+        $this->writeCatalog([]);
+
+        $result = $this->makeHandler()->handleAllNonMaster('does-not-exist');
+
+        $this->assertFalse($result['ok']);
+    }
+
     private function writeCatalog(array $videoFields): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [

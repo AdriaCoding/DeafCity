@@ -103,6 +103,7 @@ match ($action) {
     'continguts-delete-input-language',
     'continguts-delete-typology',
     'continguts-delete-caption',
+    'continguts-delete-all-translations',
     'continguts-replace-caption',
     'continguts-caption-review',
     'continguts-caption-translate-start',

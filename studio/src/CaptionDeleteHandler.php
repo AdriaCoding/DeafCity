@@ -63,4 +63,38 @@ class CaptionDeleteHandler
 
         return $result;
     }
+
+    /**
+     * Deletes every caption except the Master subtitle, one at a time, so a
+     * Producer can clear a video's translations without deleting them by hand.
+     *
+     * @return array{ok: bool, error?: string, deletedLangs?: list<string>}
+     */
+    public function handleAllNonMaster(string $vimeoId): array
+    {
+        $video = $this->catalogEditor->findVideoByVimeoId($vimeoId);
+        if ($video === null) {
+            return ['ok' => false, 'error' => "Video $vimeoId not found in catalog."];
+        }
+
+        $masterLang = $video['master_caption_lang'] ?? '';
+        $langsToDelete = [];
+        foreach ($video['captions'] ?? [] as $caption) {
+            $lang = $caption['lang'] ?? '';
+            if ($lang !== '' && $lang !== $masterLang) {
+                $langsToDelete[] = $lang;
+            }
+        }
+
+        $deleted = [];
+        foreach ($langsToDelete as $lang) {
+            $result = $this->handle($vimeoId, $lang);
+            if (!$result['ok']) {
+                return $result + ['deletedLangs' => $deleted];
+            }
+            $deleted[] = $lang;
+        }
+
+        return ['ok' => true, 'deletedLangs' => $deleted];
+    }
 }

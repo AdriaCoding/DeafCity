@@ -97,6 +97,17 @@
             cursor: pointer;
         }
         .btn-save:hover { background: var(--studio-accent-bg-hover); }
+        .btn-danger-solid {
+            padding: 0.55rem 1.1rem;
+            background: var(--studio-danger);
+            border: 1px solid var(--studio-danger);
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .btn-danger-solid:hover:not(:disabled) { opacity: 0.85; }
+        .btn-danger-solid:disabled { opacity: 0.5; cursor: default; }
         .btn-save:disabled { opacity: 0.5; cursor: default; }
         .visibility-control {
             display: inline-flex;
@@ -390,6 +401,7 @@
         <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
             <button class="btn-save">Desa</button>
             <button class="btn-generate" id="btn-generate-captions" type="button">Genera subtítols</button>
+            <button type="button" class="btn-danger-solid" id="btn-delete-all-translations">Esborra totes les traduccions</button>
         </div>
         <div class="save-feedback"></div>
     </div>
@@ -618,6 +630,46 @@
                 clearRowActionLoading(row);
                 setCaptionTableFeedback('Error de connexió.', 'err');
             });
+    }
+
+    var deleteAllTranslationsBtn = document.getElementById('btn-delete-all-translations');
+    if (deleteAllTranslationsBtn) {
+        deleteAllTranslationsBtn.addEventListener('click', function () {
+            var masterLang = captionTable.getMasterLang();
+            var toDelete = captionTable.getExistingLangs().filter(function (lang) { return lang !== masterLang; });
+            if (toDelete.length === 0) {
+                setCaptionTableFeedback('No hi ha traduccions per esborrar.', '');
+                return;
+            }
+            if (!window.confirm('Eliminar ' + toDelete.length + ' traduccions? Es conservarà el subtítol mestre.')) {
+                return;
+            }
+
+            setCaptionTableFeedback('', '');
+            deleteAllTranslationsBtn.disabled = true;
+
+            var body = new FormData();
+            body.append('vimeo_id', vimeoId);
+
+            fetch('?action=continguts-delete-all-translations', { method: 'POST', body: body })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.ok) {
+                        setCaptionTableFeedback(data.error || 'Error en eliminar.', 'err');
+                        return;
+                    }
+                    (data.deletedLangs || toDelete).forEach(function (lang) {
+                        captionTable.removeExisting(lang);
+                    });
+                    setCaptionTableFeedback('Traduccions eliminades.', 'ok');
+                })
+                .catch(function () {
+                    setCaptionTableFeedback('Error de connexió.', 'err');
+                })
+                .finally(function () {
+                    deleteAllTranslationsBtn.disabled = false;
+                });
+        });
     }
 
     function replaceCaption(lang, btn, row) {
