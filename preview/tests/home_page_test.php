@@ -103,7 +103,18 @@ if (preg_match('~vpc-deaf-hearing-btn[^>]*aria-pressed="false"~', $html) !== 1
         exit(1);
     }
 }
-assert_contains('Deaf &amp; Hearing interactions', $html, 'DEAF+HEARING accessible name (DH13)');
+// DH13: the control carries the localized accessible name. Resolved from the store
+// rather than hard-coded — this copy is owned by Antoni via Studio and changes freely
+// (it has already moved once from "Deaf & Hearing interactions"), so pinning the literal
+// made this test fail on a copy edit rather than on a real regression.
+require_once dirname(__DIR__) . '/lib/preview_locale.php';
+$dhLocale = preview_bootstrap_locale();
+$dhName = $dhLocale['i18n']->t('player.filter.deaf_hearing');
+assert_contains(
+    htmlspecialchars($dhName, ENT_QUOTES, 'UTF-8'),
+    $html,
+    'DEAF+HEARING accessible name (DH13)'
+);
 if (preg_match('~vpc-deaf-hearing-btn[\s\S]{0,400}?\bdisabled\b~', $html)) {
     fwrite(STDERR, "FAIL: DEAF+HEARING should be enabled when catalog has DEAF&HEARING tags (DH27)\n");
     exit(1);
@@ -280,7 +291,11 @@ assert_contains('vpc-picker-dropdown', $html, 'custom picker dropdown present');
 assert_contains('data-picker="sign_language"', $html, 'sign_language picker attribute');
 
 // AC: Picker button shows live readout from first video (D14′) — generic label in data-generic-label only
-assert_contains('data-generic-label="Sign Language"', $html, 'picker button has generic label attr');
+assert_contains(
+    'data-generic-label="' . htmlspecialchars($dhLocale['i18n']->t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') . '"',
+    $html,
+    'picker button has generic label attr'
+);
 assert_not_contains('data-picker="sign_language" data-active="true"', $html, 'sign language picker not green on load');
 if (preg_match('~data-picker="sign_language"[^>]*data-active="false"~', $html) !== 1) {
     fwrite(STDERR, "FAIL: sign language picker should have data-active=\"false\" on cold load\n");
@@ -294,7 +309,7 @@ assert_contains('role="option"', $html, 'dropdown options have role=option');
 
 // AC: Clear/all option present
 assert_contains('vpc-picker-clear', $html, 'clear/all option present in dropdown');
-assert_contains('Sign Languages', $html, 'clear option says "Sign Languages"');
+assert_contains(htmlspecialchars($dhLocale['i18n']->t('player.filter.all_sign_languages'), ENT_QUOTES, 'UTF-8'), $html, 'sign language clear option carries the localized "all" label');
 
 // AC: Dropdown lists sign languages present in catalog
 assert_contains('LIBRAS Brazilian', $html, 'LIBRAS option in picker');
@@ -396,8 +411,8 @@ if (preg_match('~data-picker="typology"[^>]*data-active="false"~', $html) !== 1)
 echo "PASS: typology picker passive readout on load\n";
 
 // AC: Clear options for edition and typology pickers
-assert_contains('Cities', $html, 'edition clear option says "Cities"');
-assert_contains('Typologies', $html, 'typology clear option says "Typologies"');
+assert_contains(htmlspecialchars($dhLocale['i18n']->t('player.filter.all_cities'), ENT_QUOTES, 'UTF-8'), $html, 'edition clear option carries the localized "all" label');
+assert_contains(htmlspecialchars($dhLocale['i18n']->t('player.filter.all_typologies'), ENT_QUOTES, 'UTF-8'), $html, 'typology clear option carries the localized "all" label');
 
 // AC: Edition picker lists editions present in catalog
 $catalogJsonPathForEditions = dirname(dirname(dirname(__FILE__))) . '/data/catalog.json';
