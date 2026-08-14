@@ -214,12 +214,17 @@
     justify-content: center;
     gap: 0.5rem;
     flex-shrink: 0;
+    /* Whitespace between flex children becomes selectable text nodes — block I-beam/caret in gaps. */
+    user-select: none;
+    -webkit-user-select: none;
 }
 .vpc-control-center {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
 }
 .vpc-control-zone {
     display: flex;
@@ -255,6 +260,7 @@
 .vpc-control-row .vpc-prev-btn,
 .vpc-control-row .vpc-next-btn,
 .vpc-control-row .vpc-reset-btn,
+.vpc-control-row .vpc-play-pause-btn,
 .vpc-control-row .vpc-chrome-btn,
 .vpc-control-row .preview-site-nav__btn {
     font-family: 'Roboto', sans-serif;
@@ -496,6 +502,8 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
 }
 .vpc-play-pause-btn:focus-visible {
     outline: 2px solid #007800;
@@ -503,11 +511,23 @@
 }
 .vpc-play-pause-btn__hourglass {
     display: none;
+    font-family: 'Material Icons', sans-serif;
     font-size: 1.35rem;
     line-height: 1;
     color: #fff;
     position: relative;
     z-index: 1;
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+    /* Icon via ::before — no ligature text node (avoids I-beam / spinning caret). */
+    font-style: normal;
+    font-weight: normal;
+    letter-spacing: normal;
+    text-transform: none;
+}
+.vpc-play-pause-btn__hourglass::before {
+    content: 'hourglass_empty';
 }
 /*
  * play_circle SVG viewBox 20×20 with a r=8 disc → optical circle is 80% of the
@@ -535,6 +555,9 @@
 }
 .vpc-play-pause-btn[data-loading="true"] .vpc-play-pause-btn__hourglass {
     display: block;
+}
+.vpc-play-pause-btn[data-loading="true"] .vpc-play-pause-btn__hourglass::before {
+    display: inline-block;
     animation: vpc-transport-spin 0.8s linear infinite;
 }
 @keyframes vpc-transport-spin {

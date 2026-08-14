@@ -464,17 +464,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
             class="vpc-control-transport-cluster"
             role="group"
             aria-label="<?= htmlspecialchars(preview_t('player.aria.playback'), ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.aria.playback"
-        >
-            <button
+        ><button
                 type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.prev" data-i18n-hint="←"
                 title="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportPrevDisabled ? 'disabled' : '' ?>
-            ><img class="vpc-chrome-icon" src="/preview/img/skip_previous_80dp_007800.svg?v=2" alt="" width="44" height="44" aria-hidden="true"></button>
-            <div class="vpc-control-center">
-                <button
+            ><img class="vpc-chrome-icon" src="/preview/img/skip_previous_80dp_007800.svg?v=2" alt="" width="44" height="44" aria-hidden="true"></button><div class="vpc-control-center"><button
                     type="button"
                     class="vpc-play-pause-btn"
                     aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
@@ -482,17 +479,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     title="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-icon-play="/preview/img/play_circle_80dp_007800.svg"
                     data-icon-pause="/preview/img/pause_circle_80dp_007800.svg"
-                ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><span class="material-icons vpc-play-pause-btn__hourglass" aria-hidden="true">hourglass_empty</span></button>
-            </div>
-            <button
+                ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><span class="material-icons vpc-play-pause-btn__hourglass" aria-hidden="true"></span></button></div><button
                 type="button"
                 class="vpc-next-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
                 aria-label="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.next" data-i18n-hint="→"
                 title="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportNextDisabled ? 'disabled' : '' ?>
-            ><img class="vpc-chrome-icon" src="/preview/img/skip_next_80dp_007800.svg?v=3" alt="" width="44" height="44" aria-hidden="true"></button>
-        </div>
+            ><img class="vpc-chrome-icon" src="/preview/img/skip_next_80dp_007800.svg?v=3" alt="" width="44" height="44" aria-hidden="true"></button></div>
     </div>
 </div>
 <?php

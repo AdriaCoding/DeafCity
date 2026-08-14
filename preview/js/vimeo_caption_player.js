@@ -944,6 +944,9 @@
             }
 
             if (playBtn) {
+                playBtn.addEventListener('selectstart', function (e) {
+                    e.preventDefault();
+                });
                 playBtn.addEventListener('click', togglePlayPause);
             }
 

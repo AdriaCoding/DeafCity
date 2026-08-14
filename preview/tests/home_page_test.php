@@ -551,7 +551,6 @@ assert_contains('/preview/img/skip_next_80dp_007800.svg', $html, 'next uses bord
 assert_contains('/preview/img/replay_circle_filled_80dp_007800.svg', $html, 'reset uses filled replay SVG');
 assert_contains('pause_circle_80dp_007800.svg', $html, 'pause circle SVG path available to player JS');
 assert_contains('vpc-play-pause-btn__hourglass', $html, 'play button contains sandclock for loading state');
-assert_contains('hourglass_empty', $html, 'loading sandclock uses Material hourglass icon');
 
 $playerJsPath = dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js';
 if (is_file($playerJsPath)) {
@@ -652,6 +651,7 @@ if (is_file($playerCssPath)) {
         'loading cover reveals without exposing Vimeo through a fade'
     );
     assert_contains('vpc-transport-spin', $playerCss, 'transport loading spinner animation');
+    assert_contains('hourglass_empty', $playerCss, 'loading sandclock uses Material hourglass icon via CSS');
     if (!preg_match(
         '~\[data-loading="true"\][^{]*\.vpc-play-pause-btn__hourglass[^}]*animation:\s*vpc-transport-spin~s',
         $playerCss
