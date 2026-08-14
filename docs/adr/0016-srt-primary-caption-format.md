@@ -97,7 +97,14 @@ that is recoverable without failing the revision.
   which `SrtValidator` rejects. Uploaded `.srt` files previously received no
   structural validation at all — that gap is closed.
 - **An uploaded `.srt` is stored byte-for-byte**, rather than being round-tripped
-  through WebVTT as it was before.
+  through WebVTT as it was before. Programme clocks survive: DaVinci/Premiere
+  timelines that start at `01:00:00:00` produce Caption files whose cues sit one
+  hour ahead of Vimeo playback. Preview subtracts that hour when serving cues
+  (`vpc_align_caption_cues_to_playback`). To rewrite the files on disk — needed
+  for Studio editors and for Vimeo text-track mirrors — run
+  `studio/scripts/migrate_caption_nle_hour_offset.php` (dry-run default;
+  `--apply` to write). It only touches files whose content spans less than one
+  hour, and aborts if any Caption looks like a genuine hour-plus Video.
 - **`SrtToVttConverter` is gone.** Nothing needs to produce WebVTT any more.
   `VttParser` and `WebVttValidator` remain, scoped to reading upload input.
 - **`data/` cannot be rolled back by git** — it is gitignored. The migration
@@ -120,3 +127,8 @@ become visible only after the flip:
 - The timestamp formatters could emit a four-digit millisecond field for a float
   landing just under a second boundary (`4.9999` → `00:00:04,1000`), producing
   SubRip that the parser then rejects. Fixed in both the PHP and Python writers.
+- After the flip, newly uploaded SubRip from DaVinci still used `01:00:00,000`
+  as the first cue. The Preview player never matched those cues against a short
+  Video. Serve-time alignment and `migrate_caption_nle_hour_offset.php` are the
+  two mitigations; the lasting fix is setting DaVinci's timeline start timecode
+  to `00:00:00:00` before export.

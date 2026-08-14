@@ -76,6 +76,7 @@ Scripts under `studio/scripts/` that are not part of the runtime request path:
 | Script | Purpose | Usage |
 |---|---|---|
 | `sync_to_vimeo.php` | Push titles, tags, and captions to Vimeo; backfill missing `thumbnail_url` only | `php studio/scripts/sync_to_vimeo.php` |
+| `migrate_caption_nle_hour_offset.php` | Strip DaVinci/Premiere `01:00:00` programme clock from Caption files under `data/` | dry-run default; `--apply` to rewrite — see [NLE hour-offset captions](#nle-hour-offset-captions) |
 | `test_vimeo_publish.php` | Smoke-test the Vimeo text-track upload flow | `php studio/scripts/test_vimeo_publish.php` |
 | `test_groq_transcribe.php` | Smoke-test the Groq transcription API | `GROQ_SMOKE=1 php studio/scripts/test_groq_transcribe.php` |
 | `test-translate-integration.php` | Integration test for Gemini translation | `php studio/scripts/test-translate-integration.php` |
@@ -88,6 +89,21 @@ Scripts under `studio/scripts/` that are not part of the runtime request path:
 | `cue_chunker.py` | Python mirror of `src/CueChunker.php`; used by `transcribe.py` | imported by `transcribe.py` |
 | `studio_log.py` | Shared Python logging helper writing to `data/logs/studio.log` | imported by `transcribe.py` and `bench_transcription.py` |
 | `bench_transcription.py` | Benchmark local faster-whisper vs Groq on sample audio | run manually |
+
+### NLE hour-offset captions
+
+DaVinci Resolve (and Premiere) often start a timeline at `01:00:00:00`. An exported SubRip file then carries that hour into every cue. Preview playback uses Vimeo's 0-based clock, so those Subtitles never appear on a short Video.
+
+`migrate_caption_nle_hour_offset.php` walks every `.srt` under `data/` (published captions and translation drafts). It rewrites a file only when the first cue is at or after `01:00:00` **and** the whole file spans less than one hour. A Caption that genuinely lasts an hour or more aborts the run instead of guessing. Already-zero-based files are skipped (idempotent).
+
+```bash
+# From the public_html root. Always dry-run first.
+php studio/scripts/migrate_caption_nle_hour_offset.php
+php studio/scripts/migrate_caption_nle_hour_offset.php --verbose
+php studio/scripts/migrate_caption_nle_hour_offset.php --apply
+```
+
+Run `--apply` as `www-data` (or `chown` afterwards) so Studio can still write the files. Re-run after a batch of DaVinci uploads if the Producer has not yet set timeline start to `00:00:00:00`. Preview also subtracts the same hour at serve time (`vpc_align_caption_cues_to_playback` in `preview/lib/caption_cues.php`), so the Website still displays those files before the disk rewrite; the script is what fixes Vimeo mirrors and Studio editors. See [ADR-0016](../docs/adr/0016-srt-primary-caption-format.md).
 
 ## UI language
 
