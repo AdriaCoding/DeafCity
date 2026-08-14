@@ -155,6 +155,9 @@ function preview_build_site_nav_links($currentRoute, $placement, $activeCollecti
             'aria_current' => $ariaCurrent,
             'data_collection' => $dataCollection,
             'data_generic_label' => $dataGenericLabel,
+            // Key behind the generic label, so an in-session Website language switch can
+            // repaint this link without re-rendering the page (ADR-0017).
+            'label_key' => isset($item['label_key']) ? (string) $item['label_key'] : '',
         );
     }
 

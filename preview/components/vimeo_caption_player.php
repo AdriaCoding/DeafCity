@@ -625,6 +625,9 @@ $config = array(
     'subtitleLanguages'    => $subtitleLanguagesForConfig,
     // Website language drives initial subtitle track selection (issue #19).
     'initialSubtitleLang'  => isset($preview_lang) ? (string) $preview_lang : 'en',
+    // Active Website language, tracked separately from the sticky Subtitle language:
+    // the visitor can change Subtitle track without changing the Website language.
+    'websiteLang'          => isset($preview_lang) ? (string) $preview_lang : 'en',
     // D18: Participant mode — non-empty when a participant playlist is active.
     'participantName' => isset($vpc['participant_name']) ? (string)$vpc['participant_name'] : '',
     // Localized chrome strings for JS (player.* keys).
@@ -673,6 +676,7 @@ $navHiddenClass = '';
                     tabindex="-1"
                     aria-controls="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
                     aria-label="<?= htmlspecialchars(preview_t('player.transport.play_or_pause'), ENT_QUOTES, 'UTF-8') ?>"
+                    data-i18n-aria="player.transport.play_or_pause"
                 ></button>
             </div>
         </div>

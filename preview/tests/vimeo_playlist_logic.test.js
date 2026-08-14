@@ -2521,5 +2521,140 @@ console.log('vimeo_playlist_logic.test.js: all passed (including transport short
     assert.strictEqual(fallback.length, 4);
 })();
 
-console.log('vimeo_playlist_logic.test.js: all passed (including issue #08 anti-cluster shuffle)');
+// ── In-session Website language switch (no page reload) ──────────────────────
+// Selecting the active Website language must cost nothing: no request, no repaint.
+(function () {
+    var subtitleLanguages = [
+        { id: 'en', label: 'English' },
+        { id: 'es', label: 'Español' },
+        { id: 'ca', label: 'Català' },
+    ];
+    var cueTracks = [
+        { file: 'a.en.srt', lang: 'en' },
+        { file: 'a.es.srt', lang: 'es' },
+    ];
+
+    var same = logic.planWebsiteLanguageSwitch({
+        currentLang: 'es',
+        targetLang: 'es',
+        cueTracks: cueTracks,
+        subtitleLanguages: subtitleLanguages,
+        currentUrl: '/preview/?lang=es',
+    });
+    assert.strictEqual(same.changed, false, 'selecting the active language is a no-op');
+
+    // Subtitle parity: the track after a switch is the one a cold load at ?lang=<id>
+    // would have selected, because both route through resolveActiveCaptionTrackIndex.
+    var toEnglish = logic.planWebsiteLanguageSwitch({
+        currentLang: 'es',
+        targetLang: 'en',
+        cueTracks: cueTracks,
+        subtitleLanguages: subtitleLanguages,
+        currentUrl: '/preview/?lang=es',
+    });
+    assert.strictEqual(toEnglish.changed, true, 'switching to another language proceeds');
+    assert.strictEqual(toEnglish.subtitleLangId, 'en', 'sticky Subtitle language follows the Website language');
+    assert.strictEqual(
+        toEnglish.captionTrackIndex,
+        logic.resolveActiveCaptionTrackIndex(cueTracks, 'en', subtitleLanguages),
+        'selected track matches what a cold load at that language would pick'
+    );
+
+    // A Video with no track in the target language must not lose Subtitles — it falls
+    // back exactly as a cold load does, rather than blanking the caption box.
+    var noMatch = logic.planWebsiteLanguageSwitch({
+        currentLang: 'en',
+        targetLang: 'ca',
+        cueTracks: cueTracks,
+        subtitleLanguages: subtitleLanguages,
+        currentUrl: '/preview/?lang=en',
+    });
+    assert.strictEqual(
+        noMatch.captionTrackIndex,
+        logic.resolveActiveCaptionTrackIndex(cueTracks, 'ca', subtitleLanguages),
+        'missing track falls back the same way a cold load does'
+    );
+    assert.ok(noMatch.captionTrackIndex >= 0, 'fallback still yields a usable track');
+
+    // A Video with no tracks at all must not throw.
+    var noTracks = logic.planWebsiteLanguageSwitch({
+        currentLang: 'en',
+        targetLang: 'es',
+        cueTracks: [],
+        subtitleLanguages: subtitleLanguages,
+        currentUrl: '/preview/',
+    });
+    assert.strictEqual(noTracks.changed, true, 'switch still proceeds without any tracks');
+    assert.strictEqual(noTracks.captionTrackIndex, 0, 'trackless Video yields a safe index');
+
+    // The address bar must end up at the switched language so refreshing or sharing
+    // the URL reproduces what is on screen.
+    function urlAfter(currentUrl, targetLang) {
+        return logic.planWebsiteLanguageSwitch({
+            currentLang: 'es',
+            targetLang: targetLang,
+            cueTracks: cueTracks,
+            subtitleLanguages: subtitleLanguages,
+            currentUrl: currentUrl,
+        }).url;
+    }
+
+    assert.strictEqual(urlAfter('/preview/?lang=es', 'ca'), '/preview/?lang=ca', 'replaces an existing lang');
+    assert.strictEqual(urlAfter('/preview/', 'ca'), '/preview/?lang=ca', 'adds lang when absent');
+
+    // Participant mode must survive the switch — dropping this parameter would throw
+    // the viewer out of a Participant's Playlist on the next refresh.
+    assert.strictEqual(
+        urlAfter('/preview/?participant=Hugo%203&lang=es', 'ca'),
+        '/preview/?participant=Hugo%203&lang=ca',
+        'preserves the Participant while replacing lang'
+    );
+    assert.strictEqual(
+        urlAfter('/preview/?participant=Hugo%203', 'ca'),
+        '/preview/?participant=Hugo%203&lang=ca',
+        'preserves the Participant while adding lang'
+    );
+
+    // Unknown/empty Participant collection: index.php treats this as a supported state,
+    // and it resolves to loadMasterIndex -1 (no Video selected). Switching Website
+    // language from such a URL must still produce a usable plan rather than throwing —
+    // this crashed the picker when the caller dereferenced fullPlaylistItems[-1].
+    var catalogItems = [
+        { videoId: '1', participant: 'Aurora', edition: '2020-valencia', tracks: [] },
+        { videoId: '2', participant: 'Dani', edition: '2020-valencia', tracks: [] },
+    ];
+    var emptyCollection = logic.planParticipantCollectionPlaylist({
+        fullPlaylistItems: catalogItems,
+        participantName: 'Nobody At All',
+    });
+    assert.strictEqual(emptyCollection.loadMasterIndex, -1, 'unknown Participant selects no Video');
+    assert.strictEqual(catalogItems[emptyCollection.loadMasterIndex], undefined, 'index -1 has no item');
+
+    var fromEmptyCollection = logic.planWebsiteLanguageSwitch({
+        currentLang: 'en',
+        targetLang: 'ca',
+        // What the caller can now safely supply for a missing item.
+        cueTracks: [],
+        subtitleLanguages: subtitleLanguages,
+        currentUrl: '/preview/?participant=Nobody%20At%20All',
+    });
+    assert.strictEqual(fromEmptyCollection.changed, true, 'switch proceeds with no Video selected');
+    assert.strictEqual(fromEmptyCollection.captionTrackIndex, 0, 'yields a safe track index');
+    assert.strictEqual(
+        fromEmptyCollection.url,
+        '/preview/?participant=Nobody%20At%20All&lang=ca',
+        'keeps the Participant parameter intact'
+    );
+
+    // ADR-0013 regression guard: the switch carries no playback state whatsoever.
+    // If resume-intent logic is ever reintroduced here, this fails loudly.
+    var planKeys = Object.keys(toEnglish).sort();
+    assert.deepStrictEqual(
+        planKeys,
+        ['captionTrackIndex', 'changed', 'lang', 'subtitleLangId', 'url'],
+        'plan carries no playback position, autoplay or resume intent'
+    );
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including in-session Website language switch)');
 

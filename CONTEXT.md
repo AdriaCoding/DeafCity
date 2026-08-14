@@ -99,9 +99,13 @@ _Avoid_: Deleted, archived, unpublished, hidden (alone — say Invisible Video)
 
 ## Preview playback behavior contracts
 
-**Language switch resume intent**:
-When a visitor changes Website language from the Preview player chrome, playback state must carry across the navigation. If the current Video is actively playing, or has already progressed beyond start and is not loading, the language switch sets a restore intent to resume playback with sound after reload. This prevents paused restore on a thumbnail with an in-cue Subtitle text ("ghost caption").
-_Avoid_: Treating language switch as always neutral UI navigation
+**Website language switch**:
+Changing the Website language from the Preview player chrome is an in-session update, not a navigation. The Vimeo iframe stays mounted and playing while the page swaps localized strings, text direction and Subtitle track in place, so playback, filter facets, shuffle order and browser user-activation all simply continue. Localized labels always come from the server, so a switched page and a cold load at the same `?lang=` cannot drift apart. See ADR-0017.
+_Avoid_: Treating a Website language change as navigation on the player page; translating copy client-side
+
+**Language switch resume intent** (legacy — secondary routes only):
+Applies now only to About and Participants, which are still page loads. When navigating away from a playing Video, a restore intent is set so playback resumes with sound rather than restoring paused at a saved timestamp with an active Subtitle cue over a thumbnail (the "ghost caption"). On the player page's Website language switch this no longer applies — nothing reloads, so nothing is restored. Retires entirely once the persistent player shell removes the remaining page loads. See ADR-0013, superseded for the language path by ADR-0017.
+_Avoid_: Reintroducing resume intent into the Website language switch
 
 **DEAF+HEARING filter**:
 A chrome toggle on the Preview player that narrows the Playlist to Videos carrying the Catalog Tag `DEAF&HEARING` (curated deaf–hearing crossover humour). Modeled as a generic single-slot Tag facet (array membership), not a bespoke boolean, so it reuses the same mutual-exclusion, Reset, and session machinery as other filters. Mutually exclusive with Participants collection mode. Session-persisted as a one-shot handoff, not a sticky preference — a cold load always starts inactive. See ADR-0015.

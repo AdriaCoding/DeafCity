@@ -1,11 +1,36 @@
 <?php
 // Run: php8.4 preview/tests/home_page_test.php
 
+// Failures from the assert_* helpers are collected rather than fatal, so one red
+// assertion cannot hide every assertion after it. That masking is not hypothetical:
+// stale copy expectations here concealed an unrelated icon mismatch for two weeks.
+// The ~60 hand-written `exit(1)` blocks further down still stop the run; the shutdown
+// summary below reports whatever was collected before they do.
+$GLOBALS['home_page_test_failures'] = array();
+
+function record_failure($message)
+{
+    $GLOBALS['home_page_test_failures'][] = $message;
+    fwrite(STDERR, "FAIL: {$message}\n");
+}
+
+register_shutdown_function(function () {
+    $failures = $GLOBALS['home_page_test_failures'];
+    if (count($failures) === 0) {
+        return;
+    }
+    fwrite(STDERR, "\n" . count($failures) . " failing assertion(s):\n");
+    foreach ($failures as $i => $message) {
+        fwrite(STDERR, '  ' . ($i + 1) . ". {$message}\n");
+    }
+    exit(1);
+});
+
 function assert_contains($needle, $haystack, $label)
 {
     if (strpos($haystack, $needle) === false) {
-        fwrite(STDERR, "FAIL: {$label} — expected to contain: {$needle}\n");
-        exit(1);
+        record_failure("{$label} — expected to contain: {$needle}");
+        return;
     }
     echo "PASS: {$label}\n";
 }
@@ -13,8 +38,8 @@ function assert_contains($needle, $haystack, $label)
 function assert_not_contains($needle, $haystack, $label)
 {
     if (strpos($haystack, $needle) !== false) {
-        fwrite(STDERR, "FAIL: {$label} — should not contain: {$needle}\n");
-        exit(1);
+        record_failure("{$label} — should not contain: {$needle}");
+        return;
     }
     echo "PASS: {$label}\n";
 }
@@ -103,7 +128,18 @@ if (preg_match('~vpc-deaf-hearing-btn[^>]*aria-pressed="false"~', $html) !== 1
         exit(1);
     }
 }
-assert_contains('Deaf &amp; Hearing interactions', $html, 'DEAF+HEARING accessible name (DH13)');
+// DH13: the control carries the localized accessible name. Resolved from the store
+// rather than hard-coded — this copy is owned by Antoni via Studio and changes freely
+// (it has already moved once from "Deaf & Hearing interactions"), so pinning the literal
+// made this test fail on a copy edit rather than on a real regression.
+require_once dirname(__DIR__) . '/lib/preview_locale.php';
+$dhLocale = preview_bootstrap_locale();
+$dhName = $dhLocale['i18n']->t('player.filter.deaf_hearing');
+assert_contains(
+    htmlspecialchars($dhName, ENT_QUOTES, 'UTF-8'),
+    $html,
+    'DEAF+HEARING accessible name (DH13)'
+);
 if (preg_match('~vpc-deaf-hearing-btn[\s\S]{0,400}?\bdisabled\b~', $html)) {
     fwrite(STDERR, "FAIL: DEAF+HEARING should be enabled when catalog has DEAF&HEARING tags (DH27)\n");
     exit(1);
@@ -280,7 +316,11 @@ assert_contains('vpc-picker-dropdown', $html, 'custom picker dropdown present');
 assert_contains('data-picker="sign_language"', $html, 'sign_language picker attribute');
 
 // AC: Picker button shows live readout from first video (D14′) — generic label in data-generic-label only
-assert_contains('data-generic-label="Sign Language"', $html, 'picker button has generic label attr');
+assert_contains(
+    'data-generic-label="' . htmlspecialchars($dhLocale['i18n']->t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') . '"',
+    $html,
+    'picker button has generic label attr'
+);
 assert_not_contains('data-picker="sign_language" data-active="true"', $html, 'sign language picker not green on load');
 if (preg_match('~data-picker="sign_language"[^>]*data-active="false"~', $html) !== 1) {
     fwrite(STDERR, "FAIL: sign language picker should have data-active=\"false\" on cold load\n");
@@ -294,7 +334,7 @@ assert_contains('role="option"', $html, 'dropdown options have role=option');
 
 // AC: Clear/all option present
 assert_contains('vpc-picker-clear', $html, 'clear/all option present in dropdown');
-assert_contains('Sign Languages', $html, 'clear option says "Sign Languages"');
+assert_contains(htmlspecialchars($dhLocale['i18n']->t('player.filter.all_sign_languages'), ENT_QUOTES, 'UTF-8'), $html, 'sign language clear option carries the localized "all" label');
 
 // AC: Dropdown lists sign languages present in catalog
 assert_contains('LIBRAS Brazilian', $html, 'LIBRAS option in picker');
@@ -396,8 +436,8 @@ if (preg_match('~data-picker="typology"[^>]*data-active="false"~', $html) !== 1)
 echo "PASS: typology picker passive readout on load\n";
 
 // AC: Clear options for edition and typology pickers
-assert_contains('Cities', $html, 'edition clear option says "Cities"');
-assert_contains('Typologies', $html, 'typology clear option says "Typologies"');
+assert_contains(htmlspecialchars($dhLocale['i18n']->t('player.filter.all_cities'), ENT_QUOTES, 'UTF-8'), $html, 'edition clear option carries the localized "all" label');
+assert_contains(htmlspecialchars($dhLocale['i18n']->t('player.filter.all_typologies'), ENT_QUOTES, 'UTF-8'), $html, 'typology clear option carries the localized "all" label');
 
 // AC: Edition picker lists editions present in catalog
 $catalogJsonPathForEditions = dirname(dirname(dirname(__FILE__))) . '/data/catalog.json';
@@ -556,18 +596,35 @@ if (is_file($playerCssPath)) {
     // Six square buttons share one fixed width (Toni: equal length, no stretch).
     assert_contains('--vpc-square-btn-w', $playerCss, 'square chrome buttons share one fixed-width var');
     assert_contains('width: 2.75rem', $playerCss, 'chrome icon boxes remain 44px');
-    $iconPaths = array(
+    // Circular icons are cropped tight to their artwork so they read larger in the
+    // 44px chrome box (see "Cropping round icons so that they appear larger").
+    $circularIconPaths = array(
         dirname(dirname(__FILE__)) . '/img/help_80dp_007800.svg' => 'viewBox="2 2 20 20"',
         dirname(dirname(__FILE__)) . '/img/play_circle_80dp_007800.svg' => 'viewBox="2 2 16 16"',
         dirname(dirname(__FILE__)) . '/img/pause_circle_80dp_007800.svg' => 'viewBox="2 2 16 16"',
         dirname(dirname(__FILE__)) . '/img/replay_circle_filled_80dp_007800.svg' => 'viewBox="2 2 20 20"',
-        dirname(dirname(__FILE__)) . '/img/skip_previous_80dp_007800.svg' => 'viewBox="6 6 12 12"',
-        dirname(dirname(__FILE__)) . '/img/skip_next_80dp_007800.svg' => 'viewBox="6 6 12 12"',
     );
-    foreach ($iconPaths as $iconPath => $viewBox) {
+    foreach ($circularIconPaths as $iconPath => $viewBox) {
         if (is_file($iconPath)) {
             $iconSvg = file_get_contents($iconPath);
             assert_contains($viewBox, $iconSvg, 'circular chrome SVG is cropped to its artwork');
+        }
+    }
+
+    // Prev/next are NOT cropped to their artwork, deliberately. Their glyph (a bar plus
+    // a triangle) occupies exactly 6..18 on both axes, so a tight "6 6 12 12" crop would
+    // render it 1.5x larger than the circular icons beside it — and a triangle filling
+    // its box reads optically heavier than a circle filling the same box. The 3-unit
+    // padding is the optical correction that keeps the transport row visually even.
+    // Confirmed intentional by the maintainer, Aug 2026.
+    $paddedIconPaths = array(
+        dirname(dirname(__FILE__)) . '/img/skip_previous_80dp_007800.svg' => 'viewBox="3 3 18 18"',
+        dirname(dirname(__FILE__)) . '/img/skip_next_80dp_007800.svg' => 'viewBox="3 3 18 18"',
+    );
+    foreach ($paddedIconPaths as $iconPath => $viewBox) {
+        if (is_file($iconPath)) {
+            $iconSvg = file_get_contents($iconPath);
+            assert_contains($viewBox, $iconSvg, 'non-circular chrome SVG keeps its optical padding');
         }
     }
     if (!preg_match(

@@ -432,6 +432,84 @@
         return 0;
     }
 
+    /**
+     * Same URL with ?lang= set to langId, preserving every other parameter.
+     *
+     * Deliberately string-based rather than URLSearchParams: re-serializing would
+     * recode existing values (a Participant name's %20 becoming +), changing URLs the
+     * server already round-trips correctly.
+     *
+     * @param {string} currentUrl
+     * @param {string} langId
+     * @returns {string}
+     */
+    function urlWithWebsiteLanguage(currentUrl, langId) {
+        var url = String(currentUrl || '');
+
+        var hashAt = url.indexOf('#');
+        var hash = hashAt >= 0 ? url.slice(hashAt) : '';
+        if (hashAt >= 0) {
+            url = url.slice(0, hashAt);
+        }
+
+        var queryAt = url.indexOf('?');
+        var path = queryAt >= 0 ? url.slice(0, queryAt) : url;
+        var query = queryAt >= 0 ? url.slice(queryAt + 1) : '';
+
+        var parts = query === '' ? [] : query.split('&');
+        var kept = [];
+        var replaced = false;
+        for (var i = 0; i < parts.length; i++) {
+            if (parts[i] === '') continue;
+            if (parts[i].indexOf('lang=') === 0) {
+                kept.push('lang=' + encodeURIComponent(langId));
+                replaced = true;
+            } else {
+                kept.push(parts[i]);
+            }
+        }
+        if (!replaced) {
+            kept.push('lang=' + encodeURIComponent(langId));
+        }
+
+        return path + (kept.length > 0 ? '?' + kept.join('&') : '') + hash;
+    }
+
+    /**
+     * Plan an in-session Website language switch (no page reload).
+     *
+     * Pure: decides whether the switch happens at all. Playback is deliberately absent
+     * from both the inputs and the result — the Video is never touched, so there is
+     * nothing to save, restore or resume (this is what retires ADR-0013's ghost caption
+     * on this path).
+     *
+     * @param {{ currentLang?: string, targetLang?: string, cueTracks?: Array<{ lang?: string }>, subtitleLanguages?: Array<{ id?: string }> }} input
+     * @returns {{ changed: boolean, lang?: string, subtitleLangId?: string, captionTrackIndex?: number }}
+     */
+    function planWebsiteLanguageSwitch(input) {
+        var opts = input || {};
+        var currentLang = String(opts.currentLang || '');
+        var targetLang = String(opts.targetLang || '');
+
+        if (targetLang === '' || targetLang === currentLang) {
+            return { changed: false };
+        }
+
+        var cueTracks = Array.isArray(opts.cueTracks) ? opts.cueTracks : [];
+        var subtitleLanguages = Array.isArray(opts.subtitleLanguages) ? opts.subtitleLanguages : [];
+
+        // Website language drives Subtitle language (issue #19). Reuse the cold-load
+        // picker rather than reimplementing it, so a switched page and a fresh load at
+        // ?lang=<id> can never disagree about which track is showing.
+        return {
+            changed: true,
+            lang: targetLang,
+            subtitleLangId: targetLang,
+            captionTrackIndex: resolveActiveCaptionTrackIndex(cueTracks, targetLang, subtitleLanguages),
+            url: urlWithWebsiteLanguage(opts.currentUrl, targetLang),
+        };
+    }
+
     /** @typedef {{ sign_language: string|null, edition: string|null, typology: string|null }} VpcFilterState */
 
     /**
@@ -1913,6 +1991,8 @@
         buildSpokenOptionsForTracks: buildSpokenOptionsForTracks,
         pickTrackIndexForSpokenLang: pickTrackIndexForSpokenLang,
         resolveActiveCaptionTrackIndex: resolveActiveCaptionTrackIndex,
+        planWebsiteLanguageSwitch: planWebsiteLanguageSwitch,
+        urlWithWebsiteLanguage: urlWithWebsiteLanguage,
         facetItemField: facetItemField,
         itemFacetValue: itemFacetValue,
         DEAF_HEARING_TAG: DEAF_HEARING_TAG,
