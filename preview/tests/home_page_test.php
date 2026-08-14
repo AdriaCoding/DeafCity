@@ -1,11 +1,36 @@
 <?php
 // Run: php8.4 preview/tests/home_page_test.php
 
+// Failures from the assert_* helpers are collected rather than fatal, so one red
+// assertion cannot hide every assertion after it. That masking is not hypothetical:
+// stale copy expectations here concealed an unrelated icon mismatch for two weeks.
+// The ~60 hand-written `exit(1)` blocks further down still stop the run; the shutdown
+// summary below reports whatever was collected before they do.
+$GLOBALS['home_page_test_failures'] = array();
+
+function record_failure($message)
+{
+    $GLOBALS['home_page_test_failures'][] = $message;
+    fwrite(STDERR, "FAIL: {$message}\n");
+}
+
+register_shutdown_function(function () {
+    $failures = $GLOBALS['home_page_test_failures'];
+    if (count($failures) === 0) {
+        return;
+    }
+    fwrite(STDERR, "\n" . count($failures) . " failing assertion(s):\n");
+    foreach ($failures as $i => $message) {
+        fwrite(STDERR, '  ' . ($i + 1) . ". {$message}\n");
+    }
+    exit(1);
+});
+
 function assert_contains($needle, $haystack, $label)
 {
     if (strpos($haystack, $needle) === false) {
-        fwrite(STDERR, "FAIL: {$label} — expected to contain: {$needle}\n");
-        exit(1);
+        record_failure("{$label} — expected to contain: {$needle}");
+        return;
     }
     echo "PASS: {$label}\n";
 }
@@ -13,8 +38,8 @@ function assert_contains($needle, $haystack, $label)
 function assert_not_contains($needle, $haystack, $label)
 {
     if (strpos($haystack, $needle) !== false) {
-        fwrite(STDERR, "FAIL: {$label} — should not contain: {$needle}\n");
-        exit(1);
+        record_failure("{$label} — should not contain: {$needle}");
+        return;
     }
     echo "PASS: {$label}\n";
 }
@@ -571,18 +596,35 @@ if (is_file($playerCssPath)) {
     // Six square buttons share one fixed width (Toni: equal length, no stretch).
     assert_contains('--vpc-square-btn-w', $playerCss, 'square chrome buttons share one fixed-width var');
     assert_contains('width: 2.75rem', $playerCss, 'chrome icon boxes remain 44px');
-    $iconPaths = array(
+    // Circular icons are cropped tight to their artwork so they read larger in the
+    // 44px chrome box (see "Cropping round icons so that they appear larger").
+    $circularIconPaths = array(
         dirname(dirname(__FILE__)) . '/img/help_80dp_007800.svg' => 'viewBox="2 2 20 20"',
         dirname(dirname(__FILE__)) . '/img/play_circle_80dp_007800.svg' => 'viewBox="2 2 16 16"',
         dirname(dirname(__FILE__)) . '/img/pause_circle_80dp_007800.svg' => 'viewBox="2 2 16 16"',
         dirname(dirname(__FILE__)) . '/img/replay_circle_filled_80dp_007800.svg' => 'viewBox="2 2 20 20"',
-        dirname(dirname(__FILE__)) . '/img/skip_previous_80dp_007800.svg' => 'viewBox="6 6 12 12"',
-        dirname(dirname(__FILE__)) . '/img/skip_next_80dp_007800.svg' => 'viewBox="6 6 12 12"',
     );
-    foreach ($iconPaths as $iconPath => $viewBox) {
+    foreach ($circularIconPaths as $iconPath => $viewBox) {
         if (is_file($iconPath)) {
             $iconSvg = file_get_contents($iconPath);
             assert_contains($viewBox, $iconSvg, 'circular chrome SVG is cropped to its artwork');
+        }
+    }
+
+    // Prev/next are NOT cropped to their artwork, deliberately. Their glyph (a bar plus
+    // a triangle) occupies exactly 6..18 on both axes, so a tight "6 6 12 12" crop would
+    // render it 1.5x larger than the circular icons beside it — and a triangle filling
+    // its box reads optically heavier than a circle filling the same box. The 3-unit
+    // padding is the optical correction that keeps the transport row visually even.
+    // Confirmed intentional by the maintainer, Aug 2026.
+    $paddedIconPaths = array(
+        dirname(dirname(__FILE__)) . '/img/skip_previous_80dp_007800.svg' => 'viewBox="3 3 18 18"',
+        dirname(dirname(__FILE__)) . '/img/skip_next_80dp_007800.svg' => 'viewBox="3 3 18 18"',
+    );
+    foreach ($paddedIconPaths as $iconPath => $viewBox) {
+        if (is_file($iconPath)) {
+            $iconSvg = file_get_contents($iconPath);
+            assert_contains($viewBox, $iconSvg, 'non-circular chrome SVG keeps its optical padding');
         }
     }
     if (!preg_match(
