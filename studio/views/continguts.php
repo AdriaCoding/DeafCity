@@ -276,6 +276,9 @@
             font-size: 0.85rem;
             line-height: 1.35;
             color: var(--studio-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .video-card:hover .video-card-title { color: var(--studio-text); }
         .video-caption-count {
@@ -670,10 +673,52 @@
                     $invisibleVideos[] = $video;
                 }
             }
+            // The video's position within a participant's set, parsed from the title's
+            // trailing "_<N>[_SUFFIX]" convention (e.g. "..._Atifa_3_4K" -> 3).
+            function studioVideoNumber(array $video): ?int
+            {
+                if (preg_match('/_(\d+)(?:_[A-Za-z0-9]+)?$/', (string) ($video['title'] ?? ''), $m)) {
+                    return (int) $m[1];
+                }
+                return null;
+            }
+
+            // Short thumb label: "Participant #N" instead of the full title,
+            // so it fits the card without wrapping past the thumb's edges.
+            function studioVideoShortLabel(array $video): string
+            {
+                $participant = trim((string) ($video['participant'] ?? ''));
+                $number = studioVideoNumber($video);
+                if ($participant !== '' && $number !== null) {
+                    return $participant . ' #' . $number;
+                }
+                return $participant !== '' ? $participant : (string) ($video['title'] ?? '');
+            }
+
             $videosByEdition = [];
             foreach ($visibleVideos as $video) {
                 $videosByEdition[$video['edition'] ?? ''][] = $video;
             }
+            // Group each participant's videos together, in order of the participant's
+            // first appearance, instead of leaving them scattered by catalog insertion
+            // order; within a participant's group, order by video number.
+            foreach ($videosByEdition as &$editionVideos) {
+                $participantFirstSeen = [];
+                foreach ($editionVideos as $i => $video) {
+                    $participant = $video['participant'] ?? '';
+                    if (!isset($participantFirstSeen[$participant])) {
+                        $participantFirstSeen[$participant] = $i;
+                    }
+                }
+                usort($editionVideos, function ($a, $b) use ($participantFirstSeen) {
+                    $participantCmp = $participantFirstSeen[$a['participant'] ?? ''] <=> $participantFirstSeen[$b['participant'] ?? ''];
+                    if ($participantCmp !== 0) {
+                        return $participantCmp;
+                    }
+                    return (studioVideoNumber($a) ?? PHP_INT_MAX) <=> (studioVideoNumber($b) ?? PHP_INT_MAX);
+                });
+            }
+            unset($editionVideos);
             $orderedEditionIds = array_column($editions, 'id');
             foreach (array_keys($videosByEdition) as $edId) {
                 if (!in_array($edId, $orderedEditionIds, true)) {
@@ -701,7 +746,7 @@
                     <?php endif; ?>
                     <?php $captionCount = count($video['captions'] ?? []); ?>
                     <div class="video-card-meta">
-                        <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
+                        <span class="video-card-title" title="<?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?>"><?= htmlspecialchars(studioVideoShortLabel($video), ENT_QUOTES) ?></span>
                         <span class="video-caption-count" title="<?= $captionCount ?> subtítol<?= $captionCount === 1 ? '' : 's' ?>"><?= $captionCount ?></span>
                     </div>
                 </a>
@@ -728,7 +773,7 @@
                     <?php endif; ?>
                     <?php $captionCount = count($video['captions'] ?? []); ?>
                     <div class="video-card-meta">
-                        <span class="video-card-title"><?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?></span>
+                        <span class="video-card-title" title="<?= htmlspecialchars($video['title'] ?? '', ENT_QUOTES) ?>"><?= htmlspecialchars(studioVideoShortLabel($video), ENT_QUOTES) ?></span>
                         <span class="video-caption-count" title="<?= $captionCount ?> subtítol<?= $captionCount === 1 ? '' : 's' ?>"><?= $captionCount ?></span>
                     </div>
                 </a>
@@ -1801,6 +1846,13 @@
         attachConfigEntryListeners(div);
     }
 
+    function videoShortLabel(video) {
+        var participant = (video.participant || '').trim();
+        var m = /_(\d+)(?:_[A-Za-z0-9]+)?$/.exec(video.title || '');
+        if (participant && m) return participant + ' #' + m[1];
+        return participant || video.title || '';
+    }
+
     function injectVideoCard(video, editionLabel) {
         videosEmptyMsg.style.display = 'none';
         var editionId = video.edition;
@@ -1829,7 +1881,7 @@
         var captionLabel = captionCount === 1 ? '1 subtítol' : captionCount + ' subtítols';
         var metaHtml =
             '<div class="video-card-meta">' +
-                '<span class="video-card-title">' + escHtml(video.title) + '</span>' +
+                '<span class="video-card-title" title="' + escHtml(video.title) + '">' + escHtml(videoShortLabel(video)) + '</span>' +
                 '<span class="video-caption-count" title="' + escHtml(captionLabel) + '">' + captionCount + '</span>' +
             '</div>';
         if (video.thumbnail_url) {
