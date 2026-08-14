@@ -202,12 +202,25 @@
             return fallback !== undefined ? fallback : key;
         }
 
-        /** "All [category]" labels per facet (D17′). */
+        /** Active Website language — changes in session without a reload. */
+        var websiteLang = typeof cfg.websiteLang === 'string' && cfg.websiteLang !== ''
+            ? cfg.websiteLang
+            : 'en';
+
+        /** "All [category]" labels per facet (D17′). Rebuilt on a Website language switch. */
         var filterClearLabels = {
             sign_language: vpcString('player.filter.all_sign_languages', 'All sign languages'),
             edition: vpcString('player.filter.all_cities', 'All cities'),
             typology: vpcString('player.filter.all_typologies', 'All typologies'),
         };
+
+        function rebuildFilterClearLabels() {
+            filterClearLabels = {
+                sign_language: vpcString('player.filter.all_sign_languages', 'All sign languages'),
+                edition: vpcString('player.filter.all_cities', 'All cities'),
+                typology: vpcString('player.filter.all_typologies', 'All typologies'),
+            };
+        }
 
         /** Participant name when a participant playlist is active (D18). '' = not in participant mode. */
         var participantName = typeof cfg.participantName === 'string' ? cfg.participantName.trim() : '';
@@ -283,7 +296,11 @@
         }
 
         function currentItemCueTracksRaw() {
+            // playlistIndex is legitimately -1 while no Video is selected — an unknown
+            // or empty Participant collection resolves to loadMasterIndex -1, which
+            // index.php treats as a supported state rather than an error.
             var item = fullPlaylistItems[playlistIndex];
+            if (!item) return [];
             return Array.isArray(item.tracks) ? item.tracks : [];
         }
 
@@ -1383,6 +1400,15 @@
                         btn.setAttribute('data-generic-label', genericLabel);
                     }
                     setChromeBtnLabel(btn, navState.label || genericLabel);
+                    // Keep the accessible name in step with the visible label, which may
+                    // be a Participant's name rather than the generic route label.
+                    if (btn.hasAttribute('data-i18n-aria')) {
+                        var displayed = navState.label || genericLabel;
+                        var navHint = btn.getAttribute('data-i18n-hint') || '';
+                        var navAria = navHint ? displayed + ' (' + navHint + ')' : displayed;
+                        btn.setAttribute('aria-label', navAria);
+                        if (btn.hasAttribute('title')) btn.setAttribute('title', navAria);
+                    }
                     if (navState.isActive) {
                         btn.classList.add('is-active');
                         btn.setAttribute('aria-current', 'true');
@@ -1504,6 +1530,142 @@
             function rebuildAllCascadingDropdowns() {
                 ['sign_language', 'edition', 'typology'].forEach(rebuildCascadingDropdown);
             }
+
+            // ── In-session Website language switch (no page reload) ───────────
+            // The Vimeo iframe is never touched here: playback, user activation,
+            // filter facets, shuffle order and Playlist cursor all simply continue.
+
+            /**
+             * Repaint every server-rendered string carrying a data-i18n-* marker.
+             * Runs before the picker re-renders, which read data-generic-label back.
+             */
+            function applyI18nMarkedStrings() {
+                root.querySelectorAll('[data-i18n-text]').forEach(function (el) {
+                    el.textContent = vpcString(el.getAttribute('data-i18n-text'), el.textContent);
+                });
+
+                root.querySelectorAll('[data-i18n-generic]').forEach(function (el) {
+                    el.setAttribute(
+                        'data-generic-label',
+                        vpcString(
+                            el.getAttribute('data-i18n-generic'),
+                            el.getAttribute('data-generic-label') || ''
+                        )
+                    );
+                });
+
+                root.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+                    var label = vpcString(el.getAttribute('data-i18n-aria'), '');
+                    // Keyboard hint suffix mirrors the composition in bottom_bar.php:
+                    // "<label> (<hint>)". The hint is a physical key except Space,
+                    // whose name is itself localized and so arrives as a key.
+                    var hintKey = el.getAttribute('data-i18n-hint-key');
+                    var hint = hintKey
+                        ? vpcString(hintKey, '')
+                        : el.getAttribute('data-i18n-hint') || '';
+                    var full = hint ? label + ' (' + hint + ')' : label;
+                    if (!label) return;
+                    el.setAttribute('aria-label', full);
+                    if (el.hasAttribute('title')) el.setAttribute('title', full);
+                });
+            }
+
+            /** Move the language picker's own face and selection to the new language. */
+            function syncLanguagePicker(langId) {
+                var pickerEl = root.querySelector('.vpc-picker[data-picker="language"]');
+                if (!pickerEl) return;
+
+                var selectedLabel = '';
+                pickerEl.querySelectorAll('.vpc-picker-option').forEach(function (li) {
+                    var isSelected = li.getAttribute('data-lang-id') === langId;
+                    li.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                    if (isSelected) selectedLabel = li.textContent;
+                });
+
+                var btn = pickerEl.querySelector('.vpc-picker-btn');
+                if (btn && selectedLabel) {
+                    setChromeBtnLabel(btn, selectedLabel);
+                }
+                pickerEl.setAttribute('data-active', langId !== 'en' ? 'true' : 'false');
+            }
+
+            /**
+             * @param {{ lang: string, dir: string, strings: Object, filter_options: Object }} payload
+             * @param {{ subtitleLangId: string, captionTrackIndex: number, url: string }} plan
+             */
+            function applyLocalePayload(payload, plan) {
+                strings = payload.strings && typeof payload.strings === 'object' ? payload.strings : {};
+                websiteLang = payload.lang;
+                rebuildFilterClearLabels();
+
+                var opts = payload.filter_options || {};
+                ['sign_language', 'edition', 'typology'].forEach(function (facet) {
+                    if (Array.isArray(opts[facet])) {
+                        filterOptionCatalog[facet] = opts[facet];
+                    }
+                });
+
+                document.documentElement.setAttribute('lang', payload.lang);
+                document.documentElement.setAttribute('dir', payload.dir);
+
+                applyI18nMarkedStrings();
+                syncLanguagePicker(payload.lang);
+                updateAllFilterPickerReadouts();
+                rebuildAllCascadingDropdowns();
+                syncCollectionNavButtons();
+
+                // Website language drives Subtitle track (issue #19). Sticky id is set
+                // first so setActiveCaptionTrack does not overwrite it from the track.
+                stickySpokenLangId = plan.subtitleLangId;
+                setActiveCaptionTrack(plan.captionTrackIndex, false);
+
+                if (window.history && typeof window.history.replaceState === 'function') {
+                    try {
+                        window.history.replaceState(null, '', plan.url);
+                    } catch (e) {}
+                }
+            }
+
+            /**
+             * Switch Website language in session. Resolves false when nothing changed,
+             * and rejects when the payload could not be fetched — the caller then falls
+             * back to navigation, so this can never leave the page half-translated.
+             * @param {string} targetLang
+             * @returns {Promise<boolean>}
+             */
+            function applyWebsiteLanguage(targetLang) {
+                var plan;
+                try {
+                    plan = L.planWebsiteLanguageSwitch({
+                        currentLang: websiteLang,
+                        targetLang: targetLang,
+                        cueTracks: currentItemCueTracksRaw(),
+                        subtitleLanguages: subtitleLanguages,
+                        currentUrl:
+                            window.location.pathname + window.location.search + window.location.hash,
+                    });
+                } catch (e) {
+                    // Never throw synchronously: the caller's .catch() is what falls back
+                    // to navigation, and it can only run if this returns a promise.
+                    return Promise.reject(e);
+                }
+                if (!plan.changed) return Promise.resolve(false);
+
+                return fetch(
+                    '/preview/api/locale.php?lang=' + encodeURIComponent(targetLang),
+                    { credentials: 'same-origin' }
+                )
+                    .then(function (res) {
+                        if (!res.ok) throw new Error('locale payload ' + res.status);
+                        return res.json();
+                    })
+                    .then(function (payload) {
+                        applyLocalePayload(payload, plan);
+                        return true;
+                    });
+            }
+
+            window.__vpcApplyWebsiteLanguage = applyWebsiteLanguage;
 
             /**
              * Apply a filter change with keep-if-matches playback (D22) and cascade (D17′).

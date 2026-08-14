@@ -152,10 +152,14 @@ if (!function_exists('preview_nav_link_shortcut_key')) {
 if (!function_exists('preview_render_nav_link')) {
     function preview_render_nav_link($link)
     {
+        $labelKey = isset($link['label_key']) ? (string) $link['label_key'] : '';
         $collectionAttr = '';
         if ($link['data_collection'] !== '') {
             $collectionAttr = ' data-collection="' . htmlspecialchars($link['data_collection'], ENT_QUOTES, 'UTF-8') . '"'
                 . ' data-generic-label="' . htmlspecialchars($link['data_generic_label'], ENT_QUOTES, 'UTF-8') . '"';
+            if ($labelKey !== '') {
+                $collectionAttr .= ' data-i18n-generic="' . htmlspecialchars($labelKey, ENT_QUOTES, 'UTF-8') . '"';
+            }
         }
         $ariaCurrent = $link['aria_current'] !== ''
             ? ' aria-current="' . htmlspecialchars($link['aria_current'], ENT_QUOTES, 'UTF-8') . '"'
@@ -167,6 +171,10 @@ if (!function_exists('preview_render_nav_link')) {
         if ($shortcutKey !== '') {
             $labelWithHint = htmlspecialchars($link['label'] . ' (' . $shortcutKey . ')', ENT_QUOTES, 'UTF-8');
             $hintAttrs = ' aria-label="' . $labelWithHint . '" title="' . $labelWithHint . '"';
+            if ($labelKey !== '') {
+                $hintAttrs .= ' data-i18n-aria="' . htmlspecialchars($labelKey, ENT_QUOTES, 'UTF-8') . '"'
+                    . ' data-i18n-hint="' . htmlspecialchars($shortcutKey, ENT_QUOTES, 'UTF-8') . '"';
+            }
         }
         ?>
         <a href="<?= htmlspecialchars($link['href'], ENT_QUOTES, 'UTF-8') ?>" class="<?= htmlspecialchars($link['class'], ENT_QUOTES, 'UTF-8') ?>" data-route="<?= htmlspecialchars($link['route'], ENT_QUOTES, 'UTF-8') ?>"<?= $collectionAttr ?><?= $ariaCurrent ?><?= $hintAttrs ?>><?= preview_chrome_btn_label($link['label']) ?></a>
@@ -224,12 +232,14 @@ if (!function_exists('preview_render_lang_picker')) {
                 aria-expanded="false"
                 aria-controls="<?= htmlspecialchars($langDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                 data-generic-label="<?= htmlspecialchars($langLabel, ENT_QUOTES, 'UTF-8') ?>"
+                data-i18n-generic="player.nav.language"
             ><?= preview_chrome_btn_label($currentLangLabel) ?></button>
             <ul
                 role="listbox"
                 id="<?= htmlspecialchars($langDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                 class="vpc-picker-dropdown"
                 aria-label="<?= htmlspecialchars($langLabel, ENT_QUOTES, 'UTF-8') ?>"
+                data-i18n-aria="player.nav.language"
                 hidden
             >
                 <?php foreach ($langOptions as $opt): ?>
@@ -237,6 +247,7 @@ if (!function_exists('preview_render_lang_picker')) {
                     role="option"
                     class="vpc-picker-option"
                     data-href="<?= htmlspecialchars($opt['href'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-lang-id="<?= htmlspecialchars(isset($opt['id']) ? (string) $opt['id'] : '', ENT_QUOTES, 'UTF-8') ?>"
                     aria-selected="<?= !empty($opt['selected']) ? 'true' : 'false' ?>"
                 ><?= htmlspecialchars($opt['label'], ENT_QUOTES, 'UTF-8') ?></li>
                 <?php endforeach; ?>
@@ -293,7 +304,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     type="button"
                     class="vpc-chrome-btn vpc-deaf-hearing-btn"
                     aria-pressed="false"
-                    aria-label="<?= htmlspecialchars($deafHearingAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                    aria-label="<?= htmlspecialchars($deafHearingAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.filter.deaf_hearing" data-i18n-hint="D"
                     title="<?= htmlspecialchars($deafHearingAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-deaf-hearing-tag="<?= htmlspecialchars('DEAF&HEARING', ENT_QUOTES, 'UTF-8') ?>"
                     <?php if (!$deafHearingEnabled): ?>disabled<?php endif; ?>
@@ -315,12 +326,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         aria-expanded="false"
                         aria-controls="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         data-generic-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
+                        data-i18n-generic="player.filter.typology"
                     ><?= preview_chrome_btn_label($initialTypologyReadout) ?></button>
                     <ul
                         role="listbox"
                         id="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         class="vpc-picker-dropdown"
                         aria-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
+                        data-i18n-aria="player.filter.typology"
                         hidden
                     >
                         <li
@@ -344,7 +357,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
             </div>
             <div class="vpc-control-secondary-r">
             <?php if ($useSignLanguageFilter || $useEditionFilter): ?>
-            <div class="vpc-r2-filters vpc-control-zone vpc-control-zone--filters" role="group" aria-label="<?= htmlspecialchars(preview_t('player.aria.filters'), ENT_QUOTES, 'UTF-8') ?>">
+            <div class="vpc-r2-filters vpc-control-zone vpc-control-zone--filters" role="group" aria-label="<?= htmlspecialchars(preview_t('player.aria.filters'), ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.aria.filters">
                 <?php if ($useSignLanguageFilter): ?>
                 <div
                     class="vpc-picker"
@@ -360,12 +373,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         aria-expanded="false"
                         aria-controls="<?= htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         data-generic-label="<?= htmlspecialchars(preview_t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') ?>"
+                        data-i18n-generic="player.filter.sign_language"
                     ><?= preview_chrome_btn_label($initialSignLangReadout) ?></button>
                     <ul
                         role="listbox"
                         id="<?= htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         class="vpc-picker-dropdown"
                         aria-label="<?= htmlspecialchars(preview_t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') ?>"
+                        data-i18n-aria="player.filter.sign_language"
                         hidden
                     >
                         <li
@@ -401,12 +416,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         aria-expanded="false"
                         aria-controls="<?= htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         data-generic-label="<?= htmlspecialchars(preview_t('player.filter.city_edition'), ENT_QUOTES, 'UTF-8') ?>"
+                        data-i18n-generic="player.filter.city_edition"
                     ><?= preview_chrome_btn_label($initialEditionReadout) ?></button>
                     <ul
                         role="listbox"
                         id="<?= htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8') ?>"
                         class="vpc-picker-dropdown"
                         aria-label="<?= htmlspecialchars(preview_t('player.filter.city_edition'), ENT_QUOTES, 'UTF-8') ?>"
+                        data-i18n-aria="player.filter.city_edition"
                         hidden
                     >
                         <li
@@ -438,21 +455,21 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 type="button"
                 class="vpc-reset-btn"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.reset" data-i18n-hint="R"
                 title="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
-            ><img class="vpc-chrome-icon" src="/preview/img/replay_circle_filled_80dp_007800.svg" alt="" width="44" height="44" aria-hidden="true"><span class="vpc-reset-btn__text"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
+            ><img class="vpc-chrome-icon" src="/preview/img/replay_circle_filled_80dp_007800.svg" alt="" width="44" height="44" aria-hidden="true"><span class="vpc-reset-btn__text" data-i18n-text="player.transport.reset_short"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
             </div>
         </div>
         <div
             class="vpc-control-transport-cluster"
             role="group"
-            aria-label="<?= htmlspecialchars(preview_t('player.aria.playback'), ENT_QUOTES, 'UTF-8') ?>"
+            aria-label="<?= htmlspecialchars(preview_t('player.aria.playback'), ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.aria.playback"
         >
             <button
                 type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.prev" data-i18n-hint="←"
                 title="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportPrevDisabled ? 'disabled' : '' ?>
             ><img class="vpc-chrome-icon" src="/preview/img/skip_previous_80dp_007800.svg?v=2" alt="" width="44" height="44" aria-hidden="true"></button>
@@ -461,7 +478,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     type="button"
                     class="vpc-play-pause-btn"
                     aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                    aria-label="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                    aria-label="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.play" data-i18n-hint-key="player.transport.space_key"
                     title="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-icon-play="/preview/img/play_circle_80dp_007800.svg"
                     data-icon-pause="/preview/img/pause_circle_80dp_007800.svg"
@@ -471,7 +488,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 type="button"
                 class="vpc-next-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
-                aria-label="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
+                aria-label="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.next" data-i18n-hint="→"
                 title="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportNextDisabled ? 'disabled' : '' ?>
             ><img class="vpc-chrome-icon" src="/preview/img/skip_next_80dp_007800.svg?v=3" alt="" width="44" height="44" aria-hidden="true"></button>
@@ -529,12 +546,12 @@ if (count($langOptions) > 1):
         }
     });
 
-    dropdown.addEventListener('click', function (e) {
-        var target = e.target;
-        if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) { return; }
-        e.stopPropagation();
-        var href = target.getAttribute('data-href');
-        if (!href) { return; }
+    /**
+     * Legacy path: leave the page to change Website language. Still used on routes
+     * with no player of their own, and as the fallback when an in-session switch
+     * cannot be performed. Carries resume intent per ADR-0013.
+     */
+    function navigateToLanguage(href) {
         var shouldResume = shouldResumeAfterLanguageSwitch();
         if (typeof sessionStorage !== 'undefined') {
             try {
@@ -552,6 +569,30 @@ if (count($langOptions) > 1):
             return;
         }
         window.location.href = href;
+    }
+
+    dropdown.addEventListener('click', function (e) {
+        var target = e.target;
+        if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) { return; }
+        e.stopPropagation();
+        var href = target.getAttribute('data-href');
+        var langId = target.getAttribute('data-lang-id');
+        if (!href) { return; }
+
+        closePicker();
+
+        // When a player owns this page the switch happens in session: the Vimeo iframe
+        // is never destroyed, so there is no playback to save and no resume intent to
+        // carry. Any failure falls back to the navigation path below, so the page can
+        // never be left half-translated.
+        if (langId && typeof window.__vpcApplyWebsiteLanguage === 'function') {
+            window.__vpcApplyWebsiteLanguage(langId)['catch'](function () {
+                navigateToLanguage(href);
+            });
+            return;
+        }
+
+        navigateToLanguage(href);
     });
 
     dropdown.addEventListener('keydown', function (e) {

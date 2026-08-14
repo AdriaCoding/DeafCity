@@ -1,5 +1,10 @@
 # Preview player: language switch carries resume intent after playback progress
 
+> **Superseded for the Website language path by [ADR-0017](0017-preview-in-session-website-language-switch.md).**
+> The Website language switch no longer navigates, so there is no restore and no ghost
+> caption to guard against. The decision below still governs navigation to About and
+> Participants, which remain page loads until the persistent player shell lands.
+
 The Preview site language picker in player chrome (`?lang=...`) must preserve playback intent when the current Video has already started. Language switch is a page navigation, but for in-play viewing it must behave like an in-session continuation, not a cold paused load.
 
 ## Why this came up

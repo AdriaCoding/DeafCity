@@ -130,6 +130,63 @@ if (!function_exists('preview_bootstrap_locale')) {
     }
 }
 
+if (!function_exists('preview_build_locale_payload')) {
+    /**
+     * Locale payload for the no-reload Website language switch.
+     *
+     * Contract: identical to what the server would render at ?lang=<requestedLang>.
+     * Built from the same resolution path as preview_bootstrap_locale() so a switched
+     * page and a cold load cannot drift apart.
+     *
+     * @param string $requestedLang
+     * @param string|null $dataDir Injectable for tests; defaults to the resolved data dir.
+     * @return array{lang: string, dir: string, strings: array<string, string>, filter_options: array<string, array<int, array<string, mixed>>>}
+     */
+    function preview_build_locale_payload($requestedLang, $dataDir = null)
+    {
+        require_once __DIR__ . '/videos_catalog.php';
+
+        if ($dataDir === null) {
+            $dataDir = preview_resolve_data_dir();
+        }
+
+        $entries = preview_i18n_load_store($dataDir . '/ui-localizations.json');
+        $configPath = $dataDir . '/studio-config.json';
+        $languageIds = preview_language_ids_from_config($configPath);
+        $completeness = preview_i18n_compute_completeness($entries, $languageIds);
+
+        // Accept-Language is deliberately empty: an explicit picker choice is the only
+        // input. Unknown ids fall through the shared resolver to its 'en' default.
+        $lang = vpc_resolve_language('', $requestedLang, $languageIds, $completeness);
+        $i18n = new PreviewI18n($entries, $lang);
+
+        // Options come from the same collection entry point index.php uses, so a change
+        // to how options are projected can never apply to one path and not the other.
+        $catalog = vpc_load_videos_catalog($dataDir . '/catalog.json');
+        $collection = vpc_catalog_collection($catalog, $configPath);
+
+        // preview_localize_filter_options() reads the active language from this global.
+        // Swap it for the requested language and restore, so building a payload never
+        // disturbs the locale of the page doing the building.
+        global $preview_i18n;
+        $previousI18n = $preview_i18n;
+        $preview_i18n = $i18n;
+        $filterOptions = array(
+            'sign_language' => preview_localize_filter_options($collection['sign_language_options'], 'sign_language'),
+            'edition' => preview_localize_filter_options($collection['edition_options'], 'edition'),
+            'typology' => preview_localize_filter_options($collection['typology_options'], 'typology'),
+        );
+        $preview_i18n = $previousI18n;
+
+        return array(
+            'lang' => $lang,
+            'dir' => ($lang === 'ar') ? 'rtl' : 'ltr',
+            'strings' => $i18n->chromeMap(),
+            'filter_options' => $filterOptions,
+        );
+    }
+}
+
 /** @var PreviewI18n|null */
 $preview_i18n = null;
 
