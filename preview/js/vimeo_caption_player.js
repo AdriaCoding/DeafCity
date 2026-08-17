@@ -431,12 +431,19 @@
         }
 
         function syncVimeoCaptionBoxes(seconds) {
+            if (videoSwitchInProgress) {
+                seconds = 0;
+            }
             var ms = seconds * 1000;
             var events = /** @type {unknown[]} */ (eventsForSync());
             syncCaptionBox(events, ms);
         }
 
         function syncAllCaptions() {
+            if (videoSwitchInProgress) {
+                syncVimeoCaptionBoxes(0);
+                return;
+            }
             if (
                 vimeoPlayer &&
                 typeof vimeoPlayer === 'object' &&
@@ -454,6 +461,8 @@
         /** Permutation of filtered indices 0..n-1. */
         var shuffledSequence = [];
         var shuffleStep = 0;
+        /** While switching videos, caption sync must use t=0 (title cue), not stale player time. */
+        var videoSwitchInProgress = false;
 
         recomputeFilteredMasterIndices();
 
@@ -1120,9 +1129,13 @@
                 var target =
                     typeof masterIx === 'number' && masterIx >= 0 ? masterIx : playlistIndex;
 
+                videoSwitchInProgress = true;
+                setTransportLoading(true);
+
                 playlistIndex = target;
 
                 var item = fullPlaylistItems[playlistIndex];
+                syncCaptionBox(eventsForSync(), 0);
                 applyLoadedVideoUi();
 
                 var vidRaw = item && item.videoId ? String(item.videoId) : '';
@@ -1133,7 +1146,6 @@
                 );
                 var posterToken = beginPosterCoveredLoad(item, wantAutoplay);
 
-                setTransportLoading(true);
                 if (!wantAutoplay) {
                     forcedPauseLoads++;
                 }
@@ -1180,6 +1192,7 @@
                         updatePlaylistNavButtons();
                         syncCollectionNavButtons();
                         syncCaptionBox(eventsForSync(), 0);
+                        videoSwitchInProgress = false;
                         setTransportLoading(false);
                         refreshTransport();
                         savePlaybackSession();
@@ -1193,6 +1206,7 @@
                         if (!wantAutoplay) {
                             forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
                         }
+                        videoSwitchInProgress = false;
                         setTransportLoading(false);
                         console.warn('Vimeo playlist: loadVideo failed', e);
                         applyLoadedVideoUi();

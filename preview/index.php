@@ -104,6 +104,6 @@ if ($vpc !== null) {
 </div>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=22"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=64" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=67" defer></script>
 </body>
 </html>
