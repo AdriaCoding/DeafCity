@@ -780,9 +780,9 @@
         grid-template-columns: 1fr var(--vpc-square-btn-w) var(--vpc-mobile-col-gap) var(--vpc-square-btn-w) 1fr;
         grid-template-areas:
             "icons icons icons icons icons"
-            ". lang . signs ."
             ". cities . participants ."
-            ". deaf . typology .";
+            ". signs . typology ."
+            ". lang . deaf .";
     }
     .vpc-control-secondary-l > .preview-site-nav {
         grid-row: 1;
