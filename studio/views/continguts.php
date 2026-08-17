@@ -673,22 +673,12 @@
                     $invisibleVideos[] = $video;
                 }
             }
-            // The video's position within a participant's set, parsed from the title's
-            // trailing "_<N>[_SUFFIX]" convention (e.g. "..._Atifa_3_4K" -> 3).
-            function studioVideoNumber(array $video): ?int
-            {
-                if (preg_match('/_(\d+)(?:_[A-Za-z0-9]+)?$/', (string) ($video['title'] ?? ''), $m)) {
-                    return (int) $m[1];
-                }
-                return null;
-            }
-
             // Short thumb label: "Participant #N" instead of the full title,
             // so it fits the card without wrapping past the thumb's edges.
             function studioVideoShortLabel(array $video): string
             {
                 $participant = trim((string) ($video['participant'] ?? ''));
-                $number = studioVideoNumber($video);
+                $number = \Studio\CatalogEditionVideoOrder::videoNumber($video);
                 if ($participant !== '' && $number !== null) {
                     return $participant . ' #' . $number;
                 }
@@ -699,24 +689,8 @@
             foreach ($visibleVideos as $video) {
                 $videosByEdition[$video['edition'] ?? ''][] = $video;
             }
-            // Group each participant's videos together, in order of the participant's
-            // first appearance, instead of leaving them scattered by catalog insertion
-            // order; within a participant's group, order by video number.
             foreach ($videosByEdition as &$editionVideos) {
-                $participantFirstSeen = [];
-                foreach ($editionVideos as $i => $video) {
-                    $participant = $video['participant'] ?? '';
-                    if (!isset($participantFirstSeen[$participant])) {
-                        $participantFirstSeen[$participant] = $i;
-                    }
-                }
-                usort($editionVideos, function ($a, $b) use ($participantFirstSeen) {
-                    $participantCmp = $participantFirstSeen[$a['participant'] ?? ''] <=> $participantFirstSeen[$b['participant'] ?? ''];
-                    if ($participantCmp !== 0) {
-                        return $participantCmp;
-                    }
-                    return (studioVideoNumber($a) ?? PHP_INT_MAX) <=> (studioVideoNumber($b) ?? PHP_INT_MAX);
-                });
+                $editionVideos = \Studio\CatalogEditionVideoOrder::sortVideos($editionVideos);
             }
             unset($editionVideos);
             $orderedEditionIds = array_column($editions, 'id');
@@ -738,7 +712,9 @@
                 <div class="edition-videos">
                 <?php foreach ($videosByEdition[$edId] as $video): ?>
                 <?php $vid = htmlspecialchars($video['vimeo_id'] ?? '', ENT_QUOTES) ?>
-                <a class="video-card" href="?action=continguts-video&amp;vimeo_id=<?= $vid ?>">
+                <a class="video-card" href="?action=continguts-video&amp;vimeo_id=<?= $vid ?>"
+                   data-participant="<?= htmlspecialchars(trim((string) ($video['participant'] ?? '')), ENT_QUOTES) ?>"
+                   data-video-number="<?= \Studio\CatalogEditionVideoOrder::videoNumber($video) ?? '' ?>">
                     <?php if (!empty($video['thumbnail_url'])): ?>
                         <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
                     <?php else: ?>
@@ -1846,6 +1822,34 @@
         attachConfigEntryListeners(div);
     }
 
+    function videoNumberFromTitle(title) {
+        var m = /_(\d+)(?:_[A-Za-z0-9]+)?$/.exec(title || '');
+        return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
+    }
+
+    function compareCatalogVideos(a, b) {
+        var participantCmp = (a.participant || '').localeCompare(b.participant || '', undefined, { sensitivity: 'base' });
+        if (participantCmp !== 0) {
+            return participantCmp;
+        }
+        return a.videoNumber - b.videoNumber;
+    }
+
+    function catalogVideoSortKey(video) {
+        return {
+            participant: (video.participant || '').trim(),
+            videoNumber: videoNumberFromTitle(video.title || ''),
+        };
+    }
+
+    function catalogCardSortKey(card) {
+        var numberRaw = card.dataset.videoNumber;
+        return {
+            participant: (card.dataset.participant || '').trim(),
+            videoNumber: numberRaw === '' ? Number.MAX_SAFE_INTEGER : parseInt(numberRaw, 10),
+        };
+    }
+
     function videoShortLabel(video) {
         var participant = (video.participant || '').trim();
         var m = /_(\d+)(?:_[A-Za-z0-9]+)?$/.exec(video.title || '');
@@ -1877,6 +1881,11 @@
         var card = document.createElement('a');
         card.className = 'video-card';
         card.href = '?action=continguts-video&vimeo_id=' + encodeURIComponent(video.vimeo_id);
+        var sortKey = catalogVideoSortKey(video);
+        card.dataset.participant = sortKey.participant;
+        card.dataset.videoNumber = sortKey.videoNumber === Number.MAX_SAFE_INTEGER
+            ? ''
+            : String(sortKey.videoNumber);
         var captionCount = (video.captions || []).length;
         var captionLabel = captionCount === 1 ? '1 subtítol' : captionCount + ' subtítols';
         var metaHtml =
@@ -1889,7 +1898,20 @@
         } else {
             card.innerHTML = '<div class="video-thumb-placeholder"></div>' + metaHtml;
         }
-        grid.appendChild(card);
+        var insertBefore = null;
+        grid.querySelectorAll('.video-card').forEach(function (existingCard) {
+            if (insertBefore !== null) {
+                return;
+            }
+            if (compareCatalogVideos(sortKey, catalogCardSortKey(existingCard)) < 0) {
+                insertBefore = existingCard;
+            }
+        });
+        if (insertBefore) {
+            grid.insertBefore(card, insertBefore);
+        } else {
+            grid.appendChild(card);
+        }
 
         var countEl = group.querySelector('.edition-count');
         countEl.textContent = formatEditionVideoCount(grid.querySelectorAll('.video-card').length);
