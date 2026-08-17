@@ -4311,11 +4311,53 @@
                 "TELEPHONE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_1_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_1_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_1_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186289571-ee2a26551e7335d1529039f164c433d989c2562e8724d18d4734e752c702ccd2-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664592?h=e5adfcaee8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664592?h=e5adfcaee8",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664594",
@@ -4327,11 +4369,53 @@
                 "SHOP ASSISTANT",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_2_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186611236-50e64402c9f52291a273a93319132e0c6d927dc5dec59f268b6b82ff3eb211a9-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664594?h=4d7a75eaff"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664594?h=4d7a75eaff",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664595",
@@ -4340,14 +4424,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "RESTAURANT",
+                "GESTURAL",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_3_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_3_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_3_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186611873-220a69054335b0d58731da65473b278fb5fcb22e96da5ca73d507883cffd811e-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664595?h=53052e151a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664595?h=53052e151a",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664593",
@@ -4359,11 +4485,53 @@
                 "SUBTÍTOLS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_4_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_4_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_4_ES.srt"
+                }
+            ],
             "typology": "pensaments",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186612620-8bf6e5f88adab8d762ca543bc2a50d79d17ebaaa32b2669e409069fc0eeb2eb8-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664593?h=a765657783"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664593?h=a765657783",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664727",
@@ -4375,11 +4543,53 @@
                 "CONFLICT",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_5_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_5_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_5_ES.srt"
+                }
+            ],
             "typology": "pensaments",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186613170-ca5dc3c9ff0890c1f46533f50dd3436679be3781eee1449b0c2f8e32851c17c0-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664727?h=d2d0c25bec"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664727?h=d2d0c25bec",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664737",
@@ -4388,14 +4598,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "GRANDMOTHER",
+                "COCHLEAR IMPLANT",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_6_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_6_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_6_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_6_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_6_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181892707-1c3c01dce8539c091271c5a152e28abdb846d64fb2bd9c7b18ede0aeb2e59a86-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664737?h=a1f86229eb"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664737?h=a1f86229eb",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664770",
@@ -4407,11 +4659,53 @@
                 "NEW SIGN",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Carlota_7_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Carlota_7_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Carlota_7_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Carlota_7_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Carlota_7_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Carlota_7_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Carlota_7_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Carlota_7_ES.srt"
+                }
+            ],
             "typology": "pensaments",
             "participant": "Carlota",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186613565-277db0ea028682561adc00d378e3d8fc44f5e3f3d8e225330a690d49a82eaef6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664770?h=5aeda11c16"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664770?h=5aeda11c16",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664797",
@@ -4423,11 +4717,53 @@
                 "SPERM",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_1_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_1_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_1_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186290392-60e7e98829dd7978cbd02e9bdbd3eb91ef276bfce586aea85daaebbcb3cf4897-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664797?h=76ad755eea"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664797?h=76ad755eea",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664811",
@@ -4436,14 +4772,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "INTERPRETER",
+                "FAREWELL",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_2_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186613851-938bea2a0ca0ba7eafc19fa62872a3970f84912e692071c31e83bc859525344b-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664811?h=0416cefa6b"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664811?h=0416cefa6b",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666771",
@@ -4551,7 +4929,8 @@
             "captions": [],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186647901-c8398a7d3448993d2060c764874c994900401e75b00ba41224bb6b6cf20cb2e3-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667321?h=a790cde1e5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211667321?h=a790cde1e5",
+            "invisible": true
         },
         {
             "id": "lsc_1211667536",
@@ -7735,11 +8114,53 @@
                 "APPLAUSE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_3_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_3_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_3_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186614103-24c066b4b27427fd9c242747b620c891528620e15c03137f5f95bd3c2223ece0-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664836?h=795ed5f5d3"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664836?h=795ed5f5d3",
+            "master_caption_lang": "ca"
         },
         {
             "id": "tunisian-sl_1211712110",
@@ -8206,7 +8627,7 @@
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
             "tags": [
-                "AFRAID"
+                "TERRIFIED"
             ],
             "captions": [
                 {
@@ -8320,7 +8741,7 @@
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
             "tags": [
-                "DOG"
+                "DOGS"
             ],
             "captions": [
                 {
@@ -8434,7 +8855,7 @@
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
             "tags": [
-                "HUG"
+                "CUDDLE"
             ],
             "captions": [
                 {
@@ -8491,7 +8912,7 @@
             "sign_language": "tunisian-sl",
             "edition": "2026-tunis",
             "tags": [
-                "DOG"
+                "DOGS"
             ],
             "captions": [
                 {
@@ -8893,14 +9314,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "FUCK",
+                "DIFFERENT SEX",
                 "DEAF&HEARING"
             ],
-            "captions": [],
-            "typology": "acudits",
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_4_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_4_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_4_ES.srt"
+                }
+            ],
+            "typology": "memories",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186614461-389da1a2036a225de8da26f412f84c0f27ef5b88f8fc9cced61e23b5958674cb-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664901?h=527b077990"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664901?h=527b077990",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211664983",
@@ -8912,11 +9375,53 @@
                 "BEAUTIFUL",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_5_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_5_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_5_ES.srt"
+                }
+            ],
             "typology": "pensaments",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893231-ffac6f234d86029790527516afeb45095730a15ef2d374892aa21190c2372392-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664983?h=cf87527dff"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211664983?h=cf87527dff",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665131",
@@ -8927,11 +9432,53 @@
             "tags": [
                 "THIEVES"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_6_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_6_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_6_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_6_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_6_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186614753-6dbf3704ad67149cc0b2165e659ee52b177b49b99209d4d51aa4b20f28e1ecfd-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665131?h=7f811928cf"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665131?h=7f811928cf",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665136",
@@ -8943,11 +9490,53 @@
                 "POOP",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Frank_7_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Frank_7_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Frank_7_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Frank_7_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Frank_7_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Frank_7_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Frank_7_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Frank_7_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Frank",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181893305-1e3ab92c5109a7e724cbd339a8a7fb21c85118036896341ffad87416f771efb1-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665136?h=7dcf41da38"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211665136?h=7dcf41da38",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665375",
@@ -9459,7 +10048,7 @@
             "sign_language": "libras",
             "edition": "2023-sao-paulo",
             "tags": [
-                "COCHLEAR IMPLANT",
+                "DISAPPOINTMENT",
                 "DEAF&HEARING"
             ],
             "captions": [
