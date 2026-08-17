@@ -551,6 +551,13 @@ assert_contains('/preview/img/skip_next_80dp_007800.svg', $html, 'next uses bord
 assert_contains('/preview/img/replay_circle_filled_80dp_007800.svg', $html, 'reset uses filled replay SVG');
 assert_contains('pause_circle_80dp_007800.svg', $html, 'pause circle SVG path available to player JS');
 assert_contains('vpc-play-pause-btn__hourglass', $html, 'play button contains sandclock for loading state');
+assert_contains('/preview/img/hourglass_empty_80dp_ffffff.svg', $html, 'loading sandclock uses inline SVG (no Material font ligature)');
+assert_not_contains('material-icons vpc-play-pause-btn__hourglass', $html, 'loading sandclock is not a Material Icons ligature span');
+$hourglassSvgPath = dirname(dirname(__FILE__)) . '/img/hourglass_empty_80dp_ffffff.svg';
+if (is_file($hourglassSvgPath)) {
+    $hourglassSvg = file_get_contents($hourglassSvgPath);
+    assert_contains('v-2.5l4-4 4 4', $hourglassSvg, 'hourglass SVG uses Material round hourglass_empty glyph');
+}
 
 $playerJsPath = dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js';
 if (is_file($playerJsPath)) {
@@ -651,7 +658,7 @@ if (is_file($playerCssPath)) {
         'loading cover reveals without exposing Vimeo through a fade'
     );
     assert_contains('vpc-transport-spin', $playerCss, 'transport loading spinner animation');
-    assert_contains('hourglass_empty', $playerCss, 'loading sandclock uses Material hourglass icon via CSS');
+    assert_not_contains("content: 'hourglass_empty'", $playerCss, 'loading sandclock does not rely on Material font ligature text');
     if (!preg_match(
         '~\[data-loading="true"\][^{]*\.vpc-play-pause-btn__hourglass[^}]*animation:\s*vpc-transport-spin~s',
         $playerCss
@@ -672,13 +679,13 @@ if (is_file($playerCssPath)) {
     }
     echo "PASS: play SVG hidden during sandclock loading\n";
     if (!preg_match(
-        '~\[data-loading="true"\]::before[^}]*width:\s*80%~s',
+        '~\[data-loading="true"\]::before[^}]*width:\s*100%~s',
         $playerCss
     )) {
-        fwrite(STDERR, "FAIL: loading circle should be 80% of play icon box to match SVG optical size\n");
+        fwrite(STDERR, "FAIL: loading circle should fill the play icon box to match play/pause SVG\n");
         exit(1);
     }
-    echo "PASS: loading circle matches play SVG optical size\n";
+    echo "PASS: loading circle matches play/pause SVG size\n";
     assert_contains('vpc-chrome-btn__label', $html, 'chrome button labels wrapped for ellipsis');
     assert_contains('vpc-chrome-btn__label-full', $html, 'chrome buttons carry full face label');
     assert_contains('vpc-chrome-btn__label-short', $html, 'chrome buttons carry short face label');

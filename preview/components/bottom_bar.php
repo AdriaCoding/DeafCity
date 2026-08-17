@@ -479,7 +479,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                     title="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-icon-play="/preview/img/play_circle_80dp_007800.svg"
                     data-icon-pause="/preview/img/pause_circle_80dp_007800.svg"
-                ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><span class="material-icons vpc-play-pause-btn__hourglass" aria-hidden="true"></span></button></div><button
+                ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><img class="vpc-play-pause-btn__hourglass" src="/preview/img/hourglass_empty_80dp_ffffff.svg" alt="" width="45" height="45" aria-hidden="true"></button></div><button
                 type="button"
                 class="vpc-next-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
                 aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
