@@ -2684,5 +2684,42 @@ console.log('vimeo_playlist_logic.test.js: all passed (including transport short
     );
 })();
 
+// Caption fetches for one catalog Video exclude every other Video's caption files.
+(function () {
+    var catalog = [
+        {
+            videoId: '1',
+            tracks: [
+                { file: 'a_en.srt', lang: 'en' },
+                { file: 'a_es.srt', lang: 'es' },
+            ],
+        },
+        {
+            videoId: '2',
+            tracks: [
+                { file: 'b_en.srt', lang: 'en' },
+                { file: 'b_ar.srt', lang: 'ar' },
+                { file: 'b_ca.srt', lang: 'ca' },
+            ],
+        },
+        {
+            videoId: '3',
+            tracks: [{ file: 'c_en.srt', lang: 'en' }],
+        },
+    ];
+    var plan = logic.planCaptionFetchesForMasterIndex(catalog, 1);
+    assert.strictEqual(plan.length, 3, 'only current Video caption files');
+    assert.deepStrictEqual(
+        plan.map(function (entry) {
+            return entry.file;
+        }),
+        ['b_en.srt', 'b_ar.srt', 'b_ca.srt']
+    );
+    plan.forEach(function (entry, cueTrackIndex) {
+        assert.strictEqual(entry.masterIndex, 1);
+        assert.strictEqual(entry.cueTrackIndex, cueTrackIndex);
+    });
+})();
+
 console.log('vimeo_playlist_logic.test.js: all passed (including in-session Website language switch)');
 

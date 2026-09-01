@@ -311,7 +311,12 @@
             return uiTracks;
         }
 
+        var captionFetchStarted = {};
+
         function loadStaticVtt(file, masterIndex, cueTrackIndex, label) {
+            var key = masterIndex + ':' + cueTrackIndex + ':' + file;
+            if (captionFetchStarted[key]) return;
+            captionFetchStarted[key] = true;
             var url =
                 captionsEndpoint +
                 (captionsEndpoint.indexOf('?') >= 0 ? '&' : '?') +
@@ -339,14 +344,21 @@
                 });
         }
 
-        fullPlaylistItems.forEach(function (item, pi) {
-            var tr = Array.isArray(item.tracks) ? item.tracks : [];
-            tr.forEach(function (t, ci) {
-                if (t && t.file) {
-                    loadStaticVtt(t.file, pi, ci, 'vpc-' + pi + '-' + ci);
-                }
-            });
-        });
+        function ensureCaptionsForMasterIndex(masterIndex) {
+            var plan = L.planCaptionFetchesForMasterIndex(fullPlaylistItems, masterIndex);
+            var i;
+            for (i = 0; i < plan.length; i++) {
+                var entry = plan[i];
+                loadStaticVtt(
+                    entry.file,
+                    entry.masterIndex,
+                    entry.cueTrackIndex,
+                    'vpc-' + entry.masterIndex + '-' + entry.cueTrackIndex
+                );
+            }
+        }
+
+        ensureCaptionsForMasterIndex(playlistIndex);
 
         /** @returns {HTMLElement | null} */
         function captionPickerOuter() {
@@ -1133,6 +1145,7 @@
                 setTransportLoading(true);
 
                 playlistIndex = target;
+                ensureCaptionsForMasterIndex(playlistIndex);
 
                 var item = fullPlaylistItems[playlistIndex];
                 syncCaptionBox(eventsForSync(), 0);

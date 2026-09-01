@@ -371,6 +371,32 @@
     }
 
     /**
+     * Caption files to fetch for one catalog Video. Never the full catalog.
+     * @param {Array<{ tracks?: Array<{ file?: string }> }>} fullPlaylistItems
+     * @param {number} masterIndex
+     * @returns {Array<{ file: string, masterIndex: number, cueTrackIndex: number }>}
+     */
+    function planCaptionFetchesForMasterIndex(fullPlaylistItems, masterIndex) {
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var item = items[masterIndex];
+        if (!item) return [];
+        var tracks = Array.isArray(item.tracks) ? item.tracks : [];
+        var out = [];
+        var i;
+        for (i = 0; i < tracks.length; i++) {
+            var t = tracks[i];
+            if (t && t.file) {
+                out.push({
+                    file: t.file,
+                    masterIndex: masterIndex,
+                    cueTrackIndex: i,
+                });
+            }
+        }
+        return out;
+    }
+
+    /**
      * Spoken-language options for the current video's caption tracks (region variants collapsed).
      * @param {Array<{ lang?: string }>} cueTracks
      * @param {Array<{ id?: string, label?: string, vimeo_code?: string }>} subtitleLanguages
@@ -2035,6 +2061,7 @@
         resolveSpokenLangId: resolveSpokenLangId,
         spokenLangLabel: spokenLangLabel,
         buildSpokenOptionsForTracks: buildSpokenOptionsForTracks,
+        planCaptionFetchesForMasterIndex: planCaptionFetchesForMasterIndex,
         pickTrackIndexForSpokenLang: pickTrackIndexForSpokenLang,
         resolveActiveCaptionTrackIndex: resolveActiveCaptionTrackIndex,
         planWebsiteLanguageSwitch: planWebsiteLanguageSwitch,

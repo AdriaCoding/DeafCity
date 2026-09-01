@@ -103,7 +103,7 @@ if ($vpc !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=22"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=68" defer></script>
+<script src="/preview/js/vimeo_playlist_logic.js?v=23"></script>
+<script src="/preview/js/vimeo_caption_player.js?v=69" defer></script>
 </body>
 </html>
