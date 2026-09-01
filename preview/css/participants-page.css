@@ -5,7 +5,7 @@ html, body {
     padding: 0;
     background: #fff;
     color: #111;
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
 }

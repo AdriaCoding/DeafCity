@@ -147,7 +147,7 @@
     box-sizing: border-box;
     background: #fff;
     color: rgb(0, 120, 0);
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', 'Noto Sans Arabic', sans-serif;
     --vpc-caption-line-height: 1.28;
     line-height: var(--vpc-caption-line-height);
     font-size: var(--vpc-caption-font-size, 1.125rem);
@@ -263,7 +263,7 @@
 .vpc-control-row .vpc-play-pause-btn,
 .vpc-control-row .vpc-chrome-btn,
 .vpc-control-row .preview-site-nav__btn {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', 'Noto Sans Arabic', sans-serif;
     font-size: 0.9375rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -463,7 +463,7 @@
     display: none;
 }
 .vpc-picker-option {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', 'Noto Sans Arabic', sans-serif;
     font-size: 0.9375rem;
     padding: 0.5em 1em;
     cursor: pointer;

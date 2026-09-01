@@ -27,19 +27,19 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= htmlspecialchars(preview_t('participants.page_title'), ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=69">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=8">
-    <link rel="stylesheet" href="/preview/css/participants-page.css?v=12">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=70">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=9">
+    <link rel="stylesheet" href="/preview/css/participants-page.css?v=13">
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; }
         body {
             display: flex;
             flex-direction: column;
             min-height: 100%;
-            font-family: Roboto, Arial, sans-serif;
+            font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
         }
         html[dir="rtl"] .preview-participants-page { direction: rtl; }
     </style>

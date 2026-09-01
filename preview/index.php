@@ -76,17 +76,17 @@ if ($vpc !== null) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DEAF.city</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Noto+Sans+Arabic&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=69">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=7">
+    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=70">
+    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=9">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
             height: 100%;
             overflow: hidden;
             background: #fff;
-            font-family: Roboto, Arial, sans-serif;
+            font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
         }
         .preview-block { height: 100%; }
     </style>
@@ -104,6 +104,6 @@ if ($vpc !== null) {
 </div>
 
 <script src="/preview/js/vimeo_playlist_logic.js?v=22"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=67" defer></script>
+<script src="/preview/js/vimeo_caption_player.js?v=68" defer></script>
 </body>
 </html>

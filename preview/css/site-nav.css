@@ -4,12 +4,12 @@
     justify-content: center;
     align-items: center;
     gap: 0.75rem;
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
 }
 
 /* Shared button face for chrome and navbar placements */
 a.preview-site-nav__btn {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 0.9375rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -114,7 +114,7 @@ a.preview-site-nav__btn.is-current:hover,
 }
 
 .preview-site-nav--navbar .vpc-picker-btn {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 0.9375rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -188,7 +188,7 @@ a.preview-site-nav__btn.is-current:hover,
 }
 
 .preview-site-nav--navbar .vpc-picker-option {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 0.9375rem;
     padding: 0.5em 1em;
     cursor: pointer;

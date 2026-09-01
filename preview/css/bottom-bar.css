@@ -7,7 +7,7 @@ html[dir="rtl"] .vpc-control-row {
 }
 
 .vpc-bottom-bar {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
 }
 
 .vpc-bottom-bar .preview-site-nav {
@@ -31,7 +31,7 @@ html[dir="rtl"] .vpc-control-row {
 
 /* Shared nav link button face */
 a.preview-site-nav__btn {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 0.9375rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -126,7 +126,7 @@ a.preview-site-nav__btn.preview-site-nav__btn--icon:hover {
 }
 
 .vpc-bottom-bar .vpc-picker-btn {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 0.9375rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -200,7 +200,7 @@ a.preview-site-nav__btn.preview-site-nav__btn--icon:hover {
 }
 
 .vpc-bottom-bar .vpc-picker-option {
-    font-family: Roboto, Arial, sans-serif;
+    font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
     font-size: 0.9375rem;
     padding: 0.5em 1em;
     cursor: pointer;

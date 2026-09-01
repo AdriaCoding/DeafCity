@@ -98,7 +98,7 @@
         }
         var ctx = captionMeasureCanvas.getContext('2d');
         if (!ctx) return 0;
-        ctx.font = '400 ' + fontSizePx + 'px Roboto, sans-serif';
+        ctx.font = '400 ' + fontSizePx + 'px Roboto, "Noto Sans Arabic", sans-serif';
         return ctx.measureText(text).width;
     }
 
