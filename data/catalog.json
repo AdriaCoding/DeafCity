@@ -1365,11 +1365,53 @@
                 "ACCIDENT",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Beto_1_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Beto_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Beto_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Beto_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Beto_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Beto_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Beto_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Beto_1_PT.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Beto",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251019-088cd6d569ec5776b2974b487793e265b449abae9258258dfca96c34b4e1e9de-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638604?h=09ebda30d9"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638604?h=09ebda30d9",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211638605",
@@ -1380,11 +1422,53 @@
             "tags": [
                 "PEE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Beto_3_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Beto_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Beto_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Beto_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Beto_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Beto_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Beto_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Beto_3_PT.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Beto",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186253301-ee4d5422e0df56f49fc854b1b1906b5f25487d6426011d7acb485b54c2bf9ee9-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638605?h=25c31ca460"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638605?h=25c31ca460",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211638607",
@@ -1395,11 +1479,53 @@
             "tags": [
                 "EXAM"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Beto_4_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Beto_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Beto_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Beto_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Beto_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Beto_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Beto_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Beto_4_PT.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Beto",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181860840-acac34bca0ee46fb8b73887c3e7ba01c73c02bcce9f4c7b60c19350f9a8e433b-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638607?h=c1b3f499c8"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638607?h=c1b3f499c8",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211637952",
@@ -1411,11 +1537,53 @@
                 "PYRAMID",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Gustavo_1_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Gustavo_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Gustavo_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Gustavo_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Gustavo_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Gustavo_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Gustavo_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Gustavo_1_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Gustavo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186253594-e590cc530bd98a8a837a2c40cbc08a38641176b8e42752424404751d25881bfa-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211637952?h=e865093f2f"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211637952?h=e865093f2f",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211637968",
@@ -1427,11 +1595,53 @@
                 "SEX",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Gustavo_2_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Gustavo_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Gustavo_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Gustavo_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Gustavo_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Gustavo_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Gustavo_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Gustavo_2_PT.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Gustavo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251329-aaeb914f7e3d28912cff6fccf2158fc545073cade839ea8f120b4cb73e6c2441-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211637968?h=3282c455bb"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211637968?h=3282c455bb",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211638032",
@@ -1442,11 +1652,53 @@
             "tags": [
                 "HELL"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Gustavo_4_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Gustavo_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Gustavo_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Gustavo_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Gustavo_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Gustavo_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Gustavo_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Gustavo_4_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Gustavo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186254218-ba57ca2d84a8e5bad176f6f97c73f294179737a739691af4a6cc1d854c6ccf50-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638032?h=e4ffa3a12d"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638032?h=e4ffa3a12d",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211638121",
@@ -1457,11 +1709,53 @@
             "tags": [
                 "COW"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Gustavo_5_ES.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Gustavo_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Gustavo_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Gustavo_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Gustavo_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Gustavo_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Gustavo_5_PT.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Gustavo_5_AR.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Gustavo",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186254715-15516042f348414a0ff1f7cb573625c740fcdd4d459d7e690a7f9110fa492acd-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638121?h=67afaa86ad"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211638121?h=67afaa86ad",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636809",
@@ -1472,11 +1766,53 @@
             "tags": [
                 "DENTURE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Indy_1_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Indy_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Indy_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Indy_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Indy_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Indy_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Indy_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Indy_1_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Indy",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251694-4bbe19fbe803da46cbd6f9224ba69af4bdd5509b938fa5bbba89cc821000ece9-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636809?h=82fbbe98b2"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636809?h=82fbbe98b2",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636813",
@@ -1487,11 +1823,53 @@
             "tags": [
                 "PREGNANCY"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Indy_2_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Indy_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Indy_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Indy_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Indy_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Indy_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Indy_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Indy_2_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Indy",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186255464-036b1f5c88968c91a7c874d03a61a26e01585062e927e3ad4fe4b4225620dc3e-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636813?h=154f715e00"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636813?h=154f715e00",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636810",
@@ -1502,11 +1880,53 @@
             "tags": [
                 "EGGS"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Indy_3_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Indy_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Indy_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Indy_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Indy_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Indy_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Indy_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Indy_3_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Indy",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186256370-70382cc8f45c53853c02a5f7543b0bb65ea08c0d71c044de094d280f7da9253d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636810?h=d7962921c9"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636810?h=d7962921c9",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636807",
@@ -1518,11 +1938,53 @@
                 "EARTHQUAKE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Indy_4_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Indy_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Indy_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Indy_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Indy_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Indy_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Indy_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Indy_4_PT.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Indy",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186257107-f21a43ae4ee74856bcdab68a1e171f4f70b1f45f26c6469d65e37cb7a628fbf6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636807?h=53d57f9857"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636807?h=53d57f9857",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636243",
@@ -1533,11 +1995,53 @@
             "tags": [
                 "DRUNK"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Ixchel_1_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Ixchel_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Ixchel_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Ixchel_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Ixchel_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Ixchel_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Ixchel_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Ixchel_1_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Ixchel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186251886-da62d78259478e634b46e604c3a7f1e54730d05af5e8765a6c2ec8e64bcb0f4d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636243?h=0f8fafc723"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636243?h=0f8fafc723",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636245",
@@ -1548,11 +2052,53 @@
             "tags": [
                 "HAPPINESS"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Ixchel_3_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Ixchel_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Ixchel_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Ixchel_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Ixchel_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Ixchel_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Ixchel_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Ixchel_3_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Ixchel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186252649-fe08f76ac126f2372f52ca930b11fc1fffde54a534fc5007afeb840a8c0c3fe6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636245?h=83dde52b2c"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636245?h=83dde52b2c",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211636244",
@@ -1564,11 +2110,53 @@
                 "TAXI",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Luis_2_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Luis_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Luis_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Luis_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Luis_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Luis_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Luis_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Luis_2_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Luis",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186252261-8a199e6fae68d3690baf6d21f8514161796abbed9518f10f57190b25fba1bbd9-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636244?h=5b1157b36c"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211636244?h=5b1157b36c",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211635871",
@@ -1579,11 +2167,53 @@
             "tags": [
                 "VAMPIRE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Miguel_2_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Miguel_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Miguel_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Miguel_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Miguel_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Miguel_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Miguel_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Miguel_2_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Miguel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186257667-5d8e9f7e2d87ac4d611c8096e0a65d2b7669ac978bc36325b8a3cf7c621d717d-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635871?h=b419b74d20"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635871?h=b419b74d20",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211635870",
@@ -1594,11 +2224,53 @@
             "tags": [
                 "COW"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Miguel_3_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Miguel_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Miguel_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Miguel_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Miguel_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Miguel_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Miguel_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Miguel_3_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Miguel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186257910-4d153cea5e353090ff475eb15dbc752e53e88a8100f1c05f648014609af4d634-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635870?h=0c4029ba41"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635870?h=0c4029ba41",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211635872",
@@ -1609,11 +2281,53 @@
             "tags": [
                 "PAINTER"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Miguel_4_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Miguel_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Miguel_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Miguel_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Miguel_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Miguel_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Miguel_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Miguel_4_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Miguel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186258172-7aa7b11ee1eed56801101f8754e7224a4be9eb2f2d7594cf97154b4b06d89203-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635872?h=27fc1f8e29"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635872?h=27fc1f8e29",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211635509",
@@ -1625,11 +2339,53 @@
                 "LOVE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Ole_4_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Ole_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Ole_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Ole_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Ole_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Ole_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Ole_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Ole_4_PT.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Ole",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186258746-f82f4adba86d3e0b6da5d74804d89a7bfb174fbafcc93c755ab385a760d12ada-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635509?h=2c69fe4eb0"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635509?h=2c69fe4eb0",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211635522",
@@ -1641,11 +2397,53 @@
                 "KISS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Ole_5_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Ole_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Ole_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Ole_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Ole_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Ole_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Ole_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Ole_5_PT.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Ole",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186259151-fe5e3dbe636b7fad599c33268a3677367d9170c55888b11818135e180cdc882c-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635522?h=cad1bfd0f5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211635522?h=cad1bfd0f5",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211634222",
@@ -1656,11 +2454,53 @@
             "tags": [
                 "THIEF"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Titi_1_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Titi_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Titi_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Titi_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Titi_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Titi_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Titi_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Titi_1_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Titi",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186259407-8a19275bab5c1ab57cc80071c0a60a3ec49808b524da30caa0daad7c5d437f10-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211634222?h=34624b0275"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211634222?h=34624b0275",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211634223",
@@ -1671,11 +2511,53 @@
             "tags": [
                 "SHAMPOO"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2021_MEXICO_Titi_2_ES.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Titi_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2021_MEXICO_Titi_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2021_MEXICO_Titi_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2021_MEXICO_Titi_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2021_MEXICO_Titi_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2021_MEXICO_Titi_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2021_MEXICO_Titi_2_PT.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Titi",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186259801-259d917b4257c2132ce0ab025fa573030363e079b6be33531a16d691e9ce567c-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211634223?h=12bf2202c7"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211634223?h=12bf2202c7",
+            "master_caption_lang": "es"
         },
         {
             "id": "lsm_1211633776",
@@ -4253,7 +5135,7 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "DRIVING LICENSE",
+                "BUREAUCRACY",
                 "DEAF&HEARING"
             ],
             "captions": [
@@ -5343,7 +6225,7 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "CITY HALL"
+                "CITYHALL"
             ],
             "captions": [
                 {
@@ -10758,7 +11640,7 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "BEAUTIFUL",
+                "DISAPPOINTMENT",
                 "DEAF&HEARING"
             ],
             "captions": [
@@ -11626,7 +12508,7 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "SWEARING",
+                "SWEAR WORDS",
                 "DEAF&HEARING"
             ],
             "captions": [
@@ -12567,7 +13449,7 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "DONKEY"
+                "DONKEYS"
             ],
             "captions": [
                 {
