@@ -34,6 +34,26 @@ assert_contains('id="gallery"', $html, 'gallery section');
 assert_contains('gallery-image', $html, 'gallery images');
 assert_contains('id="about-todo"', $html, 'about text');
 assert_contains('id="trio"', $html, 'trio video');
+assert_contains('id="sign-language-map"', $html, 'sign language map between video and credits');
+$trioPos = strpos($html, 'id="trio"');
+$mapPos = strpos($html, 'id="sign-language-map"');
+$creditsPos = strpos($html, 'id="credits"');
+if ($trioPos === false || $mapPos === false || $creditsPos === false || !($trioPos < $mapPos && $mapPos < $creditsPos)) {
+    fwrite(STDERR, "FAIL: map must sit between trio video and credits\n");
+    exit(1);
+}
+echo "PASS: map sits between trio video and credits\n";
+assert_contains('Sign languages', $html, 'sidebar legend heading');
+assert_contains('/leaflet/leaflet.js', $html, 'leaflet script');
+assert_contains('/preview/js/sign_language_map.js', $html, 'map script');
+assert_contains('/data/languages.json', $html, 'sign language geojson');
+assert_contains('sign-language-map-attribution', $html, 'glottolog map attribution');
+assert_contains('Glottolog 5.3', $html, 'glottolog version in attribution');
+assert_contains('Classification adapted by DEAF.city', $html, 'deaf.city classification note');
+assert_contains('/data/deafcity.json', $html, 'edition city markers');
+assert_not_contains('proto-bar', $html, 'no prototype switcher');
+assert_not_contains('prototype-map', $html, 'no prototype map files');
+assert_not_contains('prototype-switcher', $html, 'no prototype switcher include');
 assert_contains('id="credits"', $html, 'credits section');
 assert_contains('credits-logos', $html, 'credits logos row');
 assert_contains('ministerio.png', $html, 'sponsor logos');
@@ -61,6 +81,8 @@ assert_contains('secondary_player_chrome.js', $html, 'secondary transport script
 assert_contains('English</li>', $html, 'English option in language picker');
 
 $aboutCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/about-page.css');
+assert_contains('#sign-language-map', $aboutCss, 'sidebar map layout in about css');
+assert_not_contains('proto-bar', $aboutCss, 'no prototype bar css');
 assert_not_contains('#city-map-section', $aboutCss, 'map css removed');
 assert_not_contains('max-width: 1200px', $aboutCss, 'narrow max-width removed');
 assert_contains('align-items: stretch', $aboutCss, 'clock row stretches children');

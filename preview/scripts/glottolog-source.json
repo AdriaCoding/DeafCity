@@ -1,0 +1,9 @@
+{
+    "version": "5.3",
+    "release_year": 2026,
+    "doi": "10.5281/zenodo.18840935",
+    "cldf_doi": "10.5281/zenodo.18840967",
+    "cldf_download": "https://zenodo.org/api/records/18840967/files/glottolog/glottolog-cldf-v5.3.zip/content",
+    "family_id": "sign1238",
+    "citation": "Hammarström, Harald, Robert Forkel, Martin Haspelmath & Sebastian Bank. 2026. Glottolog 5.3. Leipzig: Max Planck Institute for Evolutionary Anthropology. DOI: 10.5281/zenodo.18840935."
+}

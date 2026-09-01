@@ -31,7 +31,8 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
     <meta name="page-url" content="/preview/about">
     <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=70">
     <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=9">
-    <link rel="stylesheet" href="/preview/css/about-page.css?v=14">
+    <link rel="stylesheet" href="/preview/css/about-page.css?v=16">
+    <link rel="stylesheet" href="/leaflet/leaflet.css">
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; }
         body {
@@ -64,6 +65,8 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
         <?php include $viewsDir . '/about/trio.php'; ?>
     </div>
 
+    <?php include __DIR__ . '/map.php'; ?>
+
     <div id="credits" class="about">
         <div id="credits-bottom">
             <?php include $viewsDir . '/about/credits_i18n.php'; ?>
@@ -77,5 +80,7 @@ $bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'abo
 <script src="/leaflet/js/gallery.js"></script>
 <script src="/preview/js/vimeo_playlist_logic.js?v=19"></script>
 <script src="/preview/js/secondary_player_chrome.js?v=6"></script>
+<script src="/leaflet/leaflet.js"></script>
+<script src="/preview/js/sign_language_map.js?v=5"></script>
 </body>
 </html>
