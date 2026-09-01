@@ -438,6 +438,7 @@
      *   hasInitialSrc: boolean,
      *   constructReal: (options?: object) => any,
      *   defaultEmbedParams?: Object<string, string>,
+     *   assignEmbedSrc?: (src: string) => void,
      * }} opts
      * @returns {any} a facade with the same interface as a real Vimeo.Player
      */
@@ -513,6 +514,30 @@
                     vOpts.id = payload.id;
                 }
                 vOpts.autoplay = payload && payload.autoplay ? '1' : '0';
+
+                // Real SDK: `new Player(iframe, {id})` throws if the iframe is not already
+                // a Vimeo embed. Assign src first, then construct with no options.
+                var assignEmbedSrc = opts && typeof opts.assignEmbedSrc === 'function'
+                    ? opts.assignEmbedSrc
+                    : null;
+                if (assignEmbedSrc) {
+                    var src = '';
+                    if (hasUrl) {
+                        src = String(payload.url);
+                    } else {
+                        var q = [];
+                        for (var k in vOpts) {
+                            if (!Object.prototype.hasOwnProperty.call(vOpts, k)) continue;
+                            if (k === 'id' || k === 'url') continue;
+                            q.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(vOpts[k])));
+                        }
+                        src = 'https://player.vimeo.com/video/' + payload.id
+                            + (q.length ? '?' + q.join('&') : '');
+                    }
+                    assignEmbedSrc(src);
+                    attachReal(constructReal());
+                    return Promise.resolve();
+                }
 
                 attachReal(constructReal(vOpts));
                 // Constructing with {id|url} already loads the Video; nothing further to await.
@@ -1400,6 +1425,17 @@
     var NAV_INTENT_KEY = 'vpc-nav-intent';
 
     /**
+     * Empty queues (unknown Participant, unmatched filters) are not a playback
+     * context. Persisting them lets pagehide re-trap a later /preview/ visit.
+     * @param {{ filteredMasterIndices?: number[] }} opts
+     * @returns {boolean}
+     */
+    function shouldPersistPlaybackSession(opts) {
+        return !!(opts && Array.isArray(opts.filteredMasterIndices)
+            && opts.filteredMasterIndices.length > 0);
+    }
+
+    /**
      * Build a serializable playback session snapshot.
      * @param {{
      *   masterIndex: number,
@@ -1750,20 +1786,7 @@
             shuffleStep = 0;
             filteredCursor = pPlan.filteredCursor;
             if (fc === 0) {
-                return {
-                    kind: 'restore',
-                    filterState: filterState,
-                    participantName: participantName,
-                    isParticipantMode: true,
-                    filteredMasterIndices: [],
-                    filteredCursor: 0,
-                    shuffleStep: 0,
-                    shuffledSequence: [],
-                    shuffleMode: false,
-                    loadMasterIndex: -1,
-                    shouldAutoplay: false,
-                    playbackTimeSec: 0,
-                };
+                return { kind: 'fresh' };
             }
         } else if (fc === 0) {
             return { kind: 'fresh' };
@@ -2408,6 +2431,7 @@
         planResetToNeutralAll: planResetToNeutralAll,
         PLAYBACK_SESSION_KEY: PLAYBACK_SESSION_KEY,
         NAV_INTENT_KEY: NAV_INTENT_KEY,
+        shouldPersistPlaybackSession: shouldPersistPlaybackSession,
         buildPlaybackSessionSnapshot: buildPlaybackSessionSnapshot,
         parsePlaybackSession: parsePlaybackSession,
         filteredIndicesFromSessionContext: filteredIndicesFromSessionContext,

@@ -40,7 +40,8 @@ ts_assert_contains('syncDeafHearingFromSession', $secondaryJs, 'secondary chrome
 ts_assert_contains("navIntent === 'deaf-hearing'", $logicJs, 'planner handles deaf-hearing force-ON');
 ts_assert_contains('kind === \'deaf-hearing\'', $playerJs, 'player consumes deaf-hearing restore kind');
 ts_assert_contains('resolveTagToggleOnFilterState', $playerJs, 'player applies DH15b tag toggle resolve');
-ts_assert_contains('toggleDeafHearingFilter', $playerJs, 'player wires DEAF+HEARING toggle');
+ts_assert_contains('shouldPersistPlaybackSession', $logicJs, 'empty-queue sessions are not persisted');
+ts_assert_contains('L.shouldPersistPlaybackSession', $playerJs, 'player skips persist on empty queue');
 
 if (strpos($secondaryJs, "match[1] !== 'en'") !== false) {
     fwrite(STDERR, "FAIL: secondary chrome still skips lang=en\n");

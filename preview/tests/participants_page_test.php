@@ -347,5 +347,18 @@ pp_assert_not_contains(
 $playerJsSrc = file_get_contents(dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js');
 pp_assert_contains('vimeoPlayer = createLazyVimeoPlayer(iframe);', $playerJsSrc, 'attachPlayer() constructs via the lazy facade, not new Vimeo.Player(iframe) directly');
 pp_assert_contains('L.createLazyVimeoPlayerFacade(', $playerJsSrc, 'createLazyVimeoPlayer() delegates to the shared, unit-tested facade logic');
+pp_assert_contains('assignEmbedSrc:', $playerJsSrc, 'createLazyVimeoPlayer() assigns iframe src before SDK construct (empty-queue Reset/load)');
+
+$playerCss = file_get_contents(dirname(dirname(__FILE__)) . '/components/vimeo_caption_player.css');
+pp_assert_contains(
+    '.vpc-empty-state.is-hidden',
+    $playerCss,
+    'empty-state overlay can be dismissed with is-hidden when a Video loads'
+);
+pp_assert_contains(
+    'dismissEmptyQueueState()',
+    $playerJsSrc,
+    'player dismisses the empty-queue overlay when loading a Video (Reset from unknown Participant)'
+);
 
 echo "\nAll participants_page tests passed.\n";

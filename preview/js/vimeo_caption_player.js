@@ -104,7 +104,10 @@
      * server-rendered as today, constructed immediately, synchronously, before this
      * function returns — behavior unchanged from a direct `new Vimeo.Player(iframe)`
      * call) vs. none (an unknown/empty Participant filter — constructed lazily, on
-     * first genuine loadVideo()).
+     * first genuine loadVideo()). The real SDK throws
+     * "The player element passed isn’t a Vimeo embed." if construct is
+     * `new Player(iframe, {id})` on a src-less iframe — so loadVideo assigns
+     * the embed src first (`assignEmbedSrc`), then constructs with no options.
      *
      * @param {HTMLIFrameElement} iframe
      * @returns {any}
@@ -113,6 +116,11 @@
         return L.createLazyVimeoPlayerFacade({
             hasInitialSrc: !!iframe.getAttribute('src'),
             defaultEmbedParams: VPC_DEFAULT_EMBED_PARAMS,
+            assignEmbedSrc: function (src) {
+                if (src && !iframe.getAttribute('src')) {
+                    iframe.setAttribute('src', src);
+                }
+            },
             constructReal: function (playerOpts) {
                 return playerOpts
                     ? new window.Vimeo.Player(iframe, playerOpts)
@@ -1007,6 +1015,13 @@
                     if (typeof done === 'function') done();
                     return;
                 }
+                if (!L.shouldPersistPlaybackSession({
+                    filteredMasterIndices: filteredMasterIndices,
+                    isParticipantMode: isParticipantMode,
+                })) {
+                    if (typeof done === 'function') done();
+                    return;
+                }
                 var timeP =
                     vimeoPlayer && typeof vimeoPlayer.getCurrentTime === 'function'
                         ? vimeoPlayer.getCurrentTime().catch(function () { return 0; })
@@ -1242,6 +1257,11 @@
                 rebuildAllCascadingDropdowns();
             }
 
+            function dismissEmptyQueueState() {
+                var emptyEl = root.querySelector('.vpc-empty-state');
+                if (emptyEl) emptyEl.classList.add('is-hidden');
+            }
+
             function resolveLoadVideoPromise(item, wantAutoplay, forceReload) {
                 if (typeof p.loadVideo !== 'function') {
                     return Promise.reject(new Error('Vimeo.Player.loadVideo unavailable'));
@@ -1294,6 +1314,7 @@
                 ensureCaptionsForMasterIndex(playlistIndex);
 
                 var item = fullPlaylistItems[playlistIndex];
+                if (item) dismissEmptyQueueState();
                 syncCaptionBox(eventsForSync(), 0);
                 applyLoadedVideoUi();
 

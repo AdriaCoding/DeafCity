@@ -117,6 +117,9 @@
     color: #666;
     font-size: 0.9rem;
 }
+.vpc-empty-state.is-hidden {
+    display: none;
+}
 @media screen and (min-width: 651px) {
     .video-shell {
         --vpc-top-crop: 9%;

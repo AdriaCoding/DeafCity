@@ -2301,7 +2301,10 @@ console.log('vimeo_playlist_logic.test.js: all passed (including load cover reve
     assert.strictEqual(nav.playbackTimeSec, 12);
 })();
 
-// Secondary restore: unknown Participant stays empty (does not fall back to ALL)
+// Secondary restore: unknown Participant with no videos is a trap — do not
+// restore the empty collection. /preview/ without ?participant= goes fresh
+// (base playlist), same as a cleared session. Explicit ?participant= still
+// skips restore via explicitParticipantName (issue #04).
 (function () {
     var items = [
         { participant: 'Hamida', participant_sequence: '1' },
@@ -2323,12 +2326,24 @@ console.log('vimeo_playlist_logic.test.js: all passed (including load cover reve
         fullPlaylistItems: items,
         randomFn: function () { return 0; },
     });
-    assert.ok(nav && nav.kind === 'restore');
-    assert.strictEqual(nav.isParticipantMode, true);
-    assert.deepStrictEqual(nav.filteredMasterIndices, []);
-    assert.strictEqual(nav.loadMasterIndex, -1);
-    assert.strictEqual(nav.shuffleMode, false);
+    assert.ok(nav && nav.kind === 'fresh', 'empty unknown Participant session does not restore a trap');
 })();
+
+assert.strictEqual(
+    logic.shouldPersistPlaybackSession({ filteredMasterIndices: [], isParticipantMode: true }),
+    false,
+    'do not persist an empty Participant queue (pagehide would re-trap /preview/)'
+);
+assert.strictEqual(
+    logic.shouldPersistPlaybackSession({ filteredMasterIndices: [0, 2], isParticipantMode: true }),
+    true,
+    'persist a non-empty Participant queue'
+);
+assert.strictEqual(
+    logic.shouldPersistPlaybackSession({ filteredMasterIndices: [1], isParticipantMode: false }),
+    true,
+    'persist a non-empty base/filter queue'
+);
 
 console.log('vimeo_playlist_logic.test.js: all passed (including participant natural order)');
 
@@ -3110,6 +3125,50 @@ function makeMockRealPlayer(id) {
     await facadeUrl.loadVideo({ url: 'https://player.vimeo.com/video/555?foo=bar', id: 555, autoplay: false });
     assert.strictEqual(urlCalls[0].url, 'https://player.vimeo.com/video/555?foo=bar', 'url payload wins over id');
     assert.strictEqual(urlCalls[0].id, undefined, 'id is not set on constructReal options when url is present');
+
+    // Real Vimeo SDK: `new Player(iframe, {id})` throws
+    // "The player element passed isn’t a Vimeo embed." when the iframe has no src.
+    // Cold empty-queue (unknown Participant) must assign embed src first, then
+    // construct with no options — same as hasInitialSrc.
+    var sdkIframeSrc = '';
+    var sdkConstructCalls = [];
+    var sdkPlayer = null;
+    var sdkFacade = logic.createLazyVimeoPlayerFacade({
+        hasInitialSrc: false,
+        defaultEmbedParams: { title: '0', controls: '0' },
+        assignEmbedSrc: function (src) {
+            sdkIframeSrc = src;
+        },
+        constructReal: function (opts) {
+            sdkConstructCalls.push({ opts: opts, iframeSrc: sdkIframeSrc });
+            if (opts) {
+                throw new Error('The player element passed isn’t a Vimeo embed.');
+            }
+            if (!sdkIframeSrc) {
+                throw new Error('The player element passed isn’t a Vimeo embed.');
+            }
+            sdkPlayer = makeMockRealPlayer('999');
+            return sdkPlayer;
+        },
+    });
+    await sdkFacade.loadVideo({ id: 999, autoplay: true });
+    assert.strictEqual(sdkConstructCalls.length, 1, 'SDK-shaped construct: called once');
+    assert.strictEqual(sdkConstructCalls[0].opts, undefined, 'SDK-shaped construct: no options after src assign');
+    assert.ok(
+        String(sdkIframeSrc).indexOf('https://player.vimeo.com/video/999') === 0,
+        'SDK-shaped construct: iframe src is the requested Vimeo embed'
+    );
+    assert.ok(String(sdkIframeSrc).indexOf('autoplay=1') !== -1, 'SDK-shaped construct: autoplay lands on iframe src');
+    assert.ok(String(sdkIframeSrc).indexOf('title=0') !== -1, 'SDK-shaped construct: default embed params land on iframe src');
+    assert.strictEqual(sdkFacade.isReal(), true, 'SDK-shaped construct: facade is real afterward');
+
+    await sdkFacade.loadVideo({ url: 'https://player.vimeo.com/video/1211636244?h=abc', id: 1211636244, autoplay: false });
+    assert.strictEqual(sdkConstructCalls.length, 1, 'SDK-shaped construct: later loadVideo does not reconstruct');
+    assert.deepStrictEqual(
+        sdkPlayer.lastLoadVideoPayload,
+        { url: 'https://player.vimeo.com/video/1211636244?h=abc', id: 1211636244, autoplay: false },
+        'SDK-shaped construct: second loadVideo delegates raw payload'
+    );
 
     console.log('vimeo_playlist_logic.test.js: all passed (including lazy Vimeo Player facade / cold-start empty-queue)');
 })().catch(function (err) {
