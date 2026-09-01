@@ -839,8 +839,7 @@
             "typology": "malentesos",
             "participant": "Pepa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186250564-6d676e4c0507b0b5b481e49e30f11fc318acb50a8210bf48ad2d63e8502b79ec-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211612212?h=36a3534e50",
-            "invisible": true
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211612212?h=36a3534e50"
         },
         {
             "id": "lse_1211612211",
@@ -1547,7 +1546,7 @@
             "sign_language": "lsm",
             "edition": "2021-mexico",
             "tags": [
-                "HAPINESS"
+                "HAPPINESS"
             ],
             "captions": [],
             "typology": "acudits",
@@ -1608,7 +1607,7 @@
             "sign_language": "lsm",
             "edition": "2021-mexico",
             "tags": [
-                "PAINTINGS"
+                "PAINTER"
             ],
             "captions": [],
             "typology": "acudits",
@@ -2755,7 +2754,7 @@
             "sign_language": "libras",
             "edition": "2023-sao-paulo",
             "tags": [
-                "LITTLE EAR",
+                "CAN IT BE?",
                 "DEAF&HEARING"
             ],
             "captions": [
@@ -3798,11 +3797,53 @@
             "tags": [
                 "ELEVATOR"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_Alger_Atifa_2_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_Alger_Atifa_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_Alger_Atifa_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_Alger_Atifa_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_Alger_Atifa_2_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_Alger_Atifa_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_Alger_Atifa_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_Alger_Atifa_2_ES.srt"
+                }
+            ],
             "typology": "endevinalles",
             "participant": "Atifa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186681663-abd403d1fdb33477d1f0b89adddfb9314b5f9ddbf0581335ba65ca3be5fb6cfe-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695373?h=97fbc9ad25"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695373?h=97fbc9ad25",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695369",
@@ -3811,13 +3852,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "KEYS"
+                "KEY"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_Alger_Atifa_3_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_Alger_Atifa_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_Alger_Atifa_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_Alger_Atifa_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_Alger_Atifa_3_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_Alger_Atifa_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_Alger_Atifa_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_Alger_Atifa_3_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Atifa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186682054-c06ca9d6aa06c27c9a053b6f222b3731e1a8a9f3ada5989420caa4a427552276-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695369?h=c1aa191352"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695369?h=c1aa191352",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695371",
@@ -3828,11 +3911,53 @@
             "tags": [
                 "CAKE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_Alger_Atifa_4_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_Alger_Atifa_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_Alger_Atifa_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_Alger_Atifa_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_Alger_Atifa_4_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_Alger_Atifa_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_Alger_Atifa_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_Alger_Atifa_4_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Atifa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181929651-c06446077bad614bb9f3ed071d8228d369b2081e7d942fa91f5d8622ce2e0c45-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695371?h=6cc598f628"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695371?h=6cc598f628",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695571",
@@ -3843,11 +3968,53 @@
             "tags": [
                 "HIKING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_Alger_Atifa_5_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_Alger_Atifa_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_Alger_Atifa_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_Alger_Atifa_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_Alger_Atifa_5_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_Alger_Atifa_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_Alger_Atifa_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_Alger_Atifa_5_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Atifa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186682629-9e39d49f8a7b9e3d84364a1ba0c311213eedc8542cf96668898ac668bb369df7-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695571?h=44b4c52356"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695571?h=44b4c52356",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695576",
@@ -3859,11 +4026,53 @@
                 "COMMUNICATION",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_Alger_Atifa_6_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_Alger_Atifa_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_Alger_Atifa_6_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_Alger_Atifa_6_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_Alger_Atifa_6_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_Alger_Atifa_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_Alger_Atifa_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_Alger_Atifa_6_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Atifa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181929886-4ce7418f21210d685c06ae6f2916273e724218cdf0e73d7e81ad4ebbfc3c0946-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695576?h=488b31f20c"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695576?h=488b31f20c",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695608",
@@ -3874,11 +4083,53 @@
             "tags": [
                 "TORTOISE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hamida_2_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hamida_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hamida_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hamida_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hamida_2_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hamida_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hamida_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hamida_2_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Hamida",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186683212-ca8958b98650149452508898112912e0d412aebcf650b5d68f07a06460801077-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695608?h=51ed33efec"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695608?h=51ed33efec",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695786",
@@ -3889,11 +4140,53 @@
             "tags": [
                 "DINARS"
             ],
-            "captions": [],
-            "typology": "anecdotes",
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hamida_3_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hamida_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hamida_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hamida_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hamida_3_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hamida_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hamida_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hamida_3_ES.srt"
+                }
+            ],
+            "typology": "memories",
             "participant": "Hamida",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186683819-d16e77822b646305404950c7078b3ab4c691ecb9c77dd051857ad2a2945ba8d4-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695786?h=f766172d26"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695786?h=f766172d26",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695913",
@@ -3902,14 +4195,56 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "RIDER",
+                "MOTORCYCLISTS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hassen _1_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hassen _1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hassen _1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hassen _1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hassen _1_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hassen _1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hassen _1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hassen _1_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Hassen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186305708-aa745728278bbfabac43172701601c392c7af7d74c1948222b0dce36e74908cb-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695913?h=d52ce60eca"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695913?h=d52ce60eca",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695919",
@@ -3921,11 +4256,53 @@
                 "DRIVING LICENSE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hassen _2_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hassen _2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hassen _2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hassen _2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hassen _2_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hassen _2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hassen _2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hassen _2_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Hassen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186685613-a11cc7d7818a16e52f1739b9e50d2b7fde0728d8e5cdbc052b0974c96f360efb-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695919?h=513fa50fa9"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695919?h=513fa50fa9",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695935",
@@ -3937,11 +4314,53 @@
                 "HOSPITAL",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hassen _3_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hassen _3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hassen _3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hassen _3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hassen _3_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hassen _3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hassen _3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hassen _3_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Hassen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186686067-269d90b918c0e246a8f8f976813ef0472db6520bf8d78323fdf2e0d2602f5baf-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695935?h=377326b35a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695935?h=377326b35a",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696102",
@@ -3950,13 +4369,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "COLORS"
+                "ORANGE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hassen _4_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hassen _4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hassen _4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hassen _4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hassen _4_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hassen _4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hassen _4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hassen _4_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Hassen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186686514-2357423fab334ea45cc12d4906e18dab5d6bed3f8901a47797021a1eb2eccd80-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696102?h=6b50a0002f"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696102?h=6b50a0002f",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696201",
@@ -3968,11 +4429,53 @@
                 "WORK",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hassen _5_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hassen _5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hassen _5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hassen _5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hassen _5_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hassen _5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hassen _5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hassen _5_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Hassen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930566-7f9f8bfe54dfb33596ccbd6befc0f4dc2e493c2b3452a041e2ba2be701e04b94-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696201?h=317a429335"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696201?h=317a429335",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696232",
@@ -3984,11 +4487,53 @@
                 "DEAF PILOT",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Lamine_1_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Lamine_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Lamine_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Lamine_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Lamine_1_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Lamine_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Lamine_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Lamine_1_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Lamine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186306184-565ee1cc7a22e7e27c2031db6dd853d18bf9d397470daf0dddab9756d4b4dc74-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696232?h=c8e0bd0794"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696232?h=c8e0bd0794",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696255",
@@ -3997,14 +4542,56 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "CALL OF NAURE",
+                "POOP",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Lamine_2_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Lamine_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Lamine_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Lamine_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Lamine_2_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Lamine_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Lamine_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Lamine_2_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Lamine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186687975-6e09fcd3ef69d55489c1f15c775f904821503c47d05564e00965db0977702f45-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696255?h=ad59680790"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696255?h=ad59680790",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696303",
@@ -4013,13 +4600,56 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "BLACKBOARD"
+                "BLACKBOARD",
+                "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Lamine_3_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Lamine_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Lamine_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Lamine_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Lamine_3_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Lamine_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Lamine_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Lamine_3_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Lamine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186688435-fbc539df645d1ebba536ee455c4d98c49b48e55b04db538ce0873af03f3e3d87-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696303?h=cfc9968a00"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696303?h=cfc9968a00",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696346",
@@ -4028,14 +4658,56 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "GLASS",
+                "A GLASS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Lamine_4_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Lamine_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Lamine_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Lamine_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Lamine_4_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Lamine_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Lamine_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Lamine_4_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Lamine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181930806-6b1cc73dd5bcc03119801ed0da07d7a836cda540b5d74ba7977e053dcbe07540-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696346?h=d74157e21d"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696346?h=d74157e21d",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696434",
@@ -4044,14 +4716,56 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "KISS",
+                "KISSES",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Lamine_5_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Lamine_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Lamine_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Lamine_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Lamine_5_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Lamine_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Lamine_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Lamine_5_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Lamine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186689237-bd1a2566bc664db478e58bb772dc58be30d8d807fe51a0ae1bb86a7b445d9bc4-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696434?h=2dbe5c6a91"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696434?h=2dbe5c6a91",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696487",
@@ -4062,11 +4776,53 @@
             "tags": [
                 "RESTAURANT"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Lamine_6_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Lamine_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Lamine_6_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Lamine_6_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Lamine_6_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Lamine_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Lamine_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Lamine_6_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Lamine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186689880-5270ee9d117aa77e4f1f224861f95c42cec4047eaa1f56c560145b0369bc1fa6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696487?h=0c1bb5c6e5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696487?h=0c1bb5c6e5",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696516",
@@ -4079,9 +4835,9 @@
             ],
             "captions": [
                 {
-                    "lang": "en",
-                    "label": "English",
-                    "file": "2026_ALGER_Mahieddine_1_EN.srt"
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_1_FR.srt"
                 },
                 {
                     "lang": "ar",
@@ -4099,9 +4855,9 @@
                     "file": "2026_ALGER_Mahieddine_1_CA.srt"
                 },
                 {
-                    "lang": "fr",
-                    "label": "French",
-                    "file": "2026_ALGER_Mahieddine_1_FR.srt"
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_1_EN.srt"
                 },
                 {
                     "lang": "it",
@@ -4123,7 +4879,7 @@
             "participant": "Mahieddine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186306803-2dbe131d5add8cdc17259892e288b8dc88258edcc867c9cb10bb0827fefa03c1-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211696516?h=10095806f1",
-            "master_caption_lang": "en"
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696545",
@@ -4134,11 +4890,53 @@
             "tags": [
                 "WATERMELON"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_2_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mahieddine_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mahieddine_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mahieddine_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_2_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mahieddine_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mahieddine_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mahieddine_2_ES.srt"
+                }
+            ],
             "typology": "endevinalles",
             "participant": "Mahieddine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186690279-52461efcbaf82955dbcc35a70f94fea1bbf41d82822bfccfb46e71bf71a0110a-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696545?h=4b9ab9237a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696545?h=4b9ab9237a",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696583",
@@ -4147,13 +4945,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "SHOE"
+                "SHOES"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_3_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mahieddine_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mahieddine_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mahieddine_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_3_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mahieddine_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mahieddine_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mahieddine_3_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Mahieddine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186690701-00af2ca2a43e0a648e94b50b54ba04aba5286085feb5effb81dc20211f622c5f-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696583?h=fb21be7843"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696583?h=fb21be7843",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696645",
@@ -4164,11 +5004,53 @@
             "tags": [
                 "CAR"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_4_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mahieddine_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mahieddine_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mahieddine_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_4_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mahieddine_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mahieddine_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mahieddine_4_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Mahieddine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186691455-80748b16259de44a5d303954b6ee8808c4b02f48335cf38c7297192befc67513-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696645?h=a3adf19e5b"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696645?h=a3adf19e5b",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696657",
@@ -4177,13 +5059,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "POOP"
+                "CHAT"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_5_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mahieddine_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mahieddine_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mahieddine_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_5_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mahieddine_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mahieddine_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mahieddine_5_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Mahieddine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186691796-ef28047bfacc8494689cf5ff476608fe1a9da2d0a4c78fd7be3af9683b24d8b1-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696657?h=b6b974499c"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696657?h=b6b974499c",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696758",
@@ -4194,11 +5118,53 @@
             "tags": [
                 "SHEEP’S TONGUE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mahieddine_6_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mahieddine_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mahieddine_6_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mahieddine_6_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mahieddine_6_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mahieddine_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mahieddine_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mahieddine_6_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Mahieddine",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186692220-8237fc2edacc65356a0c7b0f600ab672ecbb5e4dbda369fce1e50b4dfe7374c4-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696758?h=6be3ae12f6"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696758?h=6be3ae12f6",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696766",
@@ -4265,11 +5231,53 @@
             "tags": [
                 "MATCHES"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mustapha_2_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mustapha_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mustapha_2_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mustapha_2_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mustapha_2_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mustapha_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mustapha_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mustapha_2_ES.srt"
+                }
+            ],
             "typology": "endevinalles",
             "participant": "Mustapha",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186692444-3386888980c70ee168c886aa4ff72c843741bec4952d5a0a1ae0a077bef40a9f-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696779?h=0e8a2dc2a3"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696779?h=0e8a2dc2a3",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696842",
@@ -4280,11 +5288,53 @@
             "tags": [
                 "TEACHER"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mustapha_3_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mustapha_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mustapha_3_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mustapha_3_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mustapha_3_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mustapha_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mustapha_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mustapha_3_ES.srt"
+                }
+            ],
             "typology": "anecdotes",
             "participant": "Mustapha",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186692902-79962981d531b3918e318563fc0d501dcc91ba7ea86e70dc38ccc7a32fab03b5-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696842?h=4baa30c2ab"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696842?h=4baa30c2ab",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696850",
@@ -4293,13 +5343,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "BIRTH CERTIFICATE"
+                "CITY HALL"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mustapha_4_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mustapha_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mustapha_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mustapha_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mustapha_4_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mustapha_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mustapha_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mustapha_4_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Mustapha",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186693454-4e8a8ba2031f3c1f7714e8478c5c9629b674cd49b0a3ec51165ddce4e9c7f677-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696850?h=099cd999c7"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696850?h=099cd999c7",
+            "master_caption_lang": "fr"
         },
         {
             "id": "lsc_1211664592",
@@ -4830,14 +5922,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "SIGN LANGUAGE",
+                "WOODCUTTER",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_6_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_6_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_6_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_6_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_6_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186644867-a1502ee40853b148d7cb36a3a0802c182b0b37609a4572580d6f5ad58616f9ce-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666771?h=410f1351f8",
-            "typology": "acudits"
+            "typology": "acudits",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666953",
@@ -4849,11 +5983,53 @@
                 "EXAM",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_7_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_7_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_7_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_7_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_7_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_7_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_7_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_7_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186645275-c60fb4990d5fbc6178a59891c7282be7fc0051ab4ca61d930945662a63128e28-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666953?h=ace4a520c5",
-            "typology": "acudits"
+            "typology": "acudits",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211667039",
@@ -4862,14 +6038,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "WHAT'S THE TIME?",
+                "DIRECTIONS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Raquel_1_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Raquel_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Raquel_1_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Raquel_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Raquel_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Raquel_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Raquel_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Raquel_1_ES.srt"
+                }
+            ],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186291957-d78f3c628a8fe1f0c706a452429bfee86cc440066a58f987174892dbcced4a91-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211667039?h=39249b6ae2",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211667164",
@@ -4881,11 +6099,53 @@
                 "VIBRATION",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Raquel_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Raquel_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Raquel_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Raquel_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Raquel_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Raquel_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Raquel_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Raquel_2_ES.srt"
+                }
+            ],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186645628-0db456d968b0437d2123bd93baafd0ef642317e29d7af2f7fe63b084cb746d72-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211667164?h=69829e3d47",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211667171",
@@ -4897,11 +6157,53 @@
                 "INTERPRETER",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Raquel_3_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Raquel_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Raquel_3_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Raquel_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Raquel_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Raquel_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Raquel_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Raquel_3_ES.srt"
+                }
+            ],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186647009-e0a850a8be2dd8ffae4b3e0db4a48529677931a119bd3cc0c8db4ee824af1063-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211667171?h=5c0f29be6b",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211667301",
@@ -4913,11 +6215,53 @@
                 "INTERPRETER",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Raquel_4_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Raquel_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Raquel_4_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Raquel_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Raquel_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Raquel_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Raquel_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Raquel_4_ES.srt"
+                }
+            ],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186647498-d74407411c4da2bc689073505ee592a02f98af6276f01ee9015b65372366d67b-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211667301?h=b9fa6def06",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211667321",
@@ -4941,11 +6285,53 @@
             "tags": [
                 "BOCCA DELLA VERITÀ"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Raquel_6_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Raquel_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Raquel_6_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Raquel_6_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Raquel_6_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Raquel_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Raquel_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Raquel_6_ES.srt"
+                }
+            ],
             "participant": "Raquel",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186648229-6da20dffc8f70730d801fe3710f9431687ca896d3a8863538346a4d60d684f4f-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211667536?h=33631ae281",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsf_1211690992",
@@ -9547,11 +10933,53 @@
             "tags": [
                 "TORTOISE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_3_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_3_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_3_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186638089-cdd103358debfe9b3677849a49ba7f595a293a6c48e5aa610ae3427eb2f8570b-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665375?h=4ba1080a1a",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665396",
@@ -9563,11 +10991,53 @@
                 "SPERM",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_4_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_4_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_4_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186638511-5559735b3add391962f74ef3dcd3934269f744906861d210378ae44e9cb7eda9-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665396?h=4d591a84aa",
-            "typology": "acudits"
+            "typology": "acudits",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665551",
@@ -9579,11 +11049,53 @@
                 "ABUSE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_5_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_5_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_5_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186638906-8ca7df8c4c627e07e78cf82e2ebcfbfdb596774e2ecec6bb9ec2f3512a9b1e81-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665551?h=e7e7d19ab6",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665601",
@@ -9592,14 +11104,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "SIGN LANGUAGE",
+                "STEWARDESS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_6_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_6_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_6_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_6_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_6_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186639223-013af0017c354709d29129754616ac169baeea816214ae2271e96304057b12e8-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665601?h=0dac73d6b8",
-            "typology": "memories"
+            "typology": "memories",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665661",
@@ -9611,11 +11165,53 @@
                 "CALM DOWN",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_7_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_7_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_7_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_7_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_7_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_7_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_7_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_7_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186639515-b7cf30638d9635b59575a00eabc5355273d0e2d2b3943fd025fa55017c0e87c2-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665661?h=92e362acff",
-            "typology": "pensaments"
+            "typology": "pensaments",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665716",
@@ -9627,11 +11223,53 @@
                 "WHAT A NOISE!",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Laura_1_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Laura_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Laura_1_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Laura_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Laura_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Laura_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Laura_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Laura_1_ES.srt"
+                }
+            ],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186291095-343558a919cfabfcb7ddc904138d0b38d55d58990bcec7d25b91e71807580d95-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665716?h=2a68ef8e5c",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665778",
@@ -9643,11 +11281,53 @@
                 "VIBRATION",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Laura_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Laura_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Laura_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Laura_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Laura_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Laura_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Laura_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Laura_2_ES.srt"
+                }
+            ],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186640281-b6f5297a14784ec9d56cfbe9e43a0659dc5377269ead789115b03d3006494145-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665778?h=cbf36473b8",
-            "typology": "pensaments"
+            "typology": "pensaments",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665838",
@@ -9656,14 +11336,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "WHAT A NOISE!",
+                "EXAM",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Laura_3_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Laura_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Laura_3_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Laura_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Laura_3_FR.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Laura_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Laura_3_ES.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Laura_3_IT.srt"
+                }
+            ],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186640502-eca416f52ecf030785fd09e655d7148f648690ce804ffe72829e0d6c94f3c20e-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665838?h=1e50002fa5",
-            "typology": "pensaments"
+            "typology": "pensaments",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666018",
@@ -9675,11 +11397,53 @@
                 "WHAT A NOISE!",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Laura_4_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Laura_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Laura_4_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Laura_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Laura_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Laura_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Laura_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Laura_4_ES.srt"
+                }
+            ],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186640883-05473546da69f3cd4ca3905ea9f1fa6af21ba1c1ab38c0c733a7520428f7254b-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666018?h=a06cc147e6",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666081",
@@ -9688,14 +11452,56 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "WHAT A NOISE!",
+                "CAT",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Laura_5_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Laura_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Laura_5_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Laura_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Laura_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Laura_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Laura_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Laura_5_ES.srt"
+                }
+            ],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186641305-4ef551e6c5cb80c29336036d0030b2e360e45ecaf8e7df0420be5ea43172d515-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666081?h=155edc62c8",
-            "typology": "anecdotes"
+            "typology": "anecdotes",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666104",
@@ -9707,11 +11513,53 @@
                 "FIRE",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Laura_6_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Laura_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Laura_6_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Laura_6_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Laura_6_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Laura_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Laura_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Laura_6_ES.srt"
+                }
+            ],
             "participant": "Laura",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186641826-8979fc26eff8b1aef408ef18f717576aab8be2bbe099d35fef289ac805129934-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666104?h=ed415923a8",
-            "typology": "acudits"
+            "typology": "acudits",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666120",
@@ -9723,11 +11571,53 @@
                 "EYEBROWS",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_1_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_1_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_1_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186291523-24be0f8ff8393cc59e7195971f781df3489a5acd6e817b253cefeb08be447555-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666120?h=88926fd452",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666416",
@@ -9739,11 +11629,53 @@
                 "SWEARING",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_2_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186642206-594466906544f99e73e6efcb6caab518b5a1e288ec63481061236b225a5e0ddd-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666416?h=3393c72432",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666474",
@@ -9755,11 +11687,53 @@
                 "SUBWAY",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_3_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_3_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_3_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_3_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_3_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_3_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_3_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_3_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186642478-3646d3c03a4e621d232a27640d648f836460db37078c9a34c71c0b544506ef31-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666474?h=3210ab7d61",
-            "typology": "pensaments"
+            "typology": "pensaments",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666657",
@@ -9768,13 +11742,55 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "CORRECTIONS"
+                "FEAR"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_4_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_4_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_4_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_4_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_4_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186642798-72039124a747791c256f1a5816ad537aadd4df0731222cc187af7fb566478acf-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666657?h=be5882d44a",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211666728",
@@ -9786,11 +11802,53 @@
                 "INTERPRETER",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Pepita_5_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Pepita_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Pepita_5_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Pepita_5_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Pepita_5_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Pepita_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Pepita_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Pepita_5_ES.srt"
+                }
+            ],
             "participant": "Pepita",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186643280-98fccdc4cab7164bdb6e97279533c0aedd0ab61fa346df9d8c8f103b1523d8c3-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211666728?h=62c07c78fc",
-            "typology": "malentesos"
+            "typology": "malentesos",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lse_1211615289",
@@ -10106,13 +12164,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "SEAT BELT"
+                "FINE"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_Alger_Atifa_1_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_Alger_Atifa_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_Alger_Atifa_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_Alger_Atifa_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_Alger_Atifa_1_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_Alger_Atifa_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_Alger_Atifa_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_Alger_Atifa_1_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Atifa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2184256431-4b929dd30521682b0263c8bcdd811d419be64ee4510a09e1ef43f648cf8eaebd-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695370?h=e5693c500a"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695370?h=e5693c500a",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695579",
@@ -10124,11 +12224,53 @@
                 "SHEEP",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hamida_1_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hamida_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hamida_1_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hamida_1_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hamida_1_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hamida_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hamida_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hamida_1_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Hamida",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186304816-d756a7d47ba710e1ffe80417a2c5a4ddda67bc79bd954c5b80abf9fe591bbd87-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695579?h=64e2715b7b"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695579?h=64e2715b7b",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695790",
@@ -10140,11 +12282,53 @@
                 "CODA",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hamida_4_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hamida_4_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hamida_4_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hamida_4_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hamida_4_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hamida_4_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hamida_4_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hamida_4_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Hamida",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186684367-7c8a315cc3e069540ac08444d911b7afdd52f5c7e373c8141fffd9082f9cbd71-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695790?h=70ec3a8dc0"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695790?h=70ec3a8dc0",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695814",
@@ -10156,11 +12340,53 @@
                 "GAME",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hamida_5_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hamida_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hamida_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hamida_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hamida_5_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hamida_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hamida_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hamida_5_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Hamida",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186684824-0f72988feec92eef38019a9df4b1a091362b39240099503e8f94fd209ecb1608-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695814?h=f92ec020a5"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695814?h=f92ec020a5",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211695907",
@@ -10169,13 +12395,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "BANK"
+                "DOG"
             ],
-            "captions": [],
-            "typology": "acudits",
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hamida_6_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hamida_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hamida_6_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hamida_6_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hamida_6_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hamida_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hamida_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hamida_6_ES.srt"
+                }
+            ],
+            "typology": "memories",
             "participant": "Hamida",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186685188-ce8654dee110c34bd48e7338026705dbcc8bb5c91a61c783e5651cc257c1b8f1-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695907?h=04cc7d0f25"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211695907?h=04cc7d0f25",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696207",
@@ -10184,14 +12452,56 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "FATHER",
+                "MY SON",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Hassen _6_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Hassen _6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Hassen _6_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Hassen _6_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Hassen _6_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Hassen _6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Hassen _6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Hassen _6_ES.srt"
+                }
+            ],
             "typology": "memories",
             "participant": "Hassen",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186687510-513fed35d6c6092a03905c5bf4ec316d30b37d07f0a011a52d303d5c8975ff46-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696207?h=7db3963eb4"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696207?h=7db3963eb4",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696894",
@@ -10200,13 +12510,55 @@
             "sign_language": "algerian-sl",
             "edition": "2026-algiers",
             "tags": [
-                "GOLDEN DREAM"
+                "DREAM"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mustapha_5_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mustapha_5_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mustapha_5_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mustapha_5_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mustapha_5_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mustapha_5_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mustapha_5_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mustapha_5_ES.srt"
+                }
+            ],
             "typology": "acudits",
             "participant": "Mustapha",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186694305-1c62609dc1a33005b0dc1542579c88a2c5d8f1b4b09e61b71889af4216e6e8ed-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696894?h=b52c5a0068"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696894?h=b52c5a0068",
+            "master_caption_lang": "fr"
         },
         {
             "id": "algerian-sl_1211696927",
@@ -10217,11 +12569,53 @@
             "tags": [
                 "DONKEY"
             ],
-            "captions": [],
-            "typology": "anecdotes",
+            "captions": [
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_ALGER_Mustapha_6_FR.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_ALGER_Mustapha_6_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_ALGER_Mustapha_6_EU.srt"
+                },
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_ALGER_Mustapha_6_CA.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_ALGER_Mustapha_6_EN.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_ALGER_Mustapha_6_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_ALGER_Mustapha_6_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_ALGER_Mustapha_6_ES.srt"
+                }
+            ],
+            "typology": "memories",
             "participant": "Mustapha",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186695152-ddfba2f036ed7d653b820a703479925f3e1bb16a74ada631c067dfd0c7ef2cd6-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696927?h=7a015df316"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211696927?h=7a015df316",
+            "master_caption_lang": "fr"
         },
         {
             "id": "lsc_1211665292",
@@ -10230,13 +12624,55 @@
             "sign_language": "lsc",
             "edition": "2026-barcelona",
             "tags": [
-                "COACH TRIP"
+                "COACH"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_1_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_1_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_1_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_1_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_1_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_1_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_1_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_1_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186290685-307d7e2c6298f6a4ff584dffa80938726f9d231db2b66e4a94213d09e503efe8-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665292?h=5334e055cd",
-            "typology": "memories"
+            "typology": "memories",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsc_1211665341",
@@ -10248,11 +12684,53 @@
                 "VIBRATION",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2026_BARCELONA_Isaac_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2026_BARCELONA_Isaac_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2026_BARCELONA_Isaac_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2026_BARCELONA_Isaac_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2026_BARCELONA_Isaac_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2026_BARCELONA_Isaac_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2026_BARCELONA_Isaac_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2026_BARCELONA_Isaac_2_ES.srt"
+                }
+            ],
             "participant": "Isaac",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186637238-22c4234cf79058a77a2af71b332367dc0c08b9afa564e3c5b7c1135d015c1e6b-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211665341?h=6a948bfb4f",
-            "typology": "malentesos"
+            "typology": "memories",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lsf_1211691213",
