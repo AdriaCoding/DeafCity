@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('preview_t')) {
-    require_once dirname(__DIR__) . '/preview/lib/preview_locale.php';
+    require_once dirname(__DIR__) . '/lib/preview_locale.php';
 }
 
 foreach ($gallery_images as $i => $image) {

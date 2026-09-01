@@ -2,7 +2,7 @@
 # videos not yet visible on the site), caption files, translation drafts,
 # operational logs and Studio configuration. None of it is public.
 #
-# Subtitles reach the browser only through preview/captions-static.php, which
+# Subtitles reach the browser only through captions-static.php, which
 # allowlists filenames and serves them from disk.
 <IfModule mod_authz_core.c>
     Require all denied
@@ -13,7 +13,7 @@
 </IfModule>
 
 # Two exceptions: the About page's sign-language map fetches these directly
-# from the browser (see preview/js/sign_language_map.js). Both are public
+# from the browser (see js/sign_language_map.js). Both are public
 # reference data — language polygons and edition city markers.
 <FilesMatch "^(languages|deafcity)\.json$">
     <IfModule mod_authz_core.c>

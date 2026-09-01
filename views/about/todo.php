@@ -1,6 +1,6 @@
 <?php
 if (!function_exists('preview_t')) {
-    require_once dirname(dirname(__DIR__)) . '/preview/lib/preview_locale.php';
+    require_once dirname(dirname(__DIR__)) . '/lib/preview_locale.php';
 }
 if (!isset($GLOBALS['preview_i18n']) || !($GLOBALS['preview_i18n'] instanceof PreviewI18n)) {
     $__todo_locale = preview_bootstrap_locale();

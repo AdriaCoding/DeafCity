@@ -6,6 +6,8 @@ Disallow: /config/
 Disallow: /data/
 Disallow: /tmp/
 Disallow: /docs/
-Disallow: /preview/tests/
+Disallow: /tests/
+Disallow: /lib/
+Disallow: /scripts/
 Disallow: /studio/tests/
 

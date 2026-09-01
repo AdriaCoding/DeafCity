@@ -27,7 +27,7 @@ rather than assumed:
 
 1. **Nothing external requires WebVTT.** The public player does not use a native
    `<video><track>` element. Captions are rendered by custom JS fed from
-   `preview/captions-static.php`, which parses the caption file server-side into
+   `captions-static.php`, which parses the caption file server-side into
    `{start, end, text}` JSON. There is no browser-imposed format requirement.
 2. **Vimeo's texttrack API is format-blind.** `VimeoClient::uploadAndActivateTextTrack()`
    sends `type`, `language` and `name` and then raw-`PUT`s the file's bytes. No
@@ -117,7 +117,7 @@ that is recoverable without failing the revision.
 Three latent bugs were found and fixed along the way, all of which would have
 become visible only after the flip:
 
-- `preview/captions-static.php` matched timestamps with `/^([\d:\.]+)\s+-->\s+([\d:\.]+)/`,
+- `captions-static.php` matched timestamps with `/^([\d:\.]+)\s+-->\s+([\d:\.]+)/`,
   a character class containing no comma. A SubRip timestamp matched nothing, every
   cue hit `continue`, and the endpoint returned `[]` — captions would have silently
   disappeared from the player. Separately, `(float)"01,500"` is `1.0` in PHP, so

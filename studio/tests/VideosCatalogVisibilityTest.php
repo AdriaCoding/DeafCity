@@ -8,7 +8,7 @@ class VideosCatalogVisibilityTest extends TestCase
 {
     protected function setUp(): void
     {
-        require_once dirname(__DIR__, 2) . '/preview/lib/videos_catalog.php';
+        require_once dirname(__DIR__, 2) . '/lib/videos_catalog.php';
     }
 
     public function test_playlist_excludes_invisible_videos(): void

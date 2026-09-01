@@ -26,7 +26,7 @@ implementation is complete, but the final percentage remains subject to
 visual approval by Toni against Mahieddine and Mustapha.
 
 The authoritative implementation location is:
-`preview/components/vimeo_caption_player.css`, inside the
+`components/vimeo_caption_player.css`, inside the
 `@media screen and (min-width: 651px)` block.
 
 ## Consequences

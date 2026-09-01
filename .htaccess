@@ -4,6 +4,8 @@
 # truth for that (currently php8.4-fpm). See AGENTS.md.
 # ---------------------------------------------------------------------------
 
+ErrorDocument 404 /404.php
+
 # --- PHP error handling -----------------------------------------------------
 # Errors must never reach a visitor: stack traces leak absolute paths, config
 # values and library versions. They go to the vhost error log instead.
@@ -42,7 +44,7 @@ php_value session.cookie_samesite Strict
     # 'unsafe-inline' is required while the site still carries inline <script>
     # and style attributes; the policy still blocks third-party script origins.
     # img-src includes OpenStreetMap tiles for the About page sign-language map
-    # (preview/js/sign_language_map.js). Language markers use data: URIs from
+    # (js/sign_language_map.js). Language markers use data: URIs from
     # languages.json and are already covered.
     Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://code.jquery.com https://player.vimeo.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://i.vimeocdn.com https://player.vimeo.com https://*.tile.openstreetmap.org; media-src 'self' https://player.vimeo.com; frame-src 'self' https://player.vimeo.com; connect-src 'self' https://player.vimeo.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>
@@ -60,7 +62,7 @@ php_value session.cookie_samesite Strict
     RewriteRule ^data\.bak                              - [F,L]
     RewriteRule (^|/)composer\.(json|lock)$             - [F,L]
     RewriteRule ^studio/(tests|vendor)/                 - [F,L]
-    RewriteRule ^preview/tests/                         - [F,L]
+    RewriteRule ^tests/                                 - [F,L]
 
     # 2020 Torino prototype, kept on disk but not published. Carries a
     # hardcoded password and is not part of the current site.
@@ -69,11 +71,12 @@ php_value session.cookie_samesite Strict
     # Include-only source directories. These files are require()d from disk and
     # are never a URL of their own; served directly they either fatal (a
     # template with no surrounding context) or burn an FPM worker doing
-    # nothing. preview/components/ is PHP-only here because its stylesheet
+    # nothing. components/ is PHP-forbidden here because its stylesheet
     # IS loaded by the browser.
     RewriteRule ^studio/(src|views)/                    - [F,L]
-    RewriteRule ^preview/lib/                           - [F,L]
-    RewriteRule ^preview/components/.*\.php$            - [F,L]
+    RewriteRule ^lib/                                   - [F,L]
+    RewriteRule ^scripts/                               - [F,L]
+    RewriteRule ^components/.*\.php$                    - [F,L]
     RewriteRule ^views/                                 - [F,L]
 </IfModule>
 
@@ -99,8 +102,8 @@ php_value session.cookie_samesite Strict
 
 # --- Static asset caching ---------------------------------------------------
 <IfModule mod_headers.c>
-    # Safe to cache for a week because every preview asset URL now carries a
-    # filemtime-derived ?v= (preview/lib/asset_version.php), so an edit changes
+    # Safe to cache for a week because every Website asset URL now carries a
+    # filemtime-derived ?v= (lib/asset_version.php), so an edit changes
     # the URL. Media and fonts are content-addressed by filename in practice.
     <FilesMatch "\.(?:css|js|svg|png|jpe?g|gif|webp|avif|mp4|webm|woff2?|ttf|otf|ico)$">
         Header set Cache-Control "public, max-age=604800"
@@ -108,3 +111,22 @@ php_value session.cookie_samesite Strict
 </IfModule>
 
 Redirect "/testing/" "/"
+
+# --- Legacy /preview/ URLs → document root ----------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteRule ^preview/(js|css|img|components)/(.*) /$1/$2 [R=301,L]
+
+    RewriteRule ^preview/captions-static\.php$ /captions-static.php [R=301,L]
+    RewriteRule ^preview/api/locale\.php$ /api/locale.php [R=301,L]
+    RewriteRule ^preview/about(/index\.php)?/?$ /about/ [R=301,L]
+    RewriteRule ^preview/participants(/index\.php)?/?$ /participants/ [R=301,L]
+    RewriteRule ^preview/index\.php$ / [R=301,L]
+    RewriteRule ^preview/?$ / [R=301,L]
+
+    # Anything else still asking for the old tree: gone, not a second site.
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteRule ^preview/ - [F,L]
+</IfModule>

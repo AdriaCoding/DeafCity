@@ -15,10 +15,10 @@
  * body with a fixed token vocabulary cannot execute anything.
  */
 if (!function_exists('preview_t')) {
-    require_once dirname(dirname(__DIR__)) . '/preview/lib/preview_locale.php';
+    require_once dirname(dirname(__DIR__)) . '/lib/preview_locale.php';
 }
 if (!function_exists('vpc_load_videos_catalog')) {
-    require_once dirname(dirname(__DIR__)) . '/preview/lib/videos_catalog.php';
+    require_once dirname(dirname(__DIR__)) . '/lib/videos_catalog.php';
 }
 if (!isset($GLOBALS['preview_i18n']) || !($GLOBALS['preview_i18n'] instanceof PreviewI18n)) {
     $__credits_locale = preview_bootstrap_locale();

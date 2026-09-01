@@ -103,7 +103,7 @@ php studio/scripts/migrate_caption_nle_hour_offset.php --verbose
 php studio/scripts/migrate_caption_nle_hour_offset.php --apply
 ```
 
-Run `--apply` as `www-data` (or `chown` afterwards) so Studio can still write the files. Re-run after a batch of DaVinci uploads if the Producer has not yet set timeline start to `00:00:00:00`. Preview also subtracts the same hour at serve time (`vpc_align_caption_cues_to_playback` in `preview/lib/caption_cues.php`), so the Website still displays those files before the disk rewrite; the script is what fixes Vimeo mirrors and Studio editors. See [ADR-0016](../docs/adr/0016-srt-primary-caption-format.md).
+Run `--apply` as `www-data` (or `chown` afterwards) so Studio can still write the files. Re-run after a batch of DaVinci uploads if the Producer has not yet set timeline start to `00:00:00:00`. The Website also subtracts the same hour at serve time (`vpc_align_caption_cues_to_playback` in `lib/caption_cues.php`), so the Website still displays those files before the disk rewrite; the script is what fixes Vimeo mirrors and Studio editors. See [ADR-0016](../docs/adr/0016-srt-primary-caption-format.md).
 
 ## UI language
 

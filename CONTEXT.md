@@ -31,7 +31,7 @@ The public-facing DEAF.city site where visitors browse Videos, read about the pr
 _Avoid_: Portal, frontend (as a domain noun)
 
 **Preview site**:
-The in-progress modern Website shown to Antoni for validation before it replaces the live homepage. Lives at `/preview/`.
+The in-progress modern Website shown to Antoni for validation; published at `/` (formerly `/preview/`).
 _Avoid_: Staging, prototype, develop
 
 **Studio**:

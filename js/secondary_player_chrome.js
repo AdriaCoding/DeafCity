@@ -1,0 +1,319 @@
+/**
+ * Transport controls on About / Participants (no in-page player).
+ * Reset navigates to neutral /; other transport opens the player (issue 01 / 02).
+ * Syncs Participants nav from saved playback session (issue #04).
+ * DEAF+HEARING force-ON handoff (DH10/DH11) + session chrome mirror (DH9).
+ */
+(function () {
+    'use strict';
+
+    var bar = document.querySelector('.vpc-bottom-bar--player[data-secondary-page="true"]');
+    if (!bar) {
+        return;
+    }
+
+    var L = typeof window.VpcPlaylistLogic !== 'undefined' ? window.VpcPlaylistLogic : null;
+
+    function readSession() {
+        if (!L || typeof L.parsePlaybackSession !== 'function') {
+            return null;
+        }
+        try {
+            var sessionRaw = sessionStorage.getItem(L.PLAYBACK_SESSION_KEY);
+            return sessionRaw ? L.parsePlaybackSession(sessionRaw) : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function syncParticipantsNavFromSession() {
+        if (!L || typeof L.resolveParticipantsNavState !== 'function') {
+            return;
+        }
+        var btn = bar.querySelector('.preview-site-nav__btn[data-collection="participants"]');
+        if (!btn) {
+            return;
+        }
+        var genericLabel = btn.getAttribute('data-generic-label') || 'Participants';
+        var session = readSession();
+        var participantName = session && typeof session.participantName === 'string'
+            ? session.participantName.trim()
+            : '';
+        var participantSequence = session && typeof session.participantSequence === 'string'
+            ? session.participantSequence.trim()
+            : '';
+        var navState = L.resolveParticipantsNavState({
+            isParticipantMode: participantName !== '',
+            participantName: participantName,
+            participantSequence: participantSequence,
+            onPlayerPage: false,
+            isPlaying: false,
+            currentVideoParticipant: '',
+            currentVideoParticipantSequence: '',
+        });
+        var labelEl = btn.querySelector('.vpc-chrome-btn__label');
+        var displayLabel = navState.label || genericLabel;
+        if (labelEl) {
+            var fullEl = labelEl.querySelector('.vpc-chrome-btn__label-full');
+            var shortEl = labelEl.querySelector('.vpc-chrome-btn__label-short');
+            if (fullEl && shortEl) {
+                fullEl.textContent = displayLabel;
+                shortEl.textContent = displayLabel;
+            } else {
+                labelEl.textContent = displayLabel;
+            }
+        } else {
+            btn.textContent = displayLabel;
+        }
+        if (navState.isActive) {
+            btn.classList.add('is-active');
+        } else {
+            btn.classList.remove('is-active');
+        }
+        if (navState.label) {
+            btn.classList.add('preview-site-nav__btn--person-name');
+        } else {
+            btn.classList.remove('preview-site-nav__btn--person-name');
+        }
+        if (typeof window.vpcSyncChromeButtonWidths === 'function') {
+            window.vpcSyncChromeButtonWidths();
+        }
+    }
+
+    function syncDeafHearingFromSession() {
+        var btn = bar.querySelector('.vpc-deaf-hearing-btn');
+        if (!btn) {
+            return;
+        }
+        var session = readSession();
+        var tagOn = !!(
+            session
+            && session.filterState
+            && typeof session.filterState.tag === 'string'
+            && session.filterState.tag !== ''
+        );
+        if (tagOn) {
+            btn.classList.add('is-active');
+            btn.setAttribute('aria-pressed', 'true');
+        } else {
+            btn.classList.remove('is-active');
+            btn.setAttribute('aria-pressed', 'false');
+        }
+        if (typeof window.vpcSyncChromeButtonWidths === 'function') {
+            window.vpcSyncChromeButtonWidths();
+        }
+    }
+
+    syncParticipantsNavFromSession();
+    syncDeafHearingFromSession();
+
+    function playerUrl(intent) {
+        var path = '/';
+        var homeMeta = document.querySelector('meta[name="site-home"]');
+        if (homeMeta && homeMeta.getAttribute('content')) {
+            path = homeMeta.getAttribute('content');
+        }
+        var params = [];
+        var pageUrl = document.querySelector('meta[name="page-url"]');
+        var match = window.location.search.match(/[?&]lang=([^&]+)/);
+        if (match && match[1]) {
+            params.push('lang=' + encodeURIComponent(decodeURIComponent(match[1])));
+        }
+        if (intent === 'reset') {
+            try {
+                sessionStorage.removeItem('vpc-playback-session');
+                sessionStorage.removeItem('vpc-nav-intent');
+            } catch (e) {}
+        } else if (intent && intent !== 'reset') {
+            try {
+                sessionStorage.setItem('vpc-nav-intent', intent);
+            } catch (e) {}
+        }
+        if (params.length) {
+            path += '?' + params.join('&');
+        }
+        return path;
+    }
+
+    function bind(btn, intent) {
+        if (!btn) {
+            return;
+        }
+        btn.addEventListener('click', function () {
+            window.location.href = playerUrl(intent);
+        });
+    }
+
+    var resetBtn = bar.querySelector('.vpc-reset-btn');
+    var playPauseBtn = bar.querySelector('.vpc-play-pause-btn');
+    var prevBtn = bar.querySelector('.vpc-prev-btn');
+    var nextBtn = bar.querySelector('.vpc-next-btn');
+    var deafBtn = bar.querySelector('.vpc-deaf-hearing-btn');
+    var aboutNavLink = bar.querySelector('[data-route="about"]');
+    var participantsNavLink = bar.querySelector('[data-route="participants"]');
+
+    bind(resetBtn, 'reset');
+    bind(playPauseBtn, 'play');
+    bind(prevBtn, 'prev');
+    bind(nextBtn, 'next');
+
+    if (deafBtn && !deafBtn.disabled) {
+        bind(deafBtn, 'deaf-hearing');
+    }
+
+    if (L && typeof L.resolveTransportShortcutAction === 'function') {
+        document.addEventListener('keydown', function (e) {
+            var action = L.resolveTransportShortcutAction({
+                key: e.key,
+                ctrlKey: e.ctrlKey,
+                altKey: e.altKey,
+                metaKey: e.metaKey,
+                shiftKey: e.shiftKey,
+                activeElement: document.activeElement,
+            });
+            if (!action) return;
+            e.preventDefault();
+            if (action === 'play-pause' && playPauseBtn) playPauseBtn.click();
+            else if (action === 'prev' && prevBtn) prevBtn.click();
+            else if (action === 'next' && nextBtn) nextBtn.click();
+            else if (action === 'reset' && resetBtn) resetBtn.click();
+            else if (action === 'deaf-hearing' && deafBtn) deafBtn.click();
+            else if (action === 'about' && aboutNavLink) aboutNavLink.click();
+            else if (action === 'participants' && participantsNavLink) participantsNavLink.click();
+        });
+    }
+
+    // R2 filter pickers (Sign language / City–Edition / Typology): on secondary pages the
+    // player engine is not loaded, so wire the dropup open/close here and hand off to the
+    // player on selection — `filter:<facet>:<value>` intent, applied by planSecondaryNavRestore.
+    var r2Closers = [];
+    function closeAllR2Dropups() {
+        r2Closers.forEach(function (close) { close(); });
+    }
+    function wireR2Picker(picker) {
+        var facet = picker.getAttribute('data-picker');
+        var btn = picker.querySelector('.vpc-picker-btn');
+        var dropdown = picker.querySelector('.vpc-picker-dropdown');
+        if (!facet || !btn || !dropdown) {
+            return;
+        }
+
+        var activeIndex = -1;
+
+        function currentOptions() {
+            return Array.prototype.slice.call(dropdown.querySelectorAll('.vpc-picker-option'));
+        }
+
+        function clearActiveOption() {
+            currentOptions().forEach(function (o) { o.classList.remove('vpc-picker-option--active'); });
+        }
+
+        function setActiveIndex(index) {
+            var options = currentOptions();
+            if (index < 0 || index >= options.length) return;
+            clearActiveOption();
+            activeIndex = index;
+            var el = options[activeIndex];
+            el.classList.add('vpc-picker-option--active');
+            dropdown.setAttribute('aria-activedescendant', el.id);
+            if (typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest' });
+        }
+
+        function selectedOptionIndex() {
+            var options = currentOptions();
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].getAttribute('aria-selected') === 'true') return i;
+            }
+            return 0;
+        }
+
+        function close() {
+            dropdown.hidden = true;
+            btn.setAttribute('aria-expanded', 'false');
+            dropdown.removeAttribute('aria-activedescendant');
+            clearActiveOption();
+            activeIndex = -1;
+        }
+        r2Closers.push(close);
+
+        function open() {
+            dropdown.hidden = false;
+            btn.setAttribute('aria-expanded', 'true');
+            setActiveIndex(selectedOptionIndex());
+            dropdown.focus();
+        }
+
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var wasOpen = !dropdown.hidden;
+            closeAllR2Dropups();
+            if (!wasOpen) open();
+        });
+
+        btn.addEventListener('keydown', function (e) {
+            if (!L || typeof L.resolvePickerListboxKeyAction !== 'function') return;
+            var action = L.resolvePickerListboxKeyAction({
+                key: e.key,
+                activeIndex: activeIndex,
+                optionCount: currentOptions().length,
+                isOpen: !dropdown.hidden,
+            });
+            if (action.action === 'open') {
+                e.preventDefault();
+                open();
+            }
+        });
+
+        function activateOption(target) {
+            close();
+            var value = target.getAttribute('data-value') || '';
+            // "All X" (clear) option → neutral player handoff, no filter pin.
+            if (value === '') {
+                window.location.href = playerUrl('play');
+                return;
+            }
+            window.location.href = playerUrl('filter:' + facet + ':' + encodeURIComponent(value));
+        }
+
+        dropdown.addEventListener('click', function (e) {
+            var target = e.target;
+            if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) {
+                return;
+            }
+            e.stopPropagation();
+            activateOption(target);
+        });
+        dropdown.addEventListener('keydown', function (e) {
+            var action = (L && typeof L.resolvePickerListboxKeyAction === 'function')
+                ? L.resolvePickerListboxKeyAction({
+                      key: e.key,
+                      activeIndex: activeIndex,
+                      optionCount: currentOptions().length,
+                      isOpen: true,
+                  })
+                : (e.key === 'Escape' ? { action: 'close' } : { action: 'none' });
+
+            if (action.action === 'move') {
+                e.preventDefault();
+                setActiveIndex(action.index);
+            } else if (action.action === 'close') {
+                e.preventDefault();
+                close();
+                btn.focus();
+            } else if (action.action === 'select') {
+                e.preventDefault();
+                var options = currentOptions();
+                var el = options[action.index];
+                if (el) activateOption(el);
+            }
+        });
+    }
+    bar.querySelectorAll(
+        '.vpc-picker[data-picker="sign_language"],'
+        + '.vpc-picker[data-picker="edition"],'
+        + '.vpc-picker[data-picker="typology"]'
+    ).forEach(wireR2Picker);
+    if (r2Closers.length) {
+        document.addEventListener('click', closeAllR2Dropups);
+    }
+}());

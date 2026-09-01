@@ -27,11 +27,9 @@ The whole site runs **PHP 8.4** — set once, site-wide, by the Apache vhost inc
 
 `studio/.htaccess` exists again, but only to widen the site-wide Content-Security-Policy for the Studio (CodeMirror from esm.sh, Google Fonts) — it carries **no** `SetHandler` and does not change the PHP version. Don't delete it as "the old PHP-pinning file".
 
-Some `preview/`/site-root files still carry old "PHP 5.6 compatible" doc comments and avoid PHP 7+ syntax (`??`, etc.) from before the 2026-07-29 migration — that's now a style choice, not a hard constraint. Modern idioms are fine anywhere. If a directory ever needs to run a *different* PHP version, add `<dir>/.htaccess` with a `SetHandler` block pointing at that version's FPM socket (mirrors the old `studio/.htaccess` pattern).
+Some Website/site-root files still carry old "PHP 5.6 compatible" doc comments and avoid PHP 7+ syntax (`??`, etc.) from before the 2026-07-29 migration — that's now a style choice, not a hard constraint. Modern idioms are fine anywhere. If a directory ever needs to run a *different* PHP version, add `<dir>/.htaccess` with a `SetHandler` block pointing at that version's FPM socket (mirrors the old `studio/.htaccess` pattern).
 
 ### Frontend testing
-
-You may test the Studio webapp at `https://deaf.city/studio` (password: `hola`).
 
 When you need a catalog video for manual testing, use **2020_VALENCIA_Aurora_1_4k** (`vimeo_id` `1211616576`, edition Valencia 2020). Details page: `?action=continguts-video&vimeo_id=1211616576`. (The previously listed `1201722064` is no longer in the catalog — check `data/catalog.json` before trusting this id.)
 

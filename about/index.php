@@ -1,0 +1,89 @@
+<?php
+$rootDir = dirname(__DIR__);
+require __DIR__ . '/../lib/site_base.php';
+require __DIR__ . '/../lib/gallery_images.php';
+require __DIR__ . '/../lib/preview_locale.php';
+require __DIR__ . '/../lib/bottom_bar_player_config.php';
+require __DIR__ . '/../lib/asset_version.php';
+
+$locale = preview_bootstrap_locale();
+$preview_i18n = $locale['i18n'];
+$preview_lang = $locale['lang'];
+$preview_dir = $locale['dir'];
+
+$galleryJsonPath = $rootDir . '/data/gallery.json';
+if (!is_readable($galleryJsonPath)) {
+    $galleryJsonPath = preview_resolve_data_dir() . '/gallery.json';
+}
+$gallery_images = preview_load_gallery_images($galleryJsonPath);
+$viewsDir = $rootDir . '/views';
+$currentRoute = 'about';
+
+$bottomBar = preview_build_bottom_bar_player_config('about', $preview_lang, 'about');
+?>
+<!DOCTYPE html>
+<html lang="<?= htmlspecialchars($preview_lang, ENT_QUOTES, 'UTF-8') ?>" dir="<?= htmlspecialchars($preview_dir, ENT_QUOTES, 'UTF-8') ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= htmlspecialchars(preview_t('about.page_title'), ENT_QUOTES, 'UTF-8') ?></title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="page-url" content="<?= htmlspecialchars(preview_page_url_meta('about'), ENT_QUOTES, 'UTF-8') ?>">
+    <meta name="site-home" content="<?= htmlspecialchars(preview_home_path(), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('components/vimeo_caption_player.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('css/bottom-bar.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('css/about-page.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="/leaflet/leaflet.css">
+    <style>
+        html, body { height: 100%; margin: 0; overflow: hidden; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            font-family: Roboto, "Noto Sans Arabic", Arial, sans-serif;
+        }
+        html[dir="rtl"] .preview-about-page { direction: rtl; text-align: right; }
+    </style>
+</head>
+<body>
+<div class="preview-about-page">
+    <div id="clock">
+        <div id="clock-proper" class="clock">
+            <iframe src="/realtime/index.html" title="DEAF.city clock"></iframe>
+        </div>
+        <div id="gallery" class="gallery">
+            <?php include $viewsDir . '/_gallery.php'; ?>
+        </div>
+    </div>
+
+    <div id="about" class="about">
+        <div id="about-todo">
+            <?php include $viewsDir . '/about/todo.php'; ?>
+        </div>
+    </div>
+
+    <div id="trio">
+        <?php include $viewsDir . '/about/trio.php'; ?>
+    </div>
+
+    <?php include __DIR__ . '/map.php'; ?>
+
+    <div id="credits" class="about">
+        <div id="credits-bottom">
+            <?php include $viewsDir . '/about/credits_i18n.php'; ?>
+        </div>
+    </div>
+</div>
+
+<?php include __DIR__ . '/../components/bottom_bar.php'; ?>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="/leaflet/js/gallery.js"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/vimeo_playlist_logic.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/secondary_player_chrome.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
+<script src="/leaflet/leaflet.js"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/sign_language_map.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
+</body>
+</html>

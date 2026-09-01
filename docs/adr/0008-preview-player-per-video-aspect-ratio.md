@@ -18,7 +18,7 @@ So the legacy "hardcode" is not forcing Video shape — it is a **stable 16:9 la
 
 ## What the Preview site currently does
 
-- `preview/components/vimeo_caption_player.css` — `.video-shell` is a fixed `aspect-ratio: 16/9`; the iframe is `width:100%; height:100%`, stretched to fill. No per-Video ratio anywhere.
+- `components/vimeo_caption_player.css` — `.video-shell` is a fixed `aspect-ratio: 16/9`; the iframe is `width:100%; height:100%`, stretched to fill. No per-Video ratio anywhere.
 - The Preview player reads `data/catalog.json`, and **that file has no width/height**. Keys are only `id, vimeo_id, title, sign_language, edition, tags, captions, thumbnail_url`. `videos.json` lacks dimensions too.
 
 The legacy site obtained dimensions from a live `VideoCache` Vimeo lookup that the Preview pipeline never recorded into the Catalog. Adapting per-Video is therefore **not a CSS tweak** — the dimension data does not exist in the Preview's source of truth.

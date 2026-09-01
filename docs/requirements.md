@@ -27,10 +27,8 @@ Since launching in Valencia (2020), the project has expanded to Mexico City (202
 
 ### Website (public)
 
-- The current public homepage is legacy PHP built by a previous developer.
-- A modern replacement is being built on the **Preview site** (`/preview/`, replacing `/develop/`).
-- The Preview site uses the develop player model: Vimeo for video delivery, **Subtitles** served from caption files on our server (see [ADR-0001](adr/0001-server-hosted-subtitles.md)).
-- **Do not modify the live homepage** until Antoni validates the Preview site and approves the swap.
+- The public Website is the former Preview site, served at `/`.
+- The Website uses Vimeo for video delivery and **Subtitles** served from caption files on our server (see [ADR-0001](adr/0001-server-hosted-subtitles.md)).
 
 ### Studio (private)
 
