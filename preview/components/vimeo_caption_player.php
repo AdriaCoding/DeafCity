@@ -581,8 +581,14 @@ $subtitleLanguagesForConfig = count($subtitleLanguagesList) > 0
 $initialPlaylistIndex = isset($vpc['playlist_index']) ? (int) $vpc['playlist_index'] : 0;
 $initialPlaylistIndex = max(0, min($initialPlaylistIndex, count($playlistNormalized) - 1));
 
+// Set by the caller when the requested collection (e.g. an unknown/empty Participant
+// filter) resolved to nothing: $playlistNormalized[0] is only a technical placeholder
+// (kept non-empty because the component requires it), not a Video to display. Render
+// an empty player instead of flashing that unrelated Video (D18 unknown-participant fix).
+$noInitialVideo = !empty($vpc['no_initial_video']);
+
 $initialEntry = $playlistNormalized[$initialPlaylistIndex];
-$initialPosterUrl = isset($initialEntry['thumbnail_url']) && is_string($initialEntry['thumbnail_url'])
+$initialPosterUrl = (!$noInitialVideo && isset($initialEntry['thumbnail_url']) && is_string($initialEntry['thumbnail_url']))
     ? vpc_participant_thumbnail_display_url($initialEntry['thumbnail_url'])
     : '';
 $initialSignLangReadout = vpc_face_labels_for_filter_option(
@@ -651,9 +657,15 @@ $navHiddenClass = '';
 
     <div class="vpc-media-stage">
         <div class="video-stack">
-            <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box"></div>
+            <div id="<?php echo htmlspecialchars($captionBoxId, ENT_QUOTES, 'UTF-8'); ?>" class="caption-box" dir="auto" aria-live="polite" aria-atomic="true"></div>
+            <p class="vpc-caption-error is-hidden" role="status"></p>
             <div class="video-shell">
-                <div class="vpc-load-scrim is-hidden" aria-hidden="true"></div>
+                <div class="vpc-load-scrim<?php echo $noInitialVideo ? '' : ' is-hidden'; ?>" aria-hidden="true"></div>
+                <?php if ($noInitialVideo): ?>
+                <p class="vpc-empty-state">
+                    <?= htmlspecialchars(preview_t('player.empty.no_matching_videos'), ENT_QUOTES, 'UTF-8') ?>
+                </p>
+                <?php endif; ?>
                 <?php if ($initialPosterUrl !== ''): ?>
                 <img
                     class="vpc-poster-cover"
@@ -664,7 +676,7 @@ $navHiddenClass = '';
                 <?php endif; ?>
                 <iframe
                     id="<?php echo htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8'); ?>"
-                    src="<?php echo htmlspecialchars($embedSrc, ENT_QUOTES, 'UTF-8'); ?>"
+                    <?php if (!$noInitialVideo): ?>src="<?php echo htmlspecialchars($embedSrc, ENT_QUOTES, 'UTF-8'); ?>"<?php endif; ?>
                     title="<?php echo htmlspecialchars($iframeTitle, ENT_QUOTES, 'UTF-8'); ?>"
                     allow="autoplay; fullscreen; picture-in-picture"
                     referrerpolicy="strict-origin-when-cross-origin"
@@ -686,7 +698,7 @@ $navHiddenClass = '';
     $participantNavName = isset($vpc['participant_name']) ? trim((string) $vpc['participant_name']) : '';
     if ($participantNavName !== '') {
         $playlistIndexSsr = isset($vpc['playlist_index']) ? (int) $vpc['playlist_index'] : 0;
-        $ssrItem = (isset($vpc['playlist']) && is_array($vpc['playlist']) && isset($vpc['playlist'][$playlistIndexSsr]))
+        $ssrItem = (!$noInitialVideo && isset($vpc['playlist']) && is_array($vpc['playlist']) && isset($vpc['playlist'][$playlistIndexSsr]))
             ? $vpc['playlist'][$playlistIndexSsr]
             : null;
         $ssrName = $participantNavName;

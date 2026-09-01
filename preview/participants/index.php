@@ -3,6 +3,7 @@ $rootDir = dirname(dirname(dirname(__FILE__)));
 require __DIR__ . '/../lib/videos_catalog.php';
 require __DIR__ . '/../lib/preview_locale.php';
 require __DIR__ . '/../lib/bottom_bar_player_config.php';
+require __DIR__ . '/../lib/asset_version.php';
 
 $locale = preview_bootstrap_locale();
 $preview_i18n = $locale['i18n'];
@@ -30,9 +31,9 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta name="page-url" content="/preview/participants">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=70">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=9">
-    <link rel="stylesheet" href="/preview/css/participants-page.css?v=13">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('components/vimeo_caption_player.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('css/bottom-bar.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('css/participants-page.css'), ENT_QUOTES, 'UTF-8') ?>">
     <style>
         html, body { height: 100%; margin: 0; overflow: hidden; }
         body {
@@ -46,6 +47,11 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
 </head>
 <body>
 <div class="preview-participants-page">
+    <?php if ($catalog === null): ?>
+    <p style="font-family:sans-serif;padding:1rem;color:#666;">
+        <?= htmlspecialchars(preview_t('player.error.no_playlist'), ENT_QUOTES, 'UTF-8') ?>
+    </p>
+    <?php else: ?>
     <div class="participants-grid">
         <?php foreach ($participantNames as $name): ?>
             <?php
@@ -87,12 +93,13 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
             </a>
         <?php endforeach; ?>
     </div>
+    <?php endif; ?>
 </div>
 
 <?php include __DIR__ . '/../components/bottom_bar.php'; ?>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=19"></script>
-<script src="/preview/js/secondary_player_chrome.js?v=6"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/vimeo_playlist_logic.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/secondary_player_chrome.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
 <script>
 (function () {
     'use strict';

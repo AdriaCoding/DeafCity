@@ -349,6 +349,49 @@ class CatalogAction
         exit;
     }
 
+    /**
+     * Resolves a catalog-supplied caption `file` value to a real path
+     * strictly inside $captionsDir, or false if it isn't one.
+     *
+     * The catalog is server-controlled data, but a caption's `file` field
+     * ultimately traces back to things like a video title or an uploaded
+     * filename, so it must never be trusted to build a filesystem path
+     * without checking it first: basename() strips any directory
+     * component (defeats `../../config/config.php`, absolute paths like
+     * `/etc/passwd`, and encoded-looking values like `..%2f..%2f...`,
+     * none of which contain a literal path separator once reduced to a
+     * basename), and the realpath containment check is the actual
+     * guarantee — it verifies the resolved file is truly inside the
+     * captions directory before any read/write/unlink touches it.
+     */
+    public static function resolveSafeCaptionPath(string $captionsDir, ?string $file): string|false
+    {
+        if ($file === null || trim($file) === '') {
+            return false;
+        }
+
+        $safeName = basename($file);
+        if ($safeName === '' || $safeName === '.' || $safeName === '..') {
+            return false;
+        }
+
+        $realDir = realpath($captionsDir);
+        if ($realDir === false) {
+            return false;
+        }
+
+        $realCandidate = realpath($realDir . DIRECTORY_SEPARATOR . $safeName);
+        if ($realCandidate === false) {
+            return false;
+        }
+
+        if (!str_starts_with($realCandidate, $realDir . DIRECTORY_SEPARATOR)) {
+            return false;
+        }
+
+        return $realCandidate;
+    }
+
     private function downloadCaption(): never
     {
         $vimeoId = trim((string) ($_GET['vimeo_id'] ?? ''));
@@ -377,9 +420,11 @@ class CatalogAction
             exit;
         }
 
-        $captionPath = $this->c->dataDir . '/captions/' . $captionFile;
-        if (!is_file($captionPath)) {
-            http_response_code(404);
+        $captionPath = self::resolveSafeCaptionPath($this->c->dataDir . '/captions', $captionFile);
+        if ($captionPath === false) {
+            http_response_code(400);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo 'Ruta de fitxer de subtítols no vàlida.';
             exit;
         }
 
@@ -676,8 +721,8 @@ class CatalogAction
         }
 
         $captionsDir = $this->c->dataDir . '/captions';
-        $vttPath = $captionsDir . '/' . ($captionEntry['file'] ?? '');
-        if (!is_file($vttPath)) {
+        $vttPath = self::resolveSafeCaptionPath($captionsDir, $captionEntry['file'] ?? null);
+        if ($vttPath === false) {
             $this->renderEmbedError('Fitxer de subtítols no trobat al servidor.');
         }
 
@@ -719,8 +764,8 @@ class CatalogAction
                 }
             }
             if ($masterFile !== null) {
-                $masterPath = $captionsDir . '/' . $masterFile;
-                if (is_file($masterPath)) {
+                $masterPath = self::resolveSafeCaptionPath($captionsDir, $masterFile);
+                if ($masterPath !== false) {
                     $masterCues = $captionReader->read($masterPath)['cues'];
                 }
             }
@@ -833,8 +878,8 @@ class CatalogAction
             exit;
         }
 
-        $masterVttPath = $this->c->dataDir . '/captions/' . $masterFile;
-        if (!is_file($masterVttPath)) {
+        $masterVttPath = self::resolveSafeCaptionPath($this->c->dataDir . '/captions', $masterFile);
+        if ($masterVttPath === false) {
             http_response_code(422);
             echo json_encode(['ok' => false, 'error' => 'El fitxer VTT mestre no existeix al servidor.'], JSON_UNESCAPED_UNICODE);
             exit;
@@ -983,7 +1028,12 @@ class CatalogAction
             exit;
         }
 
-        $masterVttPath = $this->c->dataDir . '/captions/' . $masterFile;
+        $masterVttPath = self::resolveSafeCaptionPath($this->c->dataDir . '/captions', $masterFile);
+        if ($masterVttPath === false) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'Fitxer VTT mestre no trobat.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
 
         $translationState->resetLanguage($lang);
 

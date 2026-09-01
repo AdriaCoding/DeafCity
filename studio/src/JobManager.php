@@ -18,13 +18,14 @@ class JobManager
 
     public function createWithContent(array $fields, string $content): void
     {
+        // Fast unlocked pre-check for the common case; createDirAtomically()
+        // below is the authoritative check that closes the race between two
+        // concurrent creates (see its docblock).
         if ($this->exists()) {
             throw new \RuntimeException('Ja hi ha una feina en curs.');
         }
 
-        if (!mkdir($this->currentDir, 0775, true) && !is_dir($this->currentDir)) {
-            throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
-        }
+        $this->createDirAtomically();
 
         $this->writeJson($fields);
 
@@ -36,13 +37,14 @@ class JobManager
 
     public function createWithAudio(array $fields, UploadedFile $audio): void
     {
+        // Fast unlocked pre-check for the common case; createDirAtomically()
+        // below is the authoritative check that closes the race between two
+        // concurrent creates (see its docblock).
         if ($this->exists()) {
             throw new \RuntimeException('Ja hi ha una feina en curs.');
         }
 
-        if (!mkdir($this->currentDir, 0775, true) && !is_dir($this->currentDir)) {
-            throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
-        }
+        $this->createDirAtomically();
 
         $ext = strtolower(pathinfo($audio->originalName, PATHINFO_EXTENSION));
         $filename = $ext !== '' ? "interpreter_audio.$ext" : 'interpreter_audio';
@@ -153,6 +155,33 @@ class JobManager
         }
 
         $this->removeDir($this->currentDir);
+    }
+
+    /**
+     * Create the job directory, relying on mkdir()'s atomic EEXIST failure
+     * (rather than an is_dir() check-then-act) to detect a collision.
+     *
+     * The previous code did `if (!mkdir(...) && !is_dir(...))`, which
+     * silently treats "the directory already exists" as success — so two
+     * concurrent creates could both pass the exists() pre-check, both call
+     * mkdir(), and both go on to write job.json / the draft into the same
+     * directory, corrupting each other's job. Here, mkdir() itself is the
+     * single atomic check: whichever caller's mkdir() wins creates the
+     * directory; the loser's mkdir() fails with the directory already
+     * present, and that failure is always surfaced as "job already in
+     * progress" rather than swallowed.
+     */
+    private function createDirAtomically(): void
+    {
+        if (@mkdir($this->currentDir, 0775, true)) {
+            return;
+        }
+
+        if (is_dir($this->currentDir)) {
+            throw new \RuntimeException('Ja hi ha una feina en curs.');
+        }
+
+        throw new \RuntimeException('No s\'ha pogut crear el directori de la feina.');
     }
 
     private function writeJson(array $fields): void

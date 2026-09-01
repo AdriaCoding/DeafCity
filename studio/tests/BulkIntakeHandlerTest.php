@@ -7,6 +7,7 @@ use Studio\BackgroundJobLauncher;
 use Studio\BulkIntakeHandler;
 use Studio\BulkIntakeQueue;
 use Studio\JobManager;
+use Studio\ProcessLock;
 use Studio\StudioConfig;
 
 class BulkIntakeHandlerTest extends TestCase
@@ -101,6 +102,45 @@ class BulkIntakeHandlerTest extends TestCase
         $this->assertCount(2, $snap['items']);
         $this->assertNotEmpty($this->launched);
         $this->assertStringContainsString('run_bulk.sh', $this->launched[0]);
+    }
+
+    public function test_concurrent_launch_is_refused_while_a_launch_is_already_in_flight(): void
+    {
+        // Simulate a second, near-simultaneous request racing a first one that
+        // is still between its bulkQueue->exists() check and its queue->create()
+        // call: hold the same launch lock BulkIntakeHandler acquires, and
+        // confirm this request is refused rather than also creating a queue
+        // and launching a second worker.
+        $lock = ProcessLock::acquire($this->bulkQueue->lockFilePath());
+        $this->assertNotNull($lock);
+
+        $result = $this->handler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $this->multiFileUpload(['talk_ca.mp3', 'session_es.wav'])],
+        );
+
+        $this->assertFalse($result['created'] ?? false);
+        $this->assertArrayHasKey('_form', $result['errors']);
+        $this->assertFalse($this->bulkQueue->exists());
+        $this->assertEmpty($this->launched);
+
+        $lock->release();
+    }
+
+    public function test_lock_is_released_after_a_successful_launch_so_a_later_request_can_proceed(): void
+    {
+        $first = $this->handler()->handlePost(
+            ['bulk_languages' => ['ca', 'es']],
+            ['intake_file' => $this->multiFileUpload(['talk_ca.mp3', 'session_es.wav'])],
+        );
+        $this->assertTrue($first['created'] ?? false);
+
+        // The launch lock itself must be free again immediately afterward —
+        // only the persisted queue file (a separate, legitimate check) should
+        // now be what refuses a further concurrent launch.
+        $lock = ProcessLock::acquire($this->bulkQueue->lockFilePath());
+        $this->assertNotNull($lock);
+        $lock->release();
     }
 
     public function test_invalid_language_returns_errors_without_queue(): void

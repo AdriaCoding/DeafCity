@@ -62,48 +62,86 @@ class BackgroundJobLauncherTest extends TestCase
         $this->assertStringContainsString(escapeshellarg('/path with spaces/audio.mp3'), $captured);
     }
 
-    public function test_launch_translation_includes_gemini_key_and_targets(): void
+    public function test_launch_translation_passes_gemini_key_via_env_not_cmdline(): void
     {
         $captured = null;
+        $capturedEnv = null;
         $launcher = new BackgroundJobLauncher(
             '/srv/scripts',
             'my-secret-key',
-            function ($cmd) use (&$captured) {
+            function ($cmd) use (&$captured, &$capturedEnv) {
                 $captured = $cmd;
+                $capturedEnv = getenv('GEMINI_API_KEY');
             }
         );
 
         $launcher->launchTranslation('/master.vtt', '/status.json', 'es', '/jobdir', array('en', 'fr'));
 
         $this->assertNotNull($captured);
-        $this->assertStringContainsString(escapeshellarg('my-secret-key'), $captured);
+        // The secret must never appear on the command line — that's what a
+        // local user could read via `ps` while the shell PHP's exec()
+        // spawns (`/bin/sh -c "$cmd"`) is alive. It's made available to the
+        // launched script only through the process environment instead.
+        $this->assertStringNotContainsString('my-secret-key', $captured);
+        $this->assertStringNotContainsString('GEMINI_API_KEY', $captured);
+        $this->assertSame('my-secret-key', $capturedEnv);
         $this->assertStringContainsString('run_translate.sh', $captured);
         $this->assertStringContainsString(escapeshellarg('/master.vtt'), $captured);
         $this->assertStringContainsString(escapeshellarg('en,fr'), $captured);
         $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
+        $this->assertStringStartsWith('nohup', $captured);
     }
 
     public function test_launch_translation_with_empty_gemini_key(): void
     {
         $captured = null;
+        $capturedEnv = null;
         $launcher = new BackgroundJobLauncher(
             '/srv/scripts',
             '',
-            function ($cmd) use (&$captured) {
+            function ($cmd) use (&$captured, &$capturedEnv) {
                 $captured = $cmd;
+                $capturedEnv = getenv('GEMINI_API_KEY');
             }
         );
 
         $launcher->launchTranslation('/master.vtt', '/status.json', 'es', '/jobdir', array('en'));
 
-        $this->assertStringStartsWith('GEMINI_API_KEY=', $captured);
+        $this->assertStringStartsWith('nohup', $captured);
+        $this->assertSame('', $capturedEnv);
+    }
+
+    public function test_gemini_key_env_var_is_restored_after_launch(): void
+    {
+        $previous = getenv('GEMINI_API_KEY');
+        putenv('GEMINI_API_KEY=pre-existing-value');
+
+        try {
+            $launcher = new BackgroundJobLauncher('/srv/scripts', 'my-secret-key', function ($cmd): void {
+                // no-op: the assertion happens after the call returns
+            });
+
+            $launcher->launchTranslation('/master.vtt', '/status.json', 'es', '/jobdir', array('en'));
+
+            // Must not leak the secret (or stay cleared) into whatever this
+            // long-lived PHP-FPM worker process handles next.
+            $this->assertSame('pre-existing-value', getenv('GEMINI_API_KEY'));
+        } finally {
+            if ($previous === false) {
+                putenv('GEMINI_API_KEY');
+            } else {
+                putenv('GEMINI_API_KEY=' . $previous);
+            }
+        }
     }
 
     public function test_launch_transcription_pipeline_calls_pipeline_script(): void
     {
         $captured = null;
-        $launcher = new BackgroundJobLauncher('/srv/scripts', 'gemini-key', function ($cmd) use (&$captured) {
+        $capturedEnv = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'gemini-key', function ($cmd) use (&$captured, &$capturedEnv) {
             $captured = $cmd;
+            $capturedEnv = getenv('GEMINI_API_KEY');
         });
 
         $launcher->launchTranscriptionPipeline(
@@ -123,15 +161,18 @@ class BackgroundJobLauncherTest extends TestCase
         $this->assertStringContainsString(escapeshellarg('/data/revision_status.json'), $captured);
         $this->assertStringContainsString(escapeshellarg('ca'), $captured);
         $this->assertStringContainsString(escapeshellarg('en'), $captured);
-        $this->assertStringContainsString(escapeshellarg('gemini-key'), $captured);
+        $this->assertStringNotContainsString('gemini-key', $captured);
+        $this->assertSame('gemini-key', $capturedEnv);
         $this->assertStringContainsString('> /dev/null 2>&1 &', $captured);
     }
 
     public function test_launch_revision_and_translation_includes_gemini_key_and_paths(): void
     {
         $captured = null;
-        $launcher = new BackgroundJobLauncher('/srv/scripts', 'my-secret-key', function ($cmd) use (&$captured) {
+        $capturedEnv = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'my-secret-key', function ($cmd) use (&$captured, &$capturedEnv) {
             $captured = $cmd;
+            $capturedEnv = getenv('GEMINI_API_KEY');
         });
 
         $launcher->launchRevisionAndTranslation(
@@ -144,7 +185,8 @@ class BackgroundJobLauncherTest extends TestCase
         );
 
         $this->assertNotNull($captured);
-        $this->assertStringContainsString(escapeshellarg('my-secret-key'), $captured);
+        $this->assertStringNotContainsString('my-secret-key', $captured);
+        $this->assertSame('my-secret-key', $capturedEnv);
         $this->assertStringContainsString('run_revise.sh', $captured);
         $this->assertStringContainsString(escapeshellarg('/master.vtt'), $captured);
         $this->assertStringContainsString(escapeshellarg('/revision.json'), $captured);
@@ -243,6 +285,23 @@ class BackgroundJobLauncherTest extends TestCase
 
         $this->assertStringContainsString('--initial_prompt ' . escapeshellarg('Mexican Spanish'), $captured);
         $this->assertStringContainsString('--dialect_name ' . escapeshellarg('Mexican Spanish (not Peninsular Spanish)'), $captured);
+    }
+
+    public function test_launch_batch_translate_passes_gemini_key_via_env_not_cmdline(): void
+    {
+        $captured = null;
+        $capturedEnv = null;
+        $launcher = new BackgroundJobLauncher('/srv/scripts', 'batch-secret', function ($cmd) use (&$captured, &$capturedEnv) {
+            $captured = $cmd;
+            $capturedEnv = getenv('GEMINI_API_KEY');
+        });
+
+        $launcher->launchBatchTranslate('/data/status.json');
+
+        $this->assertStringContainsString('run_batch_translate.sh', $captured);
+        $this->assertStringContainsString(escapeshellarg('/data/status.json'), $captured);
+        $this->assertStringNotContainsString('batch-secret', $captured);
+        $this->assertSame('batch-secret', $capturedEnv);
     }
 
     public function test_launch_sync_uses_push_script(): void

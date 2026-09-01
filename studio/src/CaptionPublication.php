@@ -42,22 +42,24 @@ class CaptionPublication
     /**
      * Mirror an already-persisted server Caption set, used by bulk repair.
      *
+     * Upload/replace happens first; the tracks that were live before this
+     * call are only deleted afterward, and only once every new track has
+     * uploaded cleanly. This way a failure mid-mirror (network blip, one bad
+     * file, Vimeo rejecting one track) never leaves the video with fewer
+     * subtitles than it started with — the old tracks are left in place and
+     * the failure is surfaced as a warning instead.
+     *
      * @param list<array<string, mixed>> $captions
      * @return list<string> labels that could not be mirrored
      */
     public function mirror(string $vimeoId, array $captions): array
     {
+        $staleTracks = [];
         try {
-            $tracks = $this->vimeoClient->getTextTracks($vimeoId);
-            foreach ($tracks as $track) {
-                try {
-                    $this->vimeoClient->deleteTextTrack($track['uri']);
-                } catch (\Throwable) {
-                    // A stale track must not prevent the server master mirror.
-                }
-            }
+            $staleTracks = $this->vimeoClient->getTextTracks($vimeoId);
         } catch (\Throwable) {
-            // Vimeo may be unavailable; each upload below remains best effort.
+            // Vimeo may be unavailable; uploads below remain best effort. We
+            // deliberately don't know what's live, so nothing gets deleted.
         }
 
         $warnings = [];
@@ -82,6 +84,19 @@ class CaptionPublication
                 );
             } catch (\Throwable) {
                 $warnings[] = (string) ($caption['label'] ?? $lang);
+            }
+        }
+
+        // Only remove the tracks that were live before this run once every
+        // new track uploaded without error — a partial failure above must
+        // never be compounded by also deleting what was already working.
+        if ($warnings === []) {
+            foreach ($staleTracks as $track) {
+                try {
+                    $this->vimeoClient->deleteTextTrack($track['uri']);
+                } catch (\Throwable) {
+                    // A stale track must not prevent Publication from succeeding.
+                }
             }
         }
 

@@ -137,6 +137,7 @@
         <div class="spinner"></div>
         <p class="status-label">Polint subtítols…</p>
         <form method="POST" action="?action=shorten-cancel" id="cancel-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
         </form>
     </div>
@@ -155,6 +156,7 @@
         <div class="error-panel">
             <p>No s'ha pogut polir el fitxer de subtítols.</p>
             <form method="POST" action="?action=shorten-cancel" id="cancel-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
                 <button type="submit" class="btn-danger">Cancel·la</button>
             </form>
         </div>
@@ -180,6 +182,7 @@
             </div>
         </div>
         <form method="POST" action="?action=shorten-cancel" id="finish-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <button type="submit" class="btn-finish">Finalitza</button>
         </form>
     </div>

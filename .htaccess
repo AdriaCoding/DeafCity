@@ -1,4 +1,110 @@
-php_flag display_errors On
-php_value session.save_path /srv/www/deaf.city/storage/sessions
+# ---------------------------------------------------------------------------
+# deaf.city document-root policy.
+# PHP version is NOT set here: the Apache vhost include is the single source of
+# truth for that (currently php8.4-fpm). See AGENTS.md.
+# ---------------------------------------------------------------------------
+
+# --- PHP error handling -----------------------------------------------------
+# Errors must never reach a visitor: stack traces leak absolute paths, config
+# values and library versions. They go to the vhost error log instead.
+php_flag  display_errors        Off
+php_flag  display_startup_errors Off
+php_flag  log_errors            On
+php_value error_reporting       32767
+
+php_value session.save_path      /srv/www/deaf.city/storage/sessions
 php_value session.gc_maxlifetime 7200
+php_flag  session.cookie_httponly On
+php_flag  session.cookie_secure   On
+php_value session.cookie_samesite Strict
+
+# --- Transport --------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS. The megafone.net certificate covers deaf.city via SAN.
+    # ACME HTTP-01 challenges stay on port 80 so certificate renewal cannot be
+    # broken by a redirect loop or a temporarily invalid certificate.
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # HSTS is only emitted over TLS, never over plain HTTP.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on'"
+
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+
+    # 'unsafe-inline' is required while the site still carries inline <script>
+    # and style attributes; the policy still blocks third-party script origins.
+    # img-src includes OpenStreetMap tiles for the About page sign-language map
+    # (preview/js/sign_language_map.js). Language markers use data: URIs from
+    # languages.json and are already covered.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://code.jquery.com https://player.vimeo.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://i.vimeocdn.com https://player.vimeo.com https://*.tile.openstreetmap.org; media-src 'self' https://player.vimeo.com; frame-src 'self' https://player.vimeo.com; connect-src 'self' https://player.vimeo.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+
+# --- Never serve source, VCS, docs or scratch material ----------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Any dot-directory or dot-file: .git, .scratch, .cursor, .env, .htaccess…
+    RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
+    # Repo-level docs, dependency manifests and backups.
+    RewriteRule ^(AGENTS|CONTEXT|README)\.md$          - [F,L]
+    RewriteRule ^docs/                                  - [F,L]
+    RewriteRule ^data\.bak                              - [F,L]
+    RewriteRule (^|/)composer\.(json|lock)$             - [F,L]
+    RewriteRule ^studio/(tests|vendor)/                 - [F,L]
+    RewriteRule ^preview/tests/                         - [F,L]
+
+    # 2020 Torino prototype, kept on disk but not published. Carries a
+    # hardcoded password and is not part of the current site.
+    RewriteRule ^tmp/                                   - [F,L]
+
+    # Include-only source directories. These files are require()d from disk and
+    # are never a URL of their own; served directly they either fatal (a
+    # template with no surrounding context) or burn an FPM worker doing
+    # nothing. preview/components/ is PHP-only here because its stylesheet
+    # IS loaded by the browser.
+    RewriteRule ^studio/(src|views)/                    - [F,L]
+    RewriteRule ^preview/lib/                           - [F,L]
+    RewriteRule ^preview/components/.*\.php$            - [F,L]
+    RewriteRule ^views/                                 - [F,L]
+</IfModule>
+
+<FilesMatch "\.(bak|backup|sql|log|ini|sh|dist|example|lock|md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# --- Compression ------------------------------------------------------------
+# The server-wide deflate.conf already covers text/html, CSS and JS. JSON and
+# SVG are not in that list, and the About page's sign-language map pulls a
+# ~235 KB languages.json on every visit.
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE application/json image/svg+xml
+    </IfModule>
+</IfModule>
+
+# --- Static asset caching ---------------------------------------------------
+<IfModule mod_headers.c>
+    # Safe to cache for a week because every preview asset URL now carries a
+    # filemtime-derived ?v= (preview/lib/asset_version.php), so an edit changes
+    # the URL. Media and fonts are content-addressed by filename in practice.
+    <FilesMatch "\.(?:css|js|svg|png|jpe?g|gif|webp|avif|mp4|webm|woff2?|ttf|otf|ico)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>
+
 Redirect "/testing/" "/"

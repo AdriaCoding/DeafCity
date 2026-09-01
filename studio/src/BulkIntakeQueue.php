@@ -7,6 +7,7 @@ class BulkIntakeQueue
     private string $queuePath;
     private string $bulkTmpDir;
     private string $bulkOutputDir;
+    private string $lockPath;
 
     public function __construct(string $jobsBaseDir)
     {
@@ -14,6 +15,7 @@ class BulkIntakeQueue
         $this->queuePath = $base . '/bulk-queue.json';
         $this->bulkTmpDir = $base . '/bulk-tmp';
         $this->bulkOutputDir = $base . '/bulk-output';
+        $this->lockPath = $base . '/bulk-queue.lock';
     }
 
     public function bulkTmpDir(): string
@@ -24,6 +26,16 @@ class BulkIntakeQueue
     public function bulkOutputDir(): string
     {
         return $this->bulkOutputDir;
+    }
+
+    /**
+     * Path to the dedicated lock file (not the queue file itself — see
+     * ProcessLock) guarding "launch a bulk-queue worker" sections against
+     * a double launch.
+     */
+    public function lockFilePath(): string
+    {
+        return $this->lockPath;
     }
 
     public function exists(): bool
@@ -127,18 +139,45 @@ class BulkIntakeQueue
         }
     }
 
-    /** @param callable(array<string, mixed>): array<string, mixed> $mutator */
+    /**
+     * Read, mutate, and rewrite the queue as one atomic critical section.
+     * Without the lock here, two concurrent workers each calling
+     * markDone()/markFailed()/markProcessing() around the same time can
+     * both read the same pre-mutation queue, and whichever writes last
+     * silently overwrites (loses) the other's update.
+     *
+     * Locked via a dedicated file (queuePath . '.lock'), not queuePath
+     * itself, because write() commits via rename() — locking a path that
+     * gets replaced by rename() would let a writer that opened its handle
+     * just before the rename go on to read/lock the now-unlinked old inode
+     * instead of the queue file current writers actually see (same
+     * reasoning as CatalogEditor::withLockedCatalog()).
+     *
+     * @param callable(array<string, mixed>): array<string, mixed> $mutator
+     */
     private function updateItem(string $id, callable $mutator): void
     {
-        $queue = $this->read();
-        foreach ($queue['items'] as $i => $item) {
-            if ($item['id'] === $id) {
-                $queue['items'][$i] = $mutator($item);
-                break;
-            }
+        $lockFp = fopen($this->queuePath . '.lock', 'c');
+        if ($lockFp === false) {
+            throw new \RuntimeException('No s\'ha pogut bloquejar la cua en massa.');
         }
-        $queue['completed'] = $this->allFinished($queue['items']);
-        $this->write($queue);
+
+        try {
+            flock($lockFp, LOCK_EX);
+
+            $queue = $this->read();
+            foreach ($queue['items'] as $i => $item) {
+                if ($item['id'] === $id) {
+                    $queue['items'][$i] = $mutator($item);
+                    break;
+                }
+            }
+            $queue['completed'] = $this->allFinished($queue['items']);
+            $this->write($queue);
+        } finally {
+            flock($lockFp, LOCK_UN);
+            fclose($lockFp);
+        }
     }
 
     /** @param list<array<string, mixed>> $items */

@@ -1,5 +1,12 @@
 <?php
 
+// CLI only. Refuse to run under a web server even if the directory deny rule
+// is ever lost: these scripts spend API budget and mutate the catalog.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit("This script is CLI-only.\n");
+}
+
 /**
  * Push catalog state to Vimeo: title, tags, and caption files for every video
  * in data/catalog.json. Re-fetches thumbnail_url from Vimeo for every video,
@@ -36,6 +43,19 @@ function writeStatus(string $status, int $synced, int $total, ?string $statusFil
         'skipped' => $skipped,
         'error' => $error,
     ]));
+}
+
+/*
+ * One Vimeo push at a time. The lock is held for the whole run (released when
+ * the process exits), not just around the launch, so a second sync started
+ * from the Studio while this one is still working is refused instead of
+ * racing it through CatalogEditor and the Vimeo API.
+ */
+$syncLock = \Studio\ProcessLock::acquire(dirname(__DIR__, 2) . '/data/sync_to_vimeo.lock');
+if ($syncLock === null) {
+    fwrite(STDERR, "Another Vimeo sync is already running. Aborting.\n");
+    writeStatus('error', 0, 0, $statusFile, 0, 'Ja hi ha una sincronització en curs.');
+    exit(1);
 }
 
 $catalogPath = realpath(__DIR__ . '/../../data/catalog.json');

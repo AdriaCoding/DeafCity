@@ -68,10 +68,9 @@ class BackgroundJobLauncher
         string $dialectName = '',
     ): void {
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --audio_file %s --draft_output %s --status_file %s'
+            'nohup %s --audio_file %s --draft_output %s --status_file %s'
             . ' --revision_status %s --translation_status %s --job_dir %s --source_lang %s --target_lang %s --model %s'
             . ' --initial_prompt %s --dialect_name %s > /dev/null 2>&1 &',
-            escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_transcription_pipeline.sh'),
             escapeshellarg($audioPath),
             escapeshellarg($draftOutputPath),
@@ -85,7 +84,7 @@ class BackgroundJobLauncher
             escapeshellarg($promptHint),
             escapeshellarg($dialectName),
         );
-        call_user_func($this->exec, $cmd);
+        $this->execWithGeminiKey($cmd);
     }
 
     /**
@@ -98,8 +97,7 @@ class BackgroundJobLauncher
     public function launchTranslation($masterCaptionsPath, $statusFilePath, $sourceLang, $jobDir, array $targetLangs)
     {
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --master_captions %s --status_file %s --source_lang %s --job_dir %s --target_langs %s > /dev/null 2>&1 &',
-            escapeshellarg($this->geminiApiKey),
+            'nohup %s --master_captions %s --status_file %s --source_lang %s --job_dir %s --target_langs %s > /dev/null 2>&1 &',
             escapeshellarg($this->scriptsDir . '/run_translate.sh'),
             escapeshellarg($masterCaptionsPath),
             escapeshellarg($statusFilePath),
@@ -107,7 +105,7 @@ class BackgroundJobLauncher
             escapeshellarg($jobDir),
             escapeshellarg(implode(',', $targetLangs))
         );
-        call_user_func($this->exec, $cmd);
+        $this->execWithGeminiKey($cmd);
     }
 
     /**
@@ -133,9 +131,8 @@ class BackgroundJobLauncher
         $targetLangsArg = implode(',', $targetLangs);
         $effectiveTranslateSourceLang = $translateSourceLang !== '' ? $translateSourceLang : $sourceLang;
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --draft_path %s --revision_status %s --source_lang %s --job_dir %s'
+            'nohup %s --draft_path %s --revision_status %s --source_lang %s --job_dir %s'
             . ' --translation_status %s --target_langs %s --translate_source_lang %s --dialect_name %s > /dev/null 2>&1 &',
-            escapeshellarg($this->geminiApiKey),
             escapeshellarg($this->scriptsDir . '/run_revise.sh'),
             escapeshellarg($masterCaptionsPath),
             escapeshellarg($revisionStatusPath),
@@ -146,19 +143,18 @@ class BackgroundJobLauncher
             escapeshellarg($effectiveTranslateSourceLang),
             escapeshellarg($dialectName),
         );
-        call_user_func($this->exec, $cmd);
+        $this->execWithGeminiKey($cmd);
     }
 
     /** @param string $statusFilePath */
     public function launchBatchTranslate($statusFilePath)
     {
         $cmd = sprintf(
-            'GEMINI_API_KEY=%s nohup %s --status-file %s > /dev/null 2>&1 &',
-            escapeshellarg($this->geminiApiKey),
+            'nohup %s --status-file %s > /dev/null 2>&1 &',
             escapeshellarg($this->scriptsDir . '/run_batch_translate.sh'),
             escapeshellarg($statusFilePath),
         );
-        call_user_func($this->exec, $cmd);
+        $this->execWithGeminiKey($cmd);
     }
 
     public function launchBulkQueue(string $dataDir): void
@@ -179,5 +175,35 @@ class BackgroundJobLauncher
             escapeshellarg($dataDir),
         );
         call_user_func($this->exec, $cmd);
+    }
+
+    /**
+     * Run $cmd with GEMINI_API_KEY available to it via the process
+     * environment instead of embedded in the command line.
+     *
+     * PHP's exec() runs commands through `/bin/sh -c "$cmd"`; a secret
+     * interpolated into $cmd (the previous `GEMINI_API_KEY=%s nohup ...`
+     * form) is therefore visible — in cleartext — in that shell's own argv,
+     * readable by any local user via `ps` for as long as that process
+     * exists. putenv() instead sets it only in this PHP process's
+     * environment, which the forked shell (and the script it execs)
+     * inherits normally via getenv()/$GEMINI_API_KEY; it never appears in
+     * argv/cmdline. The previous value (if any) is restored afterward so
+     * this doesn't leak across requests handled by the same long-lived
+     * PHP-FPM worker process.
+     */
+    private function execWithGeminiKey(string $cmd): void
+    {
+        $previous = getenv('GEMINI_API_KEY');
+        putenv('GEMINI_API_KEY=' . $this->geminiApiKey);
+        try {
+            call_user_func($this->exec, $cmd);
+        } finally {
+            if ($previous === false) {
+                putenv('GEMINI_API_KEY');
+            } else {
+                putenv('GEMINI_API_KEY=' . $previous);
+            }
+        }
     }
 }

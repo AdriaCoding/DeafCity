@@ -13,6 +13,7 @@
  *   );
  */
 require_once dirname(__DIR__) . '/lib/site_nav_builder.php';
+require_once dirname(__DIR__) . '/lib/asset_version.php';
 
 if (!isset($bottomBar) || !is_array($bottomBar)) {
     trigger_error('$bottomBar array is required before including bottom_bar.php', E_USER_WARNING);
@@ -54,6 +55,12 @@ $barAttrs = $isSecondaryPage ? ' data-secondary-page="true"' : '';
 
 $transportId = isset($playerCfg['transport_id']) ? (string) $playerCfg['transport_id'] : '';
 $iframeId = isset($playerCfg['iframe_id']) ? (string) $playerCfg['iframe_id'] : '';
+// On About/Participants there is no in-page iframe (the player only exists on the
+// home page) — transport controls there navigate to it instead of controlling it
+// in place, so aria-controls must not reference an id that is absent from the page.
+$transportAriaControlsAttr = (!$isSecondaryPage && $iframeId !== '')
+    ? ' aria-controls="' . htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') . '"'
+    : '';
 $navHiddenClass = isset($playerCfg['nav_hidden_class']) ? (string) $playerCfg['nav_hidden_class'] : '';
 $transportPrevDisabled = !empty($playerCfg['transport_prev_disabled']);
 $transportNextDisabled = !empty($playerCfg['transport_next_disabled']);
@@ -240,11 +247,13 @@ if (!function_exists('preview_render_lang_picker')) {
                 class="vpc-picker-dropdown"
                 aria-label="<?= htmlspecialchars($langLabel, ENT_QUOTES, 'UTF-8') ?>"
                 data-i18n-aria="player.nav.language"
+                tabindex="-1"
                 hidden
             >
-                <?php foreach ($langOptions as $opt): ?>
+                <?php foreach ($langOptions as $optIndex => $opt): ?>
                 <li
                     role="option"
+                    id="<?= htmlspecialchars($langDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= (int) $optIndex ?>"
                     class="vpc-picker-option"
                     data-href="<?= htmlspecialchars($opt['href'], ENT_QUOTES, 'UTF-8') ?>"
                     data-lang-id="<?= htmlspecialchars(isset($opt['id']) ? (string) $opt['id'] : '', ENT_QUOTES, 'UTF-8') ?>"
@@ -334,10 +343,13 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         class="vpc-picker-dropdown"
                         aria-label="<?= htmlspecialchars(preview_t('player.filter.typology'), ENT_QUOTES, 'UTF-8') ?>"
                         data-i18n-aria="player.filter.typology"
+                        tabindex="-1"
                         hidden
                     >
+                        <?php $typologyOptN = 0; ?>
                         <li
                             role="option"
+                            id="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= $typologyOptN++ ?>"
                             class="vpc-picker-option vpc-picker-clear"
                             data-value=""
                             aria-selected="true"
@@ -346,6 +358,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                             <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
                         <li
                             role="option"
+                            id="<?= htmlspecialchars($typologyDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= $typologyOptN++ ?>"
                             class="vpc-picker-option"
                             data-value="<?= htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8') ?>"
                             aria-selected="false"
@@ -381,10 +394,13 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         class="vpc-picker-dropdown"
                         aria-label="<?= htmlspecialchars(preview_t('player.filter.sign_language'), ENT_QUOTES, 'UTF-8') ?>"
                         data-i18n-aria="player.filter.sign_language"
+                        tabindex="-1"
                         hidden
                     >
+                        <?php $signLangOptN = 0; ?>
                         <li
                             role="option"
+                            id="<?= htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= $signLangOptN++ ?>"
                             class="vpc-picker-option vpc-picker-clear"
                             data-value=""
                             aria-selected="true"
@@ -393,6 +409,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                             <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
                         <li
                             role="option"
+                            id="<?= htmlspecialchars($signLangDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= $signLangOptN++ ?>"
                             class="vpc-picker-option"
                             data-value="<?= htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8') ?>"
                             aria-selected="false"
@@ -424,10 +441,13 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                         class="vpc-picker-dropdown"
                         aria-label="<?= htmlspecialchars(preview_t('player.filter.city_edition'), ENT_QUOTES, 'UTF-8') ?>"
                         data-i18n-aria="player.filter.city_edition"
+                        tabindex="-1"
                         hidden
                     >
+                        <?php $editionOptN = 0; ?>
                         <li
                             role="option"
+                            id="<?= htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= $editionOptN++ ?>"
                             class="vpc-picker-option vpc-picker-clear"
                             data-value=""
                             aria-selected="true"
@@ -436,6 +456,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                             <?php if (!isset($opt['value'], $opt['label'])) continue; ?>
                         <li
                             role="option"
+                            id="<?= htmlspecialchars($editionDropdownId, ENT_QUOTES, 'UTF-8') ?>__opt-<?= $editionOptN++ ?>"
                             class="vpc-picker-option"
                             data-value="<?= htmlspecialchars((string) $opt['value'], ENT_QUOTES, 'UTF-8') ?>"
                             aria-selected="false"
@@ -454,7 +475,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
             <button
                 type="button"
                 class="vpc-reset-btn"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+<?= $transportAriaControlsAttr ?>
                 aria-label="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.reset" data-i18n-hint="R"
                 title="<?= htmlspecialchars($resetAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
             ><img class="vpc-chrome-icon" src="/preview/img/replay_circle_filled_80dp_007800.svg" alt="" width="44" height="44" aria-hidden="true"><span class="vpc-reset-btn__text" data-i18n-text="player.transport.reset_short"><?= htmlspecialchars(preview_t('player.transport.reset_short'), ENT_QUOTES, 'UTF-8') ?></span></button>
@@ -467,14 +488,14 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
         ><button
                 type="button"
                 class="vpc-prev-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+<?= $transportAriaControlsAttr ?>
                 aria-label="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.prev" data-i18n-hint="←"
                 title="<?= htmlspecialchars($prevAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportPrevDisabled ? 'disabled' : '' ?>
             ><img class="vpc-chrome-icon" src="/preview/img/skip_previous_80dp_007800.svg?v=2" alt="" width="44" height="44" aria-hidden="true"></button><div class="vpc-control-center"><button
                     type="button"
                     class="vpc-play-pause-btn"
-                    aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+    <?= $transportAriaControlsAttr ?>
                     aria-label="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.play" data-i18n-hint-key="player.transport.space_key"
                     title="<?= htmlspecialchars($playAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                     data-icon-play="/preview/img/play_circle_80dp_007800.svg"
@@ -482,7 +503,7 @@ $rightNavLinks = preview_nav_links_for_routes($links, array('participants'));
                 ><img class="vpc-chrome-icon" src="/preview/img/play_circle_80dp_007800.svg" alt="" width="48" height="48" aria-hidden="true"><img class="vpc-play-pause-btn__hourglass" src="/preview/img/hourglass_empty_80dp_ffffff.svg" alt="" width="45" height="45" aria-hidden="true"></button></div><button
                 type="button"
                 class="vpc-next-btn<?= htmlspecialchars($navHiddenClass, ENT_QUOTES, 'UTF-8') ?>"
-                aria-controls="<?= htmlspecialchars($iframeId, ENT_QUOTES, 'UTF-8') ?>"
+<?= $transportAriaControlsAttr ?>
                 aria-label="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>" data-i18n-aria="player.transport.next" data-i18n-hint="→"
                 title="<?= htmlspecialchars($nextAriaWithHint, ENT_QUOTES, 'UTF-8') ?>"
                 <?= $transportNextDisabled ? 'disabled' : '' ?>
@@ -525,18 +546,69 @@ if (count($langOptions) > 1):
         return src.indexOf('pause_circle') >= 0;
     }
 
+    // ── Keyboard navigation (Up/Down/Home/End move, Enter/Space select, Escape closes) ──
+    var options = Array.prototype.slice.call(dropdown.querySelectorAll('.vpc-picker-option'));
+    var activeIndex = -1;
+
+    function vpcLogic() {
+        return typeof window.VpcPlaylistLogic !== 'undefined' ? window.VpcPlaylistLogic : null;
+    }
+
+    function clearActiveOption() {
+        options.forEach(function (o) { o.classList.remove('vpc-picker-option--active'); });
+    }
+
+    function setActiveIndex(index) {
+        if (index < 0 || index >= options.length) return;
+        clearActiveOption();
+        activeIndex = index;
+        var el = options[activeIndex];
+        el.classList.add('vpc-picker-option--active');
+        dropdown.setAttribute('aria-activedescendant', el.id);
+        if (typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectedOptionIndex() {
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].getAttribute('aria-selected') === 'true') return i;
+        }
+        return 0;
+    }
+
     function closePicker() {
         dropdown.hidden = true;
         btn.setAttribute('aria-expanded', 'false');
+        dropdown.removeAttribute('aria-activedescendant');
+        clearActiveOption();
+        activeIndex = -1;
+    }
+
+    function openPicker() {
+        dropdown.hidden = false;
+        btn.setAttribute('aria-expanded', 'true');
+        setActiveIndex(selectedOptionIndex());
+        dropdown.focus();
     }
 
     btn.addEventListener('click', function (e) {
         e.stopPropagation();
         var isOpen = !dropdown.hidden;
         closePicker();
-        if (!isOpen) {
-            dropdown.hidden = false;
-            btn.setAttribute('aria-expanded', 'true');
+        if (!isOpen) openPicker();
+    });
+
+    btn.addEventListener('keydown', function (e) {
+        var L = vpcLogic();
+        if (!L) return;
+        var action = L.resolvePickerListboxKeyAction({
+            key: e.key,
+            activeIndex: activeIndex,
+            optionCount: options.length,
+            isOpen: !dropdown.hidden,
+        });
+        if (action.action === 'open') {
+            e.preventDefault();
+            openPicker();
         }
     });
 
@@ -565,10 +637,7 @@ if (count($langOptions) > 1):
         window.location.href = href;
     }
 
-    dropdown.addEventListener('click', function (e) {
-        var target = e.target;
-        if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) { return; }
-        e.stopPropagation();
+    function activateOption(target) {
         var href = target.getAttribute('data-href');
         var langId = target.getAttribute('data-lang-id');
         if (!href) { return; }
@@ -587,12 +656,37 @@ if (count($langOptions) > 1):
         }
 
         navigateToLanguage(href);
+    }
+
+    dropdown.addEventListener('click', function (e) {
+        var target = e.target;
+        if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) { return; }
+        e.stopPropagation();
+        activateOption(target);
     });
 
     dropdown.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
+        var L = vpcLogic();
+        var action = L
+            ? L.resolvePickerListboxKeyAction({
+                  key: e.key,
+                  activeIndex: activeIndex,
+                  optionCount: options.length,
+                  isOpen: true,
+              })
+            : (e.key === 'Escape' ? { action: 'close' } : { action: 'none' });
+
+        if (action.action === 'move') {
+            e.preventDefault();
+            setActiveIndex(action.index);
+        } else if (action.action === 'close') {
+            e.preventDefault();
             closePicker();
             btn.focus();
+        } else if (action.action === 'select') {
+            e.preventDefault();
+            var el = options[action.index];
+            if (el) activateOption(el);
         }
     });
 
@@ -600,4 +694,4 @@ if (count($langOptions) > 1):
 }());
 </script>
 <?php endif; ?>
-<script src="/preview/js/chrome_button_widths.js?v=5"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/chrome_button_widths.js'), ENT_QUOTES, 'UTF-8') ?>"></script>

@@ -75,6 +75,9 @@ develop/cache
 realtime*
 data/*
 !data/ui-localizations.json
+# Web-deny rule for the Studio's private data tree: must ship with the repo,
+# otherwise a fresh deploy re-exposes catalog.json, captions and logs.
+!data/.htaccess
 **/__pycache__/**
 # Studio transcription venv & model cache
 /studio/.venv/

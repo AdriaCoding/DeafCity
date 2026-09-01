@@ -29,6 +29,13 @@
 
 declare(strict_types=1);
 
+
+// CLI only. Refuse to run under a web server even if the directory deny rule
+// is ever lost: these scripts spend API budget and mutate the catalog.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit("This script is CLI-only.\n");
+}
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Studio\SrtParser;
@@ -55,15 +62,22 @@ if ($dataDir === false || !is_file($catalogPath) || !is_dir($captionsDir)) {
     exit(1);
 }
 
-$fp = fopen($catalogPath, 'c+');
+/*
+ * Lock a dedicated catalog.json.lock, never catalog.json itself: Studio's
+ * CatalogEditor commits by rename(), so a lock held on the catalog inode is
+ * released the moment that inode is replaced. Both writers must agree on the
+ * same lock file or this script is no longer serialized against live Studio
+ * writes. See CatalogEditor::withLockedCatalog().
+ */
+$fp = fopen($catalogPath . '.lock', 'c');
 if ($fp === false) {
-    fwrite(STDERR, "Could not open catalog.json for writing.\n");
+    fwrite(STDERR, "Could not open the catalog lock file.\n");
     exit(1);
 }
 
 flock($fp, LOCK_EX);
 
-$raw = stream_get_contents($fp);
+$raw = file_get_contents($catalogPath);
 $catalog = json_decode($raw ?: '', true);
 if (!is_array($catalog) || !isset($catalog['videos']) || !is_array($catalog['videos'])) {
     fwrite(STDERR, "Invalid catalog JSON.\n");
@@ -214,10 +228,22 @@ foreach ($written as $item) {
     $catalog['videos'][$item['videoIndex']]['captions'][$item['captionIndex']]['file'] = $item['newFile'];
 }
 
-ftruncate($fp, 0);
-fseek($fp, 0);
-fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
-fflush($fp);
+// Temp file + rename, so a reader never observes a half-written catalog.
+$tmpPath = $catalogPath . '.tmp-' . bin2hex(random_bytes(6));
+if (file_put_contents($tmpPath, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n") === false) {
+    fwrite(STDERR, "Could not write the temporary catalog file.\n");
+    flock($fp, LOCK_UN);
+    fclose($fp);
+    exit(1);
+}
+@chmod($tmpPath, is_file($catalogPath) ? (fileperms($catalogPath) & 0777) : 0664);
+if (!rename($tmpPath, $catalogPath)) {
+    @unlink($tmpPath);
+    fwrite(STDERR, "Could not commit catalog.json.\n");
+    flock($fp, LOCK_UN);
+    fclose($fp);
+    exit(1);
+}
 flock($fp, LOCK_UN);
 fclose($fp);
 

@@ -50,14 +50,26 @@ class CaptionUploadHandler
         }
 
         $newCaptions = [];
+        /*
+         * A multi-file upload is all-or-nothing. Files are written one at a
+         * time but the catalog is only updated once, at the end, so a failure
+         * on file 3 used to leave files 1 and 2 on disk referenced by nothing
+         * — or, worse, leave a replaced caption overwritten by a batch that
+         * was never accepted. $writtenFiles records enough to undo either.
+         *
+         * @var list<array{path: string, previousContent: string|false}> $writtenFiles
+         */
+        $writtenFiles = [];
         foreach ($uploads as $upload) {
             $lang = $upload['lang'];
             if ($lang === '') {
+                self::rollbackWrittenFiles($writtenFiles);
                 return ['ok' => false, 'error' => 'Seleccioneu una llengua vàlida per a cada fitxer de subtítols.', 'vimeoWarnings' => []];
             }
 
             $label = $labelMap[$lang] ?? $catalogLabels[$lang] ?? null;
             if ($label === null) {
+                self::rollbackWrittenFiles($writtenFiles);
                 return ['ok' => false, 'error' => 'Seleccioneu una llengua vàlida per a cada fitxer de subtítols.', 'vimeoWarnings' => []];
             }
 
@@ -69,17 +81,23 @@ class CaptionUploadHandler
             try {
                 $content = $this->normalizer->normalize($upload['tmpPath'], $upload['originalName']);
             } catch (\InvalidArgumentException $e) {
+                self::rollbackWrittenFiles($writtenFiles);
                 return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
             }
 
             $filename = $this->captionFilename->forVideo($title, $lang);
             $destPath = $this->captionsDirPath . '/' . $filename;
+            // Captured before the write, so a rollback can put back exactly
+            // what was there (or remove the file when there was nothing).
+            $previousContent = is_file($destPath) ? file_get_contents($destPath) : false;
 
             try {
                 if (file_put_contents($destPath, $content) === false) {
                     throw new \RuntimeException('No s\'ha pogut desar el fitxer de subtítols.');
                 }
+                $writtenFiles[] = ['path' => $destPath, 'previousContent' => $previousContent];
             } catch (\Throwable $e) {
+                self::rollbackWrittenFiles($writtenFiles);
                 return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
             }
 
@@ -93,6 +111,7 @@ class CaptionUploadHandler
         try {
             $result = $this->publication->publish($vimeoId, $newCaptions, $syncToVimeo);
         } catch (\Throwable $e) {
+            self::rollbackWrittenFiles($writtenFiles);
             return ['ok' => false, 'error' => $e->getMessage(), 'vimeoWarnings' => []];
         }
 
@@ -109,5 +128,20 @@ class CaptionUploadHandler
         ];
     }
 
-
+    /**
+     * Undo the caption files this batch wrote, newest first: restore whatever
+     * each destination held before, or delete it if it held nothing.
+     *
+     * @param list<array{path: string, previousContent: string|false}> $writtenFiles
+     */
+    private static function rollbackWrittenFiles(array $writtenFiles): void
+    {
+        foreach (array_reverse($writtenFiles) as $written) {
+            if ($written['previousContent'] === false) {
+                @unlink($written['path']);
+                continue;
+            }
+            @file_put_contents($written['path'], $written['previousContent']);
+        }
+    }
 }

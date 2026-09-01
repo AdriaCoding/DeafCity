@@ -2,9 +2,13 @@
 
 namespace Studio\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Studio\CatalogEditor;
+use Studio\ContentLocalizationSync;
+use Studio\LocalizationStore;
 use Studio\StudioConfig;
+use Studio\StudioConfigMutation;
 
 class StudioConfigMutationTest extends TestCase
 {
@@ -22,12 +26,101 @@ class StudioConfigMutationTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach ([$this->configPath, $this->catalogFile, $this->configPath . '.lock'] as $f) {
+        foreach ([...$this->storeFiles, $this->configPath, $this->catalogFile, $this->configPath . '.lock'] as $f) {
             if (is_file($f)) {
                 unlink($f);
             }
         }
     }
+
+    // ── config ↔ localization atomicity ───────────────────────────────────────
+
+    /**
+     * Adding a content item touches two files: studio-config.json and
+     * data/ui-localizations.json. If the second write fails the item exists in
+     * config with no translation key, so the Studio and the Website show a raw
+     * slug where a label belongs — and nothing tells the Producer why.
+     *
+     */
+    #[DataProvider('contentItemAdders')]
+    public function test_failed_localization_sync_rolls_back_the_config_entry(
+        string $addMethod,
+        string $getMethod,
+        string $id,
+        string $label,
+    ): void {
+        $mutation = $this->makeMutation($this->throwingLocalizationSync());
+
+        $before = $mutation->{$getMethod}();
+
+        try {
+            $mutation->{$addMethod}($id, $label);
+            $this->fail('The failing localization sync should have propagated.');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('localization store is down', $e->getMessage());
+        }
+
+        $this->assertEquals($before, $mutation->{$getMethod}(), 'config must be unchanged');
+        $this->assertEquals(
+            $before,
+            (new StudioConfig($this->configPath))->{$getMethod}(),
+            'the rollback must reach disk, not just the in-memory config'
+        );
+    }
+
+    /** @return array<string, array{string, string, string, string}> */
+    public static function contentItemAdders(): array
+    {
+        return [
+            'typology' => ['addTypology', 'getTypologies', 'acudit-nou', 'Acudit nou'],
+            'edition' => ['addEdition', 'getEditions', '2027-tunis', '2027 Tunis'],
+            'sign language' => ['addSignLanguage', 'getSignLanguages', 'lst', 'LST Tunisian Sign Language'],
+        ];
+    }
+
+    public function test_successful_add_still_persists_both_sides(): void
+    {
+        $storePath = $this->makeLocalizationStoreFile();
+        $mutation = $this->makeMutation(new ContentLocalizationSync(new LocalizationStore($storePath)));
+
+        $mutation->addTypology('acudit-nou', 'Acudit nou');
+
+        $ids = array_column((new StudioConfig($this->configPath))->getTypologies(), 'id');
+        $this->assertContains('acudit-nou', $ids);
+    }
+
+    private function makeMutation(ContentLocalizationSync $sync): StudioConfigMutation
+    {
+        return new StudioConfigMutation(
+            new StudioConfig($this->configPath),
+            new CatalogEditor($this->catalogFile),
+            $sync,
+        );
+    }
+
+    private function throwingLocalizationSync(): ContentLocalizationSync
+    {
+        $store = new class ($this->makeLocalizationStoreFile()) extends LocalizationStore {
+            public function createKeyIfMissing(string $key, string $section, string $context, string $enText): bool
+            {
+                throw new \RuntimeException('localization store is down');
+            }
+        };
+
+        return new ContentLocalizationSync($store);
+    }
+
+    private function makeLocalizationStoreFile(): string
+    {
+        $path = sys_get_temp_dir() . '/ui-localizations-' . uniqid() . '.json';
+        file_put_contents($path, json_encode(new \stdClass()));
+        $this->storeFiles[] = $path;
+
+        return $path;
+    }
+
+    /** @var list<string> */
+    private array $storeFiles = [];
 
     // ── updateEditionLabel ────────────────────────────────────────────────────
 

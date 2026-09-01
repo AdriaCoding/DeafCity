@@ -116,6 +116,7 @@
         <?php endif; ?>
 
         <form method="POST" action="?action=transcription-intake" enctype="multipart/form-data" id="intake-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <div class="field" id="single-language-field">
                 <label for="subtitle_language">Llengua d'entrada (d'on ve l'àudio o el text)</label>
                 <select id="subtitle_language" name="subtitle_language" required>

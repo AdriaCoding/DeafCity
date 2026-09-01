@@ -19,6 +19,7 @@ class CatalogEditorTest extends TestCase
         if (is_file($this->catalogFile)) {
             unlink($this->catalogFile);
         }
+        @unlink($this->catalogFile . '.lock');
     }
 
     private function writeCatalog(array $data): void
@@ -309,23 +310,27 @@ class CatalogEditorTest extends TestCase
         $this->writeCatalog(['videos' => []]);
 
         // Child A simulates a slow concurrent writer: it grabs the exclusive
-        // lock, holds it, and only then writes the '999' entry. This opens
-        // exactly the window the race lived in — a window where an unlocked
-        // pre-check (findVideoByVimeoId) run by another process still sees
-        // an empty catalog.
+        // lock (via the dedicated .lock file — see CatalogEditor::
+        // withLockedCatalog(), which never locks catalogFilePath itself
+        // because that path gets replaced by rename() on every commit),
+        // holds it, and only then commits the '999' entry via the same
+        // write-temp-then-rename protocol. This opens exactly the window the
+        // race lived in — a window where an unlocked pre-check
+        // (findVideoByVimeoId) run by another process still sees an empty
+        // catalog.
         $writerPid = pcntl_fork();
         if ($writerPid === 0) {
-            $fp = fopen($this->catalogFile, 'c+');
-            flock($fp, LOCK_EX);
+            $lockFp = fopen($this->catalogFile . '.lock', 'c');
+            flock($lockFp, LOCK_EX);
             usleep(300_000);
-            $raw = stream_get_contents($fp);
+            $raw = file_get_contents($this->catalogFile);
             $catalog = json_decode($raw ?: '', true) ?: ['videos' => []];
             $catalog['videos'][] = ['id' => 'lse_999', 'vimeo_id' => '999', 'title' => 'Writer', 'sign_language' => 'lse', 'edition' => 'x', 'tags' => [], 'captions' => []];
-            ftruncate($fp, 0);
-            fseek($fp, 0);
-            fwrite($fp, json_encode($catalog));
-            flock($fp, LOCK_UN);
-            fclose($fp);
+            $tmp = $this->catalogFile . '.tmp-writer-' . getmypid();
+            file_put_contents($tmp, json_encode($catalog));
+            rename($tmp, $this->catalogFile);
+            flock($lockFp, LOCK_UN);
+            fclose($lockFp);
             exit(0);
         }
 
@@ -651,5 +656,40 @@ class CatalogEditorTest extends TestCase
         $editor = new CatalogEditor($this->catalogFile);
 
         $this->assertSame(['2020-valencia'], $editor->getReferencedEditionIds());
+    }
+
+    public function test_writes_commit_via_rename_never_leaving_a_truncated_file_mid_write(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+        $originalInode = fileinode($this->catalogFile);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->addVideo('111', 'Title', 'lse', '2020-valencia');
+
+        // A commit via write-temp-then-rename always replaces the inode —
+        // an in-place ftruncate()+fwrite() would keep the original inode
+        // and expose a torn (briefly empty) file to any concurrent
+        // unlocked reader such as getAllVideos().
+        clearstatcache(true, $this->catalogFile);
+        $this->assertNotSame($originalInode, fileinode($this->catalogFile));
+
+        // No leftover temp file after a successful commit.
+        $leftovers = glob($this->catalogFile . '.tmp-*');
+        $this->assertSame([], $leftovers);
+
+        $catalog = $this->readCatalog();
+        $this->assertSame('111', $catalog['videos'][0]['vimeo_id']);
+    }
+
+    public function test_write_preserves_existing_file_permission_bits(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+        chmod($this->catalogFile, 0664);
+
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->addVideo('111', 'Title', 'lse', '2020-valencia');
+
+        clearstatcache(true, $this->catalogFile);
+        $this->assertSame('0664', substr(sprintf('%o', fileperms($this->catalogFile)), -4));
     }
 }

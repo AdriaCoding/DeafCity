@@ -1,0 +1,11 @@
+# DEAF.city
+User-agent: *
+Allow: /
+Disallow: /studio/
+Disallow: /config/
+Disallow: /data/
+Disallow: /tmp/
+Disallow: /docs/
+Disallow: /preview/tests/
+Disallow: /studio/tests/
+

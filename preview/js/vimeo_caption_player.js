@@ -8,13 +8,22 @@
         return;
     }
 
-    function ensureVimeoSdk(onReady) {
+    /**
+     * @param {() => void} onReady
+     * @param {(() => void)=} onError  Called once if the SDK script fails to load
+     *   (e.g. offline, blocked). Never called once onReady has fired.
+     */
+    function ensureVimeoSdk(onReady, onError) {
         if (window.Vimeo && window.Vimeo.Player) {
             onReady();
             return;
         }
         window.__vpcVimeoSdkCallbacks = window.__vpcVimeoSdkCallbacks || [];
         window.__vpcVimeoSdkCallbacks.push(onReady);
+        window.__vpcVimeoSdkErrorCallbacks = window.__vpcVimeoSdkErrorCallbacks || [];
+        if (typeof onError === 'function') {
+            window.__vpcVimeoSdkErrorCallbacks.push(onError);
+        }
 
         if (window.__vpcVimeoSdkLoading) return;
         window.__vpcVimeoSdkLoading = true;
@@ -25,6 +34,7 @@
             window.__vpcVimeoSdkLoading = false;
             var pending = window.__vpcVimeoSdkCallbacks || [];
             window.__vpcVimeoSdkCallbacks = [];
+            window.__vpcVimeoSdkErrorCallbacks = [];
             pending.forEach(function (cb) {
                 try {
                     cb();
@@ -34,9 +44,81 @@
         s.onerror = function () {
             window.__vpcVimeoSdkLoading = false;
             window.__vpcVimeoSdkCallbacks = [];
+            var pendingErrors = window.__vpcVimeoSdkErrorCallbacks || [];
+            window.__vpcVimeoSdkErrorCallbacks = [];
             console.warn('Vimeo Player SDK failed to load');
+            pendingErrors.forEach(function (cb) {
+                try {
+                    cb();
+                } catch (e) {}
+            });
         };
         document.head.appendChild(s);
+    }
+
+    /**
+     * Visible, minimal, non-intrusive error message in a player instance's media
+     * area — reuses the same empty-state slot the empty-queue state renders into
+     * (D18 unknown-participant fix), so it never fights the normal loading scrim.
+     * @param {HTMLElement} root
+     * @param {string} message
+     */
+    function showVpcPlayerError(root, message) {
+        var shell = root.querySelector('.video-shell');
+        if (!shell) return;
+        var el = shell.querySelector('.vpc-empty-state');
+        if (!el) {
+            el = document.createElement('p');
+            el.className = 'vpc-empty-state';
+            shell.appendChild(el);
+        }
+        el.textContent = message;
+        var scrim = shell.querySelector('.vpc-load-scrim');
+        if (scrim) scrim.classList.remove('is-hidden');
+        var poster = shell.querySelector('.vpc-poster-cover');
+        if (poster) poster.classList.add('is-hidden');
+    }
+
+    /**
+     * Vimeo embed query params the server always applies (preview/components/
+     * vimeo_caption_player.php's $defaultParams) — mirrored here so a Player
+     * constructed lazily, client-side, from a bare id ends up configured exactly
+     * like one the server would have rendered (no native controls, no title/byline/
+     * portrait chrome, our own keyboard shortcuts only, playsinline).
+     */
+    var VPC_DEFAULT_EMBED_PARAMS = {
+        title: '0',
+        byline: '0',
+        portrait: '0',
+        dnt: '1',
+        controls: '0',
+        preload: 'auto',
+        playsinline: '1',
+        keyboard: '0',
+    };
+
+    /**
+     * DOM-facing wrapper over L.createLazyVimeoPlayerFacade() (see there for why):
+     * supplies the real `new Vimeo.Player(iframe, ...)` construction and whether the
+     * iframe already carries a src (the common case — a valid initial Video,
+     * server-rendered as today, constructed immediately, synchronously, before this
+     * function returns — behavior unchanged from a direct `new Vimeo.Player(iframe)`
+     * call) vs. none (an unknown/empty Participant filter — constructed lazily, on
+     * first genuine loadVideo()).
+     *
+     * @param {HTMLIFrameElement} iframe
+     * @returns {any}
+     */
+    function createLazyVimeoPlayer(iframe) {
+        return L.createLazyVimeoPlayerFacade({
+            hasInitialSrc: !!iframe.getAttribute('src'),
+            defaultEmbedParams: VPC_DEFAULT_EMBED_PARAMS,
+            constructReal: function (playerOpts) {
+                return playerOpts
+                    ? new window.Vimeo.Player(iframe, playerOpts)
+                    : new window.Vimeo.Player(iframe);
+            },
+        });
     }
 
     /**
@@ -150,15 +232,12 @@
 
         /**
          * @param {string} videoId
-         * @returns {number}
+         * @returns {number} index into fullPlaylistItems, or -1 when videoId is empty
+         *   or matches nothing — callers must handle -1 explicitly rather than
+         *   silently falling back to (and playing) index 0.
          */
         function masterIndexForVideoId(videoId) {
-            var id = String(videoId || '');
-            if (id === '') return 0;
-            for (var i = 0; i < fullPlaylistItems.length; i++) {
-                if (String(fullPlaylistItems[i].videoId) === id) return i;
-            }
-            return 0;
+            return L.masterIndexForVideoId(fullPlaylistItems, videoId);
         }
 
         var posterItem =
@@ -236,11 +315,13 @@
         var filteredCursor = 0;
 
         /** Absolute index into fullPlaylistItems (master). */
-        var playlistIndex = posterItem
-            ? masterIndexForVideoId(posterItem.videoId)
-            : typeof cfg.playlistIndex === 'number'
-              ? cfg.playlistIndex
-              : 0;
+        var posterMasterIndex = posterItem ? masterIndexForVideoId(posterItem.videoId) : -1;
+        var playlistIndex =
+            posterMasterIndex >= 0
+                ? posterMasterIndex
+                : typeof cfg.playlistIndex === 'number'
+                  ? cfg.playlistIndex
+                  : 0;
 
         /**
          * When true the server has already shuffled the playlist and placed the chosen
@@ -312,6 +393,37 @@
         }
 
         var captionFetchStarted = {};
+        var captionFetchErrorShown = false;
+
+        /** Number of attempts for a caption fetch before giving up and showing an error. */
+        var CAPTION_FETCH_MAX_ATTEMPTS = 3;
+        /** Base delay (ms) for exponential backoff between caption fetch retries. */
+        var CAPTION_FETCH_RETRY_BASE_MS = 500;
+
+        /**
+         * Small, non-intrusive notice next to the caption row — captions failing does
+         * not stop Video playback, so this must never cover the Video itself (unlike
+         * the SDK-load error, which does — nothing plays without the SDK).
+         */
+        function showCaptionFetchError() {
+            if (captionFetchErrorShown) return;
+            captionFetchErrorShown = true;
+            var el = root.querySelector('.vpc-caption-error');
+            if (!el) return;
+            el.textContent = vpcString('player.error.captions_failed', 'Captions could not be loaded.');
+            el.classList.remove('is-hidden');
+        }
+
+        function fetchStaticVttOnce(url, label) {
+            return fetch(url).then(function (r) {
+                return r.json().then(function (data) {
+                    if (!r.ok || !Array.isArray(data)) {
+                        throw new Error('Static VTT failed (' + label + ')');
+                    }
+                    return data;
+                });
+            });
+        }
 
         function loadStaticVtt(file, masterIndex, cueTrackIndex, label) {
             var key = masterIndex + ':' + cueTrackIndex + ':' + file;
@@ -322,26 +434,35 @@
                 (captionsEndpoint.indexOf('?') >= 0 ? '&' : '?') +
                 'f=' +
                 encodeURIComponent(file);
-            fetch(url)
-                .then(function (r) {
-                    return r.json().then(function (data) {
-                        return { ok: r.ok, data: data };
+
+            function attempt(attemptNumber) {
+                fetchStaticVttOnce(url, label)
+                    .then(function (data) {
+                        var tier = vimeoTracksState[masterIndex];
+                        if (tier && tier[cueTrackIndex]) {
+                            // Binary search in findCaption() assumes start-sorted cues; nothing
+                            // upstream guarantees that, so sort defensively after parsing.
+                            tier[cueTrackIndex].events = L.sortCaptionEventsByStart(data);
+                        }
+                        syncAllCaptions();
+                    })
+                    .catch(function (e) {
+                        if (attemptNumber < CAPTION_FETCH_MAX_ATTEMPTS) {
+                            var delayMs = CAPTION_FETCH_RETRY_BASE_MS * Math.pow(2, attemptNumber - 1);
+                            window.setTimeout(function () {
+                                attempt(attemptNumber + 1);
+                            }, delayMs);
+                            return;
+                        }
+                        console.warn(
+                            'Static VTT fetch failed after ' + CAPTION_FETCH_MAX_ATTEMPTS + ' attempts (' + label + '):',
+                            e
+                        );
+                        showCaptionFetchError();
                     });
-                })
-                .then(function (res) {
-                    if (!res.ok || !Array.isArray(res.data)) {
-                        console.warn('Static VTT failed (' + label + ')', res.data);
-                        return;
-                    }
-                    var tier = vimeoTracksState[masterIndex];
-                    if (tier && tier[cueTrackIndex]) {
-                        tier[cueTrackIndex].events = res.data;
-                    }
-                    syncAllCaptions();
-                })
-                .catch(function (e) {
-                    console.warn('Static VTT fetch failed (' + label + '):', e);
-                });
+            }
+
+            attempt(1);
         }
 
         function ensureCaptionsForMasterIndex(masterIndex) {
@@ -565,6 +686,7 @@
                 var serverMasterIndices = [];
                 serverPlaylist.forEach(function (entry) {
                     var mix = masterIndexForVideoId(entry.videoId);
+                    if (mix < 0) return; // no matching master entry — do not seed a bogus index
                     if (serverMasterIndices.indexOf(mix) < 0) {
                         serverMasterIndices.push(mix);
                     }
@@ -595,7 +717,7 @@
         function attachPlayer() {
             var iframe = document.getElementById(iframeId);
             if (!iframe || !window.Vimeo || !window.Vimeo.Player) return;
-            vimeoPlayer = new window.Vimeo.Player(iframe);
+            vimeoPlayer = createLazyVimeoPlayer(iframe);
 
             /** @type {any} */
             var p = vimeoPlayer;
@@ -777,14 +899,32 @@
                     return;
                 }
                 var available = captionTextAvailableWidth(box);
-                var textWidth = measureCaptionTextWidth(text, captionTypography.baseFontSize);
-                var fit = L.captionFitFontSizeForDisplay(
-                    textWidth,
-                    captionTypography.baseFontSize,
-                    available,
-                    captionTypography.twoLineMode
-                );
+                // Measures the text AS IT WOULD ACTUALLY WRAP against `available`
+                // (greedy word-wrap simulation, binary-searched to the largest font
+                // size that fits) rather than a single aggregate line width — see
+                // captionFitFontSizeForDisplay in vimeo_playlist_logic.js for why a
+                // naive "double the width for two lines" guess sizes some cues wrong.
+                var fit = L.captionFitFontSizeForDisplay({
+                    text: text,
+                    baseFontSizePx: captionTypography.baseFontSize,
+                    boxWidthPx: available,
+                    maxLines: captionTypography.twoLineMode ? 2 : 1,
+                    measureWidthFn: measureCaptionTextWidth,
+                });
                 box.style.fontSize = fit + 'px';
+            }
+
+            /**
+             * BCP-47-ish lang tag for the active subtitle track, so a screen reader
+             * picks the right voice for the caption text — falls back to the active
+             * Website language when the track carries no explicit lang.
+             * @returns {string}
+             */
+            function activeCaptionLangCode() {
+                var cueTracks = currentItemCueTracksRaw();
+                var track = cueTracks[activeCaptionTrackIndex];
+                var tag = track && typeof track.lang === 'string' ? track.lang.trim() : '';
+                return tag !== '' ? tag : websiteLang;
             }
 
             syncCaptionBox = function (events, timeMs) {
@@ -793,6 +933,12 @@
                 var caption = findCaption(events, timeMs);
                 var newText = caption ? L.normalizeCaptionText(caption.text) : '';
                 box.textContent = newText;
+                var langCode = activeCaptionLangCode();
+                if (langCode) {
+                    box.setAttribute('lang', langCode);
+                } else {
+                    box.removeAttribute('lang');
+                }
                 refitCaptionBox();
             };
 
@@ -1541,9 +1687,12 @@
                 var clearLabel = filterClearLabels[facet] || 'All';
 
                 dropdown.innerHTML = '';
+                var dropdownIdBase = dropdown.id || facet;
+                var optN = 0;
 
                 var clearLi = document.createElement('li');
                 clearLi.setAttribute('role', 'option');
+                clearLi.id = dropdownIdBase + '__opt-' + optN++;
                 clearLi.className = 'vpc-picker-option vpc-picker-clear';
                 clearLi.setAttribute('data-value', '');
                 clearLi.setAttribute(
@@ -1556,6 +1705,7 @@
                 options.forEach(function (opt) {
                     var li = document.createElement('li');
                     li.setAttribute('role', 'option');
+                    li.id = dropdownIdBase + '__opt-' + optN++;
                     li.className = 'vpc-picker-option';
                     li.setAttribute('data-value', opt.value);
                     li.setAttribute(
@@ -1810,6 +1960,10 @@
             function closeAllPickers() {
                 root.querySelectorAll('.vpc-picker-dropdown').forEach(function (dd) {
                     dd.hidden = true;
+                    dd.removeAttribute('aria-activedescendant');
+                    dd.querySelectorAll('.vpc-picker-option--active').forEach(function (o) {
+                        o.classList.remove('vpc-picker-option--active');
+                    });
                     var picker = dd.closest('.vpc-picker');
                     var btn = picker && picker.querySelector('.vpc-picker-btn');
                     if (btn) btn.setAttribute('aria-expanded', 'false');
@@ -1828,6 +1982,48 @@
                 var dropdown = /** @type {HTMLElement|null} */ (pickerEl.querySelector('.vpc-picker-dropdown'));
                 if (!btn || !dropdown) return;
 
+                // Rebuilt on every open (cascading options depend on other active
+                // filters), so option elements — and thus activeIndex — must always
+                // be re-read from the DOM rather than cached across opens.
+                var activeIndex = -1;
+
+                function currentOptions() {
+                    return Array.prototype.slice.call(dropdown.querySelectorAll('.vpc-picker-option'));
+                }
+
+                function setActiveIndex(index) {
+                    var options = currentOptions();
+                    if (index < 0 || index >= options.length) return;
+                    options.forEach(function (o) { o.classList.remove('vpc-picker-option--active'); });
+                    activeIndex = index;
+                    var el = options[activeIndex];
+                    el.classList.add('vpc-picker-option--active');
+                    dropdown.setAttribute('aria-activedescendant', el.id);
+                    if (typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest' });
+                }
+
+                function selectedOptionIndex() {
+                    var options = currentOptions();
+                    for (var i = 0; i < options.length; i++) {
+                        if (options[i].getAttribute('aria-selected') === 'true') return i;
+                    }
+                    return 0;
+                }
+
+                function activateOption(target) {
+                    var value = target.getAttribute('data-value') || '';
+                    var isClear = value === '' || target.classList.contains('vpc-picker-clear');
+
+                    currentOptions().forEach(function (o) {
+                        o.setAttribute('aria-selected', 'false');
+                    });
+                    target.setAttribute('aria-selected', 'true');
+                    closeAllPickers();
+
+                    markGestureActivation();
+                    applyFilterChange(facet, isClear ? null : value);
+                }
+
                 // Toggle dropdown open/close
                 btn.addEventListener('click', function (e) {
                     e.stopPropagation();
@@ -1837,6 +2033,22 @@
                     if (!isOpen) {
                         dropdown.hidden = false;
                         btn.setAttribute('aria-expanded', 'true');
+                        setActiveIndex(selectedOptionIndex());
+                        dropdown.focus();
+                    }
+                });
+
+                // Keyboard on the closed trigger button: Up/Down/Enter/Space open it.
+                btn.addEventListener('keydown', function (e) {
+                    var action = L.resolvePickerListboxKeyAction({
+                        key: e.key,
+                        activeIndex: activeIndex,
+                        optionCount: currentOptions().length,
+                        isOpen: !dropdown.hidden,
+                    });
+                    if (action.action === 'open') {
+                        e.preventDefault();
+                        btn.click();
                     }
                 });
 
@@ -1845,25 +2057,30 @@
                     var target = /** @type {HTMLElement|null} */ (e.target);
                     if (!target || !target.classList.contains('vpc-picker-option')) return;
                     e.stopPropagation();
-
-                    var value = target.getAttribute('data-value') || '';
-                    var isClear = value === '' || target.classList.contains('vpc-picker-clear');
-
-                    dropdown.querySelectorAll('.vpc-picker-option').forEach(function (o) {
-                        o.setAttribute('aria-selected', 'false');
-                    });
-                    target.setAttribute('aria-selected', 'true');
-                    closeAllPickers();
-
-                    markGestureActivation();
-                    applyFilterChange(facet, isClear ? null : value);
+                    activateOption(target);
                 });
 
-                // Keyboard: Escape closes
+                // Keyboard on the open listbox: arrows/Home/End move, Enter/Space
+                // select, Escape closes.
                 dropdown.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape') {
+                    var action = L.resolvePickerListboxKeyAction({
+                        key: e.key,
+                        activeIndex: activeIndex,
+                        optionCount: currentOptions().length,
+                        isOpen: true,
+                    });
+                    if (action.action === 'move') {
+                        e.preventDefault();
+                        setActiveIndex(action.index);
+                    } else if (action.action === 'close') {
+                        e.preventDefault();
                         closeAllPickers();
                         btn.focus();
+                    } else if (action.action === 'select') {
+                        e.preventDefault();
+                        var options = currentOptions();
+                        var el = options[action.index];
+                        if (el) activateOption(el);
                     }
                 });
             }
@@ -1900,6 +2117,10 @@
                 if (emptyIframe) {
                     emptyIframe.removeAttribute('src');
                 }
+                // Keep the empty player state visible: cover any leftover frame with the
+                // load scrim and hide a stale poster (matches SSR's rendered empty state).
+                if (loadScrim) loadScrim.classList.remove('is-hidden');
+                if (posterCover) posterCover.classList.add('is-hidden');
                 updatePlaylistNavButtons();
                 syncCollectionNavButtons();
             }
@@ -1992,7 +2213,12 @@
             });
         }
 
-        ensureVimeoSdk(attachPlayer);
+        ensureVimeoSdk(attachPlayer, function () {
+            showVpcPlayerError(
+                root,
+                vpcString('player.error.sdk_load_failed', 'Video player could not load. Please check your connection and try again.')
+            );
+        });
     }
 
     function boot() {

@@ -1380,6 +1380,75 @@
             "eu": true
         }
     },
+    "player.error.sdk_load_failed": {
+        "section": "player",
+        "context": "Shown in the player area when the Vimeo Player SDK script fails to load",
+        "translations": {
+            "en": "Video player could not load. Please check your connection and try again.",
+            "fr": "Le lecteur vidéo n'a pas pu se charger. Vérifiez votre connexion et réessayez.",
+            "ca": "El reproductor de vídeo no s'ha pogut carregar. Comprova la connexió i torna-ho a provar.",
+            "es": "El reproductor de vídeo no se pudo cargar. Compruebe su conexión e inténtelo de nuevo.",
+            "it": "Il lettore video non è stato caricato. Controlla la connessione e riprova.",
+            "pt": "O leitor de vídeo não pôde ser carregado. Verifique a sua ligação e tente novamente.",
+            "ar": "تعذر تحميل مشغل الفيديو. تحقق من اتصالك وأعد المحاولة.",
+            "eu": "Bideo-erreproduzigailua ezin izan da kargatu. Egiaztatu konexioa eta saiatu berriro."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true,
+            "eu": true
+        }
+    },
+    "player.error.captions_failed": {
+        "section": "player",
+        "context": "Shown in the player area when captions fail to fetch after retrying",
+        "translations": {
+            "en": "Captions could not be loaded.",
+            "fr": "Impossible de charger les sous-titres.",
+            "ca": "No s'han pogut carregar els subtítols.",
+            "es": "No se pudieron cargar los subtítulos.",
+            "it": "Impossibile caricare i sottotitoli.",
+            "pt": "Não foi possível carregar as legendas.",
+            "ar": "تعذر تحميل الترجمة.",
+            "eu": "Ezin izan dira azpitituluak kargatu."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true,
+            "eu": true
+        }
+    },
+    "player.empty.no_matching_videos": {
+        "section": "player",
+        "context": "Shown in the player area when a filter or Participant selection matches no Videos (a normal, expected result, not an error)",
+        "translations": {
+            "en": "No videos match this selection.",
+            "fr": "Aucune vidéo ne correspond à cette sélection.",
+            "ca": "Cap vídeo coincideix amb aquesta selecció.",
+            "es": "Ningún vídeo coincide con esta selección.",
+            "it": "Nessun video corrisponde a questa selezione.",
+            "pt": "Nenhum vídeo corresponde a esta seleção.",
+            "ar": "لا توجد مقاطع فيديو مطابقة لهذا التحديد.",
+            "eu": "Ez dago hautaketa honekin bat datorren bideorik."
+        },
+        "seeded": {
+            "fr": true,
+            "ca": true,
+            "es": true,
+            "it": true,
+            "pt": true,
+            "ar": true,
+            "eu": true
+        }
+    },
     "player.filter.all_cities": {
         "section": "player",
         "context": "Default option in City\/Edition dropdown",

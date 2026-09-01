@@ -230,6 +230,71 @@ class CaptionUploadHandlerTest extends TestCase
         $this->assertStringContainsString('Nou', file_get_contents($this->captionsDir . '/Test_ES.srt'));
     }
 
+    public function test_mid_batch_failure_leaves_no_orphan_caption_file_on_disk(): void
+    {
+        // First upload is fine, second names a language the config does not
+        // know. The batch is rejected as a whole — so the first file must not
+        // survive on disk, referenced by nothing in the catalog.
+        $good = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($good, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHola\n");
+        $alsoGood = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($alsoGood, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHello\n");
+
+        $result = $this->makeHandler($this->createMock(VimeoClient::class))->handle('111', [
+            ['lang' => 'es', 'tmpPath' => $good, 'originalName' => 'a.vtt'],
+            ['lang' => 'not-a-language', 'tmpPath' => $alsoGood, 'originalName' => 'b.vtt'],
+        ]);
+
+        $this->assertFalse($result['ok']);
+        $this->assertFileDoesNotExist($this->captionsDir . '/Test_ES.srt');
+
+        $entry = (new CatalogEditor($this->catalogFile))->findVideoByVimeoId('111');
+        $this->assertSame([], $entry['captions']);
+    }
+
+    public function test_mid_batch_failure_restores_a_caption_it_had_already_overwritten(): void
+    {
+        // The batch replaces an existing Spanish caption and then fails on the
+        // second file. Rolling back by deleting would destroy a caption the
+        // Producer never asked to remove, so the previous bytes must come back.
+        $existing = $this->captionsDir . '/Test_ES.srt';
+        file_put_contents($existing, "1\n00:00:00,000 --> 00:00:02,000\nOriginal\n");
+        $original = file_get_contents($existing);
+
+        $replacement = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($replacement, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nReemplaç\n");
+        $second = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($second, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHello\n");
+
+        $result = $this->makeHandler($this->createMock(VimeoClient::class))->handle('111', [
+            ['lang' => 'es', 'tmpPath' => $replacement, 'originalName' => 'a.vtt'],
+            ['lang' => 'not-a-language', 'tmpPath' => $second, 'originalName' => 'b.vtt'],
+        ]);
+
+        $this->assertFalse($result['ok']);
+        $this->assertFileExists($existing);
+        $this->assertSame($original, file_get_contents($existing));
+    }
+
+    public function test_publish_failure_also_rolls_back_written_caption_files(): void
+    {
+        $vtt = tempnam(sys_get_temp_dir(), 'vtt');
+        file_put_contents($vtt, "WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nHola\n");
+
+        // A video id that is not in the catalog makes publish() throw after
+        // the caption file has already been written.
+        $result = $this->makeHandler($this->createMock(VimeoClient::class))->handle('999', [
+            ['lang' => 'es', 'tmpPath' => $vtt, 'originalName' => 'a.vtt'],
+        ]);
+
+        $this->assertFalse($result['ok']);
+        $this->assertCount(
+            0,
+            glob($this->captionsDir . '/*.srt'),
+            'a failed publish must not leave caption files behind'
+        );
+    }
+
     private function makeHandler(VimeoClient $vimeo): CaptionUploadHandler
     {
         return new CaptionUploadHandler(

@@ -1139,25 +1139,133 @@ console.log('vimeo_playlist_logic.test.js: all passed (including issue #12)');
 
     assert.strictEqual(logic.captionBlockHeightPx(38, 1), 55, 'one line reserve');
     assert.strictEqual(logic.captionBlockHeightPx(38, 2), 103, 'two line reserve');
-
-    assert.strictEqual(
-        logic.captionFitFontSizeForDisplay(800, 38, 400, true),
-        38,
-        'two-line mode keeps base when cue fits two lines'
-    );
-    assert.strictEqual(
-        logic.captionFitFontSizeForDisplay(800, 38, 400, false),
-        19,
-        'single-line mode still shrinks'
-    );
-    assert.strictEqual(
-        logic.captionFitFontSizeForDisplay(1600, 38, 400, true),
-        19,
-        'two-line mode shrinks only when wider than two lines'
-    );
 })();
 
 console.log('vimeo_playlist_logic.test.js: all passed (including issue #13)');
+
+// wrapCaptionTextGreedy: pure greedy word-wrap simulation (character-count measure
+// for simple, predictable assertions — the real caller injects canvas measurement).
+(function () {
+    function measureLen(s) { return s.length; }
+
+    assert.deepStrictEqual(logic.wrapCaptionTextGreedy('', measureLen, 10), [], 'empty text wraps to no lines');
+    assert.deepStrictEqual(logic.wrapCaptionTextGreedy('   ', measureLen, 10), [], 'whitespace-only text wraps to no lines');
+    assert.deepStrictEqual(logic.wrapCaptionTextGreedy('hi', measureLen, 10), ['hi'], 'short text is one line');
+    assert.deepStrictEqual(
+        logic.wrapCaptionTextGreedy('one two three four', measureLen, 8),
+        ['one two', 'three', 'four'],
+        'greedily packs words up to the width budget, never splitting a word'
+    );
+    // A single word wider than maxWidthPx still gets its own (overflowing) line —
+    // no forced hyphenation, matching normal CSS word-wrap.
+    assert.deepStrictEqual(
+        logic.wrapCaptionTextGreedy('supercalifragilisticexpialidocious hi', measureLen, 10),
+        ['supercalifragilisticexpialidocious', 'hi'],
+        'an unbreakably long word gets its own line rather than being split'
+    );
+})();
+console.log('vimeo_playlist_logic.test.js: all passed (including wrapCaptionTextGreedy)');
+
+// captionTextFitsAtSize: line-count + per-line width check built on the wrap above.
+(function () {
+    function measureLen(s) { return s.length; }
+    var measureAtSize = function (s, size) { return s.length * size; };
+
+    assert.strictEqual(logic.captionTextFitsAtSize('', 10, 10, 1, measureAtSize), true, 'empty text always fits');
+    assert.strictEqual(
+        logic.captionTextFitsAtSize('hi there', 10, 8, 1, function (s) { return measureLen(s); }),
+        true,
+        '\'hi there\' (8 chars) fits one line at width 8'
+    );
+    assert.strictEqual(
+        logic.captionTextFitsAtSize('one two three four', 1, 8, 1, measureAtSize),
+        false,
+        'text needing 3 wrapped lines does not fit a 1-line budget'
+    );
+    assert.strictEqual(
+        logic.captionTextFitsAtSize('one two three four', 1, 8, 3, measureAtSize),
+        true,
+        'the same text fits a 3-line budget'
+    );
+})();
+console.log('vimeo_playlist_logic.test.js: all passed (including captionTextFitsAtSize)');
+
+// captionFitFontSizeForDisplay: shrink-to-fit measuring the text AS ACTUALLY
+// WRAPPED (issue: the old formula approximated "fits two lines" as "the whole
+// single-line text width fits under 2×boxWidth", which is wrong for an unevenly
+// distributed cue — e.g. one very long word — since CSS wraps at word boundaries,
+// not at the text's midpoint).
+(function () {
+    // Deterministic stand-in for canvas measureText: width scales linearly with
+    // both character count and font size, like real (monospace-ish) text metrics.
+    function fakeMeasure(text, fontSizePx) {
+        return text.length * fontSizePx * 0.6;
+    }
+
+    // Degenerate inputs fall back to the base size rather than erroring.
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay({ text: '', baseFontSizePx: 38, boxWidthPx: 400, maxLines: 2, measureWidthFn: fakeMeasure }),
+        38,
+        'empty text keeps base size'
+    );
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay({ text: 'hello', baseFontSizePx: 38, boxWidthPx: 0, maxLines: 1, measureWidthFn: fakeMeasure }),
+        38,
+        'zero box width keeps base size (nothing to fit against yet)'
+    );
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay({ text: 'hello', baseFontSizePx: 38, boxWidthPx: 400, maxLines: 1 }),
+        38,
+        'missing measureWidthFn keeps base size'
+    );
+
+    // Six short, evenly-sized words wrap naturally into exactly two lines at base
+    // size ("one two three" / "four five six", per fakeMeasure) — no shrink needed.
+    var evenText = 'one two three four five six';
+    assert.strictEqual(
+        logic.captionFitFontSizeForDisplay({ text: evenText, baseFontSizePx: 38, boxWidthPx: 400, maxLines: 2, measureWidthFn: fakeMeasure }),
+        38,
+        'two-line mode: evenly-wrapping cue keeps base size'
+    );
+    // The same text in single-line mode (maxLines=1) must still shrink to fit one
+    // line — two-line mode's extra budget is not free rein for single-line mode.
+    var singleLineFit = logic.captionFitFontSizeForDisplay({ text: evenText, baseFontSizePx: 38, boxWidthPx: 400, maxLines: 1, measureWidthFn: fakeMeasure });
+    assert.ok(singleLineFit < 38, 'single-line mode: same cue still shrinks below base (' + singleLineFit + 'px)');
+    assert.ok(singleLineFit > 20, 'single-line mode: shrink is not wildly excessive (' + singleLineFit + 'px)');
+
+    // The bug this fixes: one very long word plus a short one. Total single-line
+    // width is well under 2×boxWidth (the old heuristic's "fits two lines" test),
+    // but the long word ALONE overflows one line by itself once actually wrapped —
+    // the old code would barely shrink this (~36px); the fix must shrink hard.
+    var unevenText = 'supercalifragilisticexpialidocious hi';
+    var unevenFit = logic.captionFitFontSizeForDisplay({ text: unevenText, baseFontSizePx: 38, boxWidthPx: 400, maxLines: 2, measureWidthFn: fakeMeasure });
+    assert.ok(unevenFit < 25, 'uneven cue (one very long word) shrinks well below the old ~36px guess (' + unevenFit + 'px)');
+    assert.ok(unevenFit > 15, 'uneven cue shrink is not wildly excessive either (' + unevenFit + 'px)');
+    // And the result must actually satisfy the real wrap constraint — proving the
+    // fitted size is not just "smaller" but genuinely correct.
+    assert.strictEqual(
+        logic.captionTextFitsAtSize(unevenText, unevenFit, 400, 2, fakeMeasure),
+        true,
+        'the fitted size genuinely satisfies the two-line wrap constraint'
+    );
+    assert.strictEqual(
+        logic.captionTextFitsAtSize(unevenText, unevenFit + 1, 400, 2, fakeMeasure),
+        false,
+        'fitted size is the largest that fits — one step larger no longer does'
+    );
+
+    // Extreme case: even the minimum font size cannot make an unbreakable single
+    // "word" fit — falls back to the floor rather than looping forever or erroring.
+    var unbreakable = logic.captionFitFontSizeForDisplay({
+        text: 'x'.repeat(500),
+        baseFontSizePx: 38,
+        boxWidthPx: 400,
+        maxLines: 2,
+        measureWidthFn: fakeMeasure,
+    });
+    assert.strictEqual(unbreakable, logic.CAPTION_MIN_FONT_SIZE_PX, 'unbreakably-long single token falls back to the minimum font size');
+})();
+console.log('vimeo_playlist_logic.test.js: all passed (including wrap-aware captionFitFontSizeForDisplay)');
 
 // ── Issue #02: playback session + secondary-page nav intent ─────────────────
 
@@ -2722,4 +2830,290 @@ console.log('vimeo_playlist_logic.test.js: all passed (including transport short
 })();
 
 console.log('vimeo_playlist_logic.test.js: all passed (including in-session Website language switch)');
+
+// masterIndexForVideoId: unknown/empty videoId returns -1, never a silent 0 fallback
+(function () {
+    var items = [
+        { videoId: '111' },
+        { videoId: '222' },
+        { videoId: '333' },
+    ];
+    assert.strictEqual(logic.masterIndexForVideoId(items, '222'), 1, 'known id resolves its index');
+    assert.strictEqual(logic.masterIndexForVideoId(items, '111'), 0, 'known id at index 0 still resolves 0 (not confused with -1 fallback)');
+    assert.strictEqual(logic.masterIndexForVideoId(items, '999'), -1, 'unknown id returns -1, not 0');
+    assert.strictEqual(logic.masterIndexForVideoId(items, ''), -1, 'empty id returns -1, not 0');
+    assert.strictEqual(logic.masterIndexForVideoId(items, null), -1, 'nullish id returns -1, not 0');
+    assert.strictEqual(logic.masterIndexForVideoId([], '111'), -1, 'empty playlist returns -1');
+})();
+
+// sortCaptionEventsByStart: out-of-order cues are sorted so binary search over them works
+(function () {
+    var outOfOrder = [
+        { start: 5000, end: 6000, text: 'third' },
+        { start: 0, end: 1000, text: 'first' },
+        { start: 2000, end: 3000, text: 'second' },
+    ];
+    var sorted = logic.sortCaptionEventsByStart(outOfOrder);
+    assert.deepStrictEqual(
+        sorted.map(function (e) { return e.text; }),
+        ['first', 'second', 'third'],
+        'cues sorted ascending by start time'
+    );
+    // Original array left untouched (defensive copy, not an in-place mutation).
+    assert.strictEqual(outOfOrder[0].text, 'third', 'input array is not mutated');
+
+    // Stable sort: cues sharing a start time keep their original relative order.
+    var tied = [
+        { start: 1000, text: 'a' },
+        { start: 1000, text: 'b' },
+        { start: 500, text: 'c' },
+    ];
+    assert.deepStrictEqual(
+        logic.sortCaptionEventsByStart(tied).map(function (e) { return e.text; }),
+        ['c', 'a', 'b'],
+        'equal-start cues keep stable relative order'
+    );
+
+    assert.deepStrictEqual(logic.sortCaptionEventsByStart([]), [], 'empty events list stays empty');
+    assert.deepStrictEqual(logic.sortCaptionEventsByStart(undefined), [], 'non-array input returns empty list');
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including masterIndexForVideoId -1 and cue sort)');
+
+// resolvePickerListboxKeyAction: keyboard navigation for custom listbox pickers
+(function () {
+    // Closed listbox: Down/Up/Enter/Space open it; other keys do nothing.
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowDown', activeIndex: -1, optionCount: 3, isOpen: false }),
+        { action: 'open' },
+        'closed listbox: ArrowDown opens'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowUp', activeIndex: -1, optionCount: 3, isOpen: false }),
+        { action: 'open' },
+        'closed listbox: ArrowUp opens'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'Enter', activeIndex: -1, optionCount: 3, isOpen: false }),
+        { action: 'open' },
+        'closed listbox: Enter opens'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'a', activeIndex: -1, optionCount: 3, isOpen: false }),
+        { action: 'none' },
+        'closed listbox: unrelated key does nothing'
+    );
+
+    // Open listbox: Down/Up move with wraparound.
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowDown', activeIndex: 0, optionCount: 3, isOpen: true }),
+        { action: 'move', index: 1 },
+        'open listbox: ArrowDown moves to next option'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowDown', activeIndex: 2, optionCount: 3, isOpen: true }),
+        { action: 'move', index: 0 },
+        'open listbox: ArrowDown wraps from last to first'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowUp', activeIndex: 0, optionCount: 3, isOpen: true }),
+        { action: 'move', index: 2 },
+        'open listbox: ArrowUp wraps from first to last'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowUp', activeIndex: 2, optionCount: 3, isOpen: true }),
+        { action: 'move', index: 1 },
+        'open listbox: ArrowUp moves to previous option'
+    );
+
+    // Home / End jump to the first / last option regardless of current position.
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'Home', activeIndex: 2, optionCount: 5, isOpen: true }),
+        { action: 'move', index: 0 },
+        'open listbox: Home jumps to first option'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'End', activeIndex: 0, optionCount: 5, isOpen: true }),
+        { action: 'move', index: 4 },
+        'open listbox: End jumps to last option'
+    );
+
+    // Escape closes; Enter/Space select the active option.
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'Escape', activeIndex: 1, optionCount: 3, isOpen: true }),
+        { action: 'close' },
+        'open listbox: Escape closes'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'Enter', activeIndex: 1, optionCount: 3, isOpen: true }),
+        { action: 'select', index: 1 },
+        'open listbox: Enter selects the active option'
+    );
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: ' ', activeIndex: 2, optionCount: 3, isOpen: true }),
+        { action: 'select', index: 2 },
+        'open listbox: Space selects the active option'
+    );
+
+    // Unrelated keys (e.g. Tab, a letter) leave the listbox alone.
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'Tab', activeIndex: 1, optionCount: 3, isOpen: true }),
+        { action: 'none' },
+        'open listbox: unrelated key does nothing'
+    );
+
+    // No options: never opens or moves, even on a normally-actionable key.
+    assert.deepStrictEqual(
+        logic.resolvePickerListboxKeyAction({ key: 'ArrowDown', activeIndex: -1, optionCount: 0, isOpen: false }),
+        { action: 'none' },
+        'empty listbox: ArrowDown does nothing'
+    );
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including picker listbox keyboard navigation)');
+
+// createLazyVimeoPlayerFacade: defers real Vimeo.Player construction until a Video
+// is actually requested, for the unknown/empty-Participant cold-start case (no
+// unrelated Video may ever be fetched/mounted), while behaving exactly like the SDK
+// otherwise. Async — the SDK's own interface is Promise-based throughout.
+function makeMockRealPlayer(id) {
+    var handlers = {};
+    return {
+        id: id,
+        handlers: handlers,
+        onCalls: [],
+        on: function (event, handler) {
+            this.onCalls.push(event);
+            handlers[event] = handler;
+        },
+        play: function () { return Promise.resolve('played'); },
+        pause: function () { return Promise.resolve('paused'); },
+        getPaused: function () { return Promise.resolve(false); },
+        getCurrentTime: function () { return Promise.resolve(42); },
+        setCurrentTime: function (t) { return Promise.resolve(t); },
+        getVideoId: function () { return Promise.resolve(id); },
+        getVideoWidth: function () { return Promise.resolve(1920); },
+        getVideoHeight: function () { return Promise.resolve(1080); },
+        ready: function () { return Promise.resolve(); },
+        loadVideo: function (payload) {
+            this.lastLoadVideoPayload = payload;
+            return Promise.resolve();
+        },
+    };
+}
+
+(async function () {
+    // hasInitialSrc: true — the common case (a valid initial Video, server-rendered).
+    // The real Player must be constructed immediately, synchronously, with no options
+    // (the iframe's own src already carries the full param set) — unchanged behavior.
+    (function () {
+        var constructCalls = [];
+        var mockPlayer = makeMockRealPlayer('123');
+        var facade = logic.createLazyVimeoPlayerFacade({
+            hasInitialSrc: true,
+            defaultEmbedParams: { title: '0' },
+            constructReal: function (opts) {
+                constructCalls.push(opts);
+                return mockPlayer;
+            },
+        });
+        assert.strictEqual(constructCalls.length, 1, 'hasInitialSrc=true: constructReal called exactly once at construction');
+        assert.strictEqual(constructCalls[0], undefined, 'hasInitialSrc=true: constructReal called with no options');
+        assert.strictEqual(facade.isReal(), true, 'hasInitialSrc=true: facade reports a real player immediately');
+    })();
+
+    // hasInitialSrc: false — the cold-start empty-queue case (unknown/empty
+    // Participant filter). No real Player, no unrelated Video, until loadVideo().
+    var constructCalls = [];
+    var mockPlayer = null;
+    var facade = logic.createLazyVimeoPlayerFacade({
+        hasInitialSrc: false,
+        defaultEmbedParams: { title: '0', controls: '0' },
+        constructReal: function (opts) {
+            constructCalls.push(opts);
+            mockPlayer = makeMockRealPlayer(String(opts.id || opts.url));
+            return mockPlayer;
+        },
+    });
+    assert.strictEqual(constructCalls.length, 0, 'hasInitialSrc=false: constructReal NOT called at construction (no unrelated Video fetched)');
+    assert.strictEqual(facade.isReal(), false, 'hasInitialSrc=false: facade reports no real player yet');
+
+    // Chrome wiring must be able to run unconditionally against the cold facade —
+    // .on() queues handlers rather than throwing, and every reader degrades neutrally.
+    var playHandlerCalls = [];
+    facade.on('play', function () { playHandlerCalls.push('play'); });
+    facade.on('ended', function () { playHandlerCalls.push('ended'); });
+
+    assert.strictEqual(await facade.getPaused(), true, 'no real player: getPaused() resolves true (neutral)');
+    assert.strictEqual(await facade.getCurrentTime(), 0, 'no real player: getCurrentTime() resolves 0 (neutral)');
+    assert.strictEqual(await facade.getVideoId(), null, 'no real player: getVideoId() resolves null (neutral)');
+    await facade.ready(); // must not throw/reject
+
+    // The cold-to-non-empty transition: filter change / collection change / prev-next
+    // / Reset / end-of-playlist advance all funnel through loadVideoMaster() ->
+    // resolveLoadVideoPromise() -> p.loadVideo(...) — this is the single choke point
+    // that must construct the real Player, the first time a Video is genuinely
+    // requested, merging in the server's default embed params.
+    await facade.loadVideo({ id: 999, autoplay: true });
+    assert.strictEqual(constructCalls.length, 1, 'loadVideo(): constructs the real player exactly once');
+    var opts = constructCalls[0];
+    assert.strictEqual(opts.id, 999, 'loadVideo(): constructReal receives the requested id');
+    assert.strictEqual(opts.autoplay, '1', 'loadVideo(): autoplay boolean true maps to string \'1\'');
+    assert.strictEqual(opts.title, '0', 'loadVideo(): default embed params are merged in (title)');
+    assert.strictEqual(opts.controls, '0', 'loadVideo(): default embed params are merged in (controls)');
+    assert.strictEqual(facade.isReal(), true, 'loadVideo(): facade reports a real player afterward');
+    assert.deepStrictEqual(mockPlayer.onCalls, ['play', 'ended'], 'loadVideo(): queued .on() handlers replayed onto the real player, in order');
+
+    mockPlayer.handlers.play();
+    assert.deepStrictEqual(playHandlerCalls, ['play'], 'a replayed handler actually fires when the real player emits the event');
+
+    // A second loadVideo() (a later filter change / prev / next) must not reconstruct
+    // the player — it delegates straight to the real player's own loadVideo, exactly
+    // like every ordinary in-session Video switch does today.
+    await facade.loadVideo({ id: 111, autoplay: false });
+    assert.strictEqual(constructCalls.length, 1, 'second loadVideo(): does not reconstruct the player');
+    assert.deepStrictEqual(mockPlayer.lastLoadVideoPayload, { id: 111, autoplay: false }, 'second loadVideo(): delegates the raw payload to the real player');
+
+    // .on() once a real player exists delegates directly rather than queuing.
+    facade.on('pause', function () {});
+    assert.deepStrictEqual(mockPlayer.onCalls, ['play', 'ended', 'pause'], 'on() after construction delegates directly, not queued');
+
+    // loadVideo() with neither id nor url, and no real player yet, rejects rather
+    // than silently constructing a player against nothing.
+    var neverCalled = true;
+    var facadeNoTarget = logic.createLazyVimeoPlayerFacade({
+        hasInitialSrc: false,
+        constructReal: function () {
+            neverCalled = false;
+            throw new Error('constructReal should not be called with no id/url');
+        },
+    });
+    var rejected = false;
+    try {
+        await facadeNoTarget.loadVideo({});
+    } catch (e) {
+        rejected = true;
+    }
+    assert.strictEqual(rejected, true, 'loadVideo({}) with neither id nor url rejects');
+    assert.strictEqual(neverCalled, true, 'loadVideo({}) never calls constructReal');
+
+    // A `url` payload (per-Video embed_params overrides) wins over a bare `id`.
+    var urlCalls = [];
+    var facadeUrl = logic.createLazyVimeoPlayerFacade({
+        hasInitialSrc: false,
+        defaultEmbedParams: {},
+        constructReal: function (o) {
+            urlCalls.push(o);
+            return makeMockRealPlayer('u');
+        },
+    });
+    await facadeUrl.loadVideo({ url: 'https://player.vimeo.com/video/555?foo=bar', id: 555, autoplay: false });
+    assert.strictEqual(urlCalls[0].url, 'https://player.vimeo.com/video/555?foo=bar', 'url payload wins over id');
+    assert.strictEqual(urlCalls[0].id, undefined, 'id is not set on constructReal options when url is present');
+
+    console.log('vimeo_playlist_logic.test.js: all passed (including lazy Vimeo Player facade / cold-start empty-queue)');
+})().catch(function (err) {
+    console.error('FAIL (lazy Vimeo Player facade):', err);
+    process.exitCode = 1;
+});
 

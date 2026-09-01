@@ -31,10 +31,17 @@
 <main>
     <h1>Crèdits</h1>
     <p class="intro">
-        Edita directament el fitxer <code>views/about/credits_i18n.php</code> (el text que apareix a la pàgina
-        About). És un fitxer PHP: en desar es comprova la sintaxi (<code>php -l</code>) i, si hi ha algun error,
-        no es desa res. Cada vegada que deses correctament es guarda la versió anterior; el botó "Desfés" la
-        recupera.
+        Edita el text dels crèdits que apareix a la pàgina About
+        (<code>views/about/credits_body.html</code>). És HTML, no PHP: no s'hi pot posar codi.
+        Els números i les etiquetes traduïdes s'omplen sols amb aquests marcadors:
+        <code>{{count.participants}}</code>, <code>{{count.videos}}</code>,
+        <code>{{count.deaf_hearing_pct}}</code>, <code>{{label.supported_by}}</code>,
+        <code>{{label.participants}}</code>, <code>{{label.interpreter}}</code>,
+        <code>{{label.interpreters}}</code>, <code>{{label.coordination}}</code>,
+        <code>{{label.collaboration}}</code>, <code>{{label.thanks_to}}</code>,
+        <code>{{project_by}}</code>, <code>{{contact}}</code>.
+        En desar es comprova el contingut i, si hi ha algun error, no es desa res. Cada vegada que deses
+        correctament es guarda la versió anterior; el botó "Desfés" la recupera.
     </p>
 
     <div class="editor-toolbar">
@@ -47,13 +54,13 @@
 </main>
 <script type="module">
 import { EditorView, basicSetup } from 'https://esm.sh/codemirror@6.0.1';
-import { php } from 'https://esm.sh/@codemirror/lang-php@6.0.1';
+import { html } from 'https://esm.sh/@codemirror/lang-html@6.4.9';
 
 const initialContent = <?= json_encode($fileContent, JSON_HEX_TAG | JSON_THROW_ON_ERROR) ?>;
 
 const view = new EditorView({
     doc: initialContent,
-    extensions: [basicSetup, php()],
+    extensions: [basicSetup, html()],
     parent: document.getElementById('cm-editor'),
 });
 

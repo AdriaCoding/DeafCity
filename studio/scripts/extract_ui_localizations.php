@@ -1,4 +1,11 @@
 <?php
+
+// CLI only. Refuse to run under a web server even if the directory deny rule
+// is ever lost: these scripts spend API budget and mutate the catalog.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit("This script is CLI-only.\n");
+}
 /**
  * Generate data/ui-localizations.json from the English string manifest + studio-config content labels.
  *

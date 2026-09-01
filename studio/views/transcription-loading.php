@@ -157,6 +157,7 @@
         <div class="spinner"></div>
         <p class="status-label" id="status-label">Transcrivint…</p>
         <form method="POST" action="?action=cancel" id="cancel-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
         </form>
     </div>
@@ -191,6 +192,7 @@
         <div class="spinner"></div>
         <p class="status-label">Revisant subtítols…</p>
         <form method="POST" action="?action=cancel" id="cancel-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
         </form>
     </div>
@@ -209,6 +211,7 @@
         <div class="error-panel">
             <p>No s'ha pogut revisar el fitxer de subtítols.</p>
             <form method="POST" action="?action=cancel" id="cancel-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
                 <button type="submit" class="btn-danger">Cancel·la</button>
             </form>
         </div>
@@ -227,6 +230,7 @@
         <div class="spinner"></div>
         <p class="status-label" id="trans-label">Traduint a l'anglès…</p>
         <form method="POST" action="?action=cancel" id="cancel-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <button type="submit" class="btn-danger" style="font-size:0.8rem;padding:0.5rem 1rem">Cancel·la</button>
         </form>
     </div>
@@ -258,10 +262,12 @@
             <p>No s'ha pogut traduir el fitxer a l'anglès.</p>
             <div class="btn-row">
                 <form method="POST" action="?action=translation-retry" id="retry-form">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
                     <input type="hidden" name="lang" value="en">
                     <button type="submit" class="btn-retry">Torna-ho a provar</button>
                 </form>
                 <form method="POST" action="?action=cancel" id="cancel-form">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
                     <button type="submit" class="btn-danger">Cancel·la</button>
                 </form>
             </div>
@@ -303,6 +309,7 @@
             </div>
         </div>
         <form method="POST" action="?action=cancel" id="finish-form">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <button type="submit" class="btn-finish">Finalitza</button>
         </form>
     </div>

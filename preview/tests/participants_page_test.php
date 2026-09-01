@@ -19,6 +19,35 @@ function pp_assert_not_contains($needle, $haystack, $label) {
 require dirname(dirname(__FILE__)) . '/lib/preview_locale.php';
 require dirname(dirname(__FILE__)) . '/lib/videos_catalog.php';
 
+// ── player.empty.no_matching_videos: new key, additions only ───────────────────
+// Must exist with every subtitle language populated (otherwise it silently breaks
+// language-completeness resolution), and player.error.no_playlist's existing copy
+// — hand-edited by the project owner via Studio — must be byte-for-byte unchanged.
+$i18nEntries = preview_i18n_load_store(preview_resolve_data_dir() . '/ui-localizations.json');
+if (!isset($i18nEntries['player.empty.no_matching_videos']) || !is_array($i18nEntries['player.empty.no_matching_videos'])) {
+    fwrite(STDERR, "FAIL: i18n store is missing player.empty.no_matching_videos\n");
+    exit(1);
+}
+$newKeyTranslations = isset($i18nEntries['player.empty.no_matching_videos']['translations'])
+    ? $i18nEntries['player.empty.no_matching_videos']['translations']
+    : array();
+foreach (array('en', 'fr', 'ca', 'es', 'it', 'pt', 'ar', 'eu') as $langId) {
+    if (empty($newKeyTranslations[$langId])) {
+        fwrite(STDERR, "FAIL: player.empty.no_matching_videos is missing a '{$langId}' translation\n");
+        exit(1);
+    }
+}
+echo "PASS: player.empty.no_matching_videos has translations for every subtitle language\n";
+
+$noPlaylistEn = isset($i18nEntries['player.error.no_playlist']['translations']['en'])
+    ? $i18nEntries['player.error.no_playlist']['translations']['en']
+    : null;
+if ($noPlaylistEn !== 'No playlist loaded. Check that data/catalog.json exists.') {
+    fwrite(STDERR, "FAIL: player.error.no_playlist English copy changed — it must stay untouched (ops-only, genuinely-missing-catalog case)\n");
+    exit(1);
+}
+echo "PASS: player.error.no_playlist copy is unchanged (still reserved for a genuinely missing catalog)\n";
+
 $catalogJsonPath = preview_resolve_data_dir() . '/catalog.json';
 $catalog = vpc_load_videos_catalog($catalogJsonPath);
 $expectedCardCount = count(vpc_participants_from_catalog($catalog ?: array()));
@@ -256,5 +285,67 @@ if (($cfgUnk['participantName'] ?? '') !== 'DefinitelyNotARealParticipant_XYZ') 
     exit(1);
 }
 echo "PASS: unknown ?participant still enters Participant mode (participantName set)\n";
+
+// Issue: an unknown/empty Participant filter must not server-render a wrong Video's
+// poster/nav-label — the player must render as empty from the first paint, not just
+// after JS cleans it up client-side.
+pp_assert_not_contains('class="vpc-poster-cover"', $homeHtmlUnknown, 'unknown participant: no poster image rendered (would show an unrelated Video)');
+if (!preg_match('~<div class="vpc-load-scrim"[^>]*aria-hidden="true"></div>~', $homeHtmlUnknown)) {
+    fwrite(STDERR, "FAIL: unknown participant: load scrim should render visible (no is-hidden) from first paint\n");
+    exit(1);
+}
+echo "PASS: unknown participant: load scrim renders visible (not is-hidden) from first paint\n";
+pp_assert_contains('class="vpc-empty-state"', $homeHtmlUnknown, 'unknown participant: empty-state message rendered');
+pp_assert_contains(
+    'vpc-chrome-btn__label-full">DefinitelyNotARealParticipant_XYZ</span>',
+    $homeHtmlUnknown,
+    'unknown participant: Participants nav label uses the typed name, not an unrelated catalog video\'s participant'
+);
+
+// The iframe itself must carry no Vimeo src at all — hiding the poster/showing the
+// empty state is not enough if the iframe still fetches and mounts an unrelated
+// Video (the actual bug: the browser loads a real, wrong Vimeo video in the
+// background even though it is visually covered).
+if (!preg_match('~<iframe\b[^>]*>~', $homeHtmlUnknown, $mIframe)) {
+    fwrite(STDERR, "FAIL: unknown participant: no <iframe> tag found at all\n");
+    exit(1);
+}
+if (strpos($mIframe[0], 'src=') !== false) {
+    fwrite(STDERR, "FAIL: unknown participant: iframe still carries a src attribute: {$mIframe[0]}\n");
+    exit(1);
+}
+echo "PASS: unknown participant: iframe carries no src attribute (no Vimeo video fetched)\n";
+pp_assert_not_contains(
+    'player.vimeo.com',
+    $mIframe[0],
+    'unknown participant: iframe tag itself contains no player.vimeo.com URL'
+);
+
+// The empty-queue message must be visitor-facing copy (a normal, expected result —
+// an unknown/empty Participant filter matched nothing), never the ops-facing
+// "check that data/catalog.json exists" message reserved for a genuinely missing
+// catalog (preview/index.php's and preview/participants/index.php's own $vpc===null
+// / $catalog===null branches, which this page load does NOT hit — the catalog loads
+// fine here, only the Participant filter matches nothing).
+pp_assert_contains(
+    htmlspecialchars(preview_t('player.empty.no_matching_videos'), ENT_QUOTES, 'UTF-8'),
+    $homeHtmlUnknown,
+    'unknown participant: empty-state shows the visitor-facing "no matching videos" message'
+);
+pp_assert_not_contains(
+    htmlspecialchars(preview_t('player.error.no_playlist'), ENT_QUOTES, 'UTF-8'),
+    $homeHtmlUnknown,
+    'unknown participant: empty-state does NOT show the ops-facing "catalog.json" message'
+);
+
+// JS: attachPlayer() must not construct the Vimeo Player directly against an iframe
+// that may have no src — it goes through the lazy facade, which defers real
+// construction to the first genuine loadVideo() (see vimeo_playlist_logic.js's
+// createLazyVimeoPlayerFacade / its unit tests for the cold-start-to-video paths:
+// filter change, collection change, prev/next, Reset, end-of-playlist advance all
+// funnel through loadVideoMaster() -> resolveLoadVideoPromise() -> p.loadVideo()).
+$playerJsSrc = file_get_contents(dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js');
+pp_assert_contains('vimeoPlayer = createLazyVimeoPlayer(iframe);', $playerJsSrc, 'attachPlayer() constructs via the lazy facade, not new Vimeo.Player(iframe) directly');
+pp_assert_contains('L.createLazyVimeoPlayerFacade(', $playerJsSrc, 'createLazyVimeoPlayer() delegates to the shared, unit-tested facade logic');
 
 echo "\nAll participants_page tests passed.\n";

@@ -88,6 +88,35 @@
 .vpc-load-scrim.is-hidden {
     opacity: 0;
 }
+/* Non-intrusive caption-fetch-failed notice: captions failing does not stop Video
+   playback, so this sits in flow next to the caption row — it must never cover the
+   Video (unlike .vpc-empty-state, which is for states where there is no Video at all). */
+.vpc-caption-error {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0.15rem 1rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.75rem;
+}
+.vpc-caption-error.is-hidden {
+    display: none;
+}
+/* Empty player state (e.g. an unknown/empty Participant collection): plain, minimal
+   message above the load scrim, in place of a Video. */
+.vpc-empty-state {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+}
 @media screen and (min-width: 651px) {
     .video-shell {
         --vpc-top-crop: 9%;
@@ -484,6 +513,15 @@
 .vpc-picker-option[aria-selected="true"]:hover {
     background: rgb(0, 100, 0);
 }
+/* Keyboard-active option (roving aria-activedescendant) — same treatment as :hover
+   so keyboard and mouse users see a consistent "this is what Enter/click picks". */
+.vpc-picker-option--active {
+    background: #e8f5e9;
+    color: rgb(0, 80, 0);
+}
+.vpc-picker-option--active[aria-selected="true"] {
+    background: rgb(0, 100, 0);
+}
 /* "Clear / all" option: slightly muted */
 .vpc-picker-clear {
     color: #666;
@@ -767,9 +805,9 @@
         grid-template-columns: 1fr var(--vpc-square-btn-w) var(--vpc-mobile-col-gap) var(--vpc-square-btn-w) 1fr;
         grid-template-areas:
             "icons icons icons icons icons"
+            ". lang . signs ."
             ". cities . participants ."
-            ". signs . typology ."
-            ". lang . deaf .";
+            ". deaf . typology .";
     }
     .vpc-control-secondary-l > .preview-site-nav {
         grid-row: 1;

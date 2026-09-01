@@ -18,13 +18,39 @@ class BulkIntakeHandler
      */
     public function handlePost(array $post, array $files): array
     {
-        $errors = [];
         $values = ['subtitle_language' => ''];
 
         if ($this->jobManager->exists()) {
-            $errors['_form'] = 'Ja hi ha una feina en curs.';
-            return ['errors' => $errors, 'values' => $values];
+            return ['errors' => ['_form' => 'Ja hi ha una feina en curs.'], 'values' => $values];
         }
+
+        // Guards the whole check-then-launch section in doHandlePost(): without
+        // this lock, two near-simultaneous requests could both see
+        // bulkQueue->exists() === false and both go on to create a queue and
+        // launch a worker for it, duplicating the work. A refused acquire here
+        // means another request is already mid-flight for this same launch.
+        $lock = ProcessLock::acquire($this->bulkQueue->lockFilePath());
+        if ($lock === null) {
+            $message = $this->allowAudio
+                ? 'Ja hi ha una transcripció en massa en curs.'
+                : 'Ja hi ha un processament en massa en curs.';
+            return ['errors' => ['_form' => $message], 'values' => $values];
+        }
+
+        try {
+            return $this->doHandlePost($post, $files, $values);
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * @param array<string, string> $values
+     * @return array{errors: array<string, string>, values: array<string, string>, created?: bool}
+     */
+    private function doHandlePost(array $post, array $files, array $values): array
+    {
+        $errors = [];
 
         if ($this->bulkQueue->exists()) {
             $errors['_form'] = $this->allowAudio

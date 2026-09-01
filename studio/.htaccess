@@ -1,0 +1,14 @@
+# Studio-only overrides. The site-wide policy lives in the document-root
+# .htaccess; this file only widens what the Studio genuinely needs, so the
+# public site keeps the tighter policy.
+#
+# Do NOT add a SetHandler here: the Apache vhost include is the single source
+# of truth for the site's PHP version (see AGENTS.md).
+<IfModule mod_headers.c>
+    # The credits editor loads CodeMirror as an ES module from esm.sh, and the
+    # Studio pulls its webfonts from Google Fonts. Both are Studio-only, behind
+    # the auth gate; neither is allowed on the public site.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://esm.sh; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://i.vimeocdn.com; media-src 'self' blob:; frame-src 'self' https://player.vimeo.com; connect-src 'self' https://esm.sh; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>

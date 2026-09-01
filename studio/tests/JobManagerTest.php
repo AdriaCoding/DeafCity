@@ -67,6 +67,52 @@ class JobManagerTest extends TestCase
         $this->assertDirectoryDoesNotExist($this->jobsDir . '/current');
     }
 
+    public function test_colliding_create_is_rejected_atomically_even_if_precheck_missed_it(): void
+    {
+        // Simulate two concurrent requests both passing the exists() check
+        // before either has created the directory: create the directory
+        // out-of-band (as a racing second process would), bypassing this
+        // manager's own exists() pre-check, then assert createWithContent()
+        // still refuses rather than silently overwriting the winner's job.
+        mkdir($this->jobsDir . '/current', 0775, true);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Ja hi ha una feina en curs.');
+
+        $this->manager->createWithContent(
+            [
+                'vimeo_id' => '999',
+                'video_title' => 'Colliding Job',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'subtitle_language' => 'es',
+                'step' => 'subtitle-editor',
+            ],
+            "1\n00:00:01,000 --> 00:00:02,000\nCue\n"
+        );
+    }
+
+    public function test_colliding_create_does_not_clobber_the_winning_jobs_files(): void
+    {
+        // The winner of the race writes its job.json first...
+        mkdir($this->jobsDir . '/current', 0775, true);
+        file_put_contents($this->jobsDir . '/current/job.json', json_encode(['vimeo_id' => 'winner']));
+
+        try {
+            $this->manager->createWithContent(
+                ['vimeo_id' => 'loser', 'video_title' => 'Loser', 'sign_language' => 'lse', 'edition' => '2020-valencia', 'subtitle_language' => 'es', 'step' => 'subtitle-editor'],
+                "1\n00:00:01,000 --> 00:00:02,000\nCue\n"
+            );
+            $this->fail('Expected the colliding create to throw.');
+        } catch (\RuntimeException) {
+            // expected
+        }
+
+        // ...and the loser must never have touched the winner's job.json or draft.
+        $this->assertSame('winner', json_decode(file_get_contents($this->jobsDir . '/current/job.json'), true)['vimeo_id']);
+        $this->assertFileDoesNotExist($this->jobsDir . '/current/draft.srt');
+    }
+
     public function test_draftPathForLang_returns_expected_path(): void
     {
         $this->createSampleJob();

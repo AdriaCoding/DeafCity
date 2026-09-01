@@ -390,6 +390,74 @@ class CatalogSheetSyncTest extends TestCase
         );
     }
 
+    public function test_mid_run_throw_rolls_back_all_catalog_changes_from_this_run(): void
+    {
+        $editor = new CatalogEditor($this->catalogFile);
+        $editor->addVideo('999', 'Pre-existing', 'lse', '2020-valencia');
+        $before = file_get_contents($this->catalogFile);
+
+        // A CatalogEditor that behaves normally except its second
+        // upsertFromSheet() call throws, simulating an unexpected failure
+        // (e.g. a disk error) partway through a run that already
+        // successfully applied row 1.
+        $throwingEditor = new class ($this->catalogFile) extends CatalogEditor {
+            private int $calls = 0;
+
+            public function upsertFromSheet(
+                string $vimeoId,
+                string $title,
+                string $signLanguage,
+                string $edition,
+                array $tags,
+                ?string $typology,
+                ?string $participant,
+                ?string $thumbnailUrl = null,
+                ?string $embedUrl = null,
+            ): string {
+                $this->calls++;
+                if ($this->calls === 2) {
+                    throw new \RuntimeException('Simulated mid-run failure');
+                }
+                return parent::upsertFromSheet(
+                    $vimeoId,
+                    $title,
+                    $signLanguage,
+                    $edition,
+                    $tags,
+                    $typology,
+                    $participant,
+                    $thumbnailUrl,
+                    $embedUrl,
+                );
+            }
+        };
+
+        $sheets = $this->createMock(GoogleSheetsClient::class);
+        $sheets->method('fetchRows')->willReturn([
+            ['', 'Ciutats', 'Participants', 'Vimeo', '', 'TÍTOLS', 'ANECDOTES', 'DEAF+HEARING'],
+            ['001', '2020 València', 'Aurora', '111', '1', '#A', 'JOKES', ''],
+            ['002', '', 'Dani', '222', '1', '#B', 'JOKES', ''],
+        ]);
+
+        $vimeo = $this->vimeoReturningTitle('Some Title');
+
+        $sync = $this->makeSync($sheets, $vimeo, $throwingEditor);
+
+        try {
+            $sync->run();
+            $this->fail('Expected the mid-run failure to propagate.');
+        } catch (\RuntimeException $e) {
+            $this->assertSame('Simulated mid-run failure', $e->getMessage());
+        }
+
+        // Both the row-1 upsert (111) applied before the throw and the
+        // pre-existing video (999) must be exactly as they were before
+        // this run started.
+        $this->assertSame($before, file_get_contents($this->catalogFile));
+        $this->assertNull($editor->findVideoByVimeoId('111'));
+        $this->assertNotNull($editor->findVideoByVimeoId('999'));
+    }
+
     private function vimeoReturningTitle(string $title): VimeoClient
     {
         $vimeo = $this->createMock(VimeoClient::class);

@@ -193,26 +193,74 @@
         if (!facet || !btn || !dropdown) {
             return;
         }
+
+        var activeIndex = -1;
+
+        function currentOptions() {
+            return Array.prototype.slice.call(dropdown.querySelectorAll('.vpc-picker-option'));
+        }
+
+        function clearActiveOption() {
+            currentOptions().forEach(function (o) { o.classList.remove('vpc-picker-option--active'); });
+        }
+
+        function setActiveIndex(index) {
+            var options = currentOptions();
+            if (index < 0 || index >= options.length) return;
+            clearActiveOption();
+            activeIndex = index;
+            var el = options[activeIndex];
+            el.classList.add('vpc-picker-option--active');
+            dropdown.setAttribute('aria-activedescendant', el.id);
+            if (typeof el.scrollIntoView === 'function') el.scrollIntoView({ block: 'nearest' });
+        }
+
+        function selectedOptionIndex() {
+            var options = currentOptions();
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].getAttribute('aria-selected') === 'true') return i;
+            }
+            return 0;
+        }
+
         function close() {
             dropdown.hidden = true;
             btn.setAttribute('aria-expanded', 'false');
+            dropdown.removeAttribute('aria-activedescendant');
+            clearActiveOption();
+            activeIndex = -1;
         }
         r2Closers.push(close);
+
+        function open() {
+            dropdown.hidden = false;
+            btn.setAttribute('aria-expanded', 'true');
+            setActiveIndex(selectedOptionIndex());
+            dropdown.focus();
+        }
+
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
             var wasOpen = !dropdown.hidden;
             closeAllR2Dropups();
-            if (!wasOpen) {
-                dropdown.hidden = false;
-                btn.setAttribute('aria-expanded', 'true');
+            if (!wasOpen) open();
+        });
+
+        btn.addEventListener('keydown', function (e) {
+            if (!L || typeof L.resolvePickerListboxKeyAction !== 'function') return;
+            var action = L.resolvePickerListboxKeyAction({
+                key: e.key,
+                activeIndex: activeIndex,
+                optionCount: currentOptions().length,
+                isOpen: !dropdown.hidden,
+            });
+            if (action.action === 'open') {
+                e.preventDefault();
+                open();
             }
         });
-        dropdown.addEventListener('click', function (e) {
-            var target = e.target;
-            if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) {
-                return;
-            }
-            e.stopPropagation();
+
+        function activateOption(target) {
             close();
             var value = target.getAttribute('data-value') || '';
             // "All X" (clear) option → neutral player handoff, no filter pin.
@@ -221,11 +269,38 @@
                 return;
             }
             window.location.href = playerUrl('filter:' + facet + ':' + encodeURIComponent(value));
+        }
+
+        dropdown.addEventListener('click', function (e) {
+            var target = e.target;
+            if (!target || !target.classList || !target.classList.contains('vpc-picker-option')) {
+                return;
+            }
+            e.stopPropagation();
+            activateOption(target);
         });
         dropdown.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
+            var action = (L && typeof L.resolvePickerListboxKeyAction === 'function')
+                ? L.resolvePickerListboxKeyAction({
+                      key: e.key,
+                      activeIndex: activeIndex,
+                      optionCount: currentOptions().length,
+                      isOpen: true,
+                  })
+                : (e.key === 'Escape' ? { action: 'close' } : { action: 'none' });
+
+            if (action.action === 'move') {
+                e.preventDefault();
+                setActiveIndex(action.index);
+            } else if (action.action === 'close') {
+                e.preventDefault();
                 close();
                 btn.focus();
+            } else if (action.action === 'select') {
+                e.preventDefault();
+                var options = currentOptions();
+                var el = options[action.index];
+                if (el) activateOption(el);
             }
         });
     }

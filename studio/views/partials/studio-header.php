@@ -7,7 +7,16 @@
  * @var string|null $activeNav  StudioHeader::NAV_* constant
  */
 
+use Studio\Csrf;
 use Studio\StudioHeader;
+
+// Defensive: this partial also renders outside a real request (e.g. unit
+// tests calling StudioHeader::renderHtml() directly), where session_start()
+// was never called and $_SESSION doesn't exist yet.
+if (!isset($_SESSION) || !is_array($_SESSION)) {
+    $_SESSION = [];
+}
+$csrfToken = Csrf::issueToken($_SESSION);
 
 $syncMessage = StudioHeader::syncStatusMessage($syncStatus);
 $syncStatusClass = match ($syncStatus['status'] ?? 'idle') {
@@ -49,6 +58,7 @@ $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
         </nav>
         <div class="studio-header-utilities">
             <form method="POST" action="?action=sync" class="studio-sync-form" id="sync-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
                 <button type="submit" class="studio-sync-btn" id="sync-btn"
                     <?= $isSyncing ? 'disabled' : '' ?>>
                     <?php if ($isSyncing): ?>
@@ -65,10 +75,37 @@ $cssVersion = is_file($cssPath) ? (string) filemtime($cssPath) : '1';
             <?php else: ?>
                 <span class="studio-sync-status" id="sync-status-msg" aria-live="polite" hidden></span>
             <?php endif; ?>
-            <a class="studio-logout" href="?action=logout">Tanca la sessió</a>
+            <form method="POST" action="?action=logout" class="studio-logout-form" style="display:inline;margin:0;">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
+                <button type="submit" class="studio-logout"
+                        style="background:none;border:none;padding:0.55rem 0.25rem;font:inherit;cursor:pointer;">Tanca la sessió</button>
+            </form>
         </div>
     </div>
 </header>
+<script>
+    window.STUDIO_CSRF_TOKEN = <?= json_encode($csrfToken) ?>;
+    (function () {
+        // Idempotent: a page that also renders its own copy of this block must
+        // not wrap window.fetch twice.
+        if (window.STUDIO_CSRF_FETCH_WRAPPED) { return; }
+        var originalFetch = window.fetch;
+        if (typeof originalFetch !== 'function') { return; }
+        window.STUDIO_CSRF_FETCH_WRAPPED = true;
+        window.fetch = function (input, init) {
+            init = init || {};
+            var method = (init.method || 'GET').toUpperCase();
+            if (method !== 'GET' && method !== 'HEAD') {
+                var headers = new Headers(init.headers || {});
+                if (!headers.has('X-CSRF-Token')) {
+                    headers.set('X-CSRF-Token', window.STUDIO_CSRF_TOKEN);
+                }
+                init = Object.assign({}, init, { headers: headers });
+            }
+            return originalFetch(input, init);
+        };
+    }());
+</script>
 <?php if ($isSyncing): ?>
 <script>
     (function () {

@@ -42,8 +42,8 @@ class CaptionDeleteHandler
             return ['ok' => false, 'error' => $e->getMessage()];
         }
 
-        $path = $this->captionsDirPath . '/' . $captionFile;
-        if (is_file($path)) {
+        $path = self::resolveSafeCaptionPath($this->captionsDirPath, $captionFile);
+        if ($path !== false) {
             unlink($path);
         }
 
@@ -96,5 +96,45 @@ class CaptionDeleteHandler
         }
 
         return ['ok' => true, 'deletedLangs' => $deleted];
+    }
+
+    /**
+     * Resolves a catalog-supplied caption `file` value to a real path
+     * strictly inside $captionsDir, or false if it isn't one. Mirrors
+     * Studio\Actions\CatalogAction::resolveSafeCaptionPath() — same
+     * caption-path trust boundary, applied here before every unlink().
+     *
+     * basename() strips any directory component (defeats
+     * `../../config/config.php`, absolute paths, and encoded-looking
+     * values like `..%2f..%2f...`), and the realpath containment check is
+     * the actual guarantee that the resolved file is truly inside the
+     * captions directory.
+     */
+    private static function resolveSafeCaptionPath(string $captionsDir, ?string $file): string|false
+    {
+        if ($file === null || trim($file) === '') {
+            return false;
+        }
+
+        $safeName = basename($file);
+        if ($safeName === '' || $safeName === '.' || $safeName === '..') {
+            return false;
+        }
+
+        $realDir = realpath($captionsDir);
+        if ($realDir === false) {
+            return false;
+        }
+
+        $realCandidate = realpath($realDir . DIRECTORY_SEPARATOR . $safeName);
+        if ($realCandidate === false) {
+            return false;
+        }
+
+        if (!str_starts_with($realCandidate, $realDir . DIRECTORY_SEPARATOR)) {
+            return false;
+        }
+
+        return $realCandidate;
     }
 }

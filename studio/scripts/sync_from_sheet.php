@@ -1,5 +1,12 @@
 <?php
 
+// CLI only. Refuse to run under a web server even if the directory deny rule
+// is ever lost: these scripts spend API budget and mutate the catalog.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit("This script is CLI-only.\n");
+}
+
 /**
  * Sync Catalog from Toni’s Google Sheet.
  *
@@ -12,6 +19,17 @@
 
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+
+/*
+ * One sheet sync run at a time, for the whole duration of the process. Two
+ * concurrent runs would spend API budget twice and interleave their catalog
+ * writes.
+ */
+$__runLock = \Studio\ProcessLock::acquire(dirname(__DIR__, 2) . '/data/sync_from_sheet.lock');
+if ($__runLock === null) {
+    fwrite(STDERR, "Another sheet sync run is already in progress. Aborting.\n");
+    exit(1);
+}
 
 use Studio\CatalogEditor;
 use Studio\CatalogSheetSync;

@@ -139,4 +139,44 @@ echo "PASS: spoken language picker removed from player page\n";
 $logicPath = dirname(dirname(__FILE__)) . '/js/vimeo_playlist_logic.js';
 assert_true(is_file($logicPath), 'vimeo_playlist_logic.js exists');
 
+// ── Keyboard navigation (arrow/Home/End/Escape/Enter) + correct roles ──────────
+// Every role="listbox" dropup must be focusable (tabindex="-1", since focus is moved
+// to it programmatically on open — it is not part of the normal Tab order) and every
+// role="option" it contains needs a stable id for a roving aria-activedescendant.
+if (!preg_match_all('~<ul\s+role="listbox"[^>]*>~', $html, $listboxes)) {
+    fwrite(STDERR, "FAIL: no role=\"listbox\" pickers found on the player page\n");
+    exit(1);
+}
+assert_true(count($listboxes[0]) > 0, 'at least one role="listbox" picker present');
+foreach ($listboxes[0] as $tag) {
+    assert_true(strpos($tag, 'tabindex="-1"') !== false, 'listbox is focusable via tabindex="-1": ' . $tag);
+}
+
+if (!preg_match_all('~<li\s+role="option"\s+id="([^"]+)"~', $html, $optionIds)) {
+    fwrite(STDERR, "FAIL: no role=\"option\" elements carry an id\n");
+    exit(1);
+}
+assert_true(count($optionIds[1]) > 0, 'role="option" elements carry stable ids for aria-activedescendant');
+assert_true(count($optionIds[1]) === count(array_unique($optionIds[1])), 'option ids are unique on the page');
+
+// JS: shared pure keyboard-resolution logic exists (unit tested in vimeo_playlist_logic.test.js)…
+$logicJs = file_get_contents($logicPath);
+assert_true(strpos($logicJs, 'function resolvePickerListboxKeyAction') !== false, 'shared resolvePickerListboxKeyAction() logic exists');
+assert_true(strpos($logicJs, 'resolvePickerListboxKeyAction: resolvePickerListboxKeyAction') !== false, 'resolvePickerListboxKeyAction is exported from vimeo_playlist_logic.js');
+
+// …and every DOM call site (home player, About/Participants secondary chrome, and the
+// language picker shared by all pages) actually wires it up rather than only handling
+// Escape as before.
+$playerJs = file_get_contents(dirname(dirname(__FILE__)) . '/js/vimeo_caption_player.js');
+assert_true(strpos($playerJs, 'L.resolvePickerListboxKeyAction(') !== false, 'home player R2 pickers use the shared keyboard logic');
+assert_true(strpos($playerJs, "action.action === 'move'") !== false, 'home player R2 pickers handle arrow-key movement');
+assert_true(strpos($playerJs, 'setAttribute(\'aria-activedescendant\'') !== false, 'home player R2 pickers manage aria-activedescendant');
+
+$secondaryJs = file_get_contents(dirname(dirname(__FILE__)) . '/js/secondary_player_chrome.js');
+assert_true(strpos($secondaryJs, 'L.resolvePickerListboxKeyAction(') !== false, 'secondary page R2 pickers use the shared keyboard logic');
+assert_true(strpos($secondaryJs, "action.action === 'move'") !== false, 'secondary page R2 pickers handle arrow-key movement');
+
+$bottomBarPhp = file_get_contents(dirname(dirname(__FILE__)) . '/components/bottom_bar.php');
+assert_true(strpos($bottomBarPhp, 'resolvePickerListboxKeyAction(') !== false, 'language picker (shared by every page) uses the shared keyboard logic');
+
 echo "\nfilter_pickers_test.php: all passed\n";

@@ -6,9 +6,16 @@ use Studio\Container;
 use Studio\StudioHeader;
 
 /**
- * Raw PHP-file editor scoped to views/about/credits_i18n.php — the one file
- * non-technical staff (Toni) need to update by hand each time a city/edition
- * is added. Not a general file browser: the path is fixed on purpose.
+ * Editor scoped to views/about/credits_body.html — the one file non-technical
+ * staff (Toni) need to update by hand each time a city/edition is added. Not a
+ * general file browser: the path is fixed on purpose.
+ *
+ * The body is inert HTML with a fixed {{token}} vocabulary, never PHP. It used
+ * to be views/about/credits_i18n.php, which the public About page includes on
+ * every visit — so anyone holding a Studio session could publish arbitrary PHP
+ * that then ran for every visitor. The computation and translation half now
+ * lives in credits_i18n.php / credits_render.php, which this editor cannot
+ * reach; saving here can only ever change markup and text.
  */
 class CreditsEditorAction
 {
@@ -26,12 +33,50 @@ class CreditsEditorAction
 
     private function filePath(): string
     {
-        return dirname($this->c->dataDir) . '/views/about/credits_i18n.php';
+        return dirname($this->c->dataDir) . '/views/about/credits_body.html';
     }
 
     private function backupPath(): string
     {
-        return $this->c->dataDir . '/credits_i18n.backup.php';
+        return $this->c->dataDir . '/credits_body.backup.html';
+    }
+
+    /**
+     * Reject anything that would make the body executable or active again, and
+     * any {{token}} the renderer does not know how to fill.
+     *
+     * @return string|null Catalan error message, or null when the body is fine.
+     */
+    public static function validateBody(string $content): ?string
+    {
+        if (trim($content) === '') {
+            return 'El contingut no pot estar buit.';
+        }
+
+        if (preg_match('/<\\?/', $content)) {
+            return "El text dels crèdits és HTML, no PHP: no pot contenir '<?'.";
+        }
+        if (preg_match('/<\\s*(script|iframe|object|embed|form|style|link|meta|base)\\b/i', $content, $m)) {
+            return "No es permet l'etiqueta <" . strtolower($m[1]) . "> al text dels crèdits.";
+        }
+        // on…= handlers (onclick, onerror, …) would run script without a <script> tag.
+        if (preg_match('/\\son[a-z]+\\s*=/i', $content)) {
+            return "No es permeten atributs d'esdeveniment (onclick, onerror…) al text dels crèdits.";
+        }
+        if (preg_match('/(href|src)\\s*=\\s*["\\\']?\\s*javascript:/i', $content)) {
+            return "No es permeten enllaços 'javascript:' al text dels crèdits.";
+        }
+
+        require_once dirname(__DIR__, 3) . '/views/about/credits_render.php';
+        $known = credits_render_known_tokens();
+        preg_match_all('/\\{\\{([^}]*)\\}\\}/', $content, $found);
+        foreach ($found[1] as $token) {
+            if (!in_array($token, $known, true)) {
+                return 'Marcador desconegut: {{' . $token . '}}. Els disponibles són: {{' . implode('}}, {{', $known) . '}}.';
+            }
+        }
+
+        return null;
     }
 
     private function renderEditor(): never
@@ -53,9 +98,10 @@ class CreditsEditorAction
         header('Content-Type: application/json; charset=utf-8');
 
         $content = (string) ($_POST['content'] ?? '');
-        if (trim($content) === '') {
+        $invalid = self::validateBody($content);
+        if ($invalid !== null) {
             http_response_code(422);
-            echo json_encode(['ok' => false, 'error' => 'El contingut no pot estar buit.'], JSON_UNESCAPED_UNICODE);
+            echo json_encode(['ok' => false, 'error' => $invalid], JSON_UNESCAPED_UNICODE);
             exit;
         }
 
@@ -64,16 +110,6 @@ class CreditsEditorAction
         if (file_put_contents($tmpPath, $content) === false) {
             http_response_code(500);
             echo json_encode(['ok' => false, 'error' => "No s'ha pogut escriure el fitxer temporal."], JSON_UNESCAPED_UNICODE);
-            exit;
-        }
-
-        $lintOutput = [];
-        $lintStatus = 0;
-        exec('php -l ' . escapeshellarg($tmpPath) . ' 2>&1', $lintOutput, $lintStatus);
-        if ($lintStatus !== 0) {
-            @unlink($tmpPath);
-            http_response_code(422);
-            echo json_encode(['ok' => false, 'error' => implode("\n", $lintOutput)], JSON_UNESCAPED_UNICODE);
             exit;
         }
 

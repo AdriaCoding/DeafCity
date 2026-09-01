@@ -19,19 +19,94 @@ use Studio\Actions\ShellAction;
 use Studio\Actions\ShortenAction;
 use Studio\Actions\SyncAction;
 use Studio\AuthGuard;
+use Studio\AuthThrottle;
 use Studio\BackgroundJobLauncher;
 use Studio\Container;
+use Studio\Csrf;
 use Studio\JobManager;
 use Studio\StudioConfig;
 
+/**
+ * Secure session cookie. Must be configured before session_start(). The
+ * cookie path is scoped to the Studio base path rather than the site-wide
+ * "/", so the session cookie isn't sent to unrelated parts of deaf.city.
+ */
+$studioBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/studio/index.php'))), '/') . '/';
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => $studioBasePath,
+    'domain'   => '',
+    'secure'   => true,
+    'httponly' => true,
+    'samesite' => 'Strict',
+]);
 session_start();
+
 $guard = new AuthGuard($_SESSION);
 $baseUrl = (string) strtok($_SERVER['REQUEST_URI'], '?');
 $action = $_GET['action'] ?? null;
 $dataDir = dirname(__DIR__) . '/data';
+$clientIp = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+$throttle = new AuthThrottle($dataDir . '/auth-throttle');
 
-// Logout
+// Every request gets a stable per-session CSRF token — both the login form
+// (pre-auth) and every authenticated form/fetch call need one available.
+Csrf::issueToken($_SESSION);
+
+/** After this many failed logins from one IP within the window, reject with 429. */
+const STUDIO_KNOWN_WEAK_PASSWORDS = ['hola', '1234', 'password', 'admin'];
+
+function studioAuthLog(string $dataDir, string $message): void
+{
+    $logFile = $dataDir . '/logs/studio.log';
+    @file_put_contents(
+        $logFile,
+        date('Y-m-d H:i:s') . ' [auth] WARN: ' . $message . "\n",
+        FILE_APPEND,
+    );
+}
+
+function studioCsrfTokenFromRequest(): ?string
+{
+    $token = $_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? null);
+
+    return is_string($token) && $token !== '' ? $token : null;
+}
+
+function studioRejectCsrf(bool $asJson): never
+{
+    http_response_code(403);
+    if ($asJson) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(
+            ['ok' => false, 'error' => 'Sessió no vàlida o caducada. Recarrega la pàgina i torna-ho a provar.'],
+            JSON_UNESCAPED_UNICODE,
+        );
+        exit;
+    }
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="ca"><head><meta charset="UTF-8"><title>Error</title></head>'
+        . '<body><p>Sessió no vàlida o caducada. Torna a la pàgina anterior i torna-ho a provar.</p></body></html>';
+    exit;
+}
+
+function studioRequireValidCsrf(bool $asJson): void
+{
+    if (!Csrf::validate($_SESSION, studioCsrfTokenFromRequest())) {
+        studioRejectCsrf($asJson);
+    }
+}
+
+// Logout is a state change — it must be a POST with a valid CSRF token,
+// not a plain link a page could be tricked into loading (or crawled).
 if ($action === 'logout') {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Mètode no permès.';
+        exit;
+    }
+    studioRequireValidCsrf(false);
     $guard->logout();
     session_destroy();
     header('Location: ' . $baseUrl);
@@ -40,14 +115,34 @@ if ($action === 'logout') {
 
 // Login gate
 $showError = false;
+$lockoutMessage = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$guard->isAuthenticated() && isset($_POST['password'])) {
-    if ($guard->login((string) $_POST['password'])) {
-        header('Location: ' . $baseUrl);
-        exit;
+    if ($throttle->isLockedOut($clientIp)) {
+        http_response_code(429);
+        $lockoutMessage = "Massa intents fallits. Torna-ho a provar d'aquí a 15 minuts.";
+    } else {
+        studioRequireValidCsrf(false);
+        if ($guard->login((string) $_POST['password'])) {
+            $throttle->reset($clientIp);
+            if (in_array(STUDIO_PASSWORD, STUDIO_KNOWN_WEAK_PASSWORDS, true)) {
+                studioAuthLog($dataDir, 'STUDIO_PASSWORD is set to a known-weak value; change it in config/config.php.');
+            }
+            // Regenerate the session id post-auth (fixation defense). Done
+            // here rather than in AuthGuard so AuthGuard stays unit-testable
+            // with a plain array session, with no real PHP session involved.
+            session_regenerate_id(true);
+            header('Location: ' . $baseUrl);
+            exit;
+        }
+        $throttle->recordFailure($clientIp);
+        $showError = true;
     }
-    $showError = true;
 }
 if (!$guard->isAuthenticated()) {
+    if ($lockoutMessage === null && $throttle->isLockedOut($clientIp)) {
+        http_response_code(429);
+        $lockoutMessage = "Massa intents fallits. Torna-ho a provar d'aquí a 15 minuts.";
+    }
     require __DIR__ . '/views/blocker.php';
     exit;
 }
@@ -62,6 +157,91 @@ $container = new Container(
         defined('GEMINI_API_KEY') ? GEMINI_API_KEY : '',
     ),
 );
+
+/**
+ * Actions safely reachable by a plain GET request: page renders, status
+ * polls, and downloads. Everything else is a state change and must arrive
+ * as POST with a valid CSRF token (checked below, before dispatch).
+ *
+ * Note: 'continguts-caption-review', 'transcription-intake' and
+ * 'shorten-intake' render on GET but also handle a POST branch internally
+ * (they read $_SERVER['REQUEST_METHOD'] themselves) — whitelisting them
+ * here only exempts their GET path; a POST to the same action name still
+ * falls through to the POST+CSRF branch below.
+ */
+$readOnlyGetActions = [
+    null,
+    'continguts',
+    'continguts-video',
+    'continguts-caption-review',
+    'continguts-download-caption-srt',
+    'continguts-download-data-zip',
+    'continguts-caption-translate-status',
+    'continguts-batch-translate-status',
+    'transcription-status',
+    'translation-status',
+    'transcription-intake',
+    'bulk-progress',
+    'bulk-status',
+    'bulk-download',
+    'shorten-intake',
+    'resume-shorten-job',
+    'shorten-download-srt',
+    'shorten-bulk-progress',
+    'shorten-bulk-status',
+    'shorten-bulk-download',
+    'download-srt',
+    'localitzacions',
+    'credits-editor',
+    'sync-status',
+    'resume-job',
+];
+
+/** Mutating actions whose handler responds with JSON, so a CSRF failure should too. */
+$jsonPostActions = [
+    'add-sign-language',
+    'add-edition',
+    'add-typology',
+    'add-subtitle-language',
+    'add-input-language',
+    'continguts-resolve-vimeo',
+    'continguts-add-video',
+    'continguts-save-video',
+    'continguts-set-video-invisible',
+    'continguts-set-master-caption',
+    'continguts-save-edition-label',
+    'continguts-save-sign-language-label',
+    'continguts-save-typology-label',
+    'continguts-delete-edition',
+    'continguts-delete-sign-language',
+    'continguts-delete-subtitle-language',
+    'continguts-delete-input-language',
+    'continguts-delete-typology',
+    'continguts-delete-caption',
+    'continguts-delete-all-translations',
+    'continguts-replace-caption',
+    'continguts-caption-review',
+    'continguts-caption-translate-start',
+    'continguts-caption-translate-retry',
+    'continguts-sync-from-sheet',
+    'continguts-batch-translate',
+    'localitzacions-save',
+    'localitzacions-seed',
+    'credits-editor-save',
+    'credits-editor-revert',
+    'translation-retry',
+];
+
+$isWhitelistedGet = $_SERVER['REQUEST_METHOD'] === 'GET' && in_array($action, $readOnlyGetActions, true);
+if (!$isWhitelistedGet) {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Mètode no permès.';
+        exit;
+    }
+    studioRequireValidCsrf(in_array($action, $jsonPostActions, true));
+}
 
 match ($action) {
     'cancel'                              => (new IntakeAction($container))->cancel(),

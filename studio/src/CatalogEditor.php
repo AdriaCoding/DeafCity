@@ -220,6 +220,30 @@ class CatalogEditor
         return $data['videos'] ?? [];
     }
 
+    /**
+     * Snapshot the full Videos list, for callers that need to roll back a
+     * multi-step run (e.g. CatalogSheetSync) if it aborts partway through.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function snapshotVideos(): array
+    {
+        return $this->getAllVideos();
+    }
+
+    /**
+     * Replace the Videos list wholesale with a previously taken snapshot —
+     * the rollback counterpart to snapshotVideos().
+     *
+     * @param list<array<string, mixed>> $videos
+     */
+    public function restoreVideos(array $videos): void
+    {
+        $this->withLockedCatalog(function (array &$catalog) use ($videos): void {
+            $catalog['videos'] = $videos;
+        }, allowMissing: true);
+    }
+
     /** @return ?array<string, mixed> */
     public function findVideoByVimeoId(string $vimeoId): ?array
     {
@@ -458,11 +482,19 @@ class CatalogEditor
     }
 
     /**
-     * Open, lock, read, and decode the Catalog; run $mutate against it by
-     * reference; write the result back; unlock and close. Centralizes the
-     * lock lifecycle so every mutation reads and writes under the same
-     * critical section — the property that closes TOCTOU races between
-     * concurrent mutations (e.g. two concurrent adds of the same Video).
+     * Serialize writers through a dedicated lock file, read and decode the
+     * Catalog, run $mutate against it by reference, then commit via
+     * write-temp-then-rename (see writeAtomically()). Centralizes the lock
+     * lifecycle so every mutation reads and writes under the same critical
+     * section — the property that closes TOCTOU races between concurrent
+     * mutations (e.g. two concurrent adds of the same Video).
+     *
+     * A separate lock file (rather than locking catalogFilePath itself) is
+     * required for this to be correct: locking the path being replaced by
+     * rename() would let a writer that opened its handle just before the
+     * rename go on to read/lock the now-unlinked old inode instead of the
+     * file current writers actually see — same reasoning as
+     * StudioConfig::withLockedConfig().
      *
      * @template T
      * @param callable(array<string, mixed> &$catalog): T $mutate
@@ -470,16 +502,16 @@ class CatalogEditor
      */
     private function withLockedCatalog(callable $mutate, bool $allowMissing = false): mixed
     {
-        $fp = fopen($this->catalogFilePath, 'c+');
-        if ($fp === false) {
-            throw new \RuntimeException('Could not open catalog for writing.');
+        $lockFp = fopen($this->catalogFilePath . '.lock', 'c');
+        if ($lockFp === false) {
+            throw new \RuntimeException('Could not open catalog lock.');
         }
 
         try {
-            flock($fp, LOCK_EX);
+            flock($lockFp, LOCK_EX);
 
-            $raw = stream_get_contents($fp);
-            $catalog = json_decode($raw ?: '', true);
+            $raw = is_file($this->catalogFilePath) ? file_get_contents($this->catalogFilePath) : false;
+            $catalog = $raw !== false ? json_decode($raw, true) : null;
             if (!is_array($catalog) || !isset($catalog['videos']) || !is_array($catalog['videos'])) {
                 if (!$allowMissing) {
                     throw new \RuntimeException('Invalid catalog JSON.');
@@ -489,14 +521,57 @@ class CatalogEditor
 
             $result = $mutate($catalog);
 
-            ftruncate($fp, 0);
-            fseek($fp, 0);
-            fwrite($fp, json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n");
+            $this->writeAtomically($catalog);
 
             return $result;
         } finally {
-            flock($fp, LOCK_UN);
-            fclose($fp);
+            flock($lockFp, LOCK_UN);
+            fclose($lockFp);
+        }
+    }
+
+    /**
+     * Commit $catalog via write-temp + fsync + rename() so a crash mid-write
+     * — or a concurrent reader such as getAllVideos(), which reads
+     * catalogFilePath directly without taking the lock above — can never
+     * observe a truncated or partially written catalog.json. Readers always
+     * see either the pre- or post-mutation content, never a torn write.
+     *
+     * The temp file is created alongside catalogFilePath so rename() stays
+     * on the same filesystem (atomic) and the file inherits the same
+     * directory default ACL Studio's www-data write access relies on; its
+     * permission bits are then aligned to the file it replaces (or 0664 for
+     * a brand-new catalog) so that behaviour doesn't regress either.
+     *
+     * @param array<string, mixed> $catalog
+     */
+    private function writeAtomically(array $catalog): void
+    {
+        $mode = is_file($this->catalogFilePath)
+            ? fileperms($this->catalogFilePath) & 0777
+            : 0664;
+
+        $tmpPath = $this->catalogFilePath . '.tmp-' . bin2hex(random_bytes(6));
+        $encoded = json_encode($catalog, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n";
+
+        $tmpFp = fopen($tmpPath, 'wb');
+        if ($tmpFp === false) {
+            throw new \RuntimeException('Could not write catalog.');
+        }
+        if (fwrite($tmpFp, $encoded) === false) {
+            fclose($tmpFp);
+            @unlink($tmpPath);
+            throw new \RuntimeException('Could not write catalog.');
+        }
+        fflush($tmpFp);
+        fsync($tmpFp);
+        fclose($tmpFp);
+
+        chmod($tmpPath, $mode);
+
+        if (!rename($tmpPath, $this->catalogFilePath)) {
+            @unlink($tmpPath);
+            throw new \RuntimeException('Could not save catalog.');
         }
     }
 }

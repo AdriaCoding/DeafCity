@@ -276,6 +276,26 @@ $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
         window.__vimeoId = <?= json_encode($vimeoId) ?>;
         window.__lang = <?= json_encode($lang) ?>;
         window.__postSaveRedirect = <?= json_encode($postSaveRedirect) ?>;
+        window.STUDIO_CSRF_TOKEN = <?php
+            if (!isset($_SESSION) || !is_array($_SESSION)) { $_SESSION = []; }
+            echo json_encode(\Studio\Csrf::issueToken($_SESSION));
+        ?>;
+        (function () {
+            var originalFetch = window.fetch;
+            if (typeof originalFetch !== 'function') { return; }
+            window.fetch = function (input, init) {
+                init = init || {};
+                var method = (init.method || 'GET').toUpperCase();
+                if (method !== 'GET' && method !== 'HEAD') {
+                    var headers = new Headers(init.headers || {});
+                    if (!headers.has('X-CSRF-Token')) {
+                        headers.set('X-CSRF-Token', window.STUDIO_CSRF_TOKEN);
+                    }
+                    init = Object.assign({}, init, { headers: headers });
+                }
+                return originalFetch(input, init);
+            };
+        }());
     </script>
     <script src="js/caption-utils.js?v=<?= filemtime(__DIR__ . '/../js/caption-utils.js') ?>"></script>
     <script src="js/continguts-caption-editor.js?v=<?= filemtime(__DIR__ . '/../js/continguts-caption-editor.js') ?>"></script>

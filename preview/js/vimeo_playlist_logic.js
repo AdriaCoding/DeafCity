@@ -371,6 +371,211 @@
     }
 
     /**
+     * Index into fullPlaylistItems whose videoId matches, or -1 when videoId is empty
+     * or matches nothing. Callers must handle -1 explicitly rather than silently
+     * falling back to (and playing) index 0.
+     * @param {Array<{ videoId?: string }>} fullPlaylistItems
+     * @param {string} videoId
+     * @returns {number}
+     */
+    function masterIndexForVideoId(fullPlaylistItems, videoId) {
+        var items = Array.isArray(fullPlaylistItems) ? fullPlaylistItems : [];
+        var id = String(videoId || '');
+        if (id === '') return -1;
+        for (var i = 0; i < items.length; i++) {
+            if (String(items[i].videoId) === id) return i;
+        }
+        return -1;
+    }
+
+    /**
+     * Sort caption cue events by start time. Cue lookup (binary search) assumes
+     * sorted-by-start order; nothing upstream (VTT file order, server parsing)
+     * guarantees that, so sort defensively after parsing. Stable — cues that share
+     * a start time keep their relative (file) order.
+     * @param {Array<{ start?: number }>} events
+     * @returns {Array<{ start?: number }>}
+     */
+    function sortCaptionEventsByStart(events) {
+        if (!Array.isArray(events)) return [];
+        return events
+            .map(function (event, index) {
+                return { event: event, index: index };
+            })
+            .sort(function (a, b) {
+                var byStart = (a.event && a.event.start || 0) - (b.event && b.event.start || 0);
+                return byStart !== 0 ? byStart : a.index - b.index;
+            })
+            .map(function (wrapped) {
+                return wrapped.event;
+            });
+    }
+
+    /**
+     * Lazy-construction facade over the Vimeo Player SDK's public interface (the
+     * subset vimeo_caption_player.js actually calls: on, play, pause, getPaused,
+     * getCurrentTime, setCurrentTime, getVideoId, getVideoWidth, getVideoHeight,
+     * ready, loadVideo).
+     *
+     * Why this exists: the SDK's Player constructor requires the iframe to already
+     * carry a Vimeo embed URL, or an {id}/{url} option — it throws otherwise. When
+     * there is no initial Video to show (an unknown/empty Participant filter — the
+     * wrong-video-flash fix), the server deliberately renders the iframe with no
+     * src, so the browser never fetches an unrelated Video. This facade lets the
+     * player's attachPlayer() wire up every button/picker/event handler
+     * unconditionally regardless of that: .on() queues handlers until a real Player
+     * exists; every other reader method degrades to a neutral resolved value; and
+     * .loadVideo() — the single choke point every playback path (filter change,
+     * collection change, prev/next, Reset, end-of-playlist advance) funnels through
+     * — is what actually constructs the real Player, using the requested Video's
+     * id/url, the first time a Video is genuinely requested.
+     *
+     * `constructReal` is injected (rather than this module calling `new
+     * window.Vimeo.Player(...)` itself) so the queuing/deferral behavior is
+     * unit-testable without a DOM or the real SDK.
+     *
+     * @param {{
+     *   hasInitialSrc: boolean,
+     *   constructReal: (options?: object) => any,
+     *   defaultEmbedParams?: Object<string, string>,
+     * }} opts
+     * @returns {any} a facade with the same interface as a real Vimeo.Player
+     */
+    function createLazyVimeoPlayerFacade(opts) {
+        var constructReal = opts && typeof opts.constructReal === 'function' ? opts.constructReal : function () {
+            return null;
+        };
+        var defaultEmbedParams = (opts && opts.defaultEmbedParams) || {};
+        var real = null;
+        var pendingHandlers = [];
+
+        function attachReal(realPlayer) {
+            real = realPlayer;
+            pendingHandlers.forEach(function (pair) {
+                real.on(pair[0], pair[1]);
+            });
+            pendingHandlers = [];
+        }
+
+        var facade = {
+            isReal: function () {
+                return !!real;
+            },
+            on: function (event, handler) {
+                if (real) real.on(event, handler);
+                else pendingHandlers.push([event, handler]);
+            },
+            play: function () {
+                return real ? real.play() : Promise.resolve();
+            },
+            pause: function () {
+                return real ? real.pause() : Promise.resolve();
+            },
+            getPaused: function () {
+                return real ? real.getPaused() : Promise.resolve(true);
+            },
+            getCurrentTime: function () {
+                return real ? real.getCurrentTime() : Promise.resolve(0);
+            },
+            setCurrentTime: function (t) {
+                return real ? real.setCurrentTime(t) : Promise.resolve(0);
+            },
+            getVideoId: function () {
+                return real ? real.getVideoId() : Promise.resolve(null);
+            },
+            getVideoWidth: function () {
+                return real ? real.getVideoWidth() : Promise.resolve(0);
+            },
+            getVideoHeight: function () {
+                return real ? real.getVideoHeight() : Promise.resolve(0);
+            },
+            ready: function () {
+                return real ? real.ready() : Promise.resolve();
+            },
+            loadVideo: function (payload) {
+                if (real) return real.loadVideo(payload);
+
+                var hasUrl = !!(payload && payload.url);
+                var hasId = !!(payload && typeof payload.id === 'number' && !isNaN(payload.id));
+                if (!hasUrl && !hasId) {
+                    return Promise.reject(new Error('Vimeo playlist item lacks video id'));
+                }
+
+                var vOpts = {};
+                for (var key in defaultEmbedParams) {
+                    if (Object.prototype.hasOwnProperty.call(defaultEmbedParams, key)) {
+                        vOpts[key] = defaultEmbedParams[key];
+                    }
+                }
+                if (hasUrl) {
+                    vOpts.url = payload.url;
+                } else {
+                    vOpts.id = payload.id;
+                }
+                vOpts.autoplay = payload && payload.autoplay ? '1' : '0';
+
+                attachReal(constructReal(vOpts));
+                // Constructing with {id|url} already loads the Video; nothing further to await.
+                return Promise.resolve();
+            },
+        };
+
+        if (opts && opts.hasInitialSrc) {
+            attachReal(constructReal());
+        }
+
+        return facade;
+    }
+
+    /**
+     * Resolve a keyboard action for a custom role="listbox" filter picker (the R2
+     * sign-language/edition/typology/language dropups). Pure decision logic shared
+     * by the three DOM call sites (home player, About/Participants secondary chrome,
+     * and the language picker) so keyboard behavior cannot drift between them.
+     *
+     * ARIA: Up/Down/Home/End move a roving `aria-activedescendant`; Enter/Space
+     * selects the active option; Escape closes. When the listbox is closed,
+     * Up/Down/Enter/Space open it (activating the current selection is the
+     * caller's job, via the returned 'open' action).
+     *
+     * @param {{ key: string, activeIndex: number, optionCount: number, isOpen: boolean }} params
+     * @returns {{ action: 'move'|'open'|'close'|'select'|'none', index?: number }}
+     */
+    function resolvePickerListboxKeyAction(params) {
+        var key = params && params.key;
+        var activeIndex = params && typeof params.activeIndex === 'number' ? params.activeIndex : -1;
+        var optionCount = params && typeof params.optionCount === 'number' ? params.optionCount : 0;
+        var isOpen = !!(params && params.isOpen);
+
+        if (optionCount <= 0) return { action: 'none' };
+
+        if (!isOpen) {
+            if (key === 'ArrowDown' || key === 'ArrowUp' || key === 'Enter' || key === ' ') {
+                return { action: 'open' };
+            }
+            return { action: 'none' };
+        }
+
+        switch (key) {
+            case 'ArrowDown':
+                return { action: 'move', index: activeIndex < optionCount - 1 ? activeIndex + 1 : 0 };
+            case 'ArrowUp':
+                return { action: 'move', index: activeIndex > 0 ? activeIndex - 1 : optionCount - 1 };
+            case 'Home':
+                return { action: 'move', index: 0 };
+            case 'End':
+                return { action: 'move', index: optionCount - 1 };
+            case 'Escape':
+                return { action: 'close' };
+            case 'Enter':
+            case ' ':
+                return { action: 'select', index: activeIndex };
+            default:
+                return { action: 'none' };
+        }
+    }
+
+    /**
      * Caption files to fetch for one catalog Video. Never the full catalog.
      * @param {Array<{ tracks?: Array<{ file?: string }> }>} fullPlaylistItems
      * @param {number} masterIndex
@@ -1940,16 +2145,122 @@
     }
 
     /**
-     * Shrink-to-fit with optional two-line budget on narrow viewports.
-     * @param {number} textWidthPx
-     * @param {number} baseFontSizePx
-     * @param {number} boxWidthPx
-     * @param {boolean} [twoLineMode]
+     * Greedily wrap `text` into lines of at most `maxWidthPx`, measuring each
+     * candidate line with `measureWidthFn`. Never splits a word — a single word
+     * wider than maxWidthPx still gets its own (overflowing) line, matching normal
+     * CSS word-wrap behavior (no forced hyphenation). Pure — measurement is
+     * injected so this runs (and is unit-tested) without a browser/canvas, sharing
+     * one measurement function with the DOM code that renders the real wrap.
+     *
+     * @param {string} text
+     * @param {(candidateLine: string) => number} measureWidthFn
+     * @param {number} maxWidthPx
+     * @returns {string[]}
+     */
+    function wrapCaptionTextGreedy(text, measureWidthFn, maxWidthPx) {
+        var words = String(text || '').split(/\s+/).filter(function (w) { return w !== ''; });
+        if (words.length === 0) return [];
+        var lines = [];
+        var current = words[0];
+        for (var i = 1; i < words.length; i++) {
+            var candidate = current + ' ' + words[i];
+            if (measureWidthFn(candidate) <= maxWidthPx) {
+                current = candidate;
+            } else {
+                lines.push(current);
+                current = words[i];
+            }
+        }
+        lines.push(current);
+        return lines;
+    }
+
+    /**
+     * Whether `text`, wrapped against `maxWidthPx` at `fontSizePx`, fits within
+     * `maxLines` lines with every wrapped line's rendered width within maxWidthPx.
+     * The actual wrap check (not a single-line or doubled-width guess) — this is
+     * what makes shrink-to-fit correct for an unevenly distributed cue (e.g. one
+     * very long word pushing a line past the box even though the total text width
+     * would "fit" a naive width budget).
+     *
+     * @param {string} text
+     * @param {number} fontSizePx
+     * @param {number} maxWidthPx
+     * @param {number} maxLines
+     * @param {(text: string, fontSizePx: number) => number} measureWidthFn
+     * @returns {boolean}
+     */
+    function captionTextFitsAtSize(text, fontSizePx, maxWidthPx, maxLines, measureWidthFn) {
+        var measureAtSize = function (candidate) {
+            return measureWidthFn(candidate, fontSizePx);
+        };
+        var lines = wrapCaptionTextGreedy(text, measureAtSize, maxWidthPx);
+        if (lines.length === 0) return true;
+        if (lines.length > maxLines) return false;
+        for (var i = 0; i < lines.length; i++) {
+            if (measureAtSize(lines[i]) > maxWidthPx) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Shrink-to-fit font size for the caption box, measuring the text AS IT WOULD
+     * ACTUALLY WRAP against boxWidthPx — not a single aggregate line width, and not
+     * (for two-line mode) a "does the full text fit in double the width" guess.
+     * That guess undercounts shrink for a cue with one very long word or unevenly
+     * distributed word lengths (its widest wrapped line can exceed boxWidthPx even
+     * though the total single-line width is under 2×boxWidthPx), and overcounts
+     * shrink for a cue that wraps evenly. Binary-searches the largest font size
+     * (down to CAPTION_MIN_FONT_SIZE_PX) at which the real greedy wrap fits within
+     * maxLines lines, each within boxWidthPx.
+     *
+     * Single-line mode (maxLines=1, the default/wide-viewport case) is the same
+     * check with a one-line budget — a cue must fit as one line within boxWidthPx.
+     *
+     * `measureWidthFn` is injected (the DOM/canvas measurement lives in
+     * vimeo_caption_player.js) so this runs — and is unit-tested — without a
+     * browser.
+     *
+     * @param {{
+     *   text: string,
+     *   baseFontSizePx: number,
+     *   boxWidthPx: number,
+     *   maxLines?: 1 | 2,
+     *   measureWidthFn: (text: string, fontSizePx: number) => number,
+     * }} opts
      * @returns {number}
      */
-    function captionFitFontSizeForDisplay(textWidthPx, baseFontSizePx, boxWidthPx, twoLineMode) {
-        var budget = twoLineMode ? boxWidthPx * 2 : boxWidthPx;
-        return captionFitFontSizeFromWidths(textWidthPx, baseFontSizePx, budget);
+    function captionFitFontSizeForDisplay(opts) {
+        var text = opts && typeof opts.text === 'string' ? opts.text : '';
+        var baseFontSizePx = opts && typeof opts.baseFontSizePx === 'number' ? opts.baseFontSizePx : 18;
+        var boxWidthPx = opts && typeof opts.boxWidthPx === 'number' ? opts.boxWidthPx : 0;
+        var maxLines = opts && opts.maxLines === 2 ? 2 : 1;
+        var measureWidthFn = opts && typeof opts.measureWidthFn === 'function' ? opts.measureWidthFn : null;
+
+        if (text === '' || !measureWidthFn || !boxWidthPx || boxWidthPx <= 0) {
+            return baseFontSizePx;
+        }
+        if (captionTextFitsAtSize(text, baseFontSizePx, boxWidthPx, maxLines, measureWidthFn)) {
+            return baseFontSizePx;
+        }
+
+        var lo = CAPTION_MIN_FONT_SIZE_PX;
+        var hi = baseFontSizePx;
+        // Even the minimum size doesn't fit — an extreme edge case (a single
+        // unbreakable word/token wider than the box at any size in budget). No
+        // amount of further shrinking within budget fixes an unbreakable overflow.
+        if (!captionTextFitsAtSize(text, lo, boxWidthPx, maxLines, measureWidthFn)) {
+            return lo;
+        }
+        for (var i = 0; i < 16; i++) {
+            var mid = (lo + hi) / 2;
+            if (captionTextFitsAtSize(text, mid, boxWidthPx, maxLines, measureWidthFn)) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        return Math.round(lo * 10) / 10;
     }
 
     /**
@@ -2043,6 +2354,8 @@
         captionFitFontSizeFromWidths: captionFitFontSizeFromWidths,
         captionUsesTwoLineWrap: captionUsesTwoLineWrap,
         captionBlockHeightPx: captionBlockHeightPx,
+        wrapCaptionTextGreedy: wrapCaptionTextGreedy,
+        captionTextFitsAtSize: captionTextFitsAtSize,
         captionFitFontSizeForDisplay: captionFitFontSizeForDisplay,
         filteredCursorFromShuffleStep: filteredCursorFromShuffleStep,
         buildShuffledSequence: buildShuffledSequence,
@@ -2061,6 +2374,10 @@
         resolveSpokenLangId: resolveSpokenLangId,
         spokenLangLabel: spokenLangLabel,
         buildSpokenOptionsForTracks: buildSpokenOptionsForTracks,
+        masterIndexForVideoId: masterIndexForVideoId,
+        sortCaptionEventsByStart: sortCaptionEventsByStart,
+        createLazyVimeoPlayerFacade: createLazyVimeoPlayerFacade,
+        resolvePickerListboxKeyAction: resolvePickerListboxKeyAction,
         planCaptionFetchesForMasterIndex: planCaptionFetchesForMasterIndex,
         pickTrackIndexForSpokenLang: pickTrackIndexForSpokenLang,
         resolveActiveCaptionTrackIndex: resolveActiveCaptionTrackIndex,

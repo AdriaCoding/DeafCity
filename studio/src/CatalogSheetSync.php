@@ -65,94 +65,109 @@ class CatalogSheetSync
             );
         }
 
-        $removed = 0;
-        if ($replace && !$dryRun) {
-            $keepIds = array_map(static fn(SheetVideoRow $r): string => $r->vimeoId, $sheetRows);
-            $keepIds = array_values(array_unique(array_merge($keepIds, $parsed['duplicateVimeoIds'])));
-            $removed = $this->catalog->removeVideosNotIn($keepIds);
-        } elseif ($replace && $dryRun) {
-            $keepIds = array_fill_keys(
-                array_merge(
-                    array_map(static fn(SheetVideoRow $r): string => $r->vimeoId, $sheetRows),
-                    $parsed['duplicateVimeoIds'],
-                ),
-                true,
-            );
-            foreach ($this->catalog->getAllVideos() as $existing) {
-                $id = (string) ($existing['vimeo_id'] ?? '');
-                if ($id !== '' && !isset($keepIds[$id])) {
-                    $removed++;
+        // A run that mutates the Catalog and then throws partway through
+        // (as opposed to the Vimeo error classes above, which are already
+        // caught and reported as a clean partial result) must not leave the
+        // Catalog half-updated. Snapshot it now and, if anything below
+        // throws, restore this exact snapshot before letting the exception
+        // propagate.
+        $snapshot = $dryRun ? null : $this->catalog->snapshotVideos();
+
+        try {
+            $removed = 0;
+            if ($replace && !$dryRun) {
+                $keepIds = array_map(static fn(SheetVideoRow $r): string => $r->vimeoId, $sheetRows);
+                $keepIds = array_values(array_unique(array_merge($keepIds, $parsed['duplicateVimeoIds'])));
+                $removed = $this->catalog->removeVideosNotIn($keepIds);
+            } elseif ($replace && $dryRun) {
+                $keepIds = array_fill_keys(
+                    array_merge(
+                        array_map(static fn(SheetVideoRow $r): string => $r->vimeoId, $sheetRows),
+                        $parsed['duplicateVimeoIds'],
+                    ),
+                    true,
+                );
+                foreach ($this->catalog->getAllVideos() as $existing) {
+                    $id = (string) ($existing['vimeo_id'] ?? '');
+                    if ($id !== '' && !isset($keepIds[$id])) {
+                        $removed++;
+                    }
                 }
             }
-        }
 
-        $added = 0;
-        $updated = 0;
-        $rateLimitWaits = 0;
+            $added = 0;
+            $updated = 0;
+            $rateLimitWaits = 0;
 
-        foreach ($sheetRows as $row) {
-            $existing = $this->catalog->findVideoByVimeoId($row->vimeoId);
-            $needsThumb = $existing === null
-                || !isset($existing['thumbnail_url'])
-                || $existing['thumbnail_url'] === '';
-            $needsEmbed = $existing === null
-                || !isset($existing['embed_url'])
-                || $existing['embed_url'] === '';
+            foreach ($sheetRows as $row) {
+                $existing = $this->catalog->findVideoByVimeoId($row->vimeoId);
+                $needsThumb = $existing === null
+                    || !isset($existing['thumbnail_url'])
+                    || $existing['thumbnail_url'] === '';
+                $needsEmbed = $existing === null
+                    || !isset($existing['embed_url'])
+                    || $existing['embed_url'] === '';
 
-            $fetch = $this->fetchWithRetries(
-                $row,
-                $needsThumb && !$dryRun,
-                $needsEmbed && !$dryRun,
-                $rateLimitWaits,
-                $warnings,
-            );
-            if ($fetch['abort'] !== null) {
-                return new CatalogSheetSyncResult(
-                    added: $added,
-                    updated: $updated,
-                    removed: $removed,
-                    skipped: $skipped,
-                    warnings: $warnings,
-                    error: $fetch['abort'],
+                $fetch = $this->fetchWithRetries(
+                    $row,
+                    $needsThumb && !$dryRun,
+                    $needsEmbed && !$dryRun,
+                    $rateLimitWaits,
+                    $warnings,
                 );
-            }
-            if ($fetch['skip']) {
-                $skipped++;
-                continue;
-            }
+                if ($fetch['abort'] !== null) {
+                    return new CatalogSheetSyncResult(
+                        added: $added,
+                        updated: $updated,
+                        removed: $removed,
+                        skipped: $skipped,
+                        warnings: $warnings,
+                        error: $fetch['abort'],
+                    );
+                }
+                if ($fetch['skip']) {
+                    $skipped++;
+                    continue;
+                }
 
-            $meta = $fetch['meta'];
-            assert($meta !== null);
+                $meta = $fetch['meta'];
+                assert($meta !== null);
 
-            if ($row->unknownTypology) {
-                $warnings[] = "Unknown typology \"{$row->rawTypology}\" for Vimeo ID {$row->vimeoId} — typology cleared";
-            }
+                if ($row->unknownTypology) {
+                    $warnings[] = "Unknown typology \"{$row->rawTypology}\" for Vimeo ID {$row->vimeoId} — typology cleared";
+                }
 
-            if ($dryRun) {
-                if ($existing === null) {
+                if ($dryRun) {
+                    if ($existing === null) {
+                        $added++;
+                    } else {
+                        $updated++;
+                    }
+                    continue;
+                }
+
+                $action = $this->catalog->upsertFromSheet(
+                    $row->vimeoId,
+                    $meta['title'],
+                    $row->signLanguage,
+                    $row->editionId,
+                    $row->tags,
+                    $row->typologyId,
+                    $row->participant !== '' ? $row->participant : null,
+                    $meta['thumbnail_url'],
+                    $meta['embed_url'],
+                );
+                if ($action === 'added') {
                     $added++;
                 } else {
                     $updated++;
                 }
-                continue;
             }
-
-            $action = $this->catalog->upsertFromSheet(
-                $row->vimeoId,
-                $meta['title'],
-                $row->signLanguage,
-                $row->editionId,
-                $row->tags,
-                $row->typologyId,
-                $row->participant !== '' ? $row->participant : null,
-                $meta['thumbnail_url'],
-                $meta['embed_url'],
-            );
-            if ($action === 'added') {
-                $added++;
-            } else {
-                $updated++;
+        } catch (\Throwable $e) {
+            if ($snapshot !== null) {
+                $this->catalog->restoreVideos($snapshot);
             }
+            throw $e;
         }
 
         return new CatalogSheetSyncResult(

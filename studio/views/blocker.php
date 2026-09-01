@@ -4,6 +4,10 @@
 <?php
 $colorsPath = __DIR__ . '/../css/colors.css';
 $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
+if (!isset($_SESSION) || !is_array($_SESSION)) {
+    $_SESSION = [];
+}
+$csrfToken = \Studio\Csrf::issueToken($_SESSION);
 ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,10 +77,13 @@ $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
 <body>
     <div class="gate">
         <h1>Studio</h1>
-        <?php if ($showError): ?>
+        <?php if (!empty($lockoutMessage)): ?>
+            <p class="error"><?= htmlspecialchars($lockoutMessage, ENT_QUOTES, 'UTF-8') ?></p>
+        <?php elseif ($showError): ?>
             <p class="error">Contrasenya incorrecta.</p>
         <?php endif; ?>
         <form method="POST" action="<?= htmlspecialchars($baseUrl, ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
             <input type="password" name="password" placeholder="Contrasenya" autofocus autocomplete="current-password">
             <button type="submit">Entra</button>
         </form>

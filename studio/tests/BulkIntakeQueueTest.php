@@ -124,6 +124,38 @@ class BulkIntakeQueueTest extends TestCase
         $this->assertNull($this->queue->current());
     }
 
+    public function test_concurrent_updates_to_different_items_do_not_lose_either_update(): void
+    {
+        // Three items, so each of the two concurrent workers below marks a
+        // different one done — without a lock around the read-modify-write
+        // cycle, both processes read the same pre-mutation queue and
+        // whichever writes last silently discards the other's update.
+        $this->queue->create([
+            ['id' => 'item-1', 'originalFilename' => 'a', 'language' => 'ca', 'tmpAudioPath' => '/x/a.mp3'],
+            ['id' => 'item-2', 'originalFilename' => 'b', 'language' => 'es', 'tmpAudioPath' => '/x/b.mp3'],
+            ['id' => 'item-3', 'originalFilename' => 'c', 'language' => 'en', 'tmpAudioPath' => '/x/c.mp3'],
+        ]);
+
+        $pids = [];
+        foreach (['item-1' => '/out/1_EN.srt', 'item-2' => '/out/2_EN.srt'] as $id => $enPath) {
+            $pid = pcntl_fork();
+            if ($pid === 0) {
+                (new BulkIntakeQueue($this->jobsDir))->markDone($id, $enPath, $enPath);
+                exit(0);
+            }
+            $pids[] = $pid;
+        }
+        foreach ($pids as $pid) {
+            pcntl_waitpid($pid, $status);
+        }
+
+        $snap = $this->queue->statusSnapshot();
+        $statuses = array_column($snap['items'], 'status', 'id');
+        $this->assertSame('done', $statuses['item-1'], 'concurrent update to item-1 must not be lost');
+        $this->assertSame('done', $statuses['item-2'], 'concurrent update to item-2 must not be lost');
+        $this->assertSame('pending', $statuses['item-3']);
+    }
+
     public function test_destroy_removes_queue_and_tmp_dir(): void
     {
         $this->queue->create($this->sampleItems());

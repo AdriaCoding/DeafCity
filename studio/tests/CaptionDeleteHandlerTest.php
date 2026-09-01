@@ -169,6 +169,82 @@ class CaptionDeleteHandlerTest extends TestCase
         $this->assertFalse($result['ok']);
     }
 
+    public function test_relative_traversal_caption_file_does_not_delete_outside_the_captions_dir(): void
+    {
+        $secretDir = $this->baseDir . '/secret';
+        mkdir($secretDir, 0777, true);
+        $secretFile = $secretDir . '/config.php';
+        file_put_contents($secretFile, "<?php // SECRET\n");
+
+        $this->writeCatalog([
+            'master_caption_lang' => 'es',
+            'captions' => [
+                ['lang' => 'es', 'label' => 'Spanish', 'file' => '../secret/config.php'],
+            ],
+        ]);
+
+        $result = $this->makeHandler()->handle('111', 'es');
+
+        $this->assertTrue($result['ok']);
+        $this->assertFileExists($secretFile);
+    }
+
+    public function test_deep_relative_traversal_to_config_php_does_not_delete_it(): void
+    {
+        $configDir = $this->baseDir . '/config';
+        mkdir($configDir, 0777, true);
+        $configFile = $configDir . '/config.php';
+        file_put_contents($configFile, "<?php // SECRET\n");
+
+        $this->writeCatalog([
+            'master_caption_lang' => 'es',
+            'captions' => [
+                ['lang' => 'es', 'label' => 'Spanish', 'file' => '../../config/config.php'],
+            ],
+        ]);
+
+        $result = $this->makeHandler()->handle('111', 'es');
+
+        $this->assertTrue($result['ok']);
+        $this->assertFileExists($configFile);
+    }
+
+    public function test_absolute_path_caption_file_does_not_delete_outside_the_captions_dir(): void
+    {
+        $secretDir = $this->baseDir . '/secret';
+        mkdir($secretDir, 0777, true);
+        $secretFile = $secretDir . '/passwd';
+        file_put_contents($secretFile, 'root:x:0:0');
+
+        $this->writeCatalog([
+            'master_caption_lang' => 'es',
+            'captions' => [
+                ['lang' => 'es', 'label' => 'Spanish', 'file' => $secretFile],
+            ],
+        ]);
+
+        $result = $this->makeHandler()->handle('111', 'es');
+
+        $this->assertTrue($result['ok']);
+        $this->assertFileExists($secretFile);
+    }
+
+    public function test_url_encoded_style_traversal_caption_file_is_a_noop_on_disk(): void
+    {
+        $this->writeCatalog([
+            'master_caption_lang' => 'es',
+            'captions' => [
+                ['lang' => 'es', 'label' => 'Spanish', 'file' => '..%2f..%2fsecret%2fconfig.php'],
+            ],
+        ]);
+
+        $result = $this->makeHandler()->handle('111', 'es');
+
+        // Not exploitable, and not an error either: the catalog entry is
+        // still removed even though there was never a real file to clean up.
+        $this->assertTrue($result['ok']);
+    }
+
     private function writeCatalog(array $videoFields): void
     {
         file_put_contents($this->catalogFile, json_encode(['videos' => [

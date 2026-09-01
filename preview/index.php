@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/lib/videos_catalog.php';
 require __DIR__ . '/lib/preview_locale.php';
+require __DIR__ . '/lib/asset_version.php';
 
 $locale = preview_bootstrap_locale();
 $preview_i18n = $locale['i18n'];
@@ -60,8 +61,13 @@ if ($participantName !== '' && $vpc !== null && $catalog !== null) {
         $vpc['catalog_playlist'] = $catalogPlaylist;
         $vpc['playlist_index'] = 0;
         // Participant playlists are sequence-sorted server-side (natural order, no shuffle)
+    } else {
+        // Empty/unknown participant: keep the catalog master as a technical SSR playlist
+        // (the component requires a non-empty playlist to render), but do not let its
+        // item 0 be shown as if it were the requested participant's video — render an
+        // empty player instead of flashing an unrelated video (issue: wrong-video flash).
+        $vpc['no_initial_video'] = true;
     }
-    // Empty/unknown: keep catalog master + a technical SSR playlist; JS applies empty filter.
 }
 
 $deafHearingEnabled = $collection['deaf_hearing_enabled'];
@@ -78,8 +84,8 @@ if ($vpc !== null) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Noto+Sans+Arabic&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/preview/components/vimeo_caption_player.css?v=70">
-    <link rel="stylesheet" href="/preview/css/bottom-bar.css?v=9">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('components/vimeo_caption_player.css'), ENT_QUOTES, 'UTF-8') ?>">
+    <link rel="stylesheet" href="<?= htmlspecialchars(preview_asset_url('css/bottom-bar.css'), ENT_QUOTES, 'UTF-8') ?>">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body {
@@ -103,7 +109,7 @@ if ($vpc !== null) {
 <?php endif; ?>
 </div>
 
-<script src="/preview/js/vimeo_playlist_logic.js?v=23"></script>
-<script src="/preview/js/vimeo_caption_player.js?v=69" defer></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/vimeo_playlist_logic.js'), ENT_QUOTES, 'UTF-8') ?>"></script>
+<script src="<?= htmlspecialchars(preview_asset_url('js/vimeo_caption_player.js'), ENT_QUOTES, 'UTF-8') ?>" defer></script>
 </body>
 </html>
