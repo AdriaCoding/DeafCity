@@ -442,7 +442,7 @@ class TranscriptionOrchestratorTest extends TestCase
         $this->assertStringContainsString('fallback=transport', $joined);
     }
 
-    public function test_dialect_source_reduces_to_base_language_and_sends_prompt_hint(): void
+    public function test_dialect_source_reduces_to_base_language_without_whisper_prompt(): void
     {
         file_put_contents(
             $this->jobsDir . '/current/job.json',
@@ -493,7 +493,54 @@ class TranscriptionOrchestratorTest extends TestCase
 
         $this->assertSame('editor', $result['result']);
         $this->assertSame('es', $fakeGroq->captured['language']);
-        $this->assertSame('Espanyol (Mèxic)', $fakeGroq->captured['prompt']);
+        $this->assertSame('', $fakeGroq->captured['prompt']);
+
+        unlink($configPath);
+        @unlink($configPath . '.lock');
+    }
+
+    public function test_dialect_fallback_forwards_revision_name_not_whisper_prompt(): void
+    {
+        file_put_contents(
+            $this->jobsDir . '/current/job.json',
+            json_encode([
+                'subtitle_language' => 'es-mx',
+                'job_type' => 'transcription',
+                'intake_mode' => 'generate',
+                'interpreter_audio' => 'interpreter_audio.wav',
+            ])
+        );
+
+        $configPath = sys_get_temp_dir() . '/orch-test-config-' . uniqid() . '.json';
+        copy(__DIR__ . '/fixtures/studio-config.json', $configPath);
+        $studioConfig = new StudioConfig($configPath);
+        $studioConfig->addInputLanguage('es-mx', 'Espanyol (Mèxic)', 'es');
+
+        $launched = null;
+        $orch = new TranscriptionOrchestrator(
+            jobManager: $this->jobManager,
+            groqTranscriber: new GroqTranscriber('k', 'https://x', 20, fn() => ['status' => 0, 'body' => '']),
+            audioPreprocessor: new AudioPreprocessor(function (string $cmd, array &$out, int &$code) {
+                $code = 0;
+            }),
+            launcher: new BackgroundJobLauncher('/srv/scripts', '', function ($cmd) use (&$launched) {
+                $launched = $cmd;
+            }),
+            srtParser: new SrtParser(),
+            studioConfig: $studioConfig,
+            groqApiKey: '',
+            groqModel: 'whisper-large-v3-turbo',
+            localModel: 'whisper-large-v3-turbo',
+            clock: fn() => 0.0,
+            pipelineTargetLang: 'en',
+        );
+
+        $result = $orch->run();
+
+        $this->assertSame('loading', $result['result']);
+        $this->assertNotNull($launched);
+        $this->assertStringContainsString('--initial_prompt ' . escapeshellarg(''), $launched);
+        $this->assertStringContainsString('--dialect_name ' . escapeshellarg('Espanyol (Mèxic)'), $launched);
 
         unlink($configPath);
         @unlink($configPath . '.lock');

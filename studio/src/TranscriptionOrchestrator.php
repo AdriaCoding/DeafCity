@@ -81,15 +81,15 @@ class TranscriptionOrchestrator
         // engine or the fallback launcher. Everything downstream in this
         // class (logging, local fallback) works off that reduced value.
         $baseLanguage = $this->studioConfig->getBaseLanguageFor($language);
-        // Best-effort vocabulary/spelling hint for the ASR prompt fields, and
-        // the display name forwarded to the local-fallback pipeline's own
-        // chained revision step. Empty for every non-dialect job.
-        $dialectHint = $language !== $baseLanguage ? $this->studioConfig->languageLabelFor($language) : '';
+        // Human-readable dialect label for the Gemini revision step only. Whisper's
+        // `prompt` field is a transcription prefix, not a language name — never
+        // send the UI label there (it skips long stretches of speech).
+        $dialectName = $language !== $baseLanguage ? $this->studioConfig->languageLabelFor($language) : '';
         $audioPath = $this->jobManager->interpreterAudioPath();
 
         // Blank key ⇒ no egress, go straight to local.
         if ($this->groqApiKey === '') {
-            return $this->fallbackToLocal($baseLanguage, 'blank_key', 0.0, $dialectHint);
+            return $this->fallbackToLocal($baseLanguage, 'blank_key', 0.0, $dialectName);
         }
 
         $start = ($this->clock)();
@@ -97,11 +97,11 @@ class TranscriptionOrchestrator
 
         try {
             $flacPath = $this->audioPreprocessor->toGroqUpload($audioPath, dirname($audioPath));
-            $cues = $this->groqTranscriber->transcribe($flacPath, $this->groqModel, $baseLanguage, $dialectHint);
+            $cues = $this->groqTranscriber->transcribe($flacPath, $this->groqModel, $baseLanguage);
         } catch (GroqTranscriptionException $e) {
             $this->deleteFlac($flacPath);
             $wall = ($this->clock)() - $start;
-            return $this->routeFailure($e, $baseLanguage, $wall, $dialectHint);
+            return $this->routeFailure($e, $baseLanguage, $wall, $dialectName);
         } catch (\RuntimeException $e) {
             // ffmpeg preprocessing failed — local engine would read the same
             // bytes and reject them too. Fail loud.
@@ -128,23 +128,23 @@ class TranscriptionOrchestrator
     /**
      * @return Result
      */
-    private function routeFailure(GroqTranscriptionException $e, string $language, float $wall, string $dialectHint = ''): array
+    private function routeFailure(GroqTranscriptionException $e, string $language, float $wall, string $dialectName = ''): array
     {
         return match ($e->category()) {
             GroqTranscriptionException::CATEGORY_TRANSPORT,
             GroqTranscriptionException::CATEGORY_EMPTY
-                => $this->fallbackToLocal($language, $e->category(), $wall, $dialectHint),
+                => $this->fallbackToLocal($language, $e->category(), $wall, $dialectName),
             GroqTranscriptionException::CATEGORY_AUTH,
             GroqTranscriptionException::CATEGORY_BAD_INPUT
                 => $this->failLoud($e->category(), $language, $wall),
-            default => $this->fallbackToLocal($language, 'transport', $wall, $dialectHint),
+            default => $this->fallbackToLocal($language, 'transport', $wall, $dialectName),
         };
     }
 
     /**
      * @return Result
      */
-    private function fallbackToLocal(string $language, string $category, float $wall, string $dialectHint = ''): array
+    private function fallbackToLocal(string $language, string $category, float $wall, string $dialectName = ''): array
     {
         // Reset the status so the loading screen polls a clean 'pending'.
         file_put_contents(
@@ -167,8 +167,8 @@ class TranscriptionOrchestrator
                 sourceLang:           $language,
                 targetLang:           $this->pipelineTargetLang,
                 model:                $this->localModel,
-                promptHint:           $dialectHint,
-                dialectName:          $dialectHint,
+                promptHint:           '',
+                dialectName:          $dialectName,
             );
         } else {
             $this->launcher->launchTranscription(
@@ -177,7 +177,6 @@ class TranscriptionOrchestrator
                 $this->jobManager->transcriptionStatusPath(),
                 $language,
                 $this->localModel,
-                $dialectHint,
             );
         }
 

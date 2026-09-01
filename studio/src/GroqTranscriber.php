@@ -48,9 +48,9 @@ class GroqTranscriber
      * @throws GroqTranscriptionException
      */
     /**
-     * @param string $prompt  optional vocabulary/spelling hint (e.g. a dialect
-     *   cue) forwarded to Groq's Whisper-compatible `prompt` field; empty by
-     *   default, in which case the request body is unchanged from before.
+     * @param string $prompt  optional Whisper transcription prefix (prior text
+     *   from the same recording). Not a language label — UI dialect names must
+     *   never be passed here. Empty by default omits the field from the request.
      */
     public function transcribe(string $audioPath, string $model, string $language, string $prompt = ''): array
     {
