@@ -68,8 +68,8 @@ Legacy Glottolog ~2018 htmlmap branch ids (not Glottolog 5.x’s current tree):
 | 982 | Deaf Sign Language | on |
 | 980 | Rural Sign Language | on |
 | 978 | Auxiliary Sign Systems | **off** |
-| 979 | Pidgin Sign Language | on |
-| 981 | Family Sign Language | on |
+| 979 | Pidgin Sign Language | **off** |
+| 981 | Family Sign Language | **off** |
 
 Current counts: 982=141, 980=79, 978=4, 979=1, 981=2.
 

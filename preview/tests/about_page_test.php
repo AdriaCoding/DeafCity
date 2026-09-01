@@ -44,6 +44,7 @@ if ($trioPos === false || $mapPos === false || $creditsPos === false || !($trioP
 }
 echo "PASS: map sits between trio video and credits\n";
 assert_contains('Sign languages', $html, 'sidebar legend heading');
+assert_contains('DEAF.city editions', $html, 'deafcity editions legend label');
 assert_contains('/leaflet/leaflet.js', $html, 'leaflet script');
 assert_contains('/preview/js/sign_language_map.js', $html, 'map script');
 assert_contains('/data/languages.json', $html, 'sign language geojson');

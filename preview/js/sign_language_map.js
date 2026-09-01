@@ -5,7 +5,7 @@
 
     var languagesUrl = canvas.getAttribute('data-languages-url') || '/data/languages.json';
     var deafcityUrl = canvas.getAttribute('data-deafcity-url') || '/data/deafcity.json';
-    var defaultOffBranches = { 978: true };
+    var defaultOffBranches = { 978: true, 979: true, 981: true };
     var branchesdef = {
         982: 'Deaf Sign Language',
         980: 'Rural Sign Language',

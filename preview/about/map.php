@@ -9,7 +9,7 @@ $cityJsonVer = is_readable($rootDir . '/data/deafcity.json') ? filemtime($rootDi
             <li class="sign-language-map-filter-item" id="map-filter-deafcity" data-branch="deafcity">
                 <label>
                     <span class="sign-language-map-filter-icon"><span class="deafcity-marker"></span></span>
-                    <span class="sign-language-map-filter-text">DEAF.city</span>
+                    <span class="sign-language-map-filter-text">DEAF.city editions</span>
                     <input type="checkbox" checked class="map-filter-checkbox">
                 </label>
             </li>
