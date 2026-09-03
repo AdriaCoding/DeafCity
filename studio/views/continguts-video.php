@@ -732,6 +732,10 @@
             try {
                 search = iframe.contentWindow.location.search;
             } catch (err) {
+                if (status) {
+                    status.innerHTML = '<span>No s\'ha pogut carregar l\'editor de subtítols.</span>';
+                }
+                setActionButtonLoading(btn, false);
                 return;
             }
             if (search.indexOf('action=continguts-video') !== -1) {
@@ -785,6 +789,7 @@
     var ctBody          = document.getElementById('ct-body');
     var ctPollTimer     = null;
     var ctBgPollTimer   = null;
+    var ctPendingReload = false;
     var ctLangLabels    = {};
     SUBTITLE_LANGUAGES.forEach(function (l) { ctLangLabels[l.id] = l.label; });
 
@@ -810,7 +815,7 @@
                 if (data.status === 'saved') {
                     ctStopPoll();
                     ctRender('saved', data);
-                    ctScheduleReload();
+                    ctSetPageButton('idle');
                 } else if (data.status === 'pending' || data.status === 'running') {
                     ctRender('running', data);
                 }
@@ -825,7 +830,10 @@
                 if (data.status === 'saved') {
                     clearInterval(ctBgPollTimer);
                     ctBgPollTimer = null;
-                    window.location.reload();
+                    ctSetPageButton('idle');
+                    if ((data.savedLangs || []).length > 0) {
+                        ctPendingReload = true;
+                    }
                 }
             });
         }, 3000);
@@ -833,10 +841,6 @@
 
     function ctStopBgPoll() {
         if (ctBgPollTimer) { clearInterval(ctBgPollTimer); ctBgPollTimer = null; }
-    }
-
-    function ctScheduleReload() {
-        setTimeout(function () { window.location.reload(); }, 1800);
     }
 
     function ctSetPageButton(mode) {
@@ -863,6 +867,9 @@
 
     function ctRender(state, data) {
         var html = '';
+        if (state === 'running' || state === 'loading' || state === 'confirming') {
+            ctPendingReload = false;
+        }
         switch (state) {
             case 'loading':
                 html = '<p class="ct-info"><span class="ct-spinner"></span> Carregant…</p>';
@@ -903,7 +910,11 @@
                     var status  = entry.status || 'pending';
                     var label   = escapeHtml(ctLangLabels[id] || id);
                     html += '<div class="ct-lang-card"><span class="ct-lang-label">' + label + '</span>';
-                    html += '<div class="ct-card-right">' + ctBadgeHtml(status) + '</div></div>';
+                    html += '<div class="ct-card-right">' + ctBadgeHtml(status);
+                    if (status === 'error') {
+                        html += '<button type="button" class="ct-retry-btn" data-lang="' + escapeHtml(id) + '">Reintenta</button>';
+                    }
+                    html += '</div></div>';
                 });
                 html += '</div>';
                 html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
@@ -914,7 +925,7 @@
             case 'saved': {
                 var saved  = (data && data.savedLangs)  ? data.savedLangs  : [];
                 var errors = (data && data.errorLangs)  ? data.errorLangs  : [];
-                var langs  = (data && data.languages)   ? data.languages   : {};
+                ctPendingReload = saved.length > 0;
                 html += '<div class="ct-lang-list">';
                 saved.forEach(function (id) {
                     html += '<div class="ct-lang-card"><span class="ct-lang-label">' + escapeHtml(ctLangLabels[id] || id) + '</span>';
@@ -927,12 +938,14 @@
                     html += '</div></div>';
                 });
                 html += '</div>';
-                if (saved.length > 0) {
-                    html += '<p class="ct-feedback ok">Subtítols desats al catàleg. Actualitzant la pàgina…</p>';
+                if (saved.length > 0 && errors.length === 0) {
+                    html += '<p class="ct-feedback ok">Subtítols desats al catàleg.</p>';
+                } else if (saved.length > 0 && errors.length > 0) {
+                    html += '<p class="ct-feedback ok">Alguns subtítols s\'han desat. Reintenteu els que han fallat o tanqueu per actualitzar la pàgina.</p>';
                 } else {
                     html += '<p class="ct-feedback err">No s\'ha pogut desar cap traducció.</p>';
-                    html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
                 }
+                html += '<div class="ct-actions"><button type="button" class="ct-btn-close" id="ct-close-btn">Tanca</button></div>';
                 break;
             }
 
@@ -953,6 +966,10 @@
         if (closeBtn) {
             closeBtn.addEventListener('click', function () {
                 ctStopPoll();
+                if (ctPendingReload) {
+                    window.location.reload();
+                    return;
+                }
                 ctDialog.close();
             });
         }
@@ -1041,7 +1058,6 @@
                     ctStartPoll();
                 } else if (data.status === 'saved') {
                     ctRender('saved', data);
-                    if ((data.savedLangs || []).length > 0) ctScheduleReload();
                 } else {
                     ctRender('error', { message: data.message || 'Error inesperat.' });
                 }
