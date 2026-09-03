@@ -4,11 +4,21 @@
 #
 # Do NOT add a SetHandler here: the Apache vhost include is the single source
 # of truth for the site's PHP version (see AGENTS.md).
+
+# continguts-caption-review is embedded in an iframe on the video details page.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{QUERY_STRING} (^|&)action=continguts-caption-review(&|$)
+    RewriteRule ^ - [E=STUDIO_EMBED:1]
+</IfModule>
+
 <IfModule mod_headers.c>
     # The credits editor loads CodeMirror as an ES module from esm.sh, and the
     # Studio pulls its webfonts from Google Fonts. Both are Studio-only, behind
     # the auth gate; neither is allowed on the public site.
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://esm.sh; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://i.vimeocdn.com; media-src 'self' blob:; frame-src 'self' https://player.vimeo.com; connect-src 'self' https://esm.sh; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
-    Header always set X-Frame-Options "DENY"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://esm.sh; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://i.vimeocdn.com; media-src 'self' blob:; frame-src 'self' https://player.vimeo.com; connect-src 'self' https://esm.sh; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" env=!STUDIO_EMBED
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://esm.sh; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://i.vimeocdn.com; media-src 'self' blob:; frame-src 'self' https://player.vimeo.com; connect-src 'self' https://esm.sh; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'" env=STUDIO_EMBED
+    Header always set X-Frame-Options "DENY" env=!STUDIO_EMBED
+    Header always set X-Frame-Options "SAMEORIGIN" env=STUDIO_EMBED
     Header always set X-Robots-Tag "noindex, nofollow"
 </IfModule>
