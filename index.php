@@ -82,7 +82,21 @@ if ($vpc !== null) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="site-home" content="<?= htmlspecialchars(preview_home_path(), ENT_QUOTES, 'UTF-8') ?>">
-    <title>DEAF.city</title>
+    <title>Some Unheard Stories</title>
+    <meta name="description" content="Some Unheard Stories">
+    <meta property="og:site_name" content="DEAF.city">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script type="application/ld+json">
+    <?= json_encode([
+        '@context' => 'https://schema.org',
+        '@type' => 'WebSite',
+        'name' => 'DEAF.city',
+        'alternateName' => ['deaf.city'],
+        'url' => 'https://deaf.city/',
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
+    </script>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Noto+Sans+Arabic&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

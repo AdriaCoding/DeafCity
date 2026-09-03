@@ -99,6 +99,13 @@ assert_not_contains('vB-layout', $html, 'no variant B about block');
 assert_not_contains('vC-about', $html, 'no variant C about block');
 assert_not_contains('trio-wrap', $html, 'no inline trio video');
 assert_contains('overflow: hidden', $html, 'non-scrollable body');
+assert_contains('<title>Some Unheard Stories</title>', $html, 'home page title for search results');
+assert_contains('name="description" content="Some Unheard Stories"', $html, 'home page meta description');
+assert_contains('property="og:site_name" content="DEAF.city"', $html, 'og site name for search results');
+assert_contains('"@type":"WebSite"', $html, 'WebSite structured data');
+assert_contains('"name":"DEAF.city"', $html, 'WebSite structured data site name');
+assert_contains('rel="icon" href="/favicon.svg"', $html, 'favicon svg link');
+assert_contains('rel="icon" href="/favicon.ico"', $html, 'favicon ico link');
 
 // Issue #17 (D24/D25): play in center cell inside transport cluster; groups ordered secondary-L → transport → secondary-R
 $clusterPos = strpos($html, 'vpc-control-transport-cluster');
