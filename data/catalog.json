@@ -285,7 +285,7 @@
             ],
             "typology": "anecdotes",
             "participant": "Dani",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181853496-ae46f08ea3ae58474e691ef9163327a2a4f0c2017f0736fb571f4d0423532a8a-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197696445-910a5b1dd84fa1acaaddeba9d541e10eb3db5b601d6779683b00763f434f9cdc-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211615986?h=72e362ac87",
             "master_caption_lang": "ca"
         },
@@ -343,7 +343,7 @@
             ],
             "typology": "acudits",
             "participant": "Dani",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181853733-48e038512100c54de47dfd2939f38c66ab08c1f6396c7ed858c9e7045b934c43-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197696735-bd3afd2483d9f7ed202057dac5a90f66d610875b274827738af2d9dbfd023779-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211615981?h=0226ffb104",
             "master_caption_lang": "ca"
         },
@@ -516,7 +516,7 @@
             ],
             "typology": "anecdotes",
             "participant": "Monica",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181831862-eeb3076418ae295b74a9e77c08d183c10b4e469a91509b1ac330ae851f129ee5-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197697246-4d88f8f0ae1fb091087802fc69fa5108d18d1fda1a5ece50ce568a3fab9d709c-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211615291?h=53e5e2048c",
             "master_caption_lang": "ca"
         },
@@ -573,7 +573,7 @@
             ],
             "typology": "pensaments",
             "participant": "Pegolino",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181849938-4404d9496720c1011d0ec445191199bef05524491829283138c3dc5819b97cd4-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197698073-d15adedfc6c4748516af2cdfa53d64a0b9190c6b0a9c4fa83598d4e319ba0e90-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211614388?h=d44f0b9b67",
             "master_caption_lang": "ca"
         },
@@ -631,7 +631,7 @@
             ],
             "typology": "acudits",
             "participant": "Pegolino",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181830984-ee001a15d7f5fb0266402cf4d3a8a0e46f51f58f381de5f97be5807b1ed78e64-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197698379-5d8852cbb3d18cacaf5d4a12972b1edc5ff7e19cf2b7c06aefc42a3e2e27e1d2-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211614385?h=090f3bcf0f",
             "master_caption_lang": "ca"
         },
@@ -804,7 +804,7 @@
             ],
             "typology": "malentesos",
             "participant": "Pegolino",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181851545-da8612e28168ff106d1cc99a27f38077677b969233cbda70e4165bfdff8a2938-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197698691-feeda84e95a711d0436c0deeaa49c8772ebeb1eb3434d93ac49134d4f7da05dd-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211614511?h=d8ac950750",
             "master_caption_lang": "ca"
         },
@@ -835,11 +835,53 @@
                 "SWEARING",
                 "DEAF&HEARING"
             ],
-            "captions": [],
+            "captions": [
+                {
+                    "lang": "ca",
+                    "label": "Catalan",
+                    "file": "2020_VALENCIA_Pepa_2_CA.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2020_VALENCIA_Pepa_2_AR.srt"
+                },
+                {
+                    "lang": "eu",
+                    "label": "Basque",
+                    "file": "2020_VALENCIA_Pepa_2_EU.srt"
+                },
+                {
+                    "lang": "en",
+                    "label": "English",
+                    "file": "2020_VALENCIA_Pepa_2_EN.srt"
+                },
+                {
+                    "lang": "fr",
+                    "label": "French",
+                    "file": "2020_VALENCIA_Pepa_2_FR.srt"
+                },
+                {
+                    "lang": "it",
+                    "label": "Italian",
+                    "file": "2020_VALENCIA_Pepa_2_IT.srt"
+                },
+                {
+                    "lang": "pt",
+                    "label": "Portuguese",
+                    "file": "2020_VALENCIA_Pepa_2_PT.srt"
+                },
+                {
+                    "lang": "es",
+                    "label": "Spanish",
+                    "file": "2020_VALENCIA_Pepa_2_ES.srt"
+                }
+            ],
             "typology": "malentesos",
             "participant": "Pepa",
             "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2186250564-6d676e4c0507b0b5b481e49e30f11fc318acb50a8210bf48ad2d63e8502b79ec-d_960x540?&r=pad&region=us",
-            "embed_url": "https:\/\/player.vimeo.com\/video\/1211612212?h=36a3534e50"
+            "embed_url": "https:\/\/player.vimeo.com\/video\/1211612212?h=36a3534e50",
+            "master_caption_lang": "ca"
         },
         {
             "id": "lse_1211612211",
@@ -911,7 +953,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Pepa",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181843870-dddf74b256c16b81d5d366b7f19d4762545c3c7d0a4e8961acc335229bb5249d-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197700097-e7fd2164368e687008789127fe0f87af494c51dc6594349a16f6f32136d6be40-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211612213?h=4bbf82ede4",
             "invisible": true
         },
@@ -969,7 +1011,7 @@
             ],
             "typology": "malentesos",
             "participant": "Pepa",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181844175-78813b2e8e7f527df17b00daa9b5760b3fa0e4901260aaa1b4433c7131d30e9e-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197700530-550aed9687b2cc7f48d24ada3993ceca43b08811bc7492217f92f7a1e4b26057-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211612210?h=73d6d0ea1b",
             "master_caption_lang": "ca"
         },
@@ -1027,7 +1069,7 @@
             ],
             "typology": "memories",
             "participant": "Pepa",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181827801-f139ba2682d166c1a55bd1026691eac872ab68d8e05482ffd39fda03c199b33d-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197700896-19628b4437f7c7d454cb8ed27910798400e9dcbb6b8ae541b49be45ee1056e1c-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211612346?h=31d61267b0",
             "master_caption_lang": "ca"
         },
@@ -1160,7 +1202,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Riutort",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181845382-1fe487ddc990188636eadf093e8ad6113664f1e3a426802561a1dbe647bff264-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197701665-6ccaa9f0f7ed46ab91ae2db7bd04188e4ddae70425876d4df8ab2dcd701476a7-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211611040?h=78e475506c",
             "invisible": true
         },
@@ -1235,7 +1277,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Riutort",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181845927-abdb0ae0963f26201a7b83773d797b8f96e18415bc937fbc7f48643451afe38e-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197702109-1437c0611ab9d90a3f7ec0ee4b0eb5a8d7a847b39eeaf8d8d2c6af2a2dd4c8ad-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211610936?h=6aa614b82f",
             "invisible": true
         },
@@ -1293,7 +1335,7 @@
             ],
             "typology": "anecdotes",
             "participant": "Sony",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181848173-f6e6d23f07f09f16be0f8054df457824c42cc2216d6a5f96496bf803d197d5ad-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197710609-6bded28d4a280e3de8b893a0f128f7352c76bee90f2547244bb3232f1614c733-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211608971?h=e3cd93f48d",
             "master_caption_lang": "ca"
         },
@@ -1602,11 +1644,6 @@
                     "file": "2021_MEXICO_Gustavo_2_ES.srt"
                 },
                 {
-                    "lang": "ar",
-                    "label": "Arabic",
-                    "file": "2021_MEXICO_Gustavo_2_AR.srt"
-                },
-                {
                     "lang": "eu",
                     "label": "Basque",
                     "file": "2021_MEXICO_Gustavo_2_EU.srt"
@@ -1635,6 +1672,11 @@
                     "lang": "pt",
                     "label": "Portuguese",
                     "file": "2021_MEXICO_Gustavo_2_PT.srt"
+                },
+                {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Gustavo_2_AR.srt"
                 }
             ],
             "typology": "anecdotes",
@@ -12928,7 +12970,7 @@
             ],
             "typology": "malentesos",
             "participant": "Monica",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181852764-9cdcd6db25110e39e7d5213f35d91e3acd1898dec03feb5ecc44b8449ddcea1c-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197697578-369fedd3dbb1625e73ecb7eb4bf41ee554f9ba6618ee0fd1b5053a5a8affb20d-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211615290?h=74f3b5cc4c",
             "master_caption_lang": "ca"
         },
@@ -12986,7 +13028,7 @@
             ],
             "typology": "malentesos",
             "participant": "Sony",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181849266-383e1cb3f9805f8e81bd70868e9df60fad258e64b7cba41c7b6f1f11b7b33211-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197702953-a5ed97b7dedd2f87b729811ddd42f1fcdd4979fab031e0713e6a8cc349805eb1-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211608970?h=99c50036e3",
             "master_caption_lang": "ca"
         },
@@ -13003,7 +13045,7 @@
             "captions": [],
             "typology": "anecdotes",
             "participant": "Sony",
-            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2181823875-ac4442a9a55a9c3e297247f1c8d7e1ce40b6b0a6c0af7aa6adaada5f05ee43e9-d_960x540?&r=pad&region=us",
+            "thumbnail_url": "https:\/\/i.vimeocdn.com\/video\/2197708895-66e2592f8582e60dba7913a64bafbad3c2dec7059f910a56f2e18a6423a58b21-d_960x540?&r=pad&region=us",
             "embed_url": "https:\/\/player.vimeo.com\/video\/1211608975?h=c828a7e666",
             "invisible": true
         },
