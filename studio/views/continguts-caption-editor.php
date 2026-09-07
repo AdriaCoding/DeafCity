@@ -298,6 +298,7 @@ $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
         }());
     </script>
     <script src="js/caption-utils.js?v=<?= filemtime(__DIR__ . '/../js/caption-utils.js') ?>"></script>
+    <script src="js/caption-editor-host.js?v=<?= filemtime(__DIR__ . '/../js/caption-editor-host.js') ?>"></script>
     <script src="js/continguts-caption-editor.js?v=<?= filemtime(__DIR__ . '/../js/continguts-caption-editor.js') ?>"></script>
 </body>
 </html>

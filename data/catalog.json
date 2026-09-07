@@ -1758,6 +1758,11 @@
                     "file": "2021_MEXICO_Gustavo_5_ES.srt"
                 },
                 {
+                    "lang": "ar",
+                    "label": "Arabic",
+                    "file": "2021_MEXICO_Gustavo_5_AR.srt"
+                },
+                {
                     "lang": "eu",
                     "label": "Basque",
                     "file": "2021_MEXICO_Gustavo_5_EU.srt"
@@ -1786,11 +1791,6 @@
                     "lang": "pt",
                     "label": "Portuguese",
                     "file": "2021_MEXICO_Gustavo_5_PT.srt"
-                },
-                {
-                    "lang": "ar",
-                    "label": "Arabic",
-                    "file": "2021_MEXICO_Gustavo_5_AR.srt"
                 }
             ],
             "typology": "acudits",
@@ -1870,41 +1870,6 @@
                     "lang": "es",
                     "label": "Spanish",
                     "file": "2021_MEXICO_Indy_2_ES.srt"
-                },
-                {
-                    "lang": "ar",
-                    "label": "Arabic",
-                    "file": "2021_MEXICO_Indy_2_AR.srt"
-                },
-                {
-                    "lang": "eu",
-                    "label": "Basque",
-                    "file": "2021_MEXICO_Indy_2_EU.srt"
-                },
-                {
-                    "lang": "ca",
-                    "label": "Catalan",
-                    "file": "2021_MEXICO_Indy_2_CA.srt"
-                },
-                {
-                    "lang": "en",
-                    "label": "English",
-                    "file": "2021_MEXICO_Indy_2_EN.srt"
-                },
-                {
-                    "lang": "fr",
-                    "label": "French",
-                    "file": "2021_MEXICO_Indy_2_FR.srt"
-                },
-                {
-                    "lang": "it",
-                    "label": "Italian",
-                    "file": "2021_MEXICO_Indy_2_IT.srt"
-                },
-                {
-                    "lang": "pt",
-                    "label": "Portuguese",
-                    "file": "2021_MEXICO_Indy_2_PT.srt"
                 }
             ],
             "typology": "acudits",

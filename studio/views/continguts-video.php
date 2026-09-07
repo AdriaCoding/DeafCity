@@ -427,6 +427,7 @@
 <script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
 <script src="js/tag-input.js?v=<?= filemtime(__DIR__ . '/../js/tag-input.js') ?>"></script>
 <script src="js/caption-table.js?v=<?= filemtime(__DIR__ . '/../js/caption-table.js') ?>"></script>
+<script src="js/caption-editor-host.js?v=<?= filemtime(__DIR__ . '/../js/caption-editor-host.js') ?>"></script>
 <script>
 (function () {
     var ALL_TAGS = <?= json_encode($catalogTags, JSON_UNESCAPED_UNICODE) ?>;
@@ -718,12 +719,32 @@
         input.click();
     }
 
+    var captionEditorOpenBtn = null;
+
+    function closeCaptionEditor() {
+        var dialog = document.getElementById('caption-edit-dialog');
+        var iframe = document.getElementById('caption-edit-iframe');
+        var status = document.getElementById('caption-edit-dialog-status');
+        if (status) status.hidden = true;
+        if (dialog && dialog.open) dialog.close();
+        if (iframe) iframe.src = 'about:blank';
+        if (captionEditorOpenBtn) {
+            setActionButtonLoading(captionEditorOpenBtn, false);
+            captionEditorOpenBtn = null;
+        }
+    }
+
+    window.addEventListener('message', function (event) {
+        StudioCaptionEditorHost.handleHostMessage(event, window.location.origin, closeCaptionEditor);
+    });
+
     function openCaptionEditor(lang, btn) {
         var dialog = document.getElementById('caption-edit-dialog');
         var iframe = document.getElementById('caption-edit-iframe');
         var status = document.getElementById('caption-edit-dialog-status');
         if (!dialog || !iframe) return;
 
+        captionEditorOpenBtn = btn;
         setActionButtonLoading(btn, true);
         if (status) status.hidden = false;
 
@@ -733,16 +754,14 @@
                 search = iframe.contentWindow.location.search;
             } catch (err) {
                 if (status) {
+                    status.hidden = false;
                     status.innerHTML = '<span>No s\'ha pogut carregar l\'editor de subtítols.</span>';
                 }
                 setActionButtonLoading(btn, false);
                 return;
             }
             if (search.indexOf('action=continguts-video') !== -1) {
-                if (status) status.hidden = true;
-                dialog.close();
-                iframe.src = 'about:blank';
-                setActionButtonLoading(btn, false);
+                closeCaptionEditor();
                 return;
             }
             if (status) status.hidden = true;

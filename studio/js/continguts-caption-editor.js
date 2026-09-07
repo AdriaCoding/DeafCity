@@ -170,13 +170,17 @@
         CaptionUtils.triggerDownload(CaptionUtils.generateSrt(translatedCues), base + '.srt', 'application/x-subrip');
     }
 
+    function leaveEditor() {
+        StudioCaptionEditorHost.exitEditor(window, window.__postSaveRedirect);
+    }
+
     function exitWithoutSaving() {
         if (isDirty() && !window.confirm('Sortir sense desar els canvis?')) {
             return;
         }
         exitingWithoutSave = true;
         setEditorBusy(true, cancelBtn, 'Sortint…');
-        window.location.href = window.__postSaveRedirect;
+        leaveEditor();
     }
 
     function save() {
@@ -192,7 +196,7 @@
             .then(function (data) {
                 if (data.ok) {
                     savedSnapshot = JSON.stringify(translatedCues);
-                    window.location.href = window.__postSaveRedirect;
+                    leaveEditor();
                 } else {
                     if (saveError) {
                         saveError.textContent = (data.errors || ['Error desconegut.']).join('\n');
