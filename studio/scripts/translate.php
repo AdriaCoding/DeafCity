@@ -23,11 +23,15 @@ if (PHP_SAPI !== 'cli') {
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Studio\CaptionTranslationFinalizer;
+use Studio\CatalogEditor;
 use Studio\GeminiTranslationException;
 use Studio\GeminiTranslator;
 use Studio\JobManager;
+use Studio\StudioConfig;
 use Studio\TranslationJobState;
 use Studio\TranslationRunner;
+use Studio\VimeoClient;
 use Studio\SrtParser;
 
 $opts = getopt('', [
@@ -111,6 +115,20 @@ try {
     );
 
     $runner->run($masterVtt, $sourceLang, array_values($targetLangs));
+
+    $dataDir = dirname(__DIR__, 2) . '/data';
+    $vimeoId = basename(dirname($jobDir));
+    $langLabels = [];
+    foreach ((new StudioConfig($dataDir . '/studio-config.json'))->getSubtitleLanguages() as $language) {
+        $langLabels[(string) ($language['id'] ?? '')] = (string) ($language['label'] ?? '');
+    }
+    $finalizer = new CaptionTranslationFinalizer(
+        new CatalogEditor($dataDir . '/catalog.json'),
+        new VimeoClient(VIMEO_CLIENT_ID, VIMEO_CLIENT_SECRET, VIMEO_ACCESS_TOKEN),
+        $dataDir . '/captions',
+        $langLabels,
+    );
+    $finalizer->finalize($vimeoId, $jobDir, $state, true);
 } catch (\Throwable $e) {
     $msg = $e->getMessage();
     $logger(date('Y-m-d H:i:s') . " [translate.php] FATAL: $msg");

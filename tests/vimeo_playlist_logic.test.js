@@ -2157,6 +2157,94 @@ console.log('vimeo_playlist_logic.test.js: all passed (including load cover plan
 
 console.log('vimeo_playlist_logic.test.js: all passed (including load cover reveal)');
 
+// ── Load cover: timeout must uncover a playing Video even if bufferend never fires ─
+
+(function () {
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: true,
+            seconds: 0.2,
+            buffering: true,
+            coverAgeMs: 3000,
+            maxCoverMs: 2500,
+        }),
+        true,
+        'force-reveal after timeout even while Vimeo still reports buffering'
+    );
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: false,
+            seconds: 0,
+            buffering: true,
+            coverAgeMs: 5000,
+            maxCoverMs: 2500,
+        }),
+        false,
+        'timeout does not uncover a Video that never started playing'
+    );
+    assert.strictEqual(
+        logic.shouldRevealLoadCover({
+            playbackStarted: false,
+            paused: false,
+            seconds: 0,
+            buffering: true,
+            coverAgeMs: 3000,
+            maxCoverMs: 2500,
+        }),
+        true,
+        'timeout reveals when Vimeo reports the Video is not paused'
+    );
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including load cover timeout reveal)');
+
+// ── Load cover: bufferstart must not re-cover a Video that is already playing ─
+
+(function () {
+    assert.strictEqual(
+        logic.shouldReshowLoadCoverOnBufferStart({
+            playbackStarted: false,
+            suppressGrayActive: true,
+        }),
+        true,
+        're-cover Vimeo gray while the initial load has not started playback'
+    );
+    assert.strictEqual(
+        logic.shouldReshowLoadCoverOnBufferStart({
+            playbackStarted: true,
+            suppressGrayActive: true,
+        }),
+        false,
+        'do not re-cover after playback started (Chrome ABR bufferstart)'
+    );
+    assert.strictEqual(
+        logic.shouldReshowLoadCoverOnBufferStart({
+            playbackStarted: false,
+            suppressGrayActive: false,
+        }),
+        false,
+        'outside the suppress-gray window, bufferstart does not re-cover'
+    );
+})();
+
+console.log('vimeo_playlist_logic.test.js: all passed (including bufferstart re-cover policy)');
+
+// ── Latest-wins: a superseded queued load must not call Vimeo loadVideo ─
+
+(function () {
+    assert.strictEqual(
+        logic.shouldDispatchQueuedVideoLoad(3, 3),
+        true,
+        'queued load runs when it is still the latest request'
+    );
+    assert.strictEqual(
+        logic.shouldDispatchQueuedVideoLoad(2, 3),
+        false,
+        'queued load is skipped when a newer request exists'
+    );
+})();
+
+
 // ── Participant natural-order playlist (no shuffle) ─────────────────────────
 
 // Orderer: numeric participant_sequence ascending (2 before 10)

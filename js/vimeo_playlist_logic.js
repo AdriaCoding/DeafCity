@@ -2311,18 +2311,54 @@
      * Whether the load cover (thumb or solid white) may be removed.
      * Keep covering while Vimeo is still buffering so its gray loader never flashes.
      *
-     * @param {{ playbackStarted?: boolean, seconds?: number, buffering?: boolean, minSeconds?: number }} opts
+     * @param {{ playbackStarted?: boolean, seconds?: number, buffering?: boolean, minSeconds?: number, coverAgeMs?: number, maxCoverMs?: number, paused?: boolean }} opts
      * @returns {boolean}
      */
     function shouldRevealLoadCover(opts) {
         var playbackStarted = !!(opts && opts.playbackStarted);
         var buffering = !!(opts && opts.buffering);
+        var paused = opts && opts.paused;
         var seconds = opts && opts.seconds != null ? Number(opts.seconds) : 0;
         var minSeconds =
             opts && opts.minSeconds != null ? Number(opts.minSeconds) : 0.05;
+        var coverAgeMs = opts && opts.coverAgeMs != null ? Number(opts.coverAgeMs) : 0;
+        var maxCoverMs = opts && opts.maxCoverMs != null ? Number(opts.maxCoverMs) : 0;
+        // Chrome often never fires bufferend after overlapping loadVideo(); a
+        // playing Video must not stay under the white scrim forever.
+        if (
+            maxCoverMs > 0 &&
+            coverAgeMs >= maxCoverMs &&
+            (playbackStarted || paused === false)
+        ) {
+            return true;
+        }
         if (!playbackStarted || buffering) return false;
         if (!(seconds > minSeconds)) return false;
         return true;
+    }
+
+    /**
+     * Whether a Vimeo bufferstart should put the load cover back.
+     * Once playback has started, Chrome often re-fires bufferstart on ABR
+     * switches; re-covering then hides a playing Video behind white.
+     *
+     * @param {{ playbackStarted?: boolean, suppressGrayActive?: boolean }} opts
+     * @returns {boolean}
+     */
+    function shouldReshowLoadCoverOnBufferStart(opts) {
+        if (opts && opts.playbackStarted) return false;
+        return !!(opts && opts.suppressGrayActive);
+    }
+
+    /**
+     * Latest-wins queue: a queued load starts only if no newer request exists.
+     *
+     * @param {number} queuedGeneration
+     * @param {number} currentGeneration
+     * @returns {boolean}
+     */
+    function shouldDispatchQueuedVideoLoad(queuedGeneration, currentGeneration) {
+        return queuedGeneration === currentGeneration;
     }
 
     var TRANSPORT_SHORTCUT_KEYS = {
@@ -2446,5 +2482,7 @@
         planEndOfPlaylist: planEndOfPlaylist,
         planLoadCover: planLoadCover,
         shouldRevealLoadCover: shouldRevealLoadCover,
+        shouldReshowLoadCoverOnBufferStart: shouldReshowLoadCoverOnBufferStart,
+        shouldDispatchQueuedVideoLoad: shouldDispatchQueuedVideoLoad,
     };
 }));

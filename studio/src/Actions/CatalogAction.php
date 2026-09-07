@@ -1046,63 +1046,17 @@ class CatalogAction
     /** @return array{saved: list<string>, errors: list<string>} */
     private function finalizeCaptionTranslation(string $vimeoId, string $jobDir, array $state): array
     {
-        $captionsDir = $this->c->dataDir . '/captions';
-        $video       = $this->c->catalogEditor()->findVideoByVimeoId($vimeoId);
-        $title       = (string) ($video['title'] ?? $vimeoId);
-        $captionFilename = new \Studio\CaptionFilename();
-        $langLabels  = [];
+        $langLabels = [];
         foreach ($this->c->studioConfig->getSubtitleLanguages() as $language) {
             $langLabels[(string) ($language['id'] ?? '')] = (string) ($language['label'] ?? '');
         }
-
-        $savedLangs  = [];
-        $errorLangs  = [];
-        $newCaptions = [];
-
-        foreach ($state['languages'] ?? [] as $lang => $entry) {
-            $langStr = (string) $lang;
-            if (($entry['status'] ?? '') === 'error') {
-                $errorLangs[] = $langStr;
-                continue;
-            }
-            if (($entry['status'] ?? '') !== 'done') {
-                continue;
-            }
-
-            $srcPath      = $jobDir . '/draft_' . $langStr . '.srt';
-            $destFilename = $captionFilename->forVideo($title, $langStr);
-            $destPath     = $captionsDir . '/' . $destFilename;
-
-            if (!is_file($srcPath) || !copy($srcPath, $destPath)) {
-                $errorLangs[] = $langStr;
-                continue;
-            }
-
-            $newCaptions[] = [
-                'lang'  => $langStr,
-                'label' => $langLabels[$langStr] ?? $langStr,
-                'file'  => $destFilename,
-            ];
-            $savedLangs[] = $langStr;
-        }
-
-        if ($newCaptions !== []) {
-            try {
-                $publication = new \Studio\CaptionPublication(
-                    $this->c->catalogEditor(),
-                    $this->c->vimeoClient(),
-                    $captionsDir,
-                );
-                $publication->publish($vimeoId, $newCaptions);
-            } catch (\Throwable) {
-                $errorLangs = array_merge($errorLangs, $savedLangs);
-                $savedLangs = [];
-            }
-        }
-
-        $this->translationJobState($vimeoId)->markSaved($savedLangs, $errorLangs);
-
-        return ['saved' => $savedLangs, 'errors' => $errorLangs];
+        $finalizer = new \Studio\CaptionTranslationFinalizer(
+            $this->c->catalogEditor(),
+            $this->c->vimeoClient(),
+            $this->c->dataDir . '/captions',
+            $langLabels,
+        );
+        return $finalizer->finalize($vimeoId, $jobDir, $this->translationJobState($vimeoId), false);
     }
 
     private function translationJobState(string $vimeoId): TranslationJobState

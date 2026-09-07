@@ -790,6 +790,35 @@
             var coverUsesScrim = false;
             /** Epoch ms — re-show white scrim on bufferstart until this time (load + short grace). */
             var suppressGrayUntil = 0;
+            var coverStartedAtMs = 0;
+            var COVER_REVEAL_MAX_MS = 2500;
+            var LOAD_VIDEO_TIMEOUT_MS = 8000;
+            var loadGeneration = 0;
+
+            function withPlayerTimeout(promise, ms) {
+                return new Promise(function (resolve, reject) {
+                    var done = false;
+                    var timer = window.setTimeout(function () {
+                        if (done) return;
+                        done = true;
+                        reject(new Error('timeout'));
+                    }, ms);
+                    promise.then(
+                        function (value) {
+                            if (done) return;
+                            done = true;
+                            window.clearTimeout(timer);
+                            resolve(value);
+                        },
+                        function (err) {
+                            if (done) return;
+                            done = true;
+                            window.clearTimeout(timer);
+                            reject(err);
+                        }
+                    );
+                });
+            }
 
             /**
              * Cover Vimeo's internal loading UI while the target Video loads.
@@ -804,6 +833,11 @@
                 var token = posterRequestToken;
                 posterTargetVideoId = item && item.videoId ? String(item.videoId) : '';
                 posterPlaybackStarted = false;
+                coverStartedAtMs = Date.now();
+                window.setTimeout(function () {
+                    if (token !== posterRequestToken) return;
+                    tryRevealLoadCover(true);
+                }, COVER_REVEAL_MAX_MS);
 
                 var thumbnailUrl =
                     item && item.thumbnailUrl ? String(item.thumbnailUrl) : '';
@@ -868,12 +902,67 @@
                 }
             }
 
+            function tryRevealLoadCover(force) {
+                if (force) {
+                    if (posterTargetVideoId !== '') {
+                        posterLoadedVideoId = posterTargetVideoId;
+                    }
+                    revealLoadedPosterVideo();
+                    return Promise.resolve();
+                }
+                var pausedP = withPlayerTimeout(
+                    typeof p.getPaused === 'function'
+                        ? p.getPaused().catch(function () {
+                              return true;
+                          })
+                        : Promise.resolve(true),
+                    400
+                ).catch(function () {
+                    return true;
+                });
+                var timeP = withPlayerTimeout(
+                    typeof p.getCurrentTime === 'function'
+                        ? p.getCurrentTime().catch(function () {
+                              return 0;
+                          })
+                        : Promise.resolve(0),
+                    400
+                ).catch(function () {
+                    return 0;
+                });
+                return Promise.all([pausedP, timeP]).then(function (pair) {
+                    var paused = pair[0];
+                    var seconds = pair[1];
+                    if (paused === false) {
+                        if (posterLoadedVideoId !== posterTargetVideoId) {
+                            posterLoadedVideoId = posterTargetVideoId;
+                        }
+                        markPosterPlaybackStarted();
+                    }
+                    if (
+                        !L.shouldRevealLoadCover({
+                            playbackStarted: posterPlaybackStarted || paused === false,
+                            seconds: seconds,
+                            buffering: coverBuffering,
+                            paused: paused,
+                            coverAgeMs: Date.now() - coverStartedAtMs,
+                            maxCoverMs: COVER_REVEAL_MAX_MS,
+                        })
+                    ) {
+                        return;
+                    }
+                    revealLoadedPosterVideo();
+                }).catch(function () {});
+            }
+
             function revealPosterAfterPlaybackProgress(seconds) {
                 if (
                     !L.shouldRevealLoadCover({
                         playbackStarted: posterPlaybackStarted,
                         seconds: seconds,
                         buffering: coverBuffering,
+                        coverAgeMs: Date.now() - coverStartedAtMs,
+                        maxCoverMs: COVER_REVEAL_MAX_MS,
                     })
                 ) {
                     return;
@@ -1213,7 +1302,7 @@
             function tryAutoplayFallback() {
                 var readyPromise =
                     typeof p.ready === 'function' ? p.ready() : Promise.resolve();
-                return readyPromise
+                return withPlayerTimeout(readyPromise, LOAD_VIDEO_TIMEOUT_MS)
                     .then(function () {
                         if (!L.shouldAutoplayWithSound(sessionPlaybackActivated, true)) {
                             return;
@@ -1227,6 +1316,7 @@
                     .then(function () {
                         refreshTransport();
                         syncAllCaptions();
+                        tryRevealLoadCover();
                     });
             }
 
@@ -1329,6 +1419,7 @@
             function loadVideoMaster(masterIx, autoPlayPreferred, seekToStart, forceReload) {
                 var target =
                     typeof masterIx === 'number' && masterIx >= 0 ? masterIx : playlistIndex;
+                var gen = ++loadGeneration;
 
                 videoSwitchInProgress = true;
                 setTransportLoading(true);
@@ -1341,80 +1432,113 @@
                 syncCaptionBox(eventsForSync(), 0);
                 applyLoadedVideoUi();
 
-                var vidRaw = item && item.videoId ? String(item.videoId) : '';
-                var vidNum = parseInt(vidRaw, 10);
                 var wantAutoplay = L.shouldAutoplayWithSound(
                     sessionPlaybackActivated,
                     autoPlayPreferred
                 );
                 var posterToken = beginPosterCoveredLoad(item, wantAutoplay);
 
-                if (!wantAutoplay) {
-                    forcedPauseLoads++;
-                }
-
-                return resolveLoadVideoPromise(item, wantAutoplay, !!forceReload)
-                    .then(function () {
-                        markPosterVideoLoaded(item, posterToken);
-                        applyLoadedVideoUi();
-                        /** @type {Promise<void>} */
-                        var autoplayP;
-                        if (wantAutoplay) {
-                            autoplayP = tryAutoplayFallback();
-                        } else {
-                            var resetP = Promise.resolve();
+                function runQueuedLoad() {
+                    if (!L.shouldDispatchQueuedVideoLoad(gen, loadGeneration)) {
+                        return Promise.resolve();
+                    }
+                    var pauseGuard = false;
+                    if (!wantAutoplay) {
+                        forcedPauseLoads++;
+                        pauseGuard = true;
+                    }
+                    return withPlayerTimeout(
+                        resolveLoadVideoPromise(item, wantAutoplay, !!forceReload),
+                        LOAD_VIDEO_TIMEOUT_MS
+                    )
+                        .then(function () {
+                            if (!L.shouldDispatchQueuedVideoLoad(gen, loadGeneration)) {
+                                return;
+                            }
+                            markPosterVideoLoaded(item, posterToken);
+                            applyLoadedVideoUi();
+                            /** @type {Promise<void>} */
+                            var autoplayP;
+                            if (wantAutoplay) {
+                                autoplayP = tryAutoplayFallback();
+                            } else {
+                                var resetP = Promise.resolve();
+                                if (
+                                    seekToStart &&
+                                    !forceReload &&
+                                    typeof p.setCurrentTime === 'function'
+                                ) {
+                                    resetP = p.setCurrentTime(0).catch(function () {});
+                                }
+                                autoplayP = resetP
+                                    .then(function () {
+                                        return p.pause().catch(function () {});
+                                    })
+                                    .then(function () {
+                                        setTransportPlaying(false);
+                                    })
+                                    .then(function () {
+                                        return new Promise(function (resolve) {
+                                            window.setTimeout(function () {
+                                                if (pauseGuard) {
+                                                    forcedPauseLoads = Math.max(
+                                                        0,
+                                                        forcedPauseLoads - 1
+                                                    );
+                                                }
+                                                resolve();
+                                            }, 300);
+                                        });
+                                    });
+                            }
+                            return autoplayP;
+                        })
+                        .then(function () {
+                            if (!L.shouldDispatchQueuedVideoLoad(gen, loadGeneration)) {
+                                return;
+                            }
+                            return withPlayerTimeout(applyVideoAspectRatio(), 3000).catch(
+                                function () {}
+                            );
+                        })
+                        .then(function () {
+                            if (!L.shouldDispatchQueuedVideoLoad(gen, loadGeneration)) {
+                                return;
+                            }
+                            updatePlaylistNavButtons();
+                            syncCollectionNavButtons();
+                            syncCaptionBox(eventsForSync(), 0);
+                            videoSwitchInProgress = false;
+                            setTransportLoading(false);
+                            refreshTransport();
+                            savePlaybackSession();
+                            tryRevealLoadCover();
                             if (
-                                seekToStart &&
-                                !forceReload &&
+                                pendingPlaybackTimeSec > 0 &&
                                 typeof p.setCurrentTime === 'function'
                             ) {
-                                resetP = p.setCurrentTime(0).catch(function () {});
+                                var seekSec = pendingPlaybackTimeSec;
+                                pendingPlaybackTimeSec = 0;
+                                return p.setCurrentTime(seekSec).catch(function () {});
                             }
-                            autoplayP = resetP
-                                .then(function () {
-                                    return p.pause().catch(function () {});
-                                })
-                                .then(function () {
-                                    setTransportPlaying(false);
-                                })
-                                .then(function () {
-                                    return new Promise(function (resolve) {
-                                        window.setTimeout(function () {
-                                            forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
-                                            resolve();
-                                        }, 300);
-                                    });
-                                });
-                        }
-                        return autoplayP;
-                    })
-                    .then(function () {
-                        return applyVideoAspectRatio();
-                    })
-                    .then(function () {
-                        updatePlaylistNavButtons();
-                        syncCollectionNavButtons();
-                        syncCaptionBox(eventsForSync(), 0);
-                        videoSwitchInProgress = false;
-                        setTransportLoading(false);
-                        refreshTransport();
-                        savePlaybackSession();
-                        if (pendingPlaybackTimeSec > 0 && typeof p.setCurrentTime === 'function') {
-                            var seekSec = pendingPlaybackTimeSec;
-                            pendingPlaybackTimeSec = 0;
-                            return p.setCurrentTime(seekSec).catch(function () {});
-                        }
-                    })
-                    .catch(function (e) {
-                        if (!wantAutoplay) {
-                            forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
-                        }
-                        videoSwitchInProgress = false;
-                        setTransportLoading(false);
-                        console.warn('Vimeo playlist: loadVideo failed', e);
-                        applyLoadedVideoUi();
-                        refreshTransport();
-                    });
+                        })
+                        .catch(function (e) {
+                            if (!L.shouldDispatchQueuedVideoLoad(gen, loadGeneration)) {
+                                return;
+                            }
+                            if (pauseGuard) {
+                                forcedPauseLoads = Math.max(0, forcedPauseLoads - 1);
+                            }
+                            videoSwitchInProgress = false;
+                            setTransportLoading(false);
+                            console.warn('Vimeo playlist: loadVideo failed', e);
+                            applyLoadedVideoUi();
+                            refreshTransport();
+                            tryRevealLoadCover();
+                        });
+                }
+
+                return Promise.resolve().then(runQueuedLoad);
             }
 
             function updatePlaylistNavButtons() {
@@ -2184,8 +2308,13 @@
             });
             p.on('bufferstart', function () {
                 coverBuffering = true;
-                // Cover Vimeo's gray loader during the load window and a short post-reveal grace.
-                if (loadScrim && Date.now() < suppressGrayUntil) {
+                if (
+                    loadScrim &&
+                    L.shouldReshowLoadCoverOnBufferStart({
+                        playbackStarted: posterPlaybackStarted,
+                        suppressGrayActive: Date.now() < suppressGrayUntil,
+                    })
+                ) {
                     loadScrim.classList.remove('is-hidden');
                 }
             });

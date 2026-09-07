@@ -594,6 +594,22 @@ if (is_file($playerJsPath)) {
     assert_contains('shouldRevealLoadCover', $playerJs, 'cover reveal waits for buffering to end');
     assert_contains("p.on('bufferstart'", $playerJs, 'player tracks Vimeo bufferstart for cover');
     assert_contains("p.on('bufferend'", $playerJs, 'player tracks Vimeo bufferend for cover');
+    assert_contains(
+        'shouldReshowLoadCoverOnBufferStart',
+        $playerJs,
+        'bufferstart re-cover is gated so a playing Video is not hidden again'
+    );
+    assert_contains(
+        'shouldDispatchQueuedVideoLoad',
+        $playerJs,
+        'overlapping Video switches drop superseded loads instead of stacking loadVideo'
+    );
+    assert_contains(
+        'Promise.resolve().then(runQueuedLoad)',
+        $playerJs,
+        'superseded Video loads skip loadVideo on a microtask instead of waiting on a hung chain'
+    );
+    assert_not_contains('loadChain', $playerJs, 'player does not serialize loadVideo on a chain that can hang');
 }
 
 $chromeWidthsPath = dirname(dirname(__FILE__)) . '/js/chrome_button_widths.js';
