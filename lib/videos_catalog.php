@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/thumbnail_ladder.php';
 require_once __DIR__ . '/catalog_projection.php';
 
 /**

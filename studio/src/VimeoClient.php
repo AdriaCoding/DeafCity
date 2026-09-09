@@ -115,16 +115,25 @@ class VimeoClient
 
     public function getThumbnailUrl(string $id): ?string
     {
+        return $this->getThumbnailMeta($id)['thumbnail_url'];
+    }
+
+    /**
+     * @return array{thumbnail_url: ?string, thumbnail_base: ?string}
+     */
+    public function getThumbnailMeta(string $id): array
+    {
         $client = $this->sdk ?? new Vimeo($this->clientId, $this->clientSecret, $this->accessToken);
         $response = $client->request('/videos/' . $id . '?fields=pictures', [], 'GET');
         $this->assertOkOrThrow($response);
-        return $this->pickThumbnailUrl($response['body']['pictures']['sizes'] ?? []);
+        $this->request4kPictures($client, $id);
+        return $this->thumbnailFromPictures($response['body']['pictures'] ?? []);
     }
 
     /**
      * Single fields-filtered GET for Catalog sheet sync.
      *
-     * @return array{title: string, thumbnail_url: ?string, embed_url: ?string}
+     * @return array{title: string, thumbnail_url: ?string, thumbnail_base: ?string, embed_url: ?string}
      */
     public function fetchVideoForCatalogSync(string $id, bool $needThumbnail, bool $needEmbed): array
     {
@@ -147,9 +156,10 @@ class VimeoClient
             );
         }
 
-        $thumbnailUrl = null;
+        $thumbnail = ['thumbnail_url' => null, 'thumbnail_base' => null];
         if ($needThumbnail) {
-            $thumbnailUrl = $this->pickThumbnailUrl($response['body']['pictures']['sizes'] ?? []);
+            $this->request4kPictures($client, $id);
+            $thumbnail = $this->thumbnailFromPictures($response['body']['pictures'] ?? []);
         }
         $embedUrl = null;
         if ($needEmbed) {
@@ -159,7 +169,8 @@ class VimeoClient
 
         return [
             'title' => $title,
-            'thumbnail_url' => $thumbnailUrl,
+            'thumbnail_url' => $thumbnail['thumbnail_url'],
+            'thumbnail_base' => $thumbnail['thumbnail_base'],
             'embed_url' => $embedUrl,
         ];
     }
@@ -173,6 +184,66 @@ class VimeoClient
     }
 
     /**
+     * @return array{thumbnail_url: ?string, thumbnail_base: ?string}
+     */
+    private function thumbnailFromPictures(mixed $pictures): array
+    {
+        $pictures = is_array($pictures) ? $pictures : [];
+        $sizes = $pictures['sizes'] ?? [];
+        $url1920 = $this->pickSizeLink($sizes, 1920) ?? $this->pickThumbnailUrl($sizes);
+        $baseLink = isset($pictures['base_link']) && is_string($pictures['base_link'])
+            ? trim($pictures['base_link'])
+            : '';
+        $base = $baseLink !== '' ? $this->normalizeThumbnailBase($baseLink) : '';
+        if ($base === '' && is_string($url1920) && $url1920 !== '') {
+            $base = $this->normalizeThumbnailBase($url1920);
+        }
+
+        return [
+            'thumbnail_url' => $url1920,
+            'thumbnail_base' => $base !== '' ? $base : null,
+        ];
+    }
+
+    private function request4kPictures(Vimeo $client, string $id): void
+    {
+        $response = $client->request('/videos/' . $id . '/pictures?sizes=3840x2160', [], 'GET');
+        $status = (int) ($response['status'] ?? 0);
+        if ($status < 200 || $status >= 300) {
+            return;
+        }
+    }
+
+    private function normalizeThumbnailBase(string $url): string
+    {
+        require_once dirname(__DIR__, 2) . '/lib/thumbnail_ladder.php';
+        return vpc_thumbnail_base($url);
+    }
+
+    /**
+     * @param list<array<string, mixed>>|mixed $sizes
+     */
+    private function pickSizeLink(mixed $sizes, int $width): ?string
+    {
+        if (!is_array($sizes)) {
+            return null;
+        }
+        foreach ($sizes as $size) {
+            if (!is_array($size)) {
+                continue;
+            }
+            if ((int) ($size['width'] ?? 0) !== $width) {
+                continue;
+            }
+            $link = $size['link'] ?? null;
+            if (is_string($link) && $link !== '') {
+                return $link;
+            }
+        }
+        return null;
+    }
+
+    /**
      * @param list<array<string, mixed>>|mixed $sizes
      */
     private function pickThumbnailUrl(mixed $sizes): ?string
@@ -180,7 +251,7 @@ class VimeoClient
         if (!is_array($sizes)) {
             return null;
         }
-        // One step above 640px wide (typically 960x540); fall back to largest <= 640.
+        // Prefer 1920 when present; otherwise the smallest size above 640, then largest <= 640.
         $above640 = null;
         $above640Width = PHP_INT_MAX;
         $atOrBelow640 = null;

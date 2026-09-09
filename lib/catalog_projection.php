@@ -49,6 +49,16 @@ function vpc_project_catalog_video(array $video) {
     }
     $entry['tags'] = $tags;
 
+    $thumbBase = '';
+    if (!empty($video['thumbnail_base']) && is_string($video['thumbnail_base'])) {
+        $thumbBase = vpc_thumbnail_base(trim($video['thumbnail_base']));
+    }
+    if ($thumbBase === '' && !empty($video['thumbnail_url']) && is_string($video['thumbnail_url'])) {
+        $thumbBase = vpc_thumbnail_base(trim($video['thumbnail_url']));
+    }
+    if ($thumbBase !== '') {
+        $entry['thumbnail_base'] = $thumbBase;
+    }
     if (!empty($video['thumbnail_url']) && is_string($video['thumbnail_url'])) {
         $entry['thumbnail_url'] = trim($video['thumbnail_url']);
     }

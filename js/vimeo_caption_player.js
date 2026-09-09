@@ -839,8 +839,12 @@
                     tryRevealLoadCover(true);
                 }, COVER_REVEAL_MAX_MS);
 
-                var thumbnailUrl =
-                    item && item.thumbnailUrl ? String(item.thumbnailUrl) : '';
+                var posterAttrs = L.ladderPosterAttrs(
+                    (item && (item.thumbnailBase || item.thumbnailUrl)) || '',
+                    cfg.thumbnailLadder,
+                    'player'
+                );
+                var thumbnailUrl = posterAttrs ? posterAttrs.src : '';
                 var coverPlan = L.planLoadCover({
                     willAutoplay: !!willAutoplay,
                     thumbnailUrl: thumbnailUrl,
@@ -864,16 +868,21 @@
                 }
 
                 posterCover.classList.remove('is-hidden');
-                if (posterCover.getAttribute('src') === coverPlan.thumbnailUrl) {
+                var samePoster =
+                    posterCover.getAttribute('src') === posterAttrs.src &&
+                    posterCover.getAttribute('srcset') === posterAttrs.srcset;
+                if (samePoster) {
                     return token;
                 }
 
                 var pendingPoster = new window.Image();
                 pendingPoster.onload = function () {
                     if (token !== posterRequestToken) return;
-                    posterCover.setAttribute('src', coverPlan.thumbnailUrl);
+                    posterCover.setAttribute('src', posterAttrs.src);
+                    posterCover.setAttribute('srcset', posterAttrs.srcset);
+                    posterCover.setAttribute('sizes', posterAttrs.sizes);
                 };
-                pendingPoster.src = coverPlan.thumbnailUrl;
+                pendingPoster.src = posterAttrs.src;
                 return token;
             }
 

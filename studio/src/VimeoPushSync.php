@@ -124,7 +124,7 @@ class VimeoPushSync
 
         while (true) {
             try {
-                $thumbnailUrl = $this->vimeoClient->getThumbnailUrl($vimeoId);
+                $meta = $this->vimeoClient->getThumbnailMeta($vimeoId);
                 break;
             } catch (VimeoRateLimitedException $e) {
                 $rateLimitWaits++;
@@ -138,12 +138,16 @@ class VimeoPushSync
             }
         }
 
-        if ($thumbnailUrl === null || $thumbnailUrl === '') {
+        $thumbnailUrl = $meta['thumbnail_url'] ?? null;
+        if (!is_string($thumbnailUrl) || $thumbnailUrl === '') {
             return false;
         }
 
         try {
-            $this->catalogEditor->updateThumbnailUrl($vimeoId, $thumbnailUrl);
+            $base = isset($meta['thumbnail_base']) && is_string($meta['thumbnail_base'])
+                ? $meta['thumbnail_base']
+                : null;
+            $this->catalogEditor->updateThumbnailUrl($vimeoId, $thumbnailUrl, $base);
         } catch (\Throwable) {
             return false;
         }

@@ -227,6 +227,24 @@ class CatalogEditorTest extends TestCase
         $this->assertSame('https://example.com/thumb.jpg', $catalog['videos'][0]['thumbnail_url']);
     }
 
+    public function test_addVideo_stores_thumbnail_base_for_vimeo_cdn_url(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        (new CatalogEditor($this->catalogFile))->addVideo(
+            vimeoId: '999',
+            title: 'New Video',
+            signLanguage: 'lse',
+            edition: '2024-madrid',
+            thumbnailUrl: 'https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us',
+            thumbnailBase: 'https://i.vimeocdn.com/video/abc-d?region=us',
+        );
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us', $entry['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $entry['thumbnail_base']);
+    }
+
     public function test_addVideo_stores_participant_when_provided(): void
     {
         $this->writeCatalog(['videos' => []]);

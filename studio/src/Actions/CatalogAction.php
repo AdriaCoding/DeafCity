@@ -125,6 +125,7 @@ class CatalogAction
         foreach ($this->contingutsContext($syncContext) as $name => $value) {
             $$name = $value;
         }
+        require_once dirname(__DIR__, 3) . '/lib/thumbnail_ladder.php';
         require $this->view('continguts.php');
         exit;
     }
@@ -220,6 +221,7 @@ class CatalogAction
         $signLanguages = $c->studioConfig->getSignLanguages();
         $editions = $c->studioConfig->getEditions();
         extract($this->c->headerContext(StudioHeader::NAV_CATALOG));
+        require_once dirname(__DIR__, 3) . '/lib/thumbnail_ladder.php';
         require $this->view('continguts-video.php');
         exit;
     }

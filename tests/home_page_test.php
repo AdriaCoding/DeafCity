@@ -250,20 +250,31 @@ if ($firstVideoId !== $headVideoId) {
 }
 echo "PASS: iframe poster matches playlist[0] (paused poster = queue head, no silent swap)\n";
 
-// Loading cover: the server-selected video is visible as a poster while Vimeo initializes.
-$headThumbnailUrl = isset($playlistItems[0]['thumbnailUrl'])
-    ? (string)$playlistItems[0]['thumbnailUrl']
-    : '';
-if ($headThumbnailUrl === '') {
-    fwrite(STDERR, "FAIL: playlist[0] needs a thumbnail for the loading cover\n");
+if (strpos($html, '3840w') === false || !preg_match('~class="vpc-poster-cover"[^>]+srcset=~', $html)) {
+    fwrite(STDERR, "FAIL: initial loading cover should expose a srcset including 3840w\n");
     exit(1);
 }
-$escapedHeadThumbnailUrl = htmlspecialchars($headThumbnailUrl, ENT_QUOTES, 'UTF-8');
+echo "PASS: initial loading cover includes a resolution ladder srcset\n";
+
+// Loading cover: the server-selected video is visible as a poster while Vimeo initializes.
+$headThumbnailUrl = isset($playlistItems[0]['thumbnailBase'])
+    ? (string)$playlistItems[0]['thumbnailBase']
+    : '';
+if ($headThumbnailUrl === '') {
+    fwrite(STDERR, "FAIL: playlist[0] needs a thumbnailBase for the loading cover\n");
+    exit(1);
+}
+$expectedPoster = vpc_thumbnail_attrs($headThumbnailUrl, 'player');
+if ($expectedPoster === array()) {
+    fwrite(STDERR, "FAIL: playlist[0] thumbnail should produce player ladder attrs\n");
+    exit(1);
+}
+$escapedPosterSrc = htmlspecialchars($expectedPoster['src'], ENT_QUOTES, 'UTF-8');
 if (!preg_match(
-    '~<img[^>]+class="vpc-poster-cover"[^>]+src="' . preg_quote($escapedHeadThumbnailUrl, '~') . '"[^>]*>~',
+    '~<img[^>]+class="vpc-poster-cover"[^>]+src="' . preg_quote($escapedPosterSrc, '~') . '"[^>]*>~',
     $html
 )) {
-    fwrite(STDERR, "FAIL: initial loading cover should render playlist[0] thumbnail\n");
+    fwrite(STDERR, "FAIL: initial loading cover should render playlist[0] 1920-rung thumbnail\n");
     exit(1);
 }
 echo "PASS: initial loading cover renders the selected video thumbnail\n";
@@ -573,6 +584,8 @@ if (is_file($playerJsPath)) {
     assert_not_contains("querySelector('.vpc-shuffle-btn')", $playerJs, 'no shuffle button DOM queries in player JS');
     assert_contains('setTransportLoading', $playerJs, 'player shows transport spinner during loadVideo');
     assert_contains("querySelector('.vpc-poster-cover')", $playerJs, 'player controls the loading cover');
+    assert_contains('ladderPosterAttrs', $playerJs, 'player builds poster srcset from the thumbnail ladder');
+    assert_contains("setAttribute('srcset'", $playerJs, 'player applies srcset when swapping posters');
     assert_contains("querySelector('.vpc-load-scrim')", $playerJs, 'player controls the solid white load scrim');
     assert_contains('planLoadCover', $playerJs, 'player chooses thumb vs solid-white cover via playlist logic');
     assert_contains("preload: 'auto'", $playerJs, 'playlist transitions preload initial video segments');

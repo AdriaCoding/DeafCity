@@ -158,29 +158,77 @@ class VimeoClientReadClassificationTest extends TestCase
     public function test_fetchVideoForCatalogSync_requests_combined_fields(): void
     {
         $sdk = $this->createMock(Vimeo::class);
-        $sdk->expects($this->once())
+        $sdk->expects($this->exactly(2))
             ->method('request')
-            ->with('/videos/111?fields=name,pictures,player_embed_url', [], 'GET')
-            ->willReturn([
-                'status' => 200,
-                'body' => [
-                    'name' => 'Title',
-                    'player_embed_url' => 'https://player.vimeo.com/video/111',
-                    'pictures' => [
-                        'sizes' => [
-                            ['width' => 640, 'link' => 'https://example.com/640.jpg'],
-                            ['width' => 960, 'link' => 'https://example.com/960.jpg'],
+            ->willReturnCallback(function (string $path) {
+                if ($path === '/videos/111?fields=name,pictures,player_embed_url') {
+                    return [
+                        'status' => 200,
+                        'body' => [
+                            'name' => 'Title',
+                            'player_embed_url' => 'https://player.vimeo.com/video/111',
+                            'pictures' => [
+                                'base_link' => 'https://i.vimeocdn.com/video/abc-d?region=us',
+                                'sizes' => [
+                                    ['width' => 640, 'link' => 'https://i.vimeocdn.com/video/abc-d_640x360?r=pad&region=us'],
+                                    ['width' => 1920, 'link' => 'https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us'],
+                                ],
+                            ],
                         ],
-                    ],
-                ],
-                'headers' => ['X-RateLimit-Remaining' => '50'],
-            ]);
+                        'headers' => ['X-RateLimit-Remaining' => '50'],
+                    ];
+                }
+                if ($path === '/videos/111/pictures?sizes=3840x2160') {
+                    return [
+                        'status' => 200,
+                        'body' => [
+                            'data' => [[
+                                'sizes' => [
+                                    ['width' => 3840, 'link' => 'https://i.vimeocdn.com/video/abc-d_3840x2160?r=pad&region=us'],
+                                ],
+                            ]],
+                        ],
+                        'headers' => [],
+                    ];
+                }
+                $this->fail('Unexpected Vimeo path: ' . $path);
+            });
 
         $meta = $this->makeClient($sdk)->fetchVideoForCatalogSync('111', true, true);
 
         $this->assertSame('Title', $meta['title']);
-        $this->assertSame('https://example.com/960.jpg', $meta['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us', $meta['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $meta['thumbnail_base']);
         $this->assertSame('https://player.vimeo.com/video/111', $meta['embed_url']);
+    }
+
+    public function test_fetchVideoForCatalogSync_keeps_1920_when_4k_pictures_fail(): void
+    {
+        $sdk = $this->createMock(Vimeo::class);
+        $sdk->method('request')
+            ->willReturnCallback(function (string $path) {
+                if (str_contains($path, '/pictures?sizes=')) {
+                    return ['status' => 500, 'body' => ['error' => 'nope'], 'headers' => []];
+                }
+                return [
+                    'status' => 200,
+                    'body' => [
+                        'name' => 'Title',
+                        'pictures' => [
+                            'base_link' => 'https://i.vimeocdn.com/video/abc-d',
+                            'sizes' => [
+                                ['width' => 1920, 'link' => 'https://i.vimeocdn.com/video/abc-d_1920x1080'],
+                            ],
+                        ],
+                    ],
+                    'headers' => [],
+                ];
+            });
+
+        $meta = $this->makeClient($sdk)->fetchVideoForCatalogSync('111', true, false);
+
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080', $meta['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d', $meta['thumbnail_base']);
     }
 
     public function test_fetchVideoForCatalogSync_title_only_when_media_not_needed(): void
@@ -199,6 +247,7 @@ class VimeoClientReadClassificationTest extends TestCase
 
         $this->assertSame('Title only', $meta['title']);
         $this->assertNull($meta['thumbnail_url']);
+        $this->assertNull($meta['thumbnail_base']);
         $this->assertNull($meta['embed_url']);
     }
 }

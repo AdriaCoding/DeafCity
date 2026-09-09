@@ -715,8 +715,9 @@
                 <a class="video-card" href="?action=continguts-video&amp;vimeo_id=<?= $vid ?>"
                    data-participant="<?= htmlspecialchars(trim((string) ($video['participant'] ?? '')), ENT_QUOTES) ?>"
                    data-video-number="<?= \Studio\CatalogEditionVideoOrder::videoNumber($video) ?? '' ?>">
-                    <?php if (!empty($video['thumbnail_url'])): ?>
-                        <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
+                    <?php $thumbHtmlAttrs = vpc_thumbnail_html_attrs(vpc_playlist_entry_thumbnail_base($video), 'grid'); ?>
+                    <?php if ($thumbHtmlAttrs !== ''): ?>
+                        <img class="video-thumb" <?= $thumbHtmlAttrs ?> alt="" loading="lazy">
                     <?php else: ?>
                         <div class="video-thumb-placeholder"></div>
                     <?php endif; ?>
@@ -742,8 +743,9 @@
                 <?php foreach ($invisibleVideos as $video): ?>
                 <?php $vid = htmlspecialchars($video['vimeo_id'] ?? '', ENT_QUOTES) ?>
                 <a class="video-card" href="?action=continguts-video&amp;vimeo_id=<?= $vid ?>">
-                    <?php if (!empty($video['thumbnail_url'])): ?>
-                        <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
+                    <?php $thumbHtmlAttrs = vpc_thumbnail_html_attrs(vpc_playlist_entry_thumbnail_base($video), 'grid'); ?>
+                    <?php if ($thumbHtmlAttrs !== ''): ?>
+                        <img class="video-thumb" <?= $thumbHtmlAttrs ?> alt="" loading="lazy">
                     <?php else: ?>
                         <div class="video-thumb-placeholder"></div>
                     <?php endif; ?>

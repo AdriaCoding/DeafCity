@@ -331,8 +331,9 @@
 <?php require __DIR__ . '/partials/studio-header.php'; ?>
 <main>
     <div class="video-hero">
-        <?php if (!empty($video['thumbnail_url'])): ?>
-            <img class="video-thumb" src="<?= htmlspecialchars($video['thumbnail_url'], ENT_QUOTES) ?>" alt="" loading="lazy">
+        <?php $thumbHtmlAttrs = vpc_thumbnail_html_attrs(vpc_playlist_entry_thumbnail_base($video), 'grid'); ?>
+        <?php if ($thumbHtmlAttrs !== ''): ?>
+            <img class="video-thumb" <?= $thumbHtmlAttrs ?> alt="" loading="lazy">
         <?php else: ?>
             <div class="video-thumb-placeholder"></div>
         <?php endif; ?>

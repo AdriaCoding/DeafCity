@@ -56,8 +56,8 @@ class VimeoPushSyncTest extends TestCase
         $vimeo->expects($this->once())->method('setTags')->with('111', ['humor']);
         $vimeo->expects($this->once())->method('uploadAndActivateTextTrack')
             ->with('111', $this->captionsDir . '/111.ar.vtt', 'ar', 'Arabic');
-        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('111')
-            ->willReturn('https://example.com/t.jpg');
+        $vimeo->expects($this->once())->method('getThumbnailMeta')->with('111')
+            ->willReturn(['thumbnail_url' => 'https://example.com/t.jpg', 'thumbnail_base' => null]);
 
         $result = $this->makeSync($vimeo)->syncVideo([
             'vimeo_id' => '111',
@@ -127,8 +127,8 @@ class VimeoPushSyncTest extends TestCase
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->method('updateTitle');
         $vimeo->method('setTags');
-        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('222')
-            ->willReturn('https://example.com/backfill.jpg');
+        $vimeo->expects($this->once())->method('getThumbnailMeta')->with('222')
+            ->willReturn(['thumbnail_url' => 'https://example.com/backfill.jpg', 'thumbnail_base' => null]);
 
         $result = $this->makeSync($vimeo)->syncVideo([
             'vimeo_id' => '222',
@@ -163,8 +163,8 @@ class VimeoPushSyncTest extends TestCase
         $vimeo->method('getTextTracks')->willReturn([]);
         $vimeo->method('updateTitle');
         $vimeo->method('setTags');
-        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('333')
-            ->willReturn('https://example.com/updated.jpg');
+        $vimeo->expects($this->once())->method('getThumbnailMeta')->with('333')
+            ->willReturn(['thumbnail_url' => 'https://example.com/updated.jpg', 'thumbnail_base' => null]);
 
         $result = $this->makeSync($vimeo)->syncVideo([
             'vimeo_id' => '333',
@@ -225,7 +225,7 @@ class VimeoPushSyncTest extends TestCase
                 }
             });
         $vimeo->method('setTags');
-        $vimeo->method('getThumbnailUrl')->willReturn('https://example.com/t.jpg');
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => 'https://example.com/t.jpg', 'thumbnail_base' => null]);
 
         $result = $this->makeSync($vimeo, static function (int $seconds) use (&$slept): void {
             $slept[] = $seconds;

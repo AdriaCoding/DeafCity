@@ -2308,6 +2308,82 @@
     }
 
     /**
+     * Build src/srcset/sizes for a Vimeo CDN thumbnail ladder.
+     * @param {string} urlOrBase
+     * @param {number[]} [widths]
+     * @param {string} [role] 'player' (default) or 'grid'
+     * @returns {{ src: string, srcset: string, sizes: string } | null}
+     */
+    function ladderPosterAttrs(urlOrBase, widths, role) {
+        var parsed = parseVimeoThumbBase(urlOrBase);
+        if (!parsed) {
+            return null;
+        }
+        var rungs = Array.isArray(widths) && widths.length > 0 ? widths : [640, 1920, 3840];
+        var srcset = [];
+        var i;
+        for (i = 0; i < rungs.length; i++) {
+            var w = Number(rungs[i]);
+            if (!(w > 0)) {
+                continue;
+            }
+            srcset.push(vimeoThumbSizeUrl(parsed, w) + ' ' + w + 'w');
+        }
+        if (srcset.length === 0) {
+            return null;
+        }
+        var isGrid = role === 'grid';
+        var fallback = isGrid ? 640 : 1920;
+        return {
+            src: vimeoThumbSizeUrl(parsed, fallback),
+            srcset: srcset.join(', '),
+            sizes: isGrid ? '(max-width: 600px) 45vw, 213px' : '100vw',
+        };
+    }
+
+    function parseVimeoThumbBase(urlOrBase) {
+        var url = String(urlOrBase || '').replace(/^\s+|\s+$/g, '');
+        if (url === '' || url.indexOf('vimeocdn.com') === -1) {
+            return null;
+        }
+        var noHash = url.split('#')[0];
+        var qIndex = noHash.indexOf('?');
+        var pathPart = qIndex === -1 ? noHash : noHash.slice(0, qIndex);
+        var query = qIndex === -1 ? '' : noHash.slice(qIndex + 1);
+        pathPart = pathPart.replace(/_\d+x\d+$/, '');
+        if (pathPart === '') {
+            return null;
+        }
+        var kept = [];
+        if (query !== '') {
+            var pairs = query.split('&');
+            var p;
+            for (p = 0; p < pairs.length; p++) {
+                if (!pairs[p]) {
+                    continue;
+                }
+                var eq = pairs[p].indexOf('=');
+                var key = eq === -1 ? pairs[p] : pairs[p].slice(0, eq);
+                if (key === 'r' || key === '') {
+                    continue;
+                }
+                kept.push(pairs[p]);
+            }
+        }
+        return { path: pathPart, query: kept.join('&') };
+    }
+
+    function vimeoThumbSizeUrl(parsed, width) {
+        var w = Number(width);
+        var height = Math.round(w * 9 / 16);
+        var url = parsed.path + '_' + w + 'x' + height;
+        if (parsed.query) {
+            url += '?' + parsed.query;
+        }
+        return url;
+    }
+
+    /**
      * Whether the load cover (thumb or solid white) may be removed.
      * Keep covering while Vimeo is still buffering so its gray loader never flashes.
      *
@@ -2481,6 +2557,7 @@
         resolveParticipantsNavState: resolveParticipantsNavState,
         planEndOfPlaylist: planEndOfPlaylist,
         planLoadCover: planLoadCover,
+        ladderPosterAttrs: ladderPosterAttrs,
         shouldRevealLoadCover: shouldRevealLoadCover,
         shouldReshowLoadCoverOnBufferStart: shouldReshowLoadCoverOnBufferStart,
         shouldDispatchQueuedVideoLoad: shouldDispatchQueuedVideoLoad,

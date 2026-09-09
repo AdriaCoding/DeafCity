@@ -2112,6 +2112,20 @@ console.log('vimeo_playlist_logic.test.js: all passed (including secondary R2 fi
     assert.strictEqual(none.kind, 'none', 'paused load with no thumb has no cover bitmap');
 })();
 
+(function () {
+    var poster = logic.ladderPosterAttrs(
+        'https://i.vimeocdn.com/video/abc-d_960x540?r=pad&region=us',
+        [640, 1920, 3840]
+    );
+    assert.ok(poster, 'legacy Vimeo URL yields poster attrs');
+    assert.ok(poster.src.indexOf('_1920x1080') !== -1, 'player src uses 1920');
+    assert.ok(poster.srcset.indexOf('640w') !== -1, 'srcset includes 640w');
+    assert.ok(poster.srcset.indexOf('1920w') !== -1, 'srcset includes 1920w');
+    assert.ok(poster.srcset.indexOf('3840w') !== -1, 'srcset includes 3840w');
+    assert.strictEqual(poster.src.indexOf('r=pad'), -1, 'poster src strips r=pad');
+    assert.strictEqual(logic.ladderPosterAttrs('', [640, 1920, 3840]), null, 'empty base yields no poster attrs');
+})();
+
 console.log('vimeo_playlist_logic.test.js: all passed (including load cover plan)');
 
 // ── Load cover reveal: wait for real playback, not while Vimeo is buffering ─

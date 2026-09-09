@@ -413,6 +413,7 @@ class CatalogSheetSyncTest extends TestCase
                 ?string $participant,
                 ?string $thumbnailUrl = null,
                 ?string $embedUrl = null,
+                ?string $thumbnailBase = null,
             ): string {
                 $this->calls++;
                 if ($this->calls === 2) {
@@ -428,6 +429,7 @@ class CatalogSheetSyncTest extends TestCase
                     $participant,
                     $thumbnailUrl,
                     $embedUrl,
+                    $thumbnailBase,
                 );
             }
         };

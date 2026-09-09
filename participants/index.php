@@ -54,7 +54,7 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
         <?= htmlspecialchars(preview_t('player.error.no_playlist'), ENT_QUOTES, 'UTF-8') ?>
     </p>
     <?php else: ?>
-    <div class="participants-grid">
+    <div class="participants-grid" data-thumb-ladder="<?= htmlspecialchars(implode(',', vpc_thumbnail_ladder_widths()), ENT_QUOTES, 'UTF-8') ?>">
         <?php foreach ($participantNames as $name): ?>
             <?php
             $videos = vpc_participant_videos_from_catalog($catalog, $name);
@@ -62,16 +62,20 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
                 continue;
             }
             $defaultVideo = $videos[0];
-            $thumbnailUrl = vpc_participant_thumbnail_display_url(
-                isset($defaultVideo['thumbnail_url']) ? (string) $defaultVideo['thumbnail_url'] : ''
-            );
+            $thumbSource = isset($defaultVideo['thumbnail_base']) && is_string($defaultVideo['thumbnail_base'])
+                && $defaultVideo['thumbnail_base'] !== ''
+                ? $defaultVideo['thumbnail_base']
+                : (isset($defaultVideo['thumbnail_url']) ? (string) $defaultVideo['thumbnail_url'] : '');
+            $thumbHtmlAttrs = vpc_thumbnail_html_attrs($thumbSource, 'grid');
             $thumbUrls = array();
             foreach ($videos as $video) {
-                $url = vpc_participant_thumbnail_display_url(
-                    isset($video['thumbnail_url']) ? (string) $video['thumbnail_url'] : ''
-                );
-                if ($url !== '') {
-                    $thumbUrls[] = $url;
+                $source = isset($video['thumbnail_base']) && is_string($video['thumbnail_base'])
+                    && $video['thumbnail_base'] !== ''
+                    ? $video['thumbnail_base']
+                    : (isset($video['thumbnail_url']) ? (string) $video['thumbnail_url'] : '');
+                $base = vpc_thumbnail_base($source);
+                if ($base !== '') {
+                    $thumbUrls[] = $base;
                 }
             }
             $encodedName = rawurlencode($name);
@@ -86,9 +90,9 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
                 data-participant="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
                 data-thumb-urls="<?= htmlspecialchars(json_encode($thumbUrls), ENT_QUOTES, 'UTF-8') ?>"
             >
-                <?php if ($thumbnailUrl !== ''): ?>
+                <?php if ($thumbHtmlAttrs !== ''): ?>
                     <span class="participant-thumb">
-                        <img src="<?= htmlspecialchars($thumbnailUrl, ENT_QUOTES, 'UTF-8') ?>" alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>">
+                        <img <?= $thumbHtmlAttrs ?> alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>">
                     </span>
                 <?php endif; ?>
                 <span class="participant-name"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></span>
@@ -134,6 +138,35 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
         return visit % count;
     }
 
+    function applyThumb(img, base, ladder) {
+        if (!img || !base || !window.VpcPlaylistLogic || !window.VpcPlaylistLogic.ladderPosterAttrs) {
+            if (img && base) {
+                img.src = base;
+            }
+            return;
+        }
+        var attrs = window.VpcPlaylistLogic.ladderPosterAttrs(base, ladder, 'grid');
+        if (!attrs) {
+            return;
+        }
+        img.src = attrs.src;
+        img.setAttribute('srcset', attrs.srcset);
+        img.setAttribute('sizes', attrs.sizes);
+    }
+
+    var grid = document.querySelector('.participants-grid');
+    var ladder = [];
+    if (grid && grid.getAttribute('data-thumb-ladder')) {
+        var rawLadder = grid.getAttribute('data-thumb-ladder').split(',');
+        var li;
+        for (li = 0; li < rawLadder.length; li++) {
+            var w = parseInt(rawLadder[li], 10);
+            if (w > 0) {
+                ladder.push(w);
+            }
+        }
+    }
+
     var cards = document.querySelectorAll('.participant-card');
     for (var i = 0; i < cards.length; i++) {
         (function (card) {
@@ -143,7 +176,7 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
                 var idx = pickThumbIndex(participant, urls.length);
                 var img = card.querySelector('.participant-thumb img');
                 if (img && urls[idx]) {
-                    img.src = urls[idx];
+                    applyThumb(img, urls[idx], ladder);
                 }
             }
             card.addEventListener('click', function () {

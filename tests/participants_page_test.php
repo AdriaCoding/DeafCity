@@ -91,6 +91,8 @@ pp_assert_contains('data-picker="language"', $html, 'language picker on particip
 pp_assert_contains('vpc-picker-dropdown', $html, 'language dropup on participants chrome');
 pp_assert_contains('English</li>', $html, 'English option in language picker');
 pp_assert_contains('data-thumb-urls', $html, 'participant cards carry thumb rotation data');
+pp_assert_contains('data-thumb-ladder', $html, 'participants grid exposes the thumbnail ladder');
+pp_assert_contains('ladderPosterAttrs', $html, 'thumb rotation applies srcset from the ladder');
 $participantsCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/participants-page.css');
 pp_assert_contains('object-fit: contain', $participantsCss, 'thumbnails use object-fit contain');
 pp_assert_contains('overflow: hidden', $html, 'non-scrollable body on participants page');
@@ -118,6 +120,10 @@ pp_assert_contains('Hamida', $html, 'Hamida name label');
 
 pp_assert_not_contains('r=pad', $html, 'no r=pad in participant thumbnail URLs');
 pp_assert_contains('region=us', $html, 'other Vimeo query params preserved');
+pp_assert_contains('_640x360', $html, 'participant thumbs use the 640 rung as src');
+pp_assert_contains('640w', $html, 'participant thumbs expose 640w in srcset');
+pp_assert_contains('1920w', $html, 'participant thumbs expose 1920w in srcset');
+pp_assert_contains('3840w', $html, 'participant thumbs expose 3840w in srcset');
 
 $padUrl = 'https://i.vimeocdn.com/video/1285032917-abc_200x150?&r=pad&region=us';
 $displayUrl = vpc_participant_thumbnail_display_url($padUrl);

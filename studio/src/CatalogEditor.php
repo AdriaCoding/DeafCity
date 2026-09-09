@@ -58,6 +58,7 @@ class CatalogEditor
         ?string $typology = null,
         ?string $participant = null,
         ?string $embedUrl = null,
+        ?string $thumbnailBase = null,
     ): array {
         // Fast unlocked pre-check for the common case; the authoritative check
         // happens inside the lock below so two concurrent adds of the same
@@ -78,9 +79,7 @@ class CatalogEditor
         if ($typology !== null && $typology !== '') {
             $entry['typology'] = $typology;
         }
-        if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
-            $entry['thumbnail_url'] = $thumbnailUrl;
-        }
+        $this->applyThumbnailFields($entry, $thumbnailUrl, $thumbnailBase);
         if ($participant !== null && trim($participant) !== '') {
             $entry['participant'] = trim($participant);
         }
@@ -332,13 +331,13 @@ class CatalogEditor
         return ($entry['invisible'] ?? false) !== true;
     }
 
-    public function updateThumbnailUrl(string $videoId, string $thumbnailUrl): void
+    public function updateThumbnailUrl(string $videoId, string $thumbnailUrl, ?string $thumbnailBase = null): void
     {
-        $this->withLockedCatalog(function (array &$catalog) use ($videoId, $thumbnailUrl): void {
+        $this->withLockedCatalog(function (array &$catalog) use ($videoId, $thumbnailUrl, $thumbnailBase): void {
             $found = false;
             foreach ($catalog['videos'] as &$entry) {
                 if (($entry['vimeo_id'] ?? '') === $videoId) {
-                    $entry['thumbnail_url'] = $thumbnailUrl;
+                    $this->applyThumbnailFields($entry, $thumbnailUrl, $thumbnailBase);
                     $found = true;
                     break;
                 }
@@ -370,6 +369,7 @@ class CatalogEditor
         ?string $participant,
         ?string $thumbnailUrl = null,
         ?string $embedUrl = null,
+        ?string $thumbnailBase = null,
     ): string {
         return $this->withLockedCatalog(function (array &$catalog) use (
             $vimeoId,
@@ -381,6 +381,7 @@ class CatalogEditor
             $participant,
             $thumbnailUrl,
             $embedUrl,
+            $thumbnailBase,
         ): string {
             $index = null;
             foreach ($catalog['videos'] as $i => $entry) {
@@ -406,9 +407,7 @@ class CatalogEditor
                 if ($participant !== null && trim($participant) !== '') {
                     $entry['participant'] = trim($participant);
                 }
-                if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
-                    $entry['thumbnail_url'] = $thumbnailUrl;
-                }
+                $this->applyThumbnailFields($entry, $thumbnailUrl, $thumbnailBase);
                 if ($embedUrl !== null && trim($embedUrl) !== '') {
                     $entry['embed_url'] = trim($embedUrl);
                 }
@@ -431,11 +430,11 @@ class CatalogEditor
                 $entry['participant'] = trim($participant);
             }
             // Empty/null participant: leave existing value (do not clear).
-            if (
-                ($thumbnailUrl !== null && $thumbnailUrl !== '')
-                && (!isset($entry['thumbnail_url']) || $entry['thumbnail_url'] === '')
-            ) {
-                $entry['thumbnail_url'] = $thumbnailUrl;
+            $needsThumb = !isset($entry['thumbnail_url']) || $entry['thumbnail_url'] === '';
+            if ($needsThumb) {
+                $this->applyThumbnailFields($entry, $thumbnailUrl, $thumbnailBase);
+            } elseif (!isset($entry['thumbnail_base']) || $entry['thumbnail_base'] === '') {
+                $this->applyThumbnailFields($entry, null, $thumbnailBase);
             }
             if (
                 ($embedUrl !== null && trim($embedUrl) !== '')
@@ -447,6 +446,29 @@ class CatalogEditor
             $catalog['videos'][$index] = $entry;
             return 'updated';
         }, allowMissing: true);
+    }
+
+    /**
+     * @param array<string, mixed> $entry
+     */
+    private function applyThumbnailFields(array &$entry, ?string $thumbnailUrl, ?string $thumbnailBase): void
+    {
+        if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
+            $entry['thumbnail_url'] = $thumbnailUrl;
+        }
+        $base = $thumbnailBase !== null ? trim($thumbnailBase) : '';
+        if ($base === '' && !empty($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])) {
+            $base = $this->derivedThumbnailBase($entry['thumbnail_url']);
+        }
+        if ($base !== '') {
+            $entry['thumbnail_base'] = $base;
+        }
+    }
+
+    private function derivedThumbnailBase(string $url): string
+    {
+        require_once dirname(__DIR__, 2) . '/lib/thumbnail_ladder.php';
+        return vpc_thumbnail_base($url);
     }
 
     /**

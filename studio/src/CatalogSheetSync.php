@@ -156,6 +156,7 @@ class CatalogSheetSync
                     $row->participant !== '' ? $row->participant : null,
                     $meta['thumbnail_url'],
                     $meta['embed_url'],
+                    $meta['thumbnail_base'] ?? null,
                 );
                 if ($action === 'added') {
                     $added++;

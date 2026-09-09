@@ -156,6 +156,9 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                 $thumbnailMeta = isset($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])
                     ? trim($entry['thumbnail_url'])
                     : '';
+                $thumbnailBaseMeta = isset($entry['thumbnail_base']) && is_string($entry['thumbnail_base'])
+                    ? trim($entry['thumbnail_base'])
+                    : '';
                 $tagsMeta = array();
                 if (isset($entry['tags']) && is_array($entry['tags'])) {
                     foreach ($entry['tags'] as $tag) {
@@ -180,6 +183,7 @@ if (!function_exists('vpc_normalize_vimeo_caption_player_playlist')) {
                     'participant' => $participantMeta,
                     'participant_sequence' => $participantSequenceMeta,
                     'thumbnail_url' => $thumbnailMeta,
+                    'thumbnail_base' => $thumbnailBaseMeta,
                     'tags' => $tagsMeta,
                 );
             }
@@ -469,7 +473,6 @@ foreach ($playlistNormalized as $pe) {
     $edOut       = isset($pe['edition'])        && is_string($pe['edition'])        ? $pe['edition']        : '';
     $tyOut       = isset($pe['typology'])       && is_string($pe['typology'])       ? $pe['typology']       : '';
     $ptOut       = isset($pe['participant'])    && is_string($pe['participant'])    ? $pe['participant']    : '';
-    $thumbOut    = isset($pe['thumbnail_url'])   && is_string($pe['thumbnail_url'])   ? $pe['thumbnail_url']   : '';
     $tagsOut     = isset($pe['tags']) && is_array($pe['tags']) ? array_values($pe['tags']) : array();
     $eParams     = isset($pe['embed_params']) && is_array($pe['embed_params']) ? $pe['embed_params'] : array();
     $embedOut    = '';
@@ -489,8 +492,9 @@ foreach ($playlistNormalized as $pe) {
     if ($embedOut !== '') {
         $row['embedUrl'] = $embedOut;
     }
-    if ($thumbOut !== '') {
-        $row['thumbnailUrl'] = vpc_participant_thumbnail_display_url($thumbOut);
+    $thumbBase = vpc_playlist_entry_thumbnail_base($pe);
+    if ($thumbBase !== '') {
+        $row['thumbnailBase'] = $thumbBase;
     }
     $playlistForJson[] = $row;
 }
@@ -524,9 +528,9 @@ if (isset($vpc['catalog_playlist']) && is_array($vpc['catalog_playlist']) && cou
             if ($embedOut !== '') {
                 $row['embedUrl'] = $embedOut;
             }
-            $thumbOut = isset($pe['thumbnail_url']) && is_string($pe['thumbnail_url']) ? $pe['thumbnail_url'] : '';
-            if ($thumbOut !== '') {
-                $row['thumbnailUrl'] = vpc_participant_thumbnail_display_url($thumbOut);
+            $thumbBase = vpc_playlist_entry_thumbnail_base($pe);
+            if ($thumbBase !== '') {
+                $row['thumbnailBase'] = $thumbBase;
             }
             $catalogForJson[] = $row;
         }
@@ -591,9 +595,15 @@ $initialPlaylistIndex = max(0, min($initialPlaylistIndex, count($playlistNormali
 $noInitialVideo = !empty($vpc['no_initial_video']);
 
 $initialEntry = $playlistNormalized[$initialPlaylistIndex];
-$initialPosterUrl = (!$noInitialVideo && isset($initialEntry['thumbnail_url']) && is_string($initialEntry['thumbnail_url']))
-    ? vpc_participant_thumbnail_display_url($initialEntry['thumbnail_url'])
-    : '';
+$initialPosterSource = '';
+if (!$noInitialVideo) {
+    if (!empty($initialEntry['thumbnail_base']) && is_string($initialEntry['thumbnail_base'])) {
+        $initialPosterSource = trim($initialEntry['thumbnail_base']);
+    } elseif (!empty($initialEntry['thumbnail_url']) && is_string($initialEntry['thumbnail_url'])) {
+        $initialPosterSource = trim($initialEntry['thumbnail_url']);
+    }
+}
+$initialPosterHtmlAttrs = vpc_thumbnail_html_attrs($initialPosterSource, 'player');
 $initialSignLangReadout = vpc_face_labels_for_filter_option(
     'sign_language',
     $signLangOptionsList,
@@ -642,6 +652,7 @@ $config = array(
     'websiteLang'          => isset($preview_lang) ? (string) $preview_lang : 'en',
     // D18: Participant mode — non-empty when a participant playlist is active.
     'participantName' => isset($vpc['participant_name']) ? (string)$vpc['participant_name'] : '',
+    'thumbnailLadder' => vpc_thumbnail_ladder_widths(),
     // Localized chrome strings for JS (player.* keys).
     'strings' => (isset($preview_i18n) && $preview_i18n instanceof PreviewI18n)
         ? $preview_i18n->chromeMap()
@@ -672,10 +683,10 @@ $navHiddenClass = '';
                     <?= htmlspecialchars(preview_t('player.empty.no_matching_videos'), ENT_QUOTES, 'UTF-8') ?>
                 </p>
                 <?php endif; ?>
-                <?php if ($initialPosterUrl !== ''): ?>
+                <?php if ($initialPosterHtmlAttrs !== ''): ?>
                 <img
                     class="vpc-poster-cover"
-                    src="<?php echo htmlspecialchars($initialPosterUrl, ENT_QUOTES, 'UTF-8'); ?>"
+                    <?= $initialPosterHtmlAttrs ?>
                     alt=""
                     aria-hidden="true"
                     draggable="false">

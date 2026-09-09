@@ -75,7 +75,7 @@ cps_assert(
 // field must be a deliberate, reviewed addition to this list, not a silent add.
 $expectedKeys = array(
     'videoId', 'tracks', 'signLanguage', 'edition', 'typology', 'participant',
-    'participant_sequence', 'tags', 'embedUrl', 'thumbnailUrl',
+    'participant_sequence', 'tags', 'embedUrl', 'thumbnailBase',
 );
 $seenKeys = array();
 foreach ($catalogPlaylist as $item) {
@@ -94,6 +94,11 @@ if (!empty($unexpected)) {
     exit(1);
 }
 echo "PASS: catalogPlaylist items carry only known fields (" . implode(', ', $seenKeys) . ")\n";
+
+cps_assert(
+    isset($cfg['thumbnailLadder']) && $cfg['thumbnailLadder'] === array(640, 1920, 3840),
+    'vpc-config exposes the site-wide thumbnail ladder once'
+);
 
 // Average per-item size, as a second, item-count-independent signal (guards against
 // a per-item field ballooning even if the catalog's item count stays flat).
