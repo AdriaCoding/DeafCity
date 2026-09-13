@@ -9,7 +9,7 @@
     var translatedCues = JSON.parse(JSON.stringify(window.__translatedCues || []));
     var savedSnapshot = JSON.stringify(translatedCues);
 
-    var cueList, saveBtn, cancelBtn, saveError, downloadSrtBtn;
+    var cueList, saveBtn, cancelBtn, saveError;
     var exitingWithoutSave = false;
 
     function setButtonLoading(btn, loading, label) {
@@ -37,7 +37,7 @@
 
     function setEditorBusy(loading, activeBtn, activeLabel) {
         document.body.classList.toggle('editor-busy', loading);
-        [saveBtn, cancelBtn, downloadSrtBtn].forEach(function (btn) {
+        [saveBtn, cancelBtn].forEach(function (btn) {
             if (!btn) return;
             if (loading && btn === activeBtn) {
                 setButtonLoading(btn, true, activeLabel);
@@ -164,10 +164,9 @@
         return JSON.stringify(translatedCues) !== savedSnapshot;
     }
 
-    function downloadSrt() {
-        var lang = window.__lang || '';
-        var base = (window.__vimeoId || 'caption') + (lang ? '_' + lang.toUpperCase() : '');
-        CaptionUtils.triggerDownload(CaptionUtils.generateSrt(translatedCues), base + '.srt', 'application/x-subrip');
+    function fillEditedSrtDownload() {
+        var input = document.getElementById('download-srt-cues');
+        if (input) input.value = JSON.stringify(translatedCues);
     }
 
     function leaveEditor() {
@@ -220,13 +219,13 @@
         saveBtn = document.getElementById('save-btn');
         cancelBtn = document.getElementById('cancel-btn');
         saveError = document.getElementById('save-error');
-        downloadSrtBtn = document.getElementById('download-srt-btn');
 
         render();
 
         saveBtn.addEventListener('click', save);
         if (cancelBtn) cancelBtn.addEventListener('click', exitWithoutSaving);
-        if (downloadSrtBtn) downloadSrtBtn.addEventListener('click', downloadSrt);
+        var downloadSrtForm = document.getElementById('download-srt-form');
+        if (downloadSrtForm) downloadSrtForm.addEventListener('submit', fillEditedSrtDownload);
 
         window.addEventListener('beforeunload', function (e) {
             if (exitingWithoutSave || !isDirty()) return;

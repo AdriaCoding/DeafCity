@@ -276,6 +276,7 @@ match ($action) {
     'continguts-set-video-invisible',
     'continguts-set-master-caption',
     'continguts-download-caption-srt',
+    'continguts-download-edited-srt',
     'continguts-download-data-zip',
     'continguts-save-edition-label',
     'continguts-save-sign-language-label',

@@ -126,6 +126,7 @@ class CatalogAction
             'continguts-set-video-invisible'      => $this->setVideoInvisible(),
             'continguts-set-master-caption'       => $this->setMasterCaption(),
             'continguts-download-caption-srt'     => $this->downloadCaption(),
+            'continguts-download-edited-srt'      => $this->downloadEditedCaption(),
             'continguts-download-data-zip'        => $this->downloadDataZip(),
             'continguts-save-edition-label'          => $this->saveLabel('edition'),
             'continguts-save-sign-language-label'    => $this->saveLabel('sign_language'),
@@ -468,6 +469,35 @@ class CatalogAction
         header('Content-Type: application/x-subrip; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $downloadBasename . '.srt"');
         echo (new \Studio\VttToSrtConverter())->convert($captionPath);
+        exit;
+    }
+
+    private function downloadEditedCaption(): never
+    {
+        $rawCues = $_POST['cues'] ?? '';
+        $cues = is_string($rawCues) ? json_decode($rawCues, true) : $rawCues;
+        if (!is_array($cues)) {
+            http_response_code(400);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo 'Cos de la sol·licitud no vàlid.';
+            exit;
+        }
+
+        $result = (new \Studio\EditedCaptionSrtDownload())->build(
+            trim((string) ($_POST['vimeo_id'] ?? '')),
+            trim((string) ($_POST['lang'] ?? '')),
+            $cues,
+        );
+        if (!$result['ok']) {
+            http_response_code(400);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo $result['error'];
+            exit;
+        }
+
+        header('Content-Type: application/x-subrip; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $result['filename'] . '"');
+        echo $result['body'];
         exit;
     }
 

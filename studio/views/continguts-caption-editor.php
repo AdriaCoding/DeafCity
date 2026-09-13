@@ -4,6 +4,8 @@
 <?php
 $colorsPath = __DIR__ . '/../css/colors.css';
 $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
+if (!isset($_SESSION) || !is_array($_SESSION)) { $_SESSION = []; }
+$csrfToken = \Studio\Csrf::issueToken($_SESSION);
 ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,6 +117,7 @@ $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
             padding: 0.4rem 0.65rem;
         }
         #save-error[hidden] { display: none; }
+        #download-srt-form { margin: 0; }
         #download-srt-btn {
             display: flex;
             align-items: center;
@@ -257,7 +260,13 @@ $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
             <button id="cancel-btn" type="button"><span class="btn-label">Cancel·la</span></button>
         </div>
         <pre id="save-error" hidden></pre>
-        <button id="download-srt-btn" type="button"><span class="material-icons">download</span>Descarrega SRT</button>
+        <form id="download-srt-form" method="post" action="?action=continguts-download-edited-srt">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES) ?>">
+            <input type="hidden" name="vimeo_id" value="<?= htmlspecialchars((string) $vimeoId, ENT_QUOTES) ?>">
+            <input type="hidden" name="lang" value="<?= htmlspecialchars((string) $lang, ENT_QUOTES) ?>">
+            <input type="hidden" name="cues" id="download-srt-cues" value="">
+            <button id="download-srt-btn" type="submit"><span class="material-icons">download</span>Descarrega SRT</button>
+        </form>
         <span class="cue-count"><?= count($translatedCues) ?> subtítols</span>
     </div>
 
@@ -276,10 +285,7 @@ $colorsVersion = is_file($colorsPath) ? (string) filemtime($colorsPath) : '1';
         window.__vimeoId = <?= json_encode($vimeoId) ?>;
         window.__lang = <?= json_encode($lang) ?>;
         window.__postSaveRedirect = <?= json_encode($postSaveRedirect) ?>;
-        window.STUDIO_CSRF_TOKEN = <?php
-            if (!isset($_SESSION) || !is_array($_SESSION)) { $_SESSION = []; }
-            echo json_encode(\Studio\Csrf::issueToken($_SESSION));
-        ?>;
+        window.STUDIO_CSRF_TOKEN = <?= json_encode($csrfToken) ?>;
         (function () {
             var originalFetch = window.fetch;
             if (typeof originalFetch !== 'function') { return; }
