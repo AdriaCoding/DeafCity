@@ -8,6 +8,8 @@ use Studio\CaptionReplaceHandler;
 use Studio\CaptionUploadHandler;
 use Studio\CatalogIntakeAddHandler;
 use Studio\Container;
+use Studio\DeafcityMapAddHandler;
+use Studio\DeafcityMapStore;
 use Studio\EditionAddHandler;
 use Studio\JobManager;
 use Studio\SignLanguageAddHandler;
@@ -43,6 +45,34 @@ class CatalogAction
             (string) ($_POST['edition_year'] ?? ''),
         );
         echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    public function addDeafcityMapLocation(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $result = (new DeafcityMapAddHandler($this->mapStore()))->handle(
+            (string) ($_POST['map_city'] ?? ''),
+            (string) ($_POST['map_sign_language_code'] ?? ''),
+            (string) ($_POST['map_year'] ?? ''),
+            (string) ($_POST['map_latitude'] ?? ''),
+            (string) ($_POST['map_longitude'] ?? ''),
+        );
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    public function deleteDeafcityMapLocation(): never
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $id = trim((string) ($_POST['id'] ?? ''));
+        if ($id === '') {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'error' => 'ID no especificat.'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+        $this->mapStore()->remove($id);
+        echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -105,6 +135,7 @@ class CatalogAction
             'continguts-delete-subtitle-language'    => $this->deleteItem('subtitle_language'),
             'continguts-delete-input-language'       => $this->deleteItem('input_language'),
             'continguts-delete-typology'             => $this->deleteItem('typology'),
+            'continguts-delete-map-location'         => $this->deleteDeafcityMapLocation(),
             'continguts-delete-caption'              => $this->deleteCaption(),
             'continguts-delete-all-translations'     => $this->deleteAllTranslations(),
             'continguts-replace-caption'             => $this->replaceCaption(),
@@ -146,6 +177,7 @@ class CatalogAction
         $referencedSubtitleLanguageIds = $catalogEditor->getReferencedSubtitleLanguageIds();
         $referencedTypologyIds = $catalogEditor->getReferencedTypologyIds();
         $catalogTags = $catalogEditor->getAllTags();
+        $mapLocations = $this->mapStore()->all();
         [$syncStatus, $isSyncing] = $this->resolveSyncContext($syncContext);
 
         return array_merge(
@@ -162,6 +194,7 @@ class CatalogAction
                 'referencedSubtitleLanguageIds',
                 'referencedTypologyIds',
                 'catalogTags',
+                'mapLocations',
                 'syncStatus',
                 'isSyncing',
             ),
@@ -1093,5 +1126,10 @@ class CatalogAction
     private function view(string $name): string
     {
         return dirname(__DIR__, 2) . '/views/' . $name;
+    }
+
+    private function mapStore(): DeafcityMapStore
+    {
+        return new DeafcityMapStore($this->c->dataDir . '/deafcity.json');
     }
 }
