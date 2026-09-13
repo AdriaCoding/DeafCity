@@ -561,6 +561,11 @@
             margin-bottom: 0.75rem;
         }
         .config-new-grid--year { grid-template-columns: 1fr 6rem; }
+        .config-new-grid--map { grid-template-columns: 1fr 6rem 7rem 7rem 7rem; }
+        @media (max-width: 900px) {
+            .config-new-grid--map { grid-template-columns: 1fr 1fr; }
+        }
+        .config-map-coords { font-size: 0.75rem; color: var(--studio-text-muted); font-family: monospace; }
         input.config-input {
             display: block;
             width: 100%;
@@ -644,6 +649,7 @@
     <div class="tabs">
         <button class="tab-btn active" data-tab="videos">Vídeos</button>
         <button class="tab-btn" data-tab="editions">Ciutats</button>
+        <button class="tab-btn" data-tab="map">Mapa</button>
         <button class="tab-btn" data-tab="languages">Llengues de signes</button>
         <button class="tab-btn" data-tab="subtitle-languages">Llengues verbals</button>
         <button class="tab-btn" data-tab="input-languages">Dialectes d'entrada</button>
@@ -802,6 +808,57 @@
             <div class="config-new-actions">
                 <button type="button" class="btn-secondary" id="edition-add-btn-c">Afegir</button>
                 <button type="button" class="btn-secondary" id="edition-cancel-btn-c" style="color:var(--studio-text-muted)">Cancel·la</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ Mapa ═══════════════════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-map">
+        <p class="config-preview" style="margin-top:0">Punts verds del mapa d'About. El text de cada ubicació és del tipus <strong>DEAF.city BARCELONA LSC</strong>.</p>
+        <div class="config-list" id="map-location-list">
+            <?php foreach ($mapLocations ?? [] as $loc): ?>
+            <div class="config-entry" data-id="<?= htmlspecialchars($loc['id'], ENT_QUOTES) ?>" data-type="map-location">
+                <span class="config-entry-label"><?= htmlspecialchars($loc['label'] ?? '') ?></span>
+                <span class="config-map-coords"><?= htmlspecialchars(sprintf('%s, %s', $loc['coordinates'][1] ?? '', $loc['coordinates'][0] ?? ''), ENT_QUOTES) ?></span>
+                <span class="config-id"><?= htmlspecialchars($loc['id']) ?></span>
+                <button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>
+            </div>
+            <?php endforeach; ?>
+        </div>
+
+        <button class="add-trigger-btn" id="map-add-trigger">+ Afegir localització DEAF.city…</button>
+        <div class="config-new-panel" id="map-new-panel">
+            <h3>Nova localització</h3>
+            <p class="config-add-error" id="map-add-error" role="alert"></p>
+            <div class="config-new-grid config-new-grid--map">
+                <div>
+                    <label class="field-label" for="map_city_c">Ciutat</label>
+                    <input type="text" id="map_city_c" class="config-input" autocomplete="off" placeholder="p. ex. Barcelona">
+                </div>
+                <div>
+                    <label class="field-label" for="map_year_c">Any</label>
+                    <input type="text" id="map_year_c" class="config-input" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off" placeholder="2027">
+                </div>
+                <div>
+                    <label class="field-label" for="map_code_c">Codi</label>
+                    <input type="text" id="map_code_c" class="config-input" autocomplete="off" placeholder="LSC">
+                </div>
+                <div>
+                    <label class="field-label" for="map_lat_c">Latitud</label>
+                    <input type="text" id="map_lat_c" class="config-input" inputmode="decimal" autocomplete="off" placeholder="41.3851">
+                </div>
+                <div>
+                    <label class="field-label" for="map_lng_c">Longitud</label>
+                    <input type="text" id="map_lng_c" class="config-input" inputmode="decimal" autocomplete="off" placeholder="2.1734">
+                </div>
+            </div>
+            <p class="config-preview">
+                <strong>Text al mapa:</strong> <span class="value" id="map-preview-label-c">—</span><br>
+                <strong>Identificador:</strong> <span class="value" id="map-preview-id-c">—</span>
+            </p>
+            <div class="config-new-actions">
+                <button type="button" class="btn-secondary" id="map-add-btn-c">Afegir</button>
+                <button type="button" class="btn-secondary" id="map-cancel-btn-c" style="color:var(--studio-text-muted)">Cancel·la</button>
             </div>
         </div>
     </div>
@@ -1173,6 +1230,9 @@
         'typology': {
             save: 'continguts-save-typology-label',
             delete: 'continguts-delete-typology'
+        },
+        'map-location': {
+            delete: 'continguts-delete-map-location'
         }
     };
 
@@ -2154,6 +2214,104 @@
             })
             .catch(function () { editionAddError.textContent = 'Error de connexió.'; })
             .finally(function () { editionAddBtn.disabled = false; });
+    });
+
+    // ── Add DEAF.city map location ────────────────────────────────────────────
+    var mapTrigger = document.getElementById('map-add-trigger');
+    var mapPanel = document.getElementById('map-new-panel');
+    var mapCity = document.getElementById('map_city_c');
+    var mapYear = document.getElementById('map_year_c');
+    var mapCode = document.getElementById('map_code_c');
+    var mapLat = document.getElementById('map_lat_c');
+    var mapLng = document.getElementById('map_lng_c');
+    var mapPreviewLabel = document.getElementById('map-preview-label-c');
+    var mapPreviewId = document.getElementById('map-preview-id-c');
+    var mapAddError = document.getElementById('map-add-error');
+    var mapAddBtn = document.getElementById('map-add-btn-c');
+    var mapCancelBtn = document.getElementById('map-cancel-btn-c');
+
+    function resetMapForm() {
+        mapCity.value = '';
+        mapYear.value = '';
+        mapCode.value = '';
+        mapLat.value = '';
+        mapLng.value = '';
+        mapPreviewLabel.textContent = '—';
+        mapPreviewId.textContent = '—';
+        mapAddError.textContent = '';
+    }
+
+    mapTrigger.addEventListener('click', function () {
+        mapPanel.classList.add('is-open');
+        mapCity.focus();
+    });
+    mapCancelBtn.addEventListener('click', function () {
+        mapPanel.classList.remove('is-open');
+        resetMapForm();
+    });
+
+    function updateMapPreview() {
+        var city = mapCity.value.trim();
+        var year = mapYear.value.trim();
+        var code = mapCode.value.trim().toUpperCase();
+        if (!city || !/^\d{4}$/.test(year)) {
+            mapPreviewId.textContent = '—';
+        } else {
+            mapPreviewId.textContent = year + '-' + slugify(city);
+        }
+        if (!city || !code) {
+            mapPreviewLabel.textContent = '—';
+            return;
+        }
+        mapPreviewLabel.textContent = 'DEAF.city ' + city.toUpperCase() + ' ' + code;
+    }
+    [mapCity, mapYear, mapCode].forEach(function (el) {
+        el.addEventListener('input', updateMapPreview);
+    });
+
+    mapAddBtn.addEventListener('click', function () {
+        mapAddError.textContent = '';
+        var city = mapCity.value.trim();
+        var year = mapYear.value.trim();
+        var code = mapCode.value.trim();
+        var lat = mapLat.value.trim();
+        var lng = mapLng.value.trim();
+        if (!city || !/^\d{4}$/.test(year) || !code || lat === '' || lng === '') {
+            mapAddError.textContent = 'Indiqueu ciutat, any, codi de llengua de signes i coordenades vàlides.';
+            return;
+        }
+        mapAddBtn.disabled = true;
+        var body = new FormData();
+        body.append('map_city', city);
+        body.append('map_year', year);
+        body.append('map_sign_language_code', code);
+        body.append('map_latitude', lat);
+        body.append('map_longitude', lng);
+        fetch('?action=add-deafcity-map-location', { method: 'POST', body: body })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (!data.ok) {
+                    mapAddError.textContent = (data.errors && data.errors[0]) || 'No s\'ha pogut afegir la localització.';
+                    return;
+                }
+                var list = document.getElementById('map-location-list');
+                var div = document.createElement('div');
+                div.className = 'config-entry';
+                div.dataset.id = data.id;
+                div.dataset.type = 'map-location';
+                var coords = (data.coordinates && data.coordinates.length === 2)
+                    ? (data.coordinates[1] + ', ' + data.coordinates[0])
+                    : '';
+                div.innerHTML = '<span class="config-entry-label">' + escHtml(data.label) + '</span>' +
+                    '<span class="config-map-coords">' + escHtml(coords) + '</span>' +
+                    '<span class="config-id">' + escHtml(data.id) + '</span>' +
+                    '<button class="btn-icon danger delete-btn" title="Elimina"><span class="material-icons" aria-hidden="true">delete</span></button>';
+                list.insertBefore(div, list.firstChild);
+                attachConfigEntryListeners(div);
+                mapCancelBtn.click();
+            })
+            .catch(function () { mapAddError.textContent = 'Error de connexió.'; })
+            .finally(function () { mapAddBtn.disabled = false; });
     });
 
     // ── Add sign language ─────────────────────────────────────────────────────
