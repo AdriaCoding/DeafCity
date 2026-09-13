@@ -197,7 +197,7 @@ class VimeoClientReadClassificationTest extends TestCase
         $meta = $this->makeClient($sdk)->fetchVideoForCatalogSync('111', true, true);
 
         $this->assertSame('Title', $meta['title']);
-        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us', $meta['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?region=us', $meta['thumbnail_url']);
         $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $meta['thumbnail_base']);
         $this->assertSame('https://player.vimeo.com/video/111', $meta['embed_url']);
     }
@@ -209,6 +209,35 @@ class VimeoClientReadClassificationTest extends TestCase
             ->willReturnCallback(function (string $path) {
                 if (str_contains($path, '/pictures?sizes=')) {
                     return ['status' => 500, 'body' => ['error' => 'nope'], 'headers' => []];
+                }
+                return [
+                    'status' => 200,
+                    'body' => [
+                        'name' => 'Title',
+                        'pictures' => [
+                            'base_link' => 'https://i.vimeocdn.com/video/abc-d',
+                            'sizes' => [
+                                ['width' => 1920, 'link' => 'https://i.vimeocdn.com/video/abc-d_1920x1080'],
+                            ],
+                        ],
+                    ],
+                    'headers' => [],
+                ];
+            });
+
+        $meta = $this->makeClient($sdk)->fetchVideoForCatalogSync('111', true, false);
+
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080', $meta['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d', $meta['thumbnail_base']);
+    }
+
+    public function test_fetchVideoForCatalogSync_keeps_1920_when_4k_pictures_throw(): void
+    {
+        $sdk = $this->createMock(Vimeo::class);
+        $sdk->method('request')
+            ->willReturnCallback(function (string $path) {
+                if (str_contains($path, '/pictures?sizes=')) {
+                    throw new \RuntimeException('network');
                 }
                 return [
                     'status' => 200,

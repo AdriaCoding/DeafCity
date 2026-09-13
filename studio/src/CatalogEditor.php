@@ -453,22 +453,61 @@ class CatalogEditor
      */
     private function applyThumbnailFields(array &$entry, ?string $thumbnailUrl, ?string $thumbnailBase): void
     {
+        require_once dirname(__DIR__, 2) . '/lib/thumbnail_ladder.php';
+        $source = $thumbnailBase !== null && trim($thumbnailBase) !== ''
+            ? trim($thumbnailBase)
+            : ($thumbnailUrl !== null && $thumbnailUrl !== ''
+                ? $thumbnailUrl
+                : (isset($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])
+                    ? $entry['thumbnail_url']
+                    : ''));
+        $fields = vpc_thumbnail_catalog_fields($source);
+        if ($fields !== []) {
+            $entry['thumbnail_base'] = $fields['thumbnail_base'];
+            $entry['thumbnail_url'] = $fields['thumbnail_url'];
+            return;
+        }
         if ($thumbnailUrl !== null && $thumbnailUrl !== '') {
             $entry['thumbnail_url'] = $thumbnailUrl;
         }
-        $base = $thumbnailBase !== null ? trim($thumbnailBase) : '';
-        if ($base === '' && !empty($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])) {
-            $base = $this->derivedThumbnailBase($entry['thumbnail_url']);
-        }
-        if ($base !== '') {
-            $entry['thumbnail_base'] = $base;
-        }
     }
 
-    private function derivedThumbnailBase(string $url): string
+    /**
+     * Replace stored 960 / padded Vimeo thumbnail URLs with thumbnail_base + 1920 alias.
+     *
+     * @return int number of Videos whose stored thumbnail fields changed
+     */
+    public function rewriteLegacyThumbnails(): int
     {
         require_once dirname(__DIR__, 2) . '/lib/thumbnail_ladder.php';
-        return vpc_thumbnail_base($url);
+
+        return $this->withLockedCatalog(function (array &$catalog): int {
+            $rewritten = 0;
+            foreach ($catalog['videos'] as &$entry) {
+                $source = '';
+                if (!empty($entry['thumbnail_base']) && is_string($entry['thumbnail_base'])) {
+                    $source = $entry['thumbnail_base'];
+                } elseif (!empty($entry['thumbnail_url']) && is_string($entry['thumbnail_url'])) {
+                    $source = $entry['thumbnail_url'];
+                }
+                $fields = vpc_thumbnail_catalog_fields($source);
+                if ($fields === []) {
+                    continue;
+                }
+                if (
+                    ($entry['thumbnail_base'] ?? null) === $fields['thumbnail_base']
+                    && ($entry['thumbnail_url'] ?? null) === $fields['thumbnail_url']
+                ) {
+                    continue;
+                }
+                $entry['thumbnail_base'] = $fields['thumbnail_base'];
+                $entry['thumbnail_url'] = $fields['thumbnail_url'];
+                $rewritten++;
+            }
+            unset($entry);
+
+            return $rewritten;
+        });
     }
 
     /**

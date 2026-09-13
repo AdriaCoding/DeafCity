@@ -145,8 +145,13 @@ foreach ($candidates as $candidate) {
     }
 
     $thumbnailUrl = null;
+    $thumbnailBase = null;
     try {
-        $thumbnailUrl = $vimeoClient->getThumbnailUrl($vimeoId);
+        $meta = $vimeoClient->getThumbnailMeta($vimeoId);
+        $url = $meta['thumbnail_url'] ?? null;
+        $base = $meta['thumbnail_base'] ?? null;
+        $thumbnailUrl = is_string($url) && $url !== '' ? $url : null;
+        $thumbnailBase = is_string($base) && $base !== '' ? $base : null;
     } catch (\Throwable) {
         // non-fatal
     }
@@ -179,6 +184,7 @@ foreach ($candidates as $candidate) {
             null,
             $participant,
             $embedUrl,
+            $thumbnailBase,
         );
     }
 

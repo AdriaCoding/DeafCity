@@ -241,8 +241,64 @@ class CatalogEditorTest extends TestCase
         );
 
         $entry = $this->readCatalog()['videos'][0];
-        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us', $entry['thumbnail_url']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?region=us', $entry['thumbnail_url']);
         $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $entry['thumbnail_base']);
+    }
+
+    public function test_addVideo_replaces_legacy_960_url_with_base_and_1920_alias(): void
+    {
+        $this->writeCatalog(['videos' => []]);
+
+        (new CatalogEditor($this->catalogFile))->addVideo(
+            vimeoId: '999',
+            title: 'New Video',
+            signLanguage: 'lse',
+            edition: '2024-madrid',
+            thumbnailUrl: 'https://i.vimeocdn.com/video/abc-d_960x540?r=pad&region=us',
+        );
+
+        $entry = $this->readCatalog()['videos'][0];
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $entry['thumbnail_base']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?region=us', $entry['thumbnail_url']);
+        $this->assertStringNotContainsString('_960x', $entry['thumbnail_url']);
+        $this->assertStringNotContainsString('r=pad', $entry['thumbnail_url']);
+    }
+
+    public function test_rewriteLegacyThumbnails_replaces_960_urls_and_leaves_non_vimeo_alone(): void
+    {
+        $this->writeCatalog(['videos' => [
+            [
+                'id' => 'lse_111',
+                'vimeo_id' => '111',
+                'title' => 'A',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [],
+                'thumbnail_url' => 'https://i.vimeocdn.com/video/abc-d_960x540?r=pad&region=us',
+            ],
+            [
+                'id' => 'lse_222',
+                'vimeo_id' => '222',
+                'title' => 'B',
+                'sign_language' => 'lse',
+                'edition' => '2020-valencia',
+                'tags' => [],
+                'captions' => [],
+                'thumbnail_url' => 'https://example.com/old.jpg',
+            ],
+        ]]);
+
+        $rewritten = (new CatalogEditor($this->catalogFile))->rewriteLegacyThumbnails();
+        $this->assertSame(1, $rewritten);
+
+        $videos = $this->readCatalog()['videos'];
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $videos[0]['thumbnail_base']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?region=us', $videos[0]['thumbnail_url']);
+        $this->assertSame('https://example.com/old.jpg', $videos[1]['thumbnail_url']);
+        $this->assertArrayNotHasKey('thumbnail_base', $videos[1]);
+
+        $this->assertSame(0, (new CatalogEditor($this->catalogFile))->rewriteLegacyThumbnails());
     }
 
     public function test_addVideo_stores_participant_when_provided(): void

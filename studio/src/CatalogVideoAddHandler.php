@@ -44,8 +44,13 @@ class CatalogVideoAddHandler
         $resolvedTitle = $title !== '' ? $title : $vimeoTitle;
 
         $thumbnailUrl = null;
+        $thumbnailBase = null;
         try {
-            $thumbnailUrl = $this->vimeoClient->getThumbnailUrl($vimeoId);
+            $meta = $this->vimeoClient->getThumbnailMeta($vimeoId);
+            $url = $meta['thumbnail_url'] ?? null;
+            $base = $meta['thumbnail_base'] ?? null;
+            $thumbnailUrl = is_string($url) && $url !== '' ? $url : null;
+            $thumbnailBase = is_string($base) && $base !== '' ? $base : null;
         } catch (\Throwable) {
             // non-fatal
         }
@@ -70,6 +75,9 @@ class CatalogVideoAddHandler
                 $thumbnailUrl,
                 $tags,
                 $typology !== '' ? $typology : null,
+                null,
+                null,
+                $thumbnailBase,
             );
         } catch (\RuntimeException $e) {
             return ['ok' => false, 'error' => $e->getMessage()];

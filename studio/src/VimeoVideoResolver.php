@@ -10,7 +10,7 @@ class VimeoVideoResolver
         private CatalogEditor $catalogEditor,
     ) {}
 
-    /** @return array{ok: bool, vimeo_id?: string, title?: string, thumbnail_url?: ?string, tags?: list<string>, error?: string} */
+    /** @return array{ok: bool, vimeo_id?: string, title?: string, thumbnail_url?: ?string, thumbnail_base?: ?string, tags?: list<string>, error?: string} */
     public function resolve(string $input): array
     {
         try {
@@ -32,8 +32,13 @@ class VimeoVideoResolver
         }
 
         $thumbnailUrl = null;
+        $thumbnailBase = null;
         try {
-            $thumbnailUrl = $this->vimeoClient->getThumbnailUrl($vimeoId);
+            $meta = $this->vimeoClient->getThumbnailMeta($vimeoId);
+            $url = $meta['thumbnail_url'] ?? null;
+            $base = $meta['thumbnail_base'] ?? null;
+            $thumbnailUrl = is_string($url) && $url !== '' ? $url : null;
+            $thumbnailBase = is_string($base) && $base !== '' ? $base : null;
         } catch (\Throwable) {
             // non-fatal
         }
@@ -50,6 +55,7 @@ class VimeoVideoResolver
             'vimeo_id' => $vimeoId,
             'title' => $title,
             'thumbnail_url' => $thumbnailUrl,
+            'thumbnail_base' => $thumbnailBase,
             'tags' => $tags,
         ];
     }

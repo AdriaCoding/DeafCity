@@ -43,3 +43,37 @@ $fromBase = vpc_thumbnail_attrs($base, 'grid');
 tl_assert($fromBase['src'] === $attrs['src'], 'base and legacy URL produce the same grid src');
 
 echo "PASS: thumbnail base derived from a legacy URL rebuilds the same ladder\n";
+
+$stored = vpc_thumbnail_catalog_fields($legacy);
+tl_assert(isset($stored['thumbnail_base'], $stored['thumbnail_url']), 'catalog fields include base and 1920 alias');
+tl_assert($stored['thumbnail_base'] === $base, 'stored base matches the derived base');
+tl_assert(strpos($stored['thumbnail_url'], '_1920x1080') !== false, 'stored alias is the 1920 rung');
+tl_assert(strpos($stored['thumbnail_url'], '_960x') === false, 'stored alias is not the legacy 960 URL');
+tl_assert(strpos($stored['thumbnail_url'], 'r=pad') === false, 'stored alias strips r=pad');
+tl_assert(vpc_thumbnail_catalog_fields('') === array(), 'empty URL stores no catalog thumbnail fields');
+tl_assert(vpc_thumbnail_catalog_fields('https://example.com/thumb.jpg') === array(), 'non-Vimeo URL stores no ladder fields');
+
+echo "PASS: catalog storage replaces a legacy 960 URL with base + 1920 alias\n";
+
+$catalogPath = dirname(dirname(__FILE__)) . '/data/catalog.json';
+if (is_file($catalogPath)) {
+    $catalogJson = file_get_contents($catalogPath);
+    tl_assert(is_string($catalogJson) && $catalogJson !== '', 'production catalog.json is readable');
+    tl_assert(strpos($catalogJson, '_960x') === false, 'production catalog stores no 960 thumbnail URLs');
+    tl_assert(strpos($catalogJson, 'r=pad') === false, 'production catalog stores no padded thumbnail URLs');
+    $catalog = json_decode($catalogJson, true);
+    tl_assert(is_array($catalog) && isset($catalog['videos']) && is_array($catalog['videos']), 'production catalog has videos');
+    foreach ($catalog['videos'] as $i => $video) {
+        $id = isset($video['vimeo_id']) ? (string) $video['vimeo_id'] : ('index ' . $i);
+        tl_assert(
+            !empty($video['thumbnail_base']) && is_string($video['thumbnail_base']),
+            "catalog video {$id} has thumbnail_base"
+        );
+        tl_assert(
+            !empty($video['thumbnail_url']) && is_string($video['thumbnail_url'])
+                && strpos($video['thumbnail_url'], '_1920x1080') !== false,
+            "catalog video {$id} stores the 1920 thumbnail_url alias"
+        );
+    }
+    echo 'PASS: production catalog (' . count($catalog['videos']) . " Videos) stores thumbnail_base + 1920 alias, no 960/r=pad\n";
+}

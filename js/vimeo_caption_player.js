@@ -882,6 +882,8 @@
                     posterCover.setAttribute('srcset', posterAttrs.srcset);
                     posterCover.setAttribute('sizes', posterAttrs.sizes);
                 };
+                pendingPoster.srcset = posterAttrs.srcset;
+                pendingPoster.sizes = posterAttrs.sizes;
                 pendingPoster.src = posterAttrs.src;
                 return token;
             }

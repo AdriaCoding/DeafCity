@@ -194,30 +194,41 @@ class VimeoClient
         $baseLink = isset($pictures['base_link']) && is_string($pictures['base_link'])
             ? trim($pictures['base_link'])
             : '';
-        $base = $baseLink !== '' ? $this->normalizeThumbnailBase($baseLink) : '';
-        if ($base === '' && is_string($url1920) && $url1920 !== '') {
-            $base = $this->normalizeThumbnailBase($url1920);
+        $source = $baseLink !== '' ? $baseLink : (is_string($url1920) ? $url1920 : '');
+        $fields = $source !== '' ? $this->catalogThumbnailFields($source) : [];
+        if ($fields !== []) {
+            return [
+                'thumbnail_url' => $fields['thumbnail_url'],
+                'thumbnail_base' => $fields['thumbnail_base'],
+            ];
         }
 
         return [
-            'thumbnail_url' => $url1920,
-            'thumbnail_base' => $base !== '' ? $base : null,
+            'thumbnail_url' => is_string($url1920) && $url1920 !== '' ? $url1920 : null,
+            'thumbnail_base' => null,
         ];
     }
 
     private function request4kPictures(Vimeo $client, string $id): void
     {
-        $response = $client->request('/videos/' . $id . '/pictures?sizes=3840x2160', [], 'GET');
+        try {
+            $response = $client->request('/videos/' . $id . '/pictures?sizes=3840x2160', [], 'GET');
+        } catch (\Throwable) {
+            return;
+        }
         $status = (int) ($response['status'] ?? 0);
         if ($status < 200 || $status >= 300) {
             return;
         }
     }
 
-    private function normalizeThumbnailBase(string $url): string
+    /**
+     * @return array{thumbnail_base: string, thumbnail_url: string}|array{}
+     */
+    private function catalogThumbnailFields(string $url): array
     {
         require_once dirname(__DIR__, 2) . '/lib/thumbnail_ladder.php';
-        return vpc_thumbnail_base($url);
+        return vpc_thumbnail_catalog_fields($url);
     }
 
     /**

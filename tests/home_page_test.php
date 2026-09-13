@@ -586,6 +586,7 @@ if (is_file($playerJsPath)) {
     assert_contains("querySelector('.vpc-poster-cover')", $playerJs, 'player controls the loading cover');
     assert_contains('ladderPosterAttrs', $playerJs, 'player builds poster srcset from the thumbnail ladder');
     assert_contains("setAttribute('srcset'", $playerJs, 'player applies srcset when swapping posters');
+    assert_contains('pendingPoster.srcset', $playerJs, 'poster preload Image uses srcset so large screens fetch the matching rung');
     assert_contains("querySelector('.vpc-load-scrim')", $playerJs, 'player controls the solid white load scrim');
     assert_contains('planLoadCover', $playerJs, 'player chooses thumb vs solid-white cover via playlist logic');
     assert_contains("preload: 'auto'", $playerJs, 'playlist transitions preload initial video segments');

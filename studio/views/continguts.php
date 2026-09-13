@@ -1151,6 +1151,7 @@
 <script src="js/transcription-intake.js?v=<?= filemtime(__DIR__ . '/../js/transcription-intake.js') ?>"></script>
 <script src="js/tag-input.js?v=<?= filemtime(__DIR__ . '/../js/tag-input.js') ?>"></script>
 <script src="js/caption-table.js?v=<?= filemtime(__DIR__ . '/../js/caption-table.js') ?>"></script>
+<script src="../js/vimeo_playlist_logic.js?v=<?= filemtime(__DIR__ . '/../../js/vimeo_playlist_logic.js') ?>"></script>
 <script>
 (function () {
     var EDITION_LABELS = <?= json_encode(array_column($editions, 'label', 'id'), JSON_UNESCAPED_UNICODE) ?>;
@@ -1319,14 +1320,27 @@
         updateSubmitState();
     });
 
-    function showVimeoPreview(thumbnailUrl, title) {
+    function showVimeoPreview(thumbnailSource, title) {
         vimeoPreview.hidden = false;
         modalVideoTitle.value = title;
-        if (thumbnailUrl) {
-            vimeoPreviewThumb.src = thumbnailUrl;
+        var attrs = thumbnailSource && window.VpcPlaylistLogic && window.VpcPlaylistLogic.ladderPosterAttrs
+            ? window.VpcPlaylistLogic.ladderPosterAttrs(thumbnailSource, [640, 1920, 3840], 'grid')
+            : null;
+        var src = attrs ? attrs.src : thumbnailSource;
+        if (src) {
+            vimeoPreviewThumb.src = src;
+            if (attrs) {
+                vimeoPreviewThumb.setAttribute('srcset', attrs.srcset);
+                vimeoPreviewThumb.setAttribute('sizes', attrs.sizes);
+            } else {
+                vimeoPreviewThumb.removeAttribute('srcset');
+                vimeoPreviewThumb.removeAttribute('sizes');
+            }
             vimeoPreviewThumb.hidden = false;
             vimeoPreviewPlaceholder.hidden = true;
         } else {
+            vimeoPreviewThumb.removeAttribute('srcset');
+            vimeoPreviewThumb.removeAttribute('sizes');
             vimeoPreviewThumb.hidden = true;
             vimeoPreviewPlaceholder.hidden = false;
         }
@@ -1362,7 +1376,7 @@
                 }
                 modalVimeoId.value = res.data.vimeo_id;
                 modalResolveStatus.textContent = 'ID: ' + res.data.vimeo_id;
-                showVimeoPreview(res.data.thumbnail_url || null, res.data.title || '');
+                showVimeoPreview(res.data.thumbnail_base || res.data.thumbnail_url || null, res.data.title || '');
                 if (Array.isArray(res.data.tags)) {
                     TagInput.setTags(res.data.tags, modalTagChips, modalTagInput);
                 }
@@ -1895,8 +1909,15 @@
                 '<span class="video-card-title" title="' + escHtml(video.title) + '">' + escHtml(videoShortLabel(video)) + '</span>' +
                 '<span class="video-caption-count" title="' + escHtml(captionLabel) + '">' + captionCount + '</span>' +
             '</div>';
-        if (video.thumbnail_url) {
-            card.innerHTML = '<img class="video-thumb" src="' + escHtml(video.thumbnail_url) + '" alt="" loading="lazy">' + metaHtml;
+        var thumbSource = video.thumbnail_base || video.thumbnail_url || '';
+        var thumbAttrs = thumbSource && window.VpcPlaylistLogic && window.VpcPlaylistLogic.ladderPosterAttrs
+            ? window.VpcPlaylistLogic.ladderPosterAttrs(thumbSource, [640, 1920, 3840], 'grid')
+            : null;
+        if (thumbAttrs) {
+            card.innerHTML = '<img class="video-thumb" src="' + escHtml(thumbAttrs.src)
+                + '" srcset="' + escHtml(thumbAttrs.srcset)
+                + '" sizes="' + escHtml(thumbAttrs.sizes)
+                + '" alt="" loading="lazy">' + metaHtml;
         } else {
             card.innerHTML = '<div class="video-thumb-placeholder"></div>' + metaHtml;
         }

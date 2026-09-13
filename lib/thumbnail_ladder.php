@@ -80,6 +80,29 @@ if (!function_exists('vpc_thumbnail_attrs')) {
     }
 }
 
+if (!function_exists('vpc_thumbnail_catalog_fields')) {
+    /**
+     * Catalog storage pair: thumbnail_base plus a 1920 thumbnail_url alias.
+     * Empty when the URL cannot feed the ladder (caller may keep a non-Vimeo URL).
+     *
+     * @return array{thumbnail_base: string, thumbnail_url: string}|array{}
+     */
+    function vpc_thumbnail_catalog_fields($urlOrBase) {
+        $base = vpc_thumbnail_base($urlOrBase);
+        if ($base === '') {
+            return array();
+        }
+        $player = vpc_thumbnail_attrs($base, 'player');
+        if ($player === array()) {
+            return array();
+        }
+        return array(
+            'thumbnail_base' => $base,
+            'thumbnail_url' => $player['src'],
+        );
+    }
+}
+
 if (!function_exists('vpc_thumbnail_html_attrs')) {
     /**
      * Escaped src/srcset/sizes attribute string, or empty when there is no ladder.
@@ -151,12 +174,6 @@ if (!function_exists('vpc_thumbnail_size_url_from_parts')) {
 
 if (!function_exists('vpc_thumbnail_height_for_width')) {
     function vpc_thumbnail_height_for_width($width) {
-        if ((int) $width === 640) {
-            return 360;
-        }
-        if ((int) $width === 1920) {
-            return 1080;
-        }
-        return 2160;
+        return (int) round(((int) $width) * 9 / 16);
     }
 }

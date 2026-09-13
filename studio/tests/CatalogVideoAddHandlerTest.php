@@ -29,7 +29,10 @@ class CatalogVideoAddHandlerTest extends TestCase
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->expects($this->once())->method('getVideo')->with('111')->willReturn('Vimeo Title');
-        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('111')->willReturn('https://example.com/t.jpg');
+        $vimeo->expects($this->once())->method('getThumbnailMeta')->with('111')->willReturn([
+            'thumbnail_url' => 'https://example.com/t.jpg',
+            'thumbnail_base' => null,
+        ]);
 
         $result = $this->makeHandler($vimeo)->handle('111', 'lse', '2024-madrid', 'Custom Title');
 
@@ -42,11 +45,27 @@ class CatalogVideoAddHandlerTest extends TestCase
         $this->assertSame('Custom Title', $catalog['videos'][0]['title']);
     }
 
+    public function test_add_stores_thumbnail_base_from_vimeo_meta(): void
+    {
+        $vimeo = $this->createMock(VimeoClient::class);
+        $vimeo->method('getVideo')->willReturn('Vimeo Title');
+        $vimeo->expects($this->once())->method('getThumbnailMeta')->with('111')->willReturn([
+            'thumbnail_url' => 'https://i.vimeocdn.com/video/abc-d_1920x1080?r=pad&region=us',
+            'thumbnail_base' => 'https://i.vimeocdn.com/video/abc-d?region=us',
+        ]);
+
+        $result = $this->makeHandler($vimeo)->handle('111', 'lse', '2024-madrid', 'Title');
+
+        $this->assertTrue($result['ok']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d?region=us', $result['video']['thumbnail_base']);
+        $this->assertSame('https://i.vimeocdn.com/video/abc-d_1920x1080?region=us', $result['video']['thumbnail_url']);
+    }
+
     public function test_uses_vimeo_title_when_custom_title_empty(): void
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('From Vimeo');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
 
         $result = $this->makeHandler($vimeo)->handle('222', 'lse', '2024-madrid', '');
 
@@ -69,7 +88,7 @@ class CatalogVideoAddHandlerTest extends TestCase
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
         $vimeo->expects($this->never())->method('getTagNames');
 
         $result = $this->makeHandler($vimeo)->handle(
@@ -92,7 +111,7 @@ class CatalogVideoAddHandlerTest extends TestCase
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
         $vimeo->expects($this->once())->method('getTagNames')->with('333')->willReturn(['humor', 'deaf']);
 
         $result = $this->makeHandler($vimeo)->handle('333', 'lse', '2024-madrid', 'Title');
@@ -123,7 +142,7 @@ class CatalogVideoAddHandlerTest extends TestCase
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
 
         $result = $this->makeHandler($vimeo)->handle('444', 'lse', '2024-madrid', 'Title', 'acudits');
 
@@ -138,7 +157,7 @@ class CatalogVideoAddHandlerTest extends TestCase
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
 
         $result = $this->makeHandler($vimeo)->handle('555', 'lse', '2024-madrid', 'Title');
 

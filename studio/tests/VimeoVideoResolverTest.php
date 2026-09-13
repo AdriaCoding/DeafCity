@@ -34,7 +34,10 @@ class VimeoVideoResolverTest extends TestCase
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->expects($this->once())->method('getVideo')->with('111')->willReturn('My Title');
-        $vimeo->expects($this->once())->method('getThumbnailUrl')->with('111')->willReturn('https://example.com/t.jpg');
+        $vimeo->expects($this->once())->method('getThumbnailMeta')->with('111')->willReturn([
+            'thumbnail_url' => 'https://example.com/t.jpg',
+            'thumbnail_base' => null,
+        ]);
 
         $result = $this->makeResolver($parser, $vimeo)->resolve('https://vimeo.com/111');
 
@@ -51,7 +54,7 @@ class VimeoVideoResolverTest extends TestCase
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->with('333')->willReturn('My Title');
-        $vimeo->method('getThumbnailUrl')->with('333')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->with('333')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
         $vimeo->expects($this->once())->method('getTagNames')->with('333')->willReturn(['humor', 'deaf']);
 
         $result = $this->makeResolver($parser, $vimeo)->resolve('https://vimeo.com/333');

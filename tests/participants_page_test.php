@@ -124,23 +124,7 @@ pp_assert_contains('_640x360', $html, 'participant thumbs use the 640 rung as sr
 pp_assert_contains('640w', $html, 'participant thumbs expose 640w in srcset');
 pp_assert_contains('1920w', $html, 'participant thumbs expose 1920w in srcset');
 pp_assert_contains('3840w', $html, 'participant thumbs expose 3840w in srcset');
-
-$padUrl = 'https://i.vimeocdn.com/video/1285032917-abc_200x150?&r=pad&region=us';
-$displayUrl = vpc_participant_thumbnail_display_url($padUrl);
-if ($displayUrl !== 'https://i.vimeocdn.com/video/1285032917-abc_200x150?region=us') {
-    fwrite(STDERR, "FAIL: unexpected display URL: {$displayUrl}\n");
-    exit(1);
-}
-if (vpc_participant_thumbnail_display_url('https://example.com/thumb.jpg?r=pad') !== 'https://example.com/thumb.jpg?r=pad') {
-    fwrite(STDERR, "FAIL: non-Vimeo URL should pass through unchanged\n");
-    exit(1);
-}
-if (vpc_participant_thumbnail_display_url('https://i.vimeocdn.com/video/x_640x360?&r=crop&region=us')
-    !== 'https://i.vimeocdn.com/video/x_640x360?&r=crop&region=us') {
-    fwrite(STDERR, "FAIL: r=crop URL should pass through unchanged\n");
-    exit(1);
-}
-echo "PASS: vpc_participant_thumbnail_display_url strips r=pad only\n";
+pp_assert_not_contains('img.src = base', $html, 'thumb rotation does not fall back to an unsized base URL');
 
 $multiVideoParticipant = 'Frank';
 $multiVideos = vpc_participant_videos_from_catalog($catalog, $multiVideoParticipant);

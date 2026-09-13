@@ -140,9 +140,6 @@ $bottomBar = preview_build_bottom_bar_player_config('participants', $preview_lan
 
     function applyThumb(img, base, ladder) {
         if (!img || !base || !window.VpcPlaylistLogic || !window.VpcPlaylistLogic.ladderPosterAttrs) {
-            if (img && base) {
-                img.src = base;
-            }
             return;
         }
         var attrs = window.VpcPlaylistLogic.ladderPosterAttrs(base, ladder, 'grid');

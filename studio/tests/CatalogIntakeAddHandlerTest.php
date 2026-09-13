@@ -35,7 +35,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
     {
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
         $vimeo->expects($this->never())->method('getTagNames');
 
         $result = $this->makeHandler($vimeo)->handle(
@@ -59,7 +59,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
         $vimeo->expects($this->never())->method('getTextTracks');
         $vimeo->expects($this->never())->method('uploadAndActivateTextTrack');
 
@@ -88,7 +88,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
 
         $result = $this->makeHandler($vimeo)->handle(
             '333',
@@ -118,7 +118,7 @@ class CatalogIntakeAddHandlerTest extends TestCase
 
         $vimeo = $this->createMock(VimeoClient::class);
         $vimeo->method('getVideo')->willReturn('Vimeo Title');
-        $vimeo->method('getThumbnailUrl')->willReturn(null);
+        $vimeo->method('getThumbnailMeta')->willReturn(['thumbnail_url' => null, 'thumbnail_base' => null]);
 
         $result = $this->makeHandler($vimeo)->handle(
             '444',
