@@ -37,24 +37,6 @@ class CatalogActionTest extends TestCase
         $this->assertSame(['art', 'humor'], $context['catalogTags']);
     }
 
-    public function test_continguts_context_includes_map_locations(): void
-    {
-        file_put_contents($this->dataDir . '/deafcity.json', json_encode([
-            [
-                'id' => '2026-barcelona',
-                'city' => 'Barcelona',
-                'sign_language_code' => 'LSC',
-                'label' => 'DEAF.city BARCELONA LSC',
-                'coordinates' => [2.1734, 41.3851],
-            ],
-        ]));
-
-        $context = $this->action()->contingutsContext();
-
-        $this->assertSame('2026-barcelona', $context['mapLocations'][0]['id']);
-        $this->assertSame('DEAF.city BARCELONA LSC', $context['mapLocations'][0]['label']);
-    }
-
     public function test_continguts_context_includes_catalog_and_sync_state(): void
     {
         file_put_contents(

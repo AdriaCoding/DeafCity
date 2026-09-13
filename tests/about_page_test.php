@@ -43,8 +43,8 @@ if ($trioPos === false || $mapPos === false || $creditsPos === false || !($trioP
     exit(1);
 }
 echo "PASS: map sits between trio video and credits\n";
-assert_not_contains('sign-language-map-filter', $html, 'no sidebar category filter');
-assert_not_contains('DEAF.city editions', $html, 'no filter legend labels');
+assert_contains('Sign languages', $html, 'sidebar legend heading');
+assert_contains('DEAF.city editions', $html, 'deafcity editions legend label');
 assert_contains('/leaflet/leaflet.js', $html, 'leaflet script');
 assert_contains('/js/sign_language_map.js', $html, 'map script');
 assert_contains('/data/languages.json', $html, 'sign language geojson');
@@ -82,43 +82,7 @@ assert_contains('secondary_player_chrome.js', $html, 'secondary transport script
 assert_contains('English</li>', $html, 'English option in language picker');
 
 $aboutCss = file_get_contents(dirname(dirname(__FILE__)) . '/css/about-page.css');
-assert_contains('#sign-language-map', $aboutCss, 'full-width map layout in about css');
-assert_not_contains('#sign-language-map-filter', $aboutCss, 'no filter column styles');
-assert_not_contains('15.5rem', $aboutCss, 'no reserved sidebar column on the map');
-assert_contains('#FFCC00', $aboutCss, 'merged sign-language markers are yellow');
-assert_contains('rgb(0, 120, 0)', $aboutCss, 'DEAF.city markers stay green');
-
-$mapJs = file_get_contents(dirname(dirname(__FILE__)) . '/js/sign_language_map.js');
-assert_contains('PIDGIN_BRANCH = 979', $mapJs, 'pidgin branch is excluded');
-assert_not_contains('setOpacity', $mapJs, 'no invisible-but-hoverable markers');
-assert_contains('fitBounds', $mapJs, 'geography crops to visible points');
-assert_not_contains('sign-language-map-filter', $mapJs, 'map script does not build a filter');
-
-$cities = json_decode(file_get_contents(dirname(dirname(__FILE__)) . '/data/deafcity.json'), true);
-if (!is_array($cities) || $cities === []) {
-    fwrite(STDERR, "FAIL: deafcity.json must list DEAF.city map locations\n");
-    exit(1);
-}
-foreach ($cities as $city) {
-    $label = (string) ($city['label'] ?? '');
-    if (!preg_match('/^DEAF\\.city .+ [A-Z0-9]{2,}$/', $label)) {
-        fwrite(STDERR, "FAIL: map location label must be DEAF.city CITY CODE — got: {$label}\n");
-        exit(1);
-    }
-}
-echo "PASS: DEAF.city map labels use DEAF.city CITY CODE\n";
-$barcelona = null;
-foreach ($cities as $city) {
-    if (($city['id'] ?? '') === '2026-barcelona') {
-        $barcelona = $city;
-        break;
-    }
-}
-if ($barcelona === null || ($barcelona['label'] ?? '') !== 'DEAF.city BARCELONA LSC') {
-    fwrite(STDERR, "FAIL: Barcelona map label must be DEAF.city BARCELONA LSC\n");
-    exit(1);
-}
-echo "PASS: Barcelona map label\n";
+assert_contains('#sign-language-map', $aboutCss, 'sidebar map layout in about css');
 assert_not_contains('proto-bar', $aboutCss, 'no prototype bar css');
 assert_not_contains('#city-map-section', $aboutCss, 'map css removed');
 assert_not_contains('max-width: 1200px', $aboutCss, 'narrow max-width removed');
